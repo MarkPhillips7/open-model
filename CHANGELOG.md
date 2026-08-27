@@ -18,7 +18,26 @@ Entry template:
 
 ---
 
-## 2026-08-27 — Fix column-relative model row formulas
+## 2026-08-27 — Sync Weekly Financials model formulas to repository
+
+Compared live **Weekly Financials** `* - Model` rows to `scripts/restore_weekly_model_formulas.py` and found several formulas out of date after the earlier restore used older CHANGELOG templates. Added canonical source `sheets/weekly_model_formulas.py` (label-based row lookup; column-relative generation for P&L rows). **No live sheet writes** — repo-only update.
+
+- **Tab / range:** n/a (git only)
+- **Insert/delete:** none
+- **Formulas captured (current live sheet):**
+  - **R3 Acquisition Contracts - Model:** `={col}6*{col}4` (was missing from restore script)
+  - **R12 New Listings - Model:** purchase lag on `$9×$10` + unlisted backlog (`Transitions!B21` / `B23:I23`); was missing
+  - **R15 Private Home Sales - Model:** purchases × `(1 − Likelihood to List)` × private close curve — **not** `Transitions!B6 × …`; seed **15** not 90
+  - **R16 Home Sales - Model:** listed lag × `$10` + `$15` private sales — was missing
+  - **R9, R18:** unchanged (match prior restore)
+  - **R21, R23, R32, R46:** column-relative P&L stack (already fixed)
+  - **R30, R41:** `35000000/13`, `20000000/13`
+  - **R38 Homes in Inventory - Model:** anchor **3275** in B; `={prev}+if({col}8<>"",…,{col}9)−if({col}14<>"",…,{col}16)` from C
+  - **R24–28 CM stack:** core values B–E; ramp `={prev}24+{col}28` from F; adjustments −3% (B–G) / −2% (H+); improvement **0.05%** from F
+- **Data:** inventory anchor 3275; CM adjustment/improvement hardcoded values as above
+- **Side effects:** `scripts/restore_weekly_model_formulas.py` now imports from `sheets/weekly_model_formulas.py`. README notes restore command and private-sales encoding.
+
+---
 
 Batch API writes duplicated column **B** refs across every column on P&L model rows (Sheets does not auto-adjust refs like fill-down). Regenerated per-column formulas on **Weekly Financials** `B21:DY21`, `B23:DY23`, `B32:DY32`, `B46:DY46`.
 

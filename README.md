@@ -76,7 +76,7 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
 | Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B21` / `B23:I23`. Does not add to purchases. |
-| Private / non-listed completions | ~**25%** (`Transitions!B6`) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
+| Private / non-listed completions | ~**25%** (`Transitions!B6`; model uses **1 − Likelihood to List** on row 10) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
 | Private sale timing (purchase → close) | 9 weeks; mode ~week 6; mean ~**6.1 weeks** | 2.0 prior, not disclosed. Edit `Transitions!B19:J19`. |
 | Listing → sale curve | ~21 weeks; ~**91%** by ~120 days | Calibrated to Q2 2026 DOM commentary + cohort sell-through charts. Listed path only. |
 | Price retention by week on market | 100% → ~**93.5%** by week 21 | Longer DOM → lower effective price. |
@@ -123,7 +123,10 @@ Then complete the [Google Cloud setup](#one-time-google-cloud-setup) below, save
 ```bash
 python scripts/auth_setup.py      # first-time sign-in
 python scripts/test_connection.py # verify access to your spreadsheet
+python scripts/restore_weekly_model_formulas.py  # restore * - Model row formulas
 ```
+
+Canonical model-row formulas live in `sheets/weekly_model_formulas.py` (synced from the live sheet). After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
 
 ### One-time Google Cloud setup
 
