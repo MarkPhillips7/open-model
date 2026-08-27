@@ -46,8 +46,8 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 
 | Resource | Role in model |
 | --- | --- |
-| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts may cancel before market; some deals complete privately and never show as public listings → informs **% canceled** and **% private** on **Transitions**. |
-| [Wealthmatica — cohort sell-through by listing week](https://wealthmatica.substack.com/i/204433858) | Shape of **Percent Sold by Listing Week** / sell-through curve; combined with Q2 2026 “~91% by ~120 days” commentary. |
+| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Home Activity** (~78% in 2025 → ~67% by Q2 2026). **% private** (`Transitions!B6`) and the **purchase→close private curve** (`B19:J19`) are a 2.0 prior, distinct from the listing DOM curve; not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B21`). |
+| [Wealthmatica — cohort sell-through by listing week](https://wealthmatica.substack.com/i/204433858) | Shape of **Percent Sold by Listing Week** / sell-through curve (listed homes only); combined with Q2 2026 “~91% by ~120 days” commentary. |
 | [X / mudirshin article media](https://x.com/mudirshin/article/2090092238499926511/media/2090092137169760256) | Seed / calibration values for early weeks (e.g. commented “220” listing baseline). |
 
 Refresh these periodically; independent scrapers and posts can lag or disagree with company-reported Non-GAAP metrics.
@@ -82,5 +82,6 @@ When updating the model after an earnings release:
 1. Pull Non-GAAP homes purchased, inventory, revenue, CM, ASP, adjusted opex, fixed opex, SBC from the supplement.
 2. Reconcile weekly “actual” stubs (often `quarterly_total / 13`) to the new quarter.
 3. Update CM guidance and growth / seasonality assumptions if management changes the outlook.
-4. Cross-check listing/acquisition run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and any new accountability charts.
+4. Cross-check listing/acquisition run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and any new accountability charts; update **Likelihood to Close** (`B8` / `AE8`) if cancel/walk-away has moved.
 5. Confirm transition curves still roughly match disclosed sell-through / days-on-market stats.
+6. Append the sheet edits to [CHANGELOG.md](CHANGELOG.md).

@@ -4,7 +4,7 @@ Personal research workbook and Python tooling for modeling **Opendoor (OPEN)** f
 
 The live model is the Google Sheet **[Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4)**. This repo connects to that sheet via OAuth and documents the approach.
 
-Sources and citations: **[RESOURCES.md](RESOURCES.md)**.
+Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made by agents are logged in **[CHANGELOG.md](CHANGELOG.md)**.
 
 > Not investment advice. The model mixes company-reported Non-GAAP metrics, management guidance, and explicit guesses where Opendoor does not disclose detail.
 
@@ -14,7 +14,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**.
 
 - Reconstruct a **weekly operating model** of Opendoor’s home funnel: acquisition contracts → purchases → listings → sales → revenue.
 - Separate **reported / stubbed actuals** from **forward model** rows so gaps and surprises are visible.
-- Encode **timing and attrition** (cancel rates, private closings, days on market, financed vs cash close) as adjustable assumptions.
+- Encode **timing and attrition** (likelihood to close by contract week, private closings, days on market, financed vs cash close) as adjustable assumptions.
 - Project **contribution margin**, fixed costs, and inventory path under seasonal and growth scenarios.
 - Use charts to compare actual vs modeled homes and money over time.
 
@@ -24,8 +24,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**.
 
 | Tab | Role |
 | --- | --- |
-| **Weekly Home Activity** | Main time series (week-ending columns). Actuals + model rows for contracts, purchases, listings, sales, ASP, revenue, CM stack, opex, SBC, EPS placeholders, inventory. |
-| **Transitions** | Lag / probability tables that turn contracts into purchases, purchases into listings, and listings into sales (plus cancel %, private %, cash %, price retention, close timing). |
+| **Weekly Home Activity** | Main time series (week-ending columns). Actuals + model rows for contracts, **likelihood to close**, purchases, listings, **private sales**, listed+private home sales, ASP, revenue, CM stack, opex, SBC, EPS placeholders, inventory. |
+| **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Seasonality** | Monthly home-sales seasonality weights; drives weekly seasonality multipliers. |
 | **Homes Chart** | Line chart of weekly home metrics (actual vs model for listings, acquisitions, sales). |
 | **Money Chart** | Line chart of weekly **Revenue** vs **Revenue - Model**. |
@@ -43,11 +43,11 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**.
 ### Funnel (actuals vs model)
 
 1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × seasonality × weekly operational growth.
-2. **Homes purchased** — Model = lagged contracts × **Transitions** “percent translated into purchase” over ~9 weeks (`SUMPRODUCT` / `MAP` lag).
-3. **New listings** — After early hardcoded weeks, model = lagged acquisitions × listing translation weights, scaled by `(1 − cancel% − private%)`.
-4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (up to ~21 weeks).
-5. **Revenue** — Model = sales × ASP, split by cash vs financed close lags from **Transitions**, with **price retention** by listing age.
-6. **Inventory** — Model rolls forward: prior inventory + acquisitions − sales (preferring actuals when present).
+2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row.
+3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B21`, default 450) draining on row 23. Complements private sales via Likelihood to List / `B6`.
+4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (~21 weeks) **+** private sales. Private sales = lagged purchases × `B6` × **Percent of Private Completions Sold by Week** (9-week purchase→close curve).
+5. **Revenue** — Listed path = listings × ASP × sell-through × **price retention**, split by cash vs financed close lags. Private path = that week’s private sales × ASP (close already in the private curve; no DOM decay).
+6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present).
 
 ### Profitability stack
 
@@ -70,11 +70,13 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 
 | Assumption | Approx. value in sheet | Intent |
 | --- | --- | --- |
-| Contract → purchase conversion (sum of weekly %) | ~**69%** (target commentary ~80% if ~20% cancel) | Closing attrition; early weeks intentionally low (title / seller cancel / date push-outs). |
-| Purchase → public listing translation | ~**75%** | ~**25%** assumed private / never publicly listed. |
-| Acquisition cancel rate | ~**18%** | Aligns with independent tracker range ~10–20%. |
-| Private / non-listed completions | ~**25%** | Complements listing translation. |
-| Listing → sale curve | ~21 weeks; ~**91%** by ~120 days | Calibrated to Q2 2026 DOM commentary + cohort sell-through charts. |
+| Likelihood to Close (per contract week) | **78%** in 2025 → **67%** from Q2 2026 (Q1 2026 interpolates) | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit `B8` / `AE8`. |
+| Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
+| Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. |
+| Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B21` / `B23:I23`. Does not add to purchases. |
+| Private / non-listed completions | ~**25%** (`Transitions!B6`) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
+| Private sale timing (purchase → close) | 9 weeks; mode ~week 6; mean ~**6.1 weeks** | 2.0 prior, not disclosed. Edit `Transitions!B19:J19`. |
+| Listing → sale curve | ~21 weeks; ~**91%** by ~120 days | Calibrated to Q2 2026 DOM commentary + cohort sell-through charts. Listed path only. |
 | Price retention by week on market | 100% → ~**93.5%** by week 21 | Longer DOM → lower effective price. |
 | Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |
 | Cash purchase share | ~**31.5%** | National U.S. mix; OPEN does not disclose. |
@@ -84,7 +86,7 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | CM path | Core improving; temporary negative adjustments; guided mid-single digits | Matches earnings CM narrative (bottom Sept 2025, Q3 guide 4–4.5%, longer-term ~5–7%). |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |
 
-Where disclosure is missing, the sheet comments say so explicitly (cancel rate, cash mix, some conversion totals).
+Where disclosure is missing, the sheet comments say so explicitly (likelihood to close, cash mix, some conversion totals).
 
 ---
 
@@ -95,7 +97,7 @@ Use the workbook to stress-test questions such as:
 - Does **volume recovery** (contracts → inventory → sales) support the revenue guide (e.g. ≥20% YoY)?
 - Is **CM** improving for the right reasons (new cohorts vs one-off), and does it reach the **5–7%** band management ties to adjusted profitability?
 - Do **fixed costs** stay flat while volume scales (operating leverage)?
-- How sensitive are revenue and inventory to **DOM / sell-through** and **cancel / private** rates?
+- How sensitive are revenue and inventory to **DOM / sell-through**, **likelihood to close**, and **private** rates?
 
 Update after each earnings release using the checklist in [RESOURCES.md](RESOURCES.md).
 

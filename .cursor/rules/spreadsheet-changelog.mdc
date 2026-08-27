@@ -1,0 +1,20 @@
+---
+description: Log every Google Sheet model change in CHANGELOG.md
+alwaysApply: true
+---
+
+# Spreadsheet changelog
+
+The live Opendoor model is a Google Sheet. Git will not see those edits unless you record them.
+
+After **any** write to the spreadsheet (formulas, values, notes, formats, charts, or row/column insert/delete), append a dated entry to `CHANGELOG.md` before finishing. Do not skip small cell edits.
+
+Each entry must include:
+
+- Tab and A1 range
+- Insert/delete: dimension, start index, count
+- Formulas: before → after (one template is enough if copied across columns)
+- Data values changed, and why
+- Side effects (charts, notes, number formats) if you noticed them
+
+Use the template at the top of `CHANGELOG.md`. One heading per change-set, not per cell.
