@@ -18,6 +18,114 @@ Entry template:
 
 ---
 
+## 2026-08-27 — Fix column-relative model row formulas
+
+Batch API writes duplicated column **B** refs across every column on P&L model rows (Sheets does not auto-adjust refs like fill-down). Regenerated per-column formulas on **Weekly Financials** `B21:DY21`, `B23:DY23`, `B32:DY32`, `B46:DY46`.
+
+- **Tab / range:** **Weekly Financials** rows 21, 23, 32, 46 (`B:DY`)
+- **Insert/delete:** none
+- **Formulas:** e.g. `B21` `=B18*B23` → `C21` `=C18*C23`, `D21` `=D18*D23`, …; same pattern for R23 (CM stack sum), R32 (`={col}30+(15000000/13)`), R46 (`=IF({col}34=0,"",({col}21-{col}32-{col}41)/{col}34)`)
+- **Data:** none
+- **Side effects:** `scripts/restore_weekly_model_formulas.py` now emits column-specific formulas for these rows.
+
+---
+
+## 2026-08-27 — Restore Weekly Financials model row formulas
+
+Reconstructed `* - Model` row formulas cleared when spread cleanup removed mistaken quarterly spread patterns from model rows. Funnel/revenue rows restored from prior CHANGELOG and agent transcript templates (row refs updated for deleted row 1). P&L model rows reconstructed from README stack logic where originals were not recoverable.
+
+- **Tab / range:** **Weekly Financials** `B9:DY9`, `B15:DY15`, `B18:DY18`, `B21:DY21`, `B23:DY23`, `B30:DY30`, `B32:DY32`, `B41:DY41`, `B46:DY46`; **Contribution Margin - Core** ramp `F24:DY24` (`=E24+F28`, `=F24+G28`, …)
+- **Insert/delete:** none
+- **Formulas:**
+  - **R9 Homes Purchased - Model:** SUMPRODUCT over 9-week purchase lag using contracts `$2/$3`, L2C `$7`, `Transitions!$B$2:$J$2`
+  - **R15 Private Home Sales - Model:** `Transitions!$B$6` × SUMPRODUCT over purchases `$8/$9`, `Transitions!$B$19:$J$19`
+  - **R18 Revenue - Model:** financed + cash listing revenue lags (`Transitions!$B$14`/`$B$15`/`$B$16`) plus private sales tail `$15×$13`
+  - **R23 Contribution Margin - Model:** `=B24+B25+B26+B27`
+  - **R21 Contribution Profit - Model:** `=B18*B23`
+  - **R30 Fixed Costs - Model:** `=35000000/13` (~$35M/qtr accountability run-rate)
+  - **R32 Adjusted Operating Expenses - Model:** `=B30+(15000000/13)` (fixed + ~$15M/qtr variable ops/marketing)
+  - **R41 Net Interest Expense - Model:** `=20000000/13` (placeholder ~$20M/qtr)
+  - **R46 Earnings per Share - Model:** `=IF(B34=0,"",(B21-B32-B41)/B34)` (placeholder ANI build from model rows)
+- **Data:** none (formula-only restore)
+- **Side effects:** Repeatable script `scripts/restore_weekly_model_formulas.py`. Col F spot-check (full Q3 2025 week): Homes Purchased - Model ≈ 101, Private Home Sales - Model ≈ 22.5, Revenue - Model ≈ $88.7M, Contribution Profit - Model ≈ −$358K, EPS - Model ≈ −$0.0078.
+
+---
+
+## 2026-08-27 — Fix weekly spread formulas after row 1 delete
+
+Deleting unused **Weekly Financials** row 1 moved **Week Ending** from row 2 → row 1 and shifted all metric labels up one row, but spread formulas still referenced `B$2` (now acquisition contracts, not dates) and used **weekly row numbers** for `OFFSET('Quarterly Financials'!$B$n…)` instead of the **quarterly** row (which stayed aligned to the old numbering).
+
+### Root cause
+
+| Issue | Symptom |
+| --- | --- |
+| `wk,B$2` | Week key derived from contract counts → blank/error |
+| `OFFSET(…$B$20…)` on weekly R20 Contribution Profit | Pulled **Gross Profit** (quarterly R20), not Contribution Profit (R21) |
+| Spread formula on **Basic Shares Outstanding** | Wrong pattern entirely (should interpolate from row 48 EOP shares, not ÷13 spread) |
+
+### Code / sheet fixes
+
+- **`sheets/formulas.py`:** `WEEK_DATE_ROW = 1`; spread helpers take `quarterly_row`; inventory/shares interpolation uses dynamic weekly row refs (`{prev_col}{weekly_row}`).
+- **`scripts/update_weekly_quarterly_spread.py`:** resolves rows by **label** on Weekly vs Quarterly tabs (survives future row insert/delete); clears spread formulas that landed on `* - Model` rows; refreshes inventory interpolation.
+- Re-ran script — restored spread rows: Contribution Profit (R20), Basic Shares (R34), Homes in Inventory (R37), Net Interest (R40), Taxes (R43), Adjusted Net Income (R44), Earnings per Share (R45).
+
+### Weekly Financials — spot-check (col F, full Q3 2025 week)
+
+| Row | Value |
+| --- | --- |
+| Contribution Profit | ≈ $1.54M / week ($20M ÷ 13) |
+| Earnings per Share | ≈ −$0.0092 / week (−$0.12 ÷ 13) |
+| Basic Shares Outstanding | ramping toward Q3 EOP |
+
+### Side effects
+
+- **Model rows** that had mistaken quarterly spread formulas (`* - Model` on rows 9, 15, 18, 21, 23, 30, 32, 41, 46) were cleared; restored in a follow-up change-set (see **Restore Weekly Financials model row formulas** above).
+
+---
+
+## 2026-08-27 — 2025 Q4, 2026 Q1, 2026 Q2 earnings actuals load
+
+Loaded and verified **2025 Q4** (`Quarterly Financials!C`), **2026 Q1** (`!D`), and **2026 Q2** (`!E`) from Open House supplements and 10-Q / 8-K filings. Filled P&L stack rows that were blank after the Q3 load; added missing **Home Sales** for 2026 Q1–Q2. Repeatable script: `scripts/load_quarters_2025_q4_2026_h1.py`.
+
+### Reviewed rows (already populated — confirmed)
+
+| Row | Label | 2025 Q4 | 2026 Q1 | 2026 Q2 | Source |
+| --- | --- | --- | --- | --- | --- |
+| 3 | Acquisition Contracts | 2,557 (formula) | 4,924 | 7,014 | Sum of weekly actuals on **Weekly Financials** |
+| 9 | Homes Purchased | 1,706 | 2,474 | 4,378 | Earnings supplement — *Non-GAAP Measures & Key Metrics* |
+| 12 | New Listings | 0 | 726 | 2,867 | Weekly sum (Open Tracker starts Feb 2026; Q4 2025 has no weekly new-list counts) |
+| 18 | Revenue | $736M | $720M | $883M | GAAP revenue, 10-Q / 8-K |
+| 30 | Fixed Costs | $35M | $33M | $35M | Segment table — *Fixed operating expense* |
+| 32 | Adjusted Operating Expenses | $50M | $63M | $55M | Non-GAAP opex reconciliation |
+| 38 | Homes in Inventory | 2,867 | 3,420 | 5,459 | Quarter-end inventory, earnings supplement |
+| 21 | Contribution Profit | — | — | $51M | Already loaded for Q2 only; Q4/Q1 added below |
+
+### New / updated quarterly data
+
+| Row | Label | 2025 Q4 | 2026 Q1 | 2026 Q2 | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 15 | Home Sales | 1,978 | 1,921 | 2,339 | Earnings supplement |
+| 20 | Gross Profit | $57M | $72M | $86M | GAAP gross profit |
+| 21 | Contribution Profit | $7M | $32M | (unch.) | Non-GAAP |
+| 23 | Contribution Margin | 1.0% | 4.4% | 5.8% | Stored as 0.01 / 0.044 / 0.058 |
+| 34 | Stock Based Compensation | $108M | $123M | $122M | SBC + market RSUs + IDSW amort (Q4 was $105M → $108M to match Q3 convention) |
+| 35 | Basic Shares Outstanding | 869,822,000 | 959,332,000 | 965,780,000 | Basic weighted-average (thousands × 1,000) |
+| 40 | Adjusted EBITDA | $(43)M | $(31)M | $(4)M | Non-GAAP highlights |
+| 41 | Net Interest Expense | $15M | $13M | $21M | EBITDA bridge: property financing + other − interest income |
+| 43 | Depreciation and Amortization | $5M | $5M | $5M | D&A excl. intangibles |
+| 44 | Taxes | $1M | $0 | $0 | GAAP / bridge income tax expense |
+| 45 | Adjusted Net Income | $(62)M | $(49)M | $(30)M | Adjusted net **loss** |
+| 46 | Earnings per Share | $(1.26) | $(0.18) | $(0.17) | GAAP basic net loss per share |
+| 48 | Shares Outstanding (Quarter End) | 957,245,487 | 963,283,777 | 968,626,958 | Balance sheet common shares at quarter end |
+
+### Weekly Financials
+
+- **Tab / range:** refreshed day-weighted spread formulas on rows 9, 15, 18, 20, 21, 23, 30, 32, 34, 35, 40, 41, 43, 44, 45, 46 via `update_weekly_quarterly_spread.py`
+- **Insert/delete:** none
+- **Side effects:** Q4 2025 EPS now spreads ÷13 day-weighted like other dollar rows (was quarterly copy only before Q3 load extended EPS spread)
+
+---
+
 ## 2026-08-27 — Day-weighted quarterly spread (+ EPS ÷ 13)
 
 Calendar quarters in the weekly grid are not always exactly 13 columns — boundary weeks straddle two quarters (e.g. week ending 10/4/2025 has 3 days in 2025 Q3 and 4 in 2025 Q4). Replaced the single-quarter `÷13` lookup with a **day-weighted blend** so one formula works everywhere.

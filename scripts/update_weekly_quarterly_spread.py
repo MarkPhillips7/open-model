@@ -12,19 +12,37 @@ sys.path.insert(0, str(ROOT))
 from sheets import SheetsClient  # noqa: E402
 from sheets.formulas import (  # noqa: E402
     weekly_from_quarterly_formula,
+    weekly_inventory_formula,
     weekly_quarterly_rate_formula,
     weekly_shares_formula,
 )
 
 WEEKLY = "Weekly Financials"
+QUARTERLY = "Quarterly Financials"
 
 # Dollar amounts: quarterly hard value spread with ÷13 (day-weighted at boundaries).
-SPREAD_ROWS = {9, 15, 18, 20, 21, 30, 32, 34, 40, 41, 43, 44, 45, 46}
+SPREAD_LABELS = (
+    "Homes Purchased",
+    "Home Sales",
+    "Revenue",
+    "Gross Profit",
+    "Contribution Profit",
+    "Fixed Costs",
+    "Adjusted Operating Expenses",
+    "Stock Based Compensation",
+    "Adjusted EBITDA",
+    "Net Interest Expense",
+    "Depreciation and Amortization",
+    "Taxes",
+    "Adjusted Net Income",
+    "Earnings per Share",
+)
 
 # Percent / rate rows: day-weighted blend, no ÷13.
-RATE_ROWS = {23}
+RATE_LABELS = ("Contribution Margin",)
 
-SHARES_ROW = 35
+SHARES_LABEL = "Basic Shares Outstanding"
+INVENTORY_LABEL = "Homes in Inventory"
 
 
 def col_letter(n: int) -> str:
@@ -35,45 +53,105 @@ def col_letter(n: int) -> str:
     return s
 
 
+def label_rows(client: SheetsClient, sheet: str) -> dict[str, int]:
+    rows = client.worksheet(sheet).get("A1:A60")
+    found: dict[str, int] = {}
+    for idx, row in enumerate(rows, start=1):
+        if row and row[0]:
+            found[row[0]] = idx
+    return found
+
+
+def row_by_label(label_rows: dict[str, int], label: str, sheet: str) -> int:
+    try:
+        return label_rows[label]
+    except KeyError as exc:
+        raise KeyError(f"Label {label!r} not found on {sheet!r}") from exc
+
+
+def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
+    """Return label -> (weekly_row, quarterly_row)."""
+    weekly_labels = label_rows(client, WEEKLY)
+    quarterly_labels = label_rows(client, QUARTERLY)
+    mapping: dict[str, tuple[int, int]] = {}
+    for label in (*SPREAD_LABELS, *RATE_LABELS, SHARES_LABEL, INVENTORY_LABEL):
+        mapping[label] = (
+            row_by_label(weekly_labels, label, WEEKLY),
+            row_by_label(quarterly_labels, label, QUARTERLY),
+        )
+    return mapping
+
+
 def update_weekly_formulas(client: SheetsClient) -> None:
     ws = client.worksheet(WEEKLY)
-    data = ws.get("A2:DY47", value_render_option="FORMULA")
+    row_map = build_row_map(client)
+
+    data = ws.get("A1:DY60", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 
     rows_to_update: dict[int, list] = {}
 
-    for row_idx, row in enumerate(data):
-        row_num = row_idx + 2
-        existing = list(row[1:]) if len(row) > 1 else []
+    for label in SPREAD_LABELS:
+        weekly_row, quarterly_row = row_map[label]
+        existing = list(data[weekly_row - 1][1:]) if len(data[weekly_row - 1]) > 1 else []
         cells = existing + [""] * (n_cols - len(existing))
-
-        needs_spread = row_num in SPREAD_ROWS
-        needs_rate = row_num in RATE_ROWS
-        needs_shares = row_num == SHARES_ROW
-
-        if not (needs_spread or needs_rate or needs_shares):
-            continue
-
         changed = len(existing) < n_cols
         for col_idx in range(n_cols):
             col = col_letter(col_idx + 2)
-            prev_col = col_letter(col_idx + 1)
-            cell = cells[col_idx]
-
-            if needs_shares:
-                new_val = weekly_shares_formula(col, prev_col)
-            elif needs_rate:
-                new_val = weekly_quarterly_rate_formula(row_num, col)
-            else:
-                new_val = weekly_from_quarterly_formula(row_num, col)
-
-            if str(cell) != new_val:
+            new_val = weekly_from_quarterly_formula(quarterly_row, col)
+            if str(cells[col_idx]) != new_val:
                 cells[col_idx] = new_val
                 changed = True
-
         if changed:
-            rows_to_update[row_num] = cells
+            rows_to_update[weekly_row] = cells
+
+    for label in RATE_LABELS:
+        weekly_row, quarterly_row = row_map[label]
+        existing = list(data[weekly_row - 1][1:]) if len(data[weekly_row - 1]) > 1 else []
+        cells = existing + [""] * (n_cols - len(existing))
+        changed = len(existing) < n_cols
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            new_val = weekly_quarterly_rate_formula(quarterly_row, col)
+            if str(cells[col_idx]) != new_val:
+                cells[col_idx] = new_val
+                changed = True
+        if changed:
+            rows_to_update[weekly_row] = cells
+
+    shares_weekly_row, _ = row_map[SHARES_LABEL]
+    existing = list(data[shares_weekly_row - 1][1:]) if len(data[shares_weekly_row - 1]) > 1 else []
+    cells = existing + [""] * (n_cols - len(existing))
+    changed = len(existing) < n_cols
+    for col_idx in range(n_cols):
+        col = col_letter(col_idx + 2)
+        prev_col = col_letter(col_idx + 1)
+        new_val = weekly_shares_formula(col, prev_col, weekly_row=shares_weekly_row)
+        if str(cells[col_idx]) != new_val:
+            cells[col_idx] = new_val
+            changed = True
+    if changed:
+        rows_to_update[shares_weekly_row] = cells
+
+    inventory_weekly_row, quarterly_inventory_row = row_map[INVENTORY_LABEL]
+    existing = list(data[inventory_weekly_row - 1][1:]) if len(data[inventory_weekly_row - 1]) > 1 else []
+    cells = existing + [""] * (n_cols - len(existing))
+    changed = len(existing) < n_cols
+    for col_idx in range(n_cols):
+        col = col_letter(col_idx + 2)
+        prev_col = col_letter(col_idx + 1)
+        new_val = weekly_inventory_formula(
+            col,
+            prev_col,
+            weekly_row=inventory_weekly_row,
+            quarterly_row=quarterly_inventory_row,
+        )
+        if str(cells[col_idx]) != new_val:
+            cells[col_idx] = new_val
+            changed = True
+    if changed:
+        rows_to_update[inventory_weekly_row] = cells
 
     for row_num in sorted(rows_to_update):
         ws.update(
@@ -85,8 +163,33 @@ def update_weekly_formulas(client: SheetsClient) -> None:
     print(f"Updated weekly formulas on rows: {sorted(rows_to_update)}")
 
 
+def clear_misplaced_spread_formulas(client: SheetsClient) -> None:
+    """Remove quarterly spread formulas that landed on model rows after layout shifts."""
+    ws = client.worksheet(WEEKLY)
+    data = ws.get("A1:DY60", value_render_option="FORMULA")
+    n_cols = max(len(row) for row in data) - 1
+    end_col = col_letter(n_cols + 1)
+
+    cleared: list[int] = []
+    for row_idx, row in enumerate(data, start=1):
+        label = row[0] if row else ""
+        if label.endswith(" - Model"):
+            cells = list(row[1:]) if len(row) > 1 else []
+            if any("Quarterly Financials'!$B$" in str(c) for c in cells):
+                ws.update(
+                    [[""] * n_cols],
+                    range_name=f"B{row_idx}:{end_col}{row_idx}",
+                    value_input_option="RAW",
+                )
+                cleared.append(row_idx)
+
+    if cleared:
+        print(f"Cleared misplaced spread formulas on rows: {cleared}")
+
+
 def main() -> None:
     client = SheetsClient()
+    clear_misplaced_spread_formulas(client)
     update_weekly_formulas(client)
     print("Done.")
 

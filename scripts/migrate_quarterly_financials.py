@@ -95,10 +95,10 @@ def quarter_key(value: str) -> str | None:
     return f"{dt.year} Q{(dt.month - 1) // 3 + 1}"
 
 
-def quarterly_sum_formula(row: int, q_col: str) -> str:
+def quarterly_sum_formula(weekly_row: int, q_col: str) -> str:
     return (
-        f"=SUM(FILTER('Weekly Financials'!$B${row}:$DY${row},"
-        f"MAP('Weekly Financials'!$B$2:$DY$2,"
+        f"=SUM(FILTER('Weekly Financials'!$B${weekly_row}:$DY${weekly_row},"
+        f"MAP('Weekly Financials'!$B$1:$DY$1,"
         f'LAMBDA(d,IF(d="","",YEAR(d)&" Q"&ROUNDUP(MONTH(d)/3,0))))={q_col}$1))'
     )
 
@@ -205,7 +205,12 @@ def update_weekly_formulas(client: SheetsClient) -> None:
             prev_col = col_letter(col_idx + 1)
 
             if row_num == 38:
-                new_val = weekly_inventory_formula(col, prev_col)
+                new_val = weekly_inventory_formula(
+                    col,
+                    prev_col,
+                    weekly_row=row_num - 1,
+                    quarterly_row=row_num,
+                )
                 if str(cell) != new_val:
                     cells[col_idx] = new_val
                     row_changed = True
