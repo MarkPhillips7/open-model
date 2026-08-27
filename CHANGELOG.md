@@ -18,7 +18,30 @@ Entry template:
 
 ---
 
-## 2026-08-27 — Sync Weekly Financials model formulas to repository
+## 2026-08-27 — Weekly ASP pulls from Quarterly Financials with carry-forward
+
+Replaced hardcoded **377,500** on **Weekly Financials** row 13 with formulas that use the matching quarter’s ASP from **Quarterly Financials** when populated, otherwise the prior week’s value.
+
+- **Tab / range:** **Weekly Financials** `B13:DY13`
+- **Insert/delete:** none
+- **Formulas:** hardcoded `377500` →
+
+```
+=LET(
+  wk, B$1,
+  qKey, IF(wk="", "", YEAR(wk)&" Q"& ROUNDUP(MONTH(wk)/3, 0)),
+  qCol, IFERROR(MATCH(qKey, 'Quarterly Financials'!$B$1:$1, 0), 0),
+  qAsp, IF(qCol=0, "", INDEX('Quarterly Financials'!$B$14:$M$14, 1, qCol)),
+  IF(wk="", "", IF(qAsp="", 377500, qAsp))
+)
+```
+
+Column **C** onward uses `{prev_col}13` instead of `377500` when `qAsp` is blank (carry forward last ASP). Quarter keyed off week-ending date (not day-weighted).
+
+- **Data:** Q3 2025 weeks now show ≈ **$356K** ASP (from quarterly revenue ÷ home sales); Q4 ≈ **$372K**; forward quarters follow quarterly row 14 when loaded.
+- **Side effects:** `sheets/formulas.py` — `weekly_asp_formula()`; `scripts/update_weekly_quarterly_spread.py` applies ASP row on refresh.
+
+---
 
 Compared live **Weekly Financials** `* - Model` rows to `scripts/restore_weekly_model_formulas.py` and found several formulas out of date after the earlier restore used older CHANGELOG templates. Added canonical source `sheets/weekly_model_formulas.py` (label-based row lookup; column-relative generation for P&L rows). **No live sheet writes** — repo-only update.
 

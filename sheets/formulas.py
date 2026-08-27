@@ -105,6 +105,29 @@ def weekly_inventory_formula(
     )
 
 
+def weekly_asp_formula(
+    col: str,
+    prev_col: str,
+    *,
+    weekly_row: int,
+    quarterly_row: int,
+    week_date_row: int = WEEK_DATE_ROW,
+    first_col_fallback: int | float = 377_500,
+) -> str:
+    """Use quarterly ASP when populated; otherwise carry forward the prior week."""
+    q_asp = f"INDEX('{QUARTERLY}'!$B${quarterly_row}:$M${quarterly_row},1,qCol)"
+    fallback = str(first_col_fallback) if col == "B" else f"{prev_col}{weekly_row}"
+    return (
+        f'=LET('
+        f"wk,{col}${week_date_row},"
+        f'qKey,IF(wk="","",YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0)),'
+        f"qCol,IFERROR(MATCH(qKey,'{QUARTERLY}'!$B$1:$1,0),0),"
+        f"qAsp,IF(qCol=0,\"\",{q_asp}),"
+        f'IF(wk="","",IF(qAsp="",{fallback},qAsp))'
+        f")"
+    )
+
+
 def weekly_shares_formula(
     col: str,
     prev_col: str,

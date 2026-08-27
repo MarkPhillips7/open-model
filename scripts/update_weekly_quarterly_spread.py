@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.formulas import (  # noqa: E402
+    weekly_asp_formula,
     weekly_from_quarterly_formula,
     weekly_inventory_formula,
     weekly_quarterly_rate_formula,
@@ -43,6 +44,7 @@ RATE_LABELS = ("Contribution Margin",)
 
 SHARES_LABEL = "Basic Shares Outstanding"
 INVENTORY_LABEL = "Homes in Inventory"
+ASP_LABEL = "Average Sale Price (homes sold by OPEN)"
 
 
 def col_letter(n: int) -> str:
@@ -74,7 +76,7 @@ def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
     weekly_labels = label_rows(client, WEEKLY)
     quarterly_labels = label_rows(client, QUARTERLY)
     mapping: dict[str, tuple[int, int]] = {}
-    for label in (*SPREAD_LABELS, *RATE_LABELS, SHARES_LABEL, INVENTORY_LABEL):
+    for label in (*SPREAD_LABELS, *RATE_LABELS, SHARES_LABEL, INVENTORY_LABEL, ASP_LABEL):
         mapping[label] = (
             row_by_label(weekly_labels, label, WEEKLY),
             row_by_label(quarterly_labels, label, QUARTERLY),
@@ -152,6 +154,29 @@ def update_weekly_formulas(client: SheetsClient) -> None:
             changed = True
     if changed:
         rows_to_update[inventory_weekly_row] = cells
+
+    asp_weekly_row, quarterly_asp_row = row_map[ASP_LABEL]
+    existing = list(data[asp_weekly_row - 1][1:]) if len(data[asp_weekly_row - 1]) > 1 else []
+    cells = existing + [""] * (n_cols - len(existing))
+    changed = len(existing) < n_cols
+    first_col_fallback = existing[0] if existing and existing[0] not in ("", None) else 377_500
+    if isinstance(first_col_fallback, str) and first_col_fallback.startswith("="):
+        first_col_fallback = 377_500
+    for col_idx in range(n_cols):
+        col = col_letter(col_idx + 2)
+        prev_col = col_letter(col_idx + 1)
+        new_val = weekly_asp_formula(
+            col,
+            prev_col,
+            weekly_row=asp_weekly_row,
+            quarterly_row=quarterly_asp_row,
+            first_col_fallback=first_col_fallback,
+        )
+        if str(cells[col_idx]) != new_val:
+            cells[col_idx] = new_val
+            changed = True
+    if changed:
+        rows_to_update[asp_weekly_row] = cells
 
     for row_num in sorted(rows_to_update):
         ws.update(
