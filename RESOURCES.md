@@ -10,7 +10,7 @@ Spreadsheet: [Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9N
 
 ### Earnings materials (primary actuals)
 
-Quarterly results and supplements are the main source for “actual” rows in **Weekly Home Activity**. Comments in the sheet point to:
+Quarterly results and supplements are the main source for “actual” rows in **Quarterly Financials** (and the weekly spreads derived from them). Comments in the sheet point to:
 
 | Metric in model | Where cited |
 | --- | --- |
@@ -46,7 +46,7 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 
 | Resource | Role in model |
 | --- | --- |
-| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Home Activity** (~78% in 2025 → ~67% by Q2 2026). **% private** (`Transitions!B6`) and the **purchase→close private curve** (`B19:J19`) are a 2.0 prior, distinct from the listing DOM curve; not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B21`). |
+| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Financials** (~78% in 2025 → ~67% by Q2 2026). **% private** (`Transitions!B6`) and the **purchase→close private curve** (`B19:J19`) are a 2.0 prior, distinct from the listing DOM curve; not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B21`). |
 | [Wealthmatica — cohort sell-through by listing week](https://wealthmatica.substack.com/i/204433858) | Shape of **Percent Sold by Listing Week** / sell-through curve (listed homes only); combined with Q2 2026 “~91% by ~120 days” commentary. |
 | [X / mudirshin article media](https://x.com/mudirshin/article/2090092238499926511/media/2090092137169760256) | Seed / calibration values for early weeks (e.g. commented “220” listing baseline). |
 
@@ -67,7 +67,7 @@ Refresh these periodically; independent scrapers and posts can lag or disagree w
 
 In-sheet citations appear as:
 
-1. **Cell comments** on **Weekly Home Activity** and **Transitions** (earnings quotes, metric definitions, guessed rates).
+1. **Cell comments** on **Weekly Financials**, **Quarterly Financials**, and **Transitions** (earnings quotes, metric definitions, guessed rates).
 2. **Inline notes** on **Transitions** (closing timing + cash %).
 3. **Seasonality!A5** (link/note to the national seasonality chart being mimicked).
 
@@ -80,7 +80,7 @@ There are no Drive “note” fields separate from comments in the current workb
 When updating the model after an earnings release:
 
 1. Pull Non-GAAP homes purchased, inventory, revenue, CM, ASP, adjusted opex, fixed opex, SBC from the supplement.
-2. Reconcile weekly “actual” stubs (often `quarterly_total / 13`) to the new quarter.
+2. Reconcile weekly “actual” stubs to **Quarterly Financials** (or enter weekly values and let quarterly rows sum).
 3. Update CM guidance and growth / seasonality assumptions if management changes the outlook.
 4. Cross-check listing/acquisition run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and any new accountability charts; update **Likelihood to Close** (`B8` / `AE8`) if cancel/walk-away has moved.
 5. Confirm transition curves still roughly match disclosed sell-through / days-on-market stats.

@@ -24,7 +24,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 | Tab | Role |
 | --- | --- |
-| **Weekly Home Activity** | Main time series (week-ending columns). Actuals + model rows for contracts, **likelihood to close**, purchases, listings, **private sales**, listed+private home sales, ASP, revenue, CM stack, opex, SBC, EPS placeholders, inventory. |
+| **Weekly Financials** | Main time series (week-ending columns). Actuals + model rows for contracts, **likelihood to close**, purchases, listings, **private sales**, listed+private home sales, ASP, revenue, CM stack, opex, SBC, EPS placeholders, inventory. Weekly-reported actuals are entered here; quarterly-reported actuals are spread from **Quarterly Financials**. |
+| **Quarterly Financials** | Same row layout as Weekly Financials, one column per quarter. Enter quarterly earnings actuals here; they spread across weeks (`÷13`). Rows like Acquisition Contracts **sum from weekly** when no quarterly report exists. |
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Seasonality** | Monthly home-sales seasonality weights; drives weekly seasonality multipliers. |
 | **Homes Chart** | Line chart of weekly home metrics (actual vs model for listings, acquisitions, sales). |
@@ -37,8 +38,9 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Weekly spine
 
 - Columns are **week ending** dates (`Week Ending`, then `+7` across the horizon).
-- Many “actual” cells are **quarterly totals ÷ 13** (weekly stub) until finer weekly data is filled in—e.g. homes purchased `1169/13`, home sales `2568/13`, revenue `$915M/13`, fixed costs `$37M/13`, adjusted opex `$53M/13`.
-- **Model** rows prefer formulas; when an actual is blank, formulas fall back to the model row (and vice versa for some lag lookups).
+- **Quarterly-reported actuals** (homes purchased, home sales, revenue, opex, SBC, inventory, etc.) live on **Quarterly Financials** as quarter totals. **Weekly Financials** spreads them (`quarterly ÷ 13`) when the quarterly cell is a hardcoded value.
+- **Weekly-reported actuals** (e.g. acquisition contracts, sparse new-listing counts) are entered on **Weekly Financials**. **Quarterly Financials** sums the matching weeks when the quarterly cell is a formula.
+- **Model** rows stay on **Weekly Financials**; formulas fall back between actual and model rows as before.
 
 ### Funnel (actuals vs model)
 
@@ -66,7 +68,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 ## Key assumptions (as encoded)
 
-These are editable levers—mostly on **Transitions** and early columns of **Weekly Home Activity**. Comments in the sheet explain the rationale; see also [RESOURCES.md](RESOURCES.md).
+These are editable levers—mostly on **Transitions** and early columns of **Weekly Financials**. Comments in the sheet explain the rationale; see also [RESOURCES.md](RESOURCES.md).
 
 | Assumption | Approx. value in sheet | Intent |
 | --- | --- | --- |
@@ -140,7 +142,7 @@ from sheets import SheetsClient
 
 client = SheetsClient()
 print(client.list_worksheets())
-data = client.read_range("Weekly Home Activity", "A1:D20")
-client.write_range("Weekly Home Activity", "A1", [["Hello", "World"]])
-client.write_range("Weekly Home Activity", "D1", [["=SUM(A1:C1)"]], as_formulas=True)
+data = client.read_range("Weekly Financials", "A1:D20")
+client.write_range("Weekly Financials", "A1", [["Hello", "World"]])
+client.write_range("Weekly Financials", "D1", [["=SUM(A1:C1)"]], as_formulas=True)
 ```

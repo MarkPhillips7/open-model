@@ -18,6 +18,79 @@ Entry template:
 
 ---
 
+## 2026-08-27 — Weekly / Quarterly Financials split
+
+Separate quarterly inputs from the weekly time series. **Weekly Home Activity** renamed to **Weekly Financials**. New **Quarterly Financials** tab holds quarter-level actuals and aggregates weekly data where appropriate.
+
+### Weekly Financials (renamed from Weekly Home Activity)
+
+- **Tab / range:** sheet rename only; row layout unchanged (rows 2–47)
+- **Formulas — quarterly-spread actuals** (`B9:DY9`, `B15:DY15`, `B18:DY18`, `B21:DY21`, `B30:DY30`, `B32:DY32`, `B34:DY34`): `=1169/13` (etc.) →
+
+```
+=LET(
+  wk, B$2,
+  qKey, IF(wk="", "", YEAR(wk)&" Q"& ROUNDUP(MONTH(wk)/3, 0)),
+  qCol, IFERROR(MATCH(qKey, 'Quarterly Financials'!$B$1:$1, 0), 0),
+  qCell, IF(qCol=0, "", OFFSET('Quarterly Financials'!$B$9, 0, qCol-1)),
+  IF(qCol=0, "", IF(ISFORMULA(qCell), "", IF(qCell="", "", qCell/13)))
+)
+```
+
+Template copied across each row’s former `/13` cells. When the matching **Quarterly Financials** cell is a **formula** (aggregated from weekly), the weekly cell stays blank for manual weekly entry. When it is a **hardcoded** quarterly report, weekly spreads `÷13`.
+
+- **Formulas — Homes in Inventory** (`C38:DY38`; `B38` stays **3139**):
+
+```
+=LET(
+  wk, E$2,
+  qKey, YEAR(wk)&" Q"& ROUNDUP(MONTH(wk)/3, 0),
+  qCol, MATCH(qKey, 'Quarterly Financials'!$B$1:$1, 0),
+  qEnd, INDEX('Quarterly Financials'!$B$38:$M$38, 1, qCol),
+  qStart, IF(qCol=1, qEnd, INDEX('Quarterly Financials'!$B$38:$M$38, 1, qCol-1)),
+  D38+(qEnd-qStart)/13
+)
+```
+
+Quarter-end inventory levels now live on **Quarterly Financials** row 38.
+
+### Quarterly Financials (new sheet)
+
+- **Tab / range:** `A1:L47`
+- **Insert/delete:** new worksheet at index 1
+- **Data — row 1:** quarter keys `2025 Q3` … `2028 Q1`
+- **Data — row 2:** quarter-ending dates (e.g. `9/30/2025`, `12/31/2025`, …)
+- **Data — rows 3–47:** same labels as **Weekly Financials** (row numbers aligned)
+- **Data — hardcoded quarterly actuals migrated from old `/13` numerators:**
+
+| Row | Label | Quarters populated |
+| --- | --- | --- |
+| 9 | Homes Purchased | 2025 Q3–2026 Q2 |
+| 15 | Home Sales | 2025 Q3–Q4 |
+| 18 | Revenue | 2025 Q3–2026 Q2 |
+| 21 | Contribution Profit | 2026 Q2 |
+| 30 | Fixed Costs | 2025 Q3–2026 Q2 |
+| 32 | Adjusted Operating Expenses | 2025 Q3–2026 Q2 |
+| 34 | Stock Based Compensation | 2025 Q4, 2026 Q3–Q4 |
+| 38 | Homes in Inventory | quarter-end levels 2025 Q3–2026 Q2 |
+
+- **Formulas — weekly-aggregated rows** (e.g. `B3` Acquisition Contracts):
+
+```
+=SUM(FILTER('Weekly Financials'!$B$3:$DY$3,
+  MAP('Weekly Financials'!$B$2:$DY$2,
+    LAMBDA(d, IF(d="", "", YEAR(d)&" Q"& ROUNDUP(MONTH(d)/3, 0)))) = B$1))
+```
+
+Same pattern on row 12 (New Listings). Other rows left blank.
+
+### Side effects
+
+- Charts on **Homes Chart** / **Money Chart** still reference sheet id 0 (now **Weekly Financials**); row indices unchanged.
+- Repo docs updated (`README.md`, `RESOURCES.md`). Migration script: `scripts/migrate_quarterly_financials.py`.
+
+---
+
 ## 2026-08-27 — Unlisted 1.0 backlog flush into listings
 
 Finite pool of homes already owned at the horizon start (week ending 2025-09-13) that were not yet publicly listed under the old ~45-day reno wait. 2.0 lists them over the first 8 weeks. Already in inventory — not added to purchases. Not a standing add-on through March.
