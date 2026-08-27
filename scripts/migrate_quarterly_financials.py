@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
+from sheets.formulas import weekly_from_quarterly_formula, weekly_inventory_formula  # noqa: E402
 
 OLD_WEEKLY = "Weekly Home Activity"
 WEEKLY = "Weekly Financials"
@@ -92,33 +93,6 @@ def quarter_key(value: str) -> str | None:
     if not dt:
         return None
     return f"{dt.year} Q{(dt.month - 1) // 3 + 1}"
-
-
-def weekly_from_quarterly_formula(row: int, col: str) -> str:
-    return (
-        f'=LET('
-        f"wk,{col}$2,"
-        f'qKey,IF(wk="","",YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0)),'
-        f"qCol,IFERROR(MATCH(qKey,'Quarterly Financials'!$B$1:$1,0),0),"
-        f"qCell,IF(qCol=0,\"\",OFFSET('Quarterly Financials'!$B${row},0,qCol-1)),"
-        f'IF(qCol=0,"",IF(ISFORMULA(qCell),"",IF(qCell="","",qCell/13)))'
-        f")"
-    )
-
-
-def weekly_inventory_formula(col: str, prev_col: str) -> str:
-    if col == "B":
-        return "3139"
-    return (
-        f'=LET('
-        f"wk,{col}$2,"
-        f'qKey,YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0),'
-        f"qCol,MATCH(qKey,'Quarterly Financials'!$B$1:$1,0),"
-        f"qEnd,INDEX('Quarterly Financials'!$B$38:$M$38,1,qCol),"
-        f"qStart,IF(qCol=1,qEnd,INDEX('Quarterly Financials'!$B$38:$M$38,1,qCol-1)),"
-        f"{prev_col}38+(qEnd-qStart)/13"
-        f")"
-    )
 
 
 def quarterly_sum_formula(row: int, q_col: str) -> str:
