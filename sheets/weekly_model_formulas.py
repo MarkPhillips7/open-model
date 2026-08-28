@@ -75,7 +75,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
   MAP(SEQUENCE(1,9), LAMBDA(lag,
     LET(
       col, COLUMN() - lag,
-      purchases, IF(col < 2, 90, INDEX(${Homes Purchased}:${Homes Purchased}, 1, col)*INDEX(${Likelihood to List}:${Likelihood to List}, 1, col)),
+      purchases, IF(col < 2, 90, INDEX(${Homes Purchased - Model}:${Homes Purchased - Model}, 1, col)*INDEX(${Likelihood to List}:${Likelihood to List}, 1, col)),
       purchases
     )
   )),
@@ -174,7 +174,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         {"Acquisition Contracts", "Acquisition Contracts - Model", "Likelihood to Close"}
     ),
     "New Listings - Model": frozenset(
-        {"Homes Purchased", "Likelihood to List"}
+        {"Homes Purchased - Model", "Likelihood to List"}
     ),
     "Private Home Sales - Model": frozenset(
         {"Homes Purchased", "Homes Purchased - Model", "Likelihood to List"}

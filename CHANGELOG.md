@@ -18,7 +18,17 @@ Entry template:
 
 ---
 
-## 2026-08-28 — GAAP below-the-line - Model rows (forward run-rates)
+## 2026-08-28 — Fix New Listings - Model purchase lag input
+
+**New Listings - Model** was lagging **Homes Purchased** (actuals) instead of **Homes Purchased - Model**. Introduced in the 2026-08-28 label-placeholder refactor: old template used `$9:$9` (model row) but was mapped to `{Homes Purchased}`.
+
+- **Tab / range:** **Weekly Financials** `B12:DY12` (New Listings - Model)
+- **Insert/delete:** none
+- **Formulas:** purchase-lag term `INDEX($9:$9, …)` → `INDEX($10:$10, …)` (Homes Purchased - Model × Likelihood to List); copied across `B12:DY12`
+- **Data:** none
+- **Side effects:** `sheets/weekly_model_formulas.py` dependency set updated; `scripts/restore_weekly_model_formulas.py` re-applied
+
+---
 
 Added **- Model** rows for debt extinguishment, GAAP interest expense, and other income — same passthrough pattern as **Stock Based Compensation - Model**. **GAAP NI - Model** now reads only model rows so forward weeks work without quarterly actuals.
 
