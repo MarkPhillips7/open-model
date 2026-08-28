@@ -18,6 +18,40 @@ Entry template:
 
 ---
 
+## 2026-08-28 — Inventory & shares blank until both quarters reported
+
+Applied the same **bothQ** guard used on day-weighted spread rows to the linear `Δ/13` interpolation rows for **Homes in Inventory** and **Basic Shares Outstanding**. Values stay blank when the current quarter’s quarterly cell (or the prior quarter’s, when `qCol>1`) is missing, a formula, or empty.
+
+- **Tab / range:** **Weekly Financials** `C37:DY37` (Homes in Inventory), `C34:DY34` (Basic Shares Outstanding); `B37` / `B34` anchors unchanged
+- **Insert/delete:** none
+- **Formulas:** added `qEndHas`, `qStartHas`, `bothQ`, and `IF(OR(wk="",NOT(bothQ)),"", prev+delta)` wrapper; `delta` remains `(qEnd-qStart)/13`
+- **Data:** none
+- **Side effects:** Q-boundary and pre-report weeks (e.g. column **AR** onward before Q3 load) now blank on these rows instead of partial ramps
+
+### Repo
+
+- **`sheets/formulas.py`** — `weekly_inventory_formula`, `weekly_shares_formula`, shared `_quarterly_index_has_data`
+- **`scripts/update_weekly_quarterly_spread.py`** — re-applied to live sheet
+
+---
+
+## 2026-08-27 — Boundary weeks blank until both quarters reported
+
+Quarter-spanning weeks (e.g. week ending **7/4/2026**, 2 days in Q2 + 5 in Q3) previously showed a **partial** spread from the prior quarter alone when the new quarter had no hardcoded actuals yet — causing sudden dips on **Homes Chart** and **Money Chart**.
+
+- **Tab / range:** **Weekly Financials** day-weighted spread rows — `B8:DY8`, `B14:DY14`, `B17:DY17`, `B19:DY19`, `B20:DY20`, `B22:DY22`, `B29:DY29`, `B31:DY31`, `B33:DY33`, `B39:DY45`
+- **Insert/delete:** none
+- **Formulas:** added `qEndHas`, `qStartHas`, `bothQ` to the LET; final guard is now `IF(OR(NOT(bothQ), blend=0), "", blend)` where `bothQ = IF(qStartKey=qEndKey, TRUE, AND(qEndHas, qStartHas))` and each `*Has` requires a non-formula, non-empty quarterly cell. Single-quarter weeks unchanged; boundary weeks stay blank until **both** adjacent quarters have reported actuals.
+- **Data:** none
+- **Side effects:** column **AR** (week ending 7/4/2026) and similar boundary columns should now be blank instead of ~2/7 of the prior quarter; charts lose the artificial Q-boundary drops.
+
+### Repo
+
+- **`sheets/formulas.py`** — `weekly_day_weighted_quarterly_formula`
+- **`scripts/update_weekly_quarterly_spread.py`** — re-applied to live sheet
+
+---
+
 ## 2026-08-27 — Weekly ASP pulls from Quarterly Financials with carry-forward
 
 Replaced hardcoded **377,500** on **Weekly Financials** row 13 with formulas that use the matching quarter’s ASP from **Quarterly Financials** when populated, otherwise the prior week’s value.

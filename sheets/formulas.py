@@ -8,6 +8,15 @@ QUARTERLY = "Quarterly Financials"
 WEEK_DATE_ROW = 1
 
 
+def _quarterly_index_cell(quarterly_row: int, qcol_expr: str) -> str:
+    return f"INDEX('{QUARTERLY}'!$B${quarterly_row}:$M${quarterly_row},1,{qcol_expr})"
+
+
+def _quarterly_index_has_data(qcol_expr: str, quarterly_row: int) -> str:
+    ref = _quarterly_index_cell(quarterly_row, qcol_expr)
+    return f'AND({qcol_expr}>0,NOT(ISFORMULA({ref})),{ref}<>"")'
+
+
 def weekly_day_weighted_quarterly_formula(
     quarterly_row: int,
     col: str,
@@ -26,8 +35,15 @@ def weekly_day_weighted_quarterly_formula(
     Boundary weeks blend adjacent quarters (e.g. 2 days in Q1 and 5 in Q2 → 2/7 and 5/7).
     """
 
+    def quarter_cell(qcol: str) -> str:
+        return f"OFFSET('{QUARTERLY}'!$B${quarterly_row},0,{qcol}-1)"
+
+    def quarter_has_data(qcol: str) -> str:
+        ref = quarter_cell(qcol)
+        return f"AND({qcol}>0,NOT(ISFORMULA({ref})),{ref}<>\"\")"
+
     def quarter_amount(qcol: str) -> str:
-        ref = f"OFFSET('{QUARTERLY}'!$B${quarterly_row},0,{qcol}-1)"
+        ref = quarter_cell(qcol)
         inner = f"IF(OR({qcol}=0,ISFORMULA({ref}),{ref}=\"\"),0,{ref})"
         if per_week_divisor is not None:
             return f"({inner}/{per_week_divisor})"
@@ -44,10 +60,13 @@ def weekly_day_weighted_quarterly_formula(
         f'qStartKey,IF(wk="","",YEAR(ws)&" Q"&ROUNDUP(MONTH(ws)/3,0)),'
         f"qEndCol,IFERROR(MATCH(qEndKey,'{QUARTERLY}'!$B$1:$1,0),0),"
         f"qStartCol,IFERROR(MATCH(qStartKey,'{QUARTERLY}'!$B$1:$1,0),0),"
+        f"qEndHas,{quarter_has_data('qEndCol')},"
+        f"qStartHas,{quarter_has_data('qStartCol')},"
+        f"bothQ,IF(qStartKey=qEndKey,TRUE,AND(qEndHas,qStartHas)),"
         f"daysEnd,SUM(MAP(SEQUENCE(7),LAMBDA(i,--(YEAR(wk-7+i)&\" Q\"&ROUNDUP(MONTH(wk-7+i)/3,0)=qEndKey)))),"
         f"daysStart,7-daysEnd,"
         f"blend,(daysEnd/7)*({q_end})+(daysStart/7)*({q_start}),"
-        f'IF(wk="","",IF(AND(qEndCol=0,qStartCol=0),"",IF(blend=0,"",blend)))'
+        f'IF(wk="","",IF(OR(NOT(bothQ),blend=0),"",blend))'
         f")"
     )
 
@@ -93,14 +112,23 @@ def weekly_inventory_formula(
 ) -> str:
     if col == "B":
         return str(first_col_anchor)
+    q_end = _quarterly_index_cell(quarterly_row, "qCol")
+    q_start = (
+        f"IF(qCol<=1,{q_end},IF(qCol=0,\"\","
+        f"{_quarterly_index_cell(quarterly_row, 'qCol-1')}))"
+    )
     return (
         f'=LET('
         f"wk,{col}${week_date_row},"
-        f'qKey,YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0),'
-        f"qCol,MATCH(qKey,'{QUARTERLY}'!$B$1:$1,0),"
-        f"qEnd,INDEX('{QUARTERLY}'!$B${quarterly_row}:$M${quarterly_row},1,qCol),"
-        f"qStart,IF(qCol=1,qEnd,INDEX('{QUARTERLY}'!$B${quarterly_row}:$M${quarterly_row},1,qCol-1)),"
-        f"{prev_col}{weekly_row}+(qEnd-qStart)/13"
+        f'qKey,IF(wk="","",YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0)),'
+        f"qCol,IFERROR(MATCH(qKey,'{QUARTERLY}'!$B$1:$1,0),0),"
+        f"qEnd,IF(qCol=0,\"\",{q_end}),"
+        f"qStart,{q_start},"
+        f"qEndHas,{_quarterly_index_has_data('qCol', quarterly_row)},"
+        f"qStartHas,IF(qCol<=1,qEndHas,{_quarterly_index_has_data('qCol-1', quarterly_row)}),"
+        f"bothQ,AND(qEndHas,qStartHas),"
+        f"delta,(qEnd-qStart)/13,"
+        f'IF(OR(wk="",NOT(bothQ)),"",{prev_col}{weekly_row}+delta)'
         f")"
     )
 
@@ -139,13 +167,22 @@ def weekly_shares_formula(
 ) -> str:
     if col == "B":
         return str(q2_eop_anchor)
+    q_end = _quarterly_index_cell(quarterly_eop_row, "qCol")
+    q_start = (
+        f"IF(qCol=1,{q2_eop_anchor},IF(qCol=0,\"\","
+        f"{_quarterly_index_cell(quarterly_eop_row, 'qCol-1')}))"
+    )
     return (
         f'=LET('
         f"wk,{col}${week_date_row},"
         f'qKey,IF(wk="","",YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0)),'
         f"qCol,IFERROR(MATCH(qKey,'{QUARTERLY}'!$B$1:$1,0),0),"
-        f"qEnd,IF(qCol=0,\"\",INDEX('{QUARTERLY}'!$B${quarterly_eop_row}:$M${quarterly_eop_row},1,qCol)),"
-        f"qStart,IF(qCol=1,{q2_eop_anchor},IF(qCol=0,\"\",INDEX('{QUARTERLY}'!$B${quarterly_eop_row}:$M${quarterly_eop_row},1,qCol-1))),"
-        f"{prev_col}{weekly_row}+(qEnd-qStart)/13"
+        f"qEnd,IF(qCol=0,\"\",{q_end}),"
+        f"qStart,{q_start},"
+        f"qEndHas,{_quarterly_index_has_data('qCol', quarterly_eop_row)},"
+        f"qStartHas,IF(qCol<=1,TRUE,{_quarterly_index_has_data('qCol-1', quarterly_eop_row)}),"
+        f"bothQ,AND(qEndHas,qStartHas),"
+        f"delta,(qEnd-qStart)/13,"
+        f'IF(OR(wk="",NOT(bothQ)),"",{prev_col}{weekly_row}+delta)'
         f")"
     )
