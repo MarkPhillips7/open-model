@@ -124,10 +124,21 @@ Then complete the [Google Cloud setup](#one-time-google-cloud-setup) below, save
 ```bash
 python scripts/auth_setup.py      # first-time sign-in
 python scripts/test_connection.py # verify access to your spreadsheet
+python scripts/validate_model_formulas.py        # check templates + live label alignment
 python scripts/restore_weekly_model_formulas.py  # restore * - Model row formulas
 ```
 
-Canonical model-row formulas live in `sheets/weekly_model_formulas.py` (synced from the live sheet). After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
+Canonical model-row formulas live in `sheets/weekly_model_formulas.py`. Templates use `{Label}` placeholders resolved at restore time via `sheets/labels.py` — never hardcoded weekly row numbers.
+
+**After inserting or deleting rows** on Weekly / Quarterly Financials:
+
+1. Run `python scripts/validate_model_formulas.py` — fails if templates still use numeric row refs or expected labels are missing.
+2. Run `python scripts/restore_weekly_model_formulas.py` — validates first, then re-applies all `* - Model` formulas.
+3. If spread rows moved, run `python scripts/update_weekly_quarterly_spread.py` (already label-based).
+
+Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --offline`
+
+After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
 
 ### One-time Google Cloud setup
 

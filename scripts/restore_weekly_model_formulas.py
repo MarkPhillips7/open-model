@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
+from sheets.labels import WEEKLY, label_rows  # noqa: E402
 from sheets.weekly_model_formulas import (  # noqa: E402
     MODEL_FORMULA_LABELS,
     cm_stack_updates,
@@ -17,21 +18,20 @@ from sheets.weekly_model_formulas import (  # noqa: E402
     row_cells_for_label,
 )
 
-WEEKLY = "Weekly Financials"
-
-
-def label_rows(client: SheetsClient, sheet: str) -> dict[str, int]:
-    rows = client.worksheet(sheet).get("A1:A60")
-    found: dict[str, int] = {}
-    for idx, row in enumerate(rows, start=1):
-        if row and row[0]:
-            found[row[0]] = idx
-    return found
+sys.path.insert(0, str(ROOT / "scripts"))
+from validate_model_formulas import validate  # noqa: E402
 
 
 def restore_model_formulas(client: SheetsClient) -> None:
     ws = client.worksheet(WEEKLY)
     labels = label_rows(client, WEEKLY)
+
+    issues = validate(client)
+    if issues:
+        raise RuntimeError(
+            "Model formula validation failed before restore:\n"
+            + "\n".join(f"  - {i}" for i in issues)
+        )
 
     missing = [lbl for lbl in MODEL_FORMULA_LABELS if lbl not in labels]
     if missing:

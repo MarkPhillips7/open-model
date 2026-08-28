@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Insert Basic Shares Outstanding - Model and wire EPS - Model to it."""
+"""Insert Basic Shares Outstanding - Model and wire EPS - Model to it.
+
+Superseded by setup_shares_sheet.py for share events; kept for one-time row insert history.
+"""
 
 from __future__ import annotations
 
@@ -9,13 +12,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from scripts.add_gaap_net_income_rows import insert_rows_before_label  # noqa: E402
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
 from sheets.formulas import SHARES_MODEL_LABEL  # noqa: E402
+from sheets.labels import QUARTERLY, WEEKLY, insert_rows_before_label  # noqa: E402
 
-WEEKLY = "Weekly Financials"
-QUARTERLY = "Quarterly Financials"
 TRANSITIONS = "Transitions"
 
 # Nov 2025 warrant distribution (424B5 / 8-K); no management % exercise guide — 25% default.

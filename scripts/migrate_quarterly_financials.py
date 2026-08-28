@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Rename Weekly Home Activity → Weekly Financials and add Quarterly Financials."""
+"""Rename Weekly Home Activity → Weekly Financials and add Quarterly Financials.
+
+ONE-TIME historical migration (2025). Uses hardcoded row numbers from the pre-migration
+layout — do not re-run after row inserts. For ongoing work use label-based scripts:
+update_weekly_quarterly_spread.py, load_quarter_*.py, restore_weekly_model_formulas.py.
+"""
 
 from __future__ import annotations
 
@@ -54,7 +59,7 @@ QUARTERLY_INPUTS: dict[int, dict[str, str | int | float]] = {
         "2026 Q1": 63_000_000,
         "2026 Q2": 55_000_000,
     },
-    34: {"2025 Q4": 105_000_000, "2026 Q3": 110_000_000, "2026 Q4": 110_000_000},
+    34: {"2025 Q4": 105_000_000},
     38: {
         "2025 Q3": 3139,
         "2025 Q4": 2867,

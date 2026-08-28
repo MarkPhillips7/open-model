@@ -18,6 +18,75 @@ Entry template:
 
 ---
 
+## 2026-08-28 — Label-based model formula restore (anti-regression)
+
+Re-applied all `* - Model` formulas from `sheets/weekly_model_formulas.py` using `{Label}` placeholders (no hardcoded weekly row numbers). Validation passed before restore.
+
+- **Tab / range:** **Weekly Financials** model rows `B3:DY51` (rows 3, 9, 12, 15, 16, 18, 21, 23, 24, 27, 28, 30, 32, 34, 36, 37, 41, 44, 49, 51)
+- **Insert/delete:** none
+- **Formulas:** GAAP NI - Model = `{cp}-{opex}-{sbc_model}-{interest_model}-{da}-{tax}` (label-resolved); EPS - Model = GAAP NI ÷ Basic Shares Outstanding - Model; funnel + shares stack refreshed
+- **Data:** none
+- **Side effects:** none
+
+### Repo
+
+- **`sheets/labels.py`** — shared `insert_rows_before_label`, `write_quarterly_cells`
+- **`scripts/validate_model_formulas.py`** — template + live label checks; `--offline` for CI
+- **`scripts/restore_weekly_model_formulas.py`** — blocks restore if validation fails
+- All row-insert scripts now use `sheets.labels` (no duplicate row lookups)
+
+---
+
+## 2026-08-28 — Fix SBC - Model: flat weekly run-rate (not cumulative)
+
+**Stock Based Compensation - Model** was rolling forward as `prior week + $110M/13`, which is correct for stock levels but wrong for a weekly flow. That inflated **Share Count Adjustment - Model** (~$8.46M/13 → shares/week compounding each column).
+
+- **Tab / range:** **Weekly Financials** `B34:DY34` (**Stock Based Compensation - Model**); **Share Count Adjustment - Model** refreshed via restore
+- **Insert/delete:** none
+- **Formulas:** `IF(N(actual)>0, actual, IF(wk="", "", 110000000/13))` — was `LET(prev, prior model, prev+110000000/13)`
+- **Data:** none
+- **Side effects:** GAAP NI - Model SBC term also fixed (uses model row)
+
+### Repo
+
+- **`sheets/formulas.py`** — `weekly_sbc_model_formula` uses flat run-rate
+
+---
+
+## 2026-08-28 — Stock Based Compensation - Model row
+
+Separated reported SBC from forward modeling. Removed **$110M** guidance placeholders from **Quarterly Financials** 2026 Q3–Q4 (not reported actuals). New model row uses the spread actual when present; otherwise rolls forward at **$110M ÷ 13** per week (~**$8.46M**).
+
+- **Tab / range:** **Weekly Financials** — inserted R34 **Stock Based Compensation - Model** `B34:DY34`; **Quarterly Financials** — label row inserted before Basic Shares; cleared **F34**, **G34** (2026 Q3–Q4 SBC)
+- **Insert/delete:** 1 row on Weekly + Quarterly before **Basic Shares Outstanding** (rows below shift +1)
+- **Formulas:**
+  - **Stock Based Compensation - Model:** `=IF(N(actual)>0, actual, IF(wk="", "", 110000000/13))` (flat weekly run-rate when no quarterly actual)
+  - **Net Income (Loss) Attributable to Common Shareholders - Model:** SBC term `{col}33` → `{col}{sbc_model}`
+  - **Share Count Adjustment - Model:** SBC dilution from model row (was actual row)
+- **Data:** Quarterly **F34**, **G34** cleared (were $110M guidance guesses)
+- **Side effects:** Basic Shares, share adjustment, GAAP NI - Model, EPS - Model row indices +1
+
+### Repo
+
+- **`sheets/formulas.py`** — `weekly_sbc_model_formula`, `SBC_MODEL_LABEL`
+- **`sheets/weekly_model_formulas.py`** — SBC model restore + GAAP/share wiring
+- **`scripts/add_sbc_model_row.py`** — live migration
+- **`scripts/migrate_quarterly_financials.py`** — removed 2026 Q3–Q4 SBC from seed data
+
+---
+
+## 2026-08-28 — Fix GAAP NI - Model row refs after layout shifts
+
+**Net Income (Loss) Attributable to Common Shareholders - Model** still subtracted hardcoded rows **41–43** (now Homes in Inventory - Model, Adjusted EBITDA, Net Interest actual) instead of **Net Interest Expense - Model**, **Depreciation and Amortization**, and **Taxes** (currently rows **44–46**).
+
+- **Tab / range:** **Weekly Financials** `B49:DY49`
+- **Insert/delete:** none
+- **Formulas:** `={col}21-{col}32-{col}34-{col}41-{col}42-{col}43` → label-resolved `{cp}-{opex}-{sbc_model}-{interest_model}-{da}-{tax}` (no hardcoded row numbers)
+- **Data:** none
+- **Side effects:** `scripts/restore_weekly_model_formulas.py` re-applied
+
+---
+
 ## 2026-08-28 — Shares tab + simplified share model (helper row)
 
 Moved share assumptions off **Transitions** into a new **Shares** tab with a reusable event table. Simplified **Basic Shares Outstanding - Model** to actual passthrough or `prior week + adjustment`; weekly deltas live on **Share Count Adjustment - Model** (BYROW + SUM over `Shares!B5:G20` + SBC).

@@ -9,10 +9,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from scripts.add_gaap_net_income_rows import insert_rows_before_label  # noqa: E402
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
 from sheets.formulas import SHARES_MODEL_LABEL  # noqa: E402
+from sheets.labels import QUARTERLY, WEEKLY, insert_rows_before_label, label_rows  # noqa: E402
 from sheets.shares_events import (  # noqa: E402
     SHARES_ADJUSTMENT_LABEL,
     SHARES_MODE_LEGEND,
@@ -20,8 +20,6 @@ from sheets.shares_events import (  # noqa: E402
     SHARES_SHEET_GRID,
 )
 
-WEEKLY = "Weekly Financials"
-QUARTERLY = "Quarterly Financials"
 TRANSITIONS = "Transitions"
 
 
@@ -29,12 +27,6 @@ def ensure_shares_sheet(client: SheetsClient) -> None:
     if SHARES_SHEET in client.list_worksheets():
         print(f"{SHARES_SHEET!r} already exists")
     else:
-        meta = client.spreadsheet.fetch_sheet_metadata()
-        transitions_id = next(
-            s["properties"]["sheetId"]
-            for s in meta["sheets"]
-            if s["properties"]["title"] == "Transitions"
-        )
         client.spreadsheet.batch_update(
             {
                 "requests": [
@@ -65,12 +57,11 @@ def clear_transitions_share_block(client: SheetsClient) -> None:
 
 
 def ensure_adjustment_row(client: SheetsClient) -> None:
-    weekly = client.worksheet(WEEKLY)
-    labels = [row[0] if row else "" for row in weekly.get("A34:A38")]
-    if SHARES_ADJUSTMENT_LABEL in labels:
+    weekly_labels = label_rows(client, WEEKLY)
+    if SHARES_ADJUSTMENT_LABEL in weekly_labels:
         print(f"{SHARES_ADJUSTMENT_LABEL!r} already on {WEEKLY}")
         return
-    if SHARES_MODEL_LABEL not in labels:
+    if SHARES_MODEL_LABEL not in weekly_labels:
         raise KeyError(f"{SHARES_MODEL_LABEL!r} missing on {WEEKLY}")
     insert_rows_before_label(
         client,
@@ -78,9 +69,8 @@ def ensure_adjustment_row(client: SheetsClient) -> None:
         before_label=SHARES_MODEL_LABEL,
         labels=[SHARES_ADJUSTMENT_LABEL],
     )
-    # Quarterly tab: label parity only (no weekly formulas).
-    q_labels = [row[0] if row else "" for row in client.worksheet(QUARTERLY).get("A34:A38")]
-    if SHARES_ADJUSTMENT_LABEL not in q_labels and SHARES_MODEL_LABEL in q_labels:
+    quarterly_labels = label_rows(client, QUARTERLY)
+    if SHARES_ADJUSTMENT_LABEL not in quarterly_labels and SHARES_MODEL_LABEL in quarterly_labels:
         insert_rows_before_label(
             client,
             tab=QUARTERLY,

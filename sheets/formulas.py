@@ -158,6 +158,25 @@ def weekly_asp_formula(
 
 SHARES_MODEL_LABEL = "Basic Shares Outstanding - Model"
 
+SBC_MODEL_LABEL = "Stock Based Compensation - Model"
+# Q3 2026 management guide (~$110M/quarter); flat weekly run-rate when no quarterly actual.
+SBC_GUIDANCE_QUARTERLY = 110_000_000
+SBC_WEEKLY_RUN_RATE = SBC_GUIDANCE_QUARTERLY / 13
+
+
+def weekly_sbc_model_formula(
+    col: str,
+    *,
+    weekly_actual_sbc_row: int,
+    week_date_row: int = WEEK_DATE_ROW,
+    weekly_run_rate: float = SBC_WEEKLY_RUN_RATE,
+) -> str:
+    """Actual SBC passthrough; else flat $110M/quarter weekly amount (not cumulative)."""
+    return (
+        f"=IF(N({col}{weekly_actual_sbc_row})>0,{col}{weekly_actual_sbc_row},"
+        f'IF({col}${week_date_row}="","",{weekly_run_rate}))'
+    )
+
 
 def weekly_shares_formula(
     col: str,

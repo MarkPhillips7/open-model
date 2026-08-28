@@ -17,9 +17,7 @@ from sheets.formulas import (  # noqa: E402
     weekly_quarterly_rate_formula,
     weekly_shares_formula,
 )
-
-WEEKLY = "Weekly Financials"
-QUARTERLY = "Quarterly Financials"
+from sheets.labels import QUARTERLY, WEEKLY, label_rows, row_by_label  # noqa: E402
 
 # Dollar amounts: quarterly hard value spread with ÷13 (day-weighted at boundaries).
 SPREAD_LABELS = (
@@ -55,22 +53,6 @@ def col_letter(n: int) -> str:
         n, r = divmod(n - 1, 26)
         s = chr(65 + r) + s
     return s
-
-
-def label_rows(client: SheetsClient, sheet: str) -> dict[str, int]:
-    rows = client.worksheet(sheet).get("A1:A60")
-    found: dict[str, int] = {}
-    for idx, row in enumerate(rows, start=1):
-        if row and row[0]:
-            found[row[0]] = idx
-    return found
-
-
-def row_by_label(label_rows: dict[str, int], label: str, sheet: str) -> int:
-    try:
-        return label_rows[label]
-    except KeyError as exc:
-        raise KeyError(f"Label {label!r} not found on {sheet!r}") from exc
 
 
 def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
