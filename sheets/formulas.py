@@ -161,7 +161,8 @@ SHARES_MODEL_LABEL = "Basic Shares Outstanding - Model"
 SBC_MODEL_LABEL = "Stock Based Compensation - Model"
 # Q3 2026 management guide (~$110M/quarter); flat weekly run-rate when no quarterly actual.
 SBC_GUIDANCE_QUARTERLY = 110_000_000
-SBC_WEEKLY_RUN_RATE = SBC_GUIDANCE_QUARTERLY / 13
+# Matches live sheet literal (110M ÷ 13 rounded in Sheets).
+SBC_WEEKLY_RUN_RATE = 8_461_538.46153846
 
 
 def weekly_sbc_model_formula(

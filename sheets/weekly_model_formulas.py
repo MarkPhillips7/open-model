@@ -40,16 +40,12 @@ INVENTORY_MODEL_ANCHOR = 3275
 
 CM_CORE_VALUES: dict[str, float] = {"B": 0.026, "C": 0.026, "D": 0.026, "E": 0.027}
 CM_ADJUSTMENTS_VALUES: dict[str, float] = {
-    "B": -0.03,
-    "C": -0.03,
-    "D": -0.03,
-    "E": -0.03,
-    "F": -0.03,
-    "G": -0.03,
-    "H": -0.02,
-    "I": -0.02,
-    "J": -0.02,
-    "K": -0.02,
+    "B": -0.01,
+    "C": -0.01,
+    "D": -0.01,
+    "E": -0.013,
+    "F": -0.017,
+    "G": -0.02,
 }
 CM_IMPROVEMENT_FROM_COL_F = 0.0005
 
@@ -113,7 +109,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
   MAP(SEQUENCE(1,21), LAMBDA(lag,
     LET(
       col, COLUMN() - lag - Transitions!$B$15,
-      IF(col < 2, 220*377500,
+      IF(col < 2, 160*356000,
         IF(INDEX(${New Listings}:${New Listings}, 1, col) = "",
           INDEX(${New Listings - Model}:${New Listings - Model}, 1, col),
           INDEX(${New Listings}:${New Listings}, 1, col)
@@ -128,7 +124,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
   MAP(SEQUENCE(1,21), LAMBDA(lag,
     LET(
       col, COLUMN() - lag - Transitions!$B$14,
-      IF(col < 2, 220*377500,
+      IF(col < 2, 160*356000,
         IF(INDEX(${New Listings}:${New Listings}, 1, col) = "",
           INDEX(${New Listings - Model}:${New Listings - Model}, 1, col),
           INDEX(${New Listings}:${New Listings}, 1, col)

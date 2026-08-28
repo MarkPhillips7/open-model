@@ -13,9 +13,9 @@ from __future__ import annotations
 from sheets.formulas import WEEK_DATE_ROW
 
 SHARES_SHEET = "Shares"
-SHARES_SBC_PRICE_CELL = f"'{SHARES_SHEET}'!$B$2"
+SHARES_SBC_PRICE_CELL = f"{SHARES_SHEET}!$B$2"
 # Event table: Mode | Start | End | Max share Δ (signed) | Fraction | Window weeks
-SHARES_EVENT_TABLE = f"'{SHARES_SHEET}'!$B$5:$G$20"
+SHARES_EVENT_TABLE = f"{SHARES_SHEET}!$B$5:$G$20"
 
 SHARES_ADJUSTMENT_LABEL = "Share Count Adjustment - Model"
 
