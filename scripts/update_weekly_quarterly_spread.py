@@ -36,6 +36,7 @@ SPREAD_LABELS = (
     "Depreciation and Amortization",
     "Taxes",
     "Adjusted Net Income",
+    "Net Income (Loss) Attributable to Common Shareholders",
     "Earnings per Share",
 )
 
@@ -43,6 +44,7 @@ SPREAD_LABELS = (
 RATE_LABELS = ("Contribution Margin",)
 
 SHARES_LABEL = "Basic Shares Outstanding"
+EOP_SHARES_LABEL = "Shares Outstanding (Quarter End)"
 INVENTORY_LABEL = "Homes in Inventory"
 ASP_LABEL = "Average Sale Price (homes sold by OPEN)"
 
@@ -81,6 +83,12 @@ def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
             row_by_label(weekly_labels, label, WEEKLY),
             row_by_label(quarterly_labels, label, QUARTERLY),
         )
+    mapping[EOP_SHARES_LABEL] = (
+        row_by_label(weekly_labels, EOP_SHARES_LABEL, WEEKLY)
+        if EOP_SHARES_LABEL in weekly_labels
+        else 0,
+        row_by_label(quarterly_labels, EOP_SHARES_LABEL, QUARTERLY),
+    )
     return mapping
 
 
@@ -123,13 +131,19 @@ def update_weekly_formulas(client: SheetsClient) -> None:
             rows_to_update[weekly_row] = cells
 
     shares_weekly_row, _ = row_map[SHARES_LABEL]
+    _, quarterly_eop_row = row_map[EOP_SHARES_LABEL]
     existing = list(data[shares_weekly_row - 1][1:]) if len(data[shares_weekly_row - 1]) > 1 else []
     cells = existing + [""] * (n_cols - len(existing))
     changed = len(existing) < n_cols
     for col_idx in range(n_cols):
         col = col_letter(col_idx + 2)
         prev_col = col_letter(col_idx + 1)
-        new_val = weekly_shares_formula(col, prev_col, weekly_row=shares_weekly_row)
+        new_val = weekly_shares_formula(
+            col,
+            prev_col,
+            weekly_row=shares_weekly_row,
+            quarterly_eop_row=quarterly_eop_row,
+        )
         if str(cells[col_idx]) != new_val:
             cells[col_idx] = new_val
             changed = True

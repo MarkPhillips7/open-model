@@ -156,12 +156,15 @@ def weekly_asp_formula(
     )
 
 
+SHARES_MODEL_LABEL = "Basic Shares Outstanding - Model"
+
+
 def weekly_shares_formula(
     col: str,
     prev_col: str,
     *,
     weekly_row: int,
-    quarterly_eop_row: int = 48,
+    quarterly_eop_row: int = 50,
     week_date_row: int = WEEK_DATE_ROW,
     q2_eop_anchor: int = 733_592_980,
 ) -> str:

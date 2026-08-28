@@ -13,7 +13,7 @@ from scripts.update_weekly_quarterly_spread import update_weekly_formulas  # noq
 from sheets import SheetsClient  # noqa: E402
 
 QUARTERLY = "Quarterly Financials"
-EOP_SHARES_ROW = 48
+EOP_SHARES_LABEL = "Shares Outstanding (Quarter End)"
 
 # Column → quarter key
 QUARTER_COLS = {
@@ -37,8 +37,8 @@ QUARTER_VALUES: dict[str, dict[int, int | float]] = {
         43: 5_000_000,
         44: 1_000_000,
         45: -62_000_000,
-        46: -1.26,
-        EOP_SHARES_ROW: 957_245_487,
+        46: -1_095_975_720,  # GAAP net loss: -1.26 × 869,822,000
+        48: -1.26,
     },
     "D": {
         15: 1_921,
@@ -52,8 +52,8 @@ QUARTER_VALUES: dict[str, dict[int, int | float]] = {
         43: 5_000_000,
         44: 0,
         45: -49_000_000,
-        46: -0.18,
-        EOP_SHARES_ROW: 963_283_777,
+        46: -172_679_760,  # GAAP net loss: -0.18 × 959,332,000
+        48: -0.18,
     },
     "E": {
         15: 2_339,
@@ -66,25 +66,42 @@ QUARTER_VALUES: dict[str, dict[int, int | float]] = {
         43: 5_000_000,
         44: 0,
         45: -30_000_000,
-        46: -0.17,
-        EOP_SHARES_ROW: 968_626_958,
+        46: -164_182_600,  # GAAP net loss: -0.17 × 965,780,000
+        48: -0.17,
     },
 }
+
+EOP_SHARES_BY_COL: dict[str, int] = {
+    "C": 957_245_487,
+    "D": 963_283_777,
+    "E": 968_626_958,
+}
+
+
+def quarterly_row_by_label(client: SheetsClient, label: str) -> int:
+    rows = client.worksheet(QUARTERLY).get("A1:A60")
+    for idx, row in enumerate(rows, start=1):
+        if row and row[0] == label:
+            return idx
+    raise KeyError(f"Label {label!r} not found on {QUARTERLY!r}")
 
 
 def write_quarters(client: SheetsClient) -> None:
     ws = client.worksheet(QUARTERLY)
-    label = ws.get(f"A{EOP_SHARES_ROW}")
+    eop_row = quarterly_row_by_label(client, EOP_SHARES_LABEL)
+    label = ws.get(f"A{eop_row}")
     if not label or not label[0] or not label[0][0]:
         ws.update(
-            [["Shares Outstanding (Quarter End)"]],
-            range_name=f"A{EOP_SHARES_ROW}",
+            [[EOP_SHARES_LABEL]],
+            range_name=f"A{eop_row}",
             value_input_option="RAW",
         )
 
     for col, values in QUARTER_VALUES.items():
         for row, value in values.items():
             ws.update([[value]], range_name=f"{col}{row}", value_input_option="RAW")
+        if col in EOP_SHARES_BY_COL:
+            ws.update([[EOP_SHARES_BY_COL[col]]], range_name=f"{col}{eop_row}", value_input_option="RAW")
         print(f"Wrote {len(values)} values to {col} ({QUARTER_COLS[col]})")
 
 

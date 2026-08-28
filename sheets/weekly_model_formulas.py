@@ -18,11 +18,26 @@ Weekly row map (reference):
   R30     Fixed Costs - Model
   R32     Adjusted Operating Expenses - Model
   R38     Homes in Inventory - Model
-  R41     Net Interest Expense - Model
-  R46     Earnings per Share - Model
+  R34     Basic Shares Outstanding
+  R35     Share Count Adjustment - Model
+  R36     Basic Shares Outstanding - Model
+  R43     Net Interest Expense - Model
+  R47     Net Income (Loss) Attributable to Common Shareholders - Model
+  R50     Earnings per Share - Model
 """
 
 from __future__ import annotations
+
+from sheets.formulas import SHARES_MODEL_LABEL
+from sheets.shares_events import (
+    SHARES_ADJUSTMENT_LABEL,
+    weekly_share_adjustment_formula,
+    weekly_shares_model_formula,
+)
+
+GAAP_NET_INCOME_MODEL_LABEL = (
+    "Net Income (Loss) Attributable to Common Shareholders - Model"
+)
 
 # B-column anchor for Homes in Inventory - Model (prior to first weekly roll-forward).
 INVENTORY_MODEL_ANCHOR = 3275
@@ -140,7 +155,10 @@ COLUMN_RELATIVE: dict[str, str] = {
     "Contribution Profit - Model": "={c}18*{c}23",
     "Contribution Margin - Model": "={c}24+{c}25+{c}26+{c}27",
     "Adjusted Operating Expenses - Model": "={c}30+(15000000/13)",
-    "Earnings per Share - Model": '=IF({c}34=0,"",({c}21-{c}32-{c}41)/{c}34)',
+    GAAP_NET_INCOME_MODEL_LABEL: (
+        "={c}21-{c}32-{c}33-{c}41-{c}42-{c}43"
+    ),
+    "Earnings per Share - Model": '=IF(N({c}{shares_row})=0,"",{c}{gaap_row}/{c}{shares_row})',
 }
 
 # Row labels included in a full model-formula restore (excluding CM stack value rows).
@@ -148,6 +166,8 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     "Acquisition Contracts - Model",
     *UNIFORM_FORMULAS.keys(),
     *COLUMN_RELATIVE.keys(),
+    SHARES_ADJUSTMENT_LABEL,
+    SHARES_MODEL_LABEL,
     "Homes in Inventory - Model",
 )
 
@@ -160,8 +180,20 @@ def col_letter(n: int) -> str:
     return s
 
 
-def column_relative_formula(label: str, col: str) -> str:
-    return COLUMN_RELATIVE[label].format(c=col)
+def column_relative_formula(
+    label: str,
+    col: str,
+    *,
+    label_to_row: dict[str, int] | None = None,
+) -> str:
+    template = COLUMN_RELATIVE[label]
+    if label == "Earnings per Share - Model":
+        if label_to_row is None:
+            raise ValueError("label_to_row required for Earnings per Share - Model")
+        gaap_row = label_to_row[GAAP_NET_INCOME_MODEL_LABEL]
+        shares_row = label_to_row[SHARES_MODEL_LABEL]
+        return template.format(c=col, gaap_row=gaap_row, shares_row=shares_row)
+    return template.format(c=col)
 
 
 def inventory_model_formula(
@@ -219,7 +251,7 @@ def row_cells_for_label(
 
     if label in COLUMN_RELATIVE:
         return [
-            column_relative_formula(label, col_letter(col_idx + 2))
+            column_relative_formula(label, col_letter(col_idx + 2), label_to_row=label_to_row)
             for col_idx in range(n_cols)
         ]
 
@@ -231,6 +263,40 @@ def row_cells_for_label(
             prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
             cells.append(
                 inventory_model_formula(col, prev_col, inventory_row=inventory_row)
+            )
+        return cells
+
+    if label == SHARES_ADJUSTMENT_LABEL:
+        sbc_row = label_to_row["Stock Based Compensation"]
+        cells: list[str | float] = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
+            cells.append(
+                weekly_share_adjustment_formula(
+                    col,
+                    prev_col,
+                    weekly_sbc_row=sbc_row,
+                )
+            )
+        return cells
+
+    if label == SHARES_MODEL_LABEL:
+        actual_row = label_to_row["Basic Shares Outstanding"]
+        model_row = label_to_row[SHARES_MODEL_LABEL]
+        adj_row = label_to_row[SHARES_ADJUSTMENT_LABEL]
+        cells = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
+            cells.append(
+                weekly_shares_model_formula(
+                    col,
+                    prev_col,
+                    weekly_actual_shares_row=actual_row,
+                    weekly_model_shares_row=model_row,
+                    weekly_adjustment_row=adj_row,
+                )
             )
         return cells
 

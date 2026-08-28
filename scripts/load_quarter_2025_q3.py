@@ -28,23 +28,32 @@ Q3_VALUES: dict[int, int | float] = {
     43: 5_000_000,  # D&A excl. intangibles (EBITDA bridge)
     44: 1_000_000,  # Income tax expense
     45: -61_000_000,  # Adjusted net loss
-    46: -0.12,  # GAAP basic EPS
+    46: -89_032_680,  # GAAP net loss: -0.12 × 741,939,000 basic shares
+    48: -0.12,  # GAAP basic EPS
 }
 
 Q3_EOP_SHARES = 771_534_057
-EOP_SHARES_ROW = 48
+
+
+def quarterly_row_by_label(client: SheetsClient, label: str) -> int:
+    rows = client.worksheet(QUARTERLY).get("A1:A60")
+    for idx, row in enumerate(rows, start=1):
+        if row and row[0] == label:
+            return idx
+    raise KeyError(f"Label {label!r} not found on {QUARTERLY!r}")
 
 
 def write_quarterly_q3(client: SheetsClient) -> None:
     ws = client.worksheet(QUARTERLY)
+    eop_row = quarterly_row_by_label(client, "Shares Outstanding (Quarter End)")
     for row, value in Q3_VALUES.items():
         ws.update([[value]], range_name=f"{Q3_COL}{row}", value_input_option="RAW")
-    ws.update([[Q3_EOP_SHARES]], range_name=f"{Q3_COL}{EOP_SHARES_ROW}", value_input_option="RAW")
-    label = ws.get(f"A{EOP_SHARES_ROW}")
+    ws.update([[Q3_EOP_SHARES]], range_name=f"{Q3_COL}{eop_row}", value_input_option="RAW")
+    label = ws.get(f"A{eop_row}")
     if not label or not label[0] or not label[0][0]:
         ws.update(
             [["Shares Outstanding (Quarter End)"]],
-            range_name=f"A{EOP_SHARES_ROW}",
+            range_name=f"A{eop_row}",
             value_input_option="RAW",
         )
     print(f"Wrote {len(Q3_VALUES)} quarterly values + EOP shares to {Q3_COL}")

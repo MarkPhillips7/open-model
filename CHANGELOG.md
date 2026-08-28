@@ -18,6 +18,131 @@ Entry template:
 
 ---
 
+## 2026-08-28 — Shares tab + simplified share model (helper row)
+
+Moved share assumptions off **Transitions** into a new **Shares** tab with a reusable event table. Simplified **Basic Shares Outstanding - Model** to actual passthrough or `prior week + adjustment`; weekly deltas live on **Share Count Adjustment - Model** (BYROW + SUM over `Shares!B5:G20` + SBC).
+
+**Aug 2026 deal** (Form [8-K Aug 19, 2026](https://www.sec.gov/Archives/edgar/data/1801169/000114036126033739/ef20080596_8k.htm), [press release](https://investor.opendoor.com/news-releases/news-release-details/opendoor-reduces-shares-outstanding-5-first-ever-share-buyback)):
+- **−45.3M** share repurchase @ **$3.49** (settlement Aug 19)
+- **$650M** 0% converts, initial conversion **~$4.71** (~138M shares)
+- Capped calls offset dilution through **$6.98**
+- **$10.38 net-zero price**: convert dilution restores repurchased shares → **net Δ shares ≈ 0** below that level (convert row at **0% Fraction** in base case)
+
+| Event | Mode | Max Δ | Fraction |
+| --- | --- | --- | --- |
+| Aug 2026 repurchase | instant | −45,300,000 | 100% |
+| Nov 2025 warrants | spread_end (4 wks) | +99,295,146 | 25% |
+| 2030 converts | instant @ maturity | +137,960,290 | 0% (base) |
+
+- **Tab / range:** new **Shares** `A1:I8`, `A22:B24`; **Weekly Financials** row inserted → R35 **Share Count Adjustment - Model**, R36 **Basic Shares Outstanding - Model**, R50 **EPS - Model**; cleared **Transitions** `A25:B34`
+- **Insert/delete:** 1 row on Weekly + Quarterly before Basic Shares - Model; 1 new sheet
+- **Formulas:**
+  - **Share Count Adjustment - Model:** `=LET(..., sbc + SUM(BYROW(FILTER(Shares!B5:G20, …))))`
+  - **Basic Shares Outstanding - Model:** `=IF(N(actual)>0, actual, prev_model + adj)`
+- **Data:** Shares event table as above; SBC price **$8** on `Shares!B2`
+- **Side effects:** Add future buybacks/dilution by appending rows to **Shares** table (modes: `instant`, `spread_end`)
+
+### Repo
+
+- **`sheets/shares_events.py`** — table layout + formula builders
+- **`scripts/setup_shares_sheet.py`** — live migration
+
+---
+
+## 2026-08-28 — Shares model: actual passthrough, roll-forward, buyback, warrant window
+
+Reworked **Basic Shares Outstanding - Model** per user feedback:
+
+1. **Actual passthrough** — if **Basic Shares Outstanding** is populated, model = actual (no overlay).
+2. **Roll-forward** — else `prior week model + weekly deltas` (not base + cumulative overlay).
+3. **Warrants** — assumed exercise spread over the last **4 weeks** before **11/20/2026** expiration (not linear from distribution).
+4. **[Aug 2026 buyback](https://x.com/nejatian/status/2087844080579653833)** — **−5%** once on first week ending on/after **8/13/2026**; convert/capped-call **$10.38** floor documented on **Transitions!B34** (no incremental convert shares in base case).
+
+- **Tab / range:** **Weekly Financials** `B35:DY35`; **Transitions** `A25:B34`; **Earnings per Share - Model** unchanged denominator row (label-resolved)
+- **Insert/delete:** none
+- **Formulas:** `IF(N(actual)>0, actual, LET(prev, prior model, prev + sbc + wDelta + bbAdj, …))`; `wDelta` only in `[exp−4wks, exp]`; `bbAdj = IF(wk>=bbDate AND prev_wk<bbDate, −prev×5%, 0)`
+- **Data:** B29=4 (warrant window weeks); B32=8/13/2026; B33=0.05; B34=10.38 (reference)
+- **Side effects:** Forward weeks with blank actuals now chain from prior model instead of going blank
+
+### Repo
+
+- **`sheets/formulas.py`** — `weekly_shares_model_formula` roll-forward logic
+- **`scripts/update_shares_model_assumptions.py`** — refresh Transitions + restore
+
+---
+
+## 2026-08-28 — Basic Shares Outstanding - Model (warrants + SBC dilution)
+
+Added **Basic Shares Outstanding - Model** below the actual shares row. **EPS - Model** now divides GAAP NI - Model by this row instead of the actual EOP-interpolation row.
+
+Management has **not** published a forward basic share-count guide. The Nov 2025 **warrant distribution** (99.3M warrants, $9/$13/$17, expire Nov 20 2026) is the main disclosed dilution lever (~10.4% if all exercised). Model overlays (editable on **Transitions**):
+
+| Cell | Default | Meaning |
+| --- | --- | --- |
+| B25 | 99,295,146 | Warrant shares if exercised |
+| B26 | 25% | Assumed exercise fraction (not company guidance) |
+| B27 / B28 | 11/21/2025 / 11/20/2026 | Warrant ramp window |
+| B31 | $8 | $/share to convert weekly SBC into incremental shares |
+
+- **Tab / range:** **Weekly Financials** + **Quarterly Financials** — 1 row inserted before **Open Mortgage Percent**; **Basic Shares Outstanding - Model** `B35:DY35`; **Earnings per Share - Model** `B49:DY49`; **Transitions** `A25:B31`
+- **Insert/delete:** 1 row on Weekly + Quarterly tabs
+- **Formulas:**
+  - **Basic Shares Outstanding - Model:** `base` = **Basic Shares Outstanding** (EOP Δ/13 when reported) + linear warrant ramp (`B25×B26` over B27→B28) + weekly `SBC/B31` after distribution date
+  - **Earnings per Share - Model:** `=IF(N({col}35)=0,"",{col}47/{col}35)` → `=IF(N({col}{shares_model})=0,"",{col}{gaap_ni}/{col}{shares_model})`
+- **Data:** Transitions dilution defaults as above
+- **Side effects:** Rows below shares shift +1 (GAAP NI - Model, EPS - Model, etc.)
+
+### Repo
+
+- **`sheets/formulas.py`** — `weekly_shares_model_formula`, `SHARES_MODEL_LABEL`
+- **`sheets/weekly_model_formulas.py`** — shares model + EPS denominator by label
+- **`scripts/add_basic_shares_model_row.py`** — migration
+- **`RESOURCES.md`** — warrant / share-count notes
+
+---
+
+## 2026-08-28 — EPS - Model: guard blank Basic Shares
+
+**Earnings per Share - Model** could `#DIV/0!` when **Basic Shares Outstanding** was blank (pre-report / boundary weeks) because the guard only tested `=0`.
+
+- **Tab / range:** **Weekly Financials** `B48:DY48` (**Earnings per Share - Model**)
+- **Insert/delete:** none
+- **Formulas:** `=IF({col}34=0,"",{col}46/{col}34)` → `=IF(N({col}34)=0,"",{col}46/{col}34)` (`N()` treats blank as 0 before dividing)
+- **Data:** none
+- **Side effects:** `scripts/restore_weekly_model_formulas.py` re-applied to live sheet
+
+---
+
+## 2026-08-28 — GAAP net income rows; EPS - Model = GAAP NI ÷ basic shares
+
+**Earnings per Share - Model** was `(Contribution Profit − Adj OpEx − Net Interest) ÷ shares`, which approximated adjusted net income, not GAAP EPS. Added GAAP net income rows and rewired the model to match the company definition: **Net Income (Loss) Attributable to Common Shareholders ÷ Basic Shares Outstanding** (basic weighted-average).
+
+- **Tab / range:** **Weekly Financials** and **Quarterly Financials** — inserted 2 rows before **Earnings per Share** (now R45–R48 weekly, R46–R49 quarterly); **Basic Shares Outstanding** `B34:DY34` formulas refreshed to reference quarterly EOP shares on **R50** (was hardcoded R48)
+- **Insert/delete:** 2 rows on each tab before **Earnings per Share**
+- **Formulas:**
+  - **Net Income (Loss) Attributable to Common Shareholders** (actual): day-weighted quarterly spread ÷13 (same pattern as other dollar rows)
+  - **Net Income (Loss) Attributable to Common Shareholders - Model:** `={col}21-{col}32-{col}33-{col}41-{col}42-{col}43` (Contribution Profit − Adj OpEx − SBC − Net Interest − D&A − Taxes)
+  - **Earnings per Share - Model:** `=IF({col}34=0,"",{col}{gaap_ni_model}/{col}34)` — was `=IF({col}34=0,"",({col}21-{col}32-{col}41-{col}42-{col}43)/{col}34)`
+- **Data (Quarterly Financials, GAAP net loss = basic EPS × basic weighted-average shares):**
+
+| Quarter | GAAP net income |
+| --- | --- |
+| 2025 Q3 | −$89,032,680 |
+| 2025 Q4 | −$1,095,975,720 |
+| 2026 Q1 | −$172,679,760 |
+| 2026 Q2 | −$164,182,600 |
+
+- **Side effects:** **Shares Outstanding (Quarter End)** moved to quarterly **R50**. Load scripts and `update_weekly_quarterly_spread.py` resolve EOP row by label.
+
+### Repo
+
+- **`sheets/weekly_model_formulas.py`** — GAAP NI - Model + EPS - Model formulas (label-based row refs)
+- **`scripts/update_weekly_quarterly_spread.py`** — spread GAAP NI actual row; pass dynamic EOP row to shares interpolation
+- **`scripts/add_gaap_net_income_rows.py`** — one-time migration (row insert + data + formula refresh)
+- **`scripts/load_quarter_2025_q3.py`**, **`scripts/load_quarters_2025_q4_2026_h1.py`** — GAAP NI values; EPS on R48; EOP by label
+
+---
+
 ## 2026-08-28 — Inventory & shares blank until both quarters reported
 
 Applied the same **bothQ** guard used on day-weighted spread rows to the linear `Δ/13` interpolation rows for **Homes in Inventory** and **Basic Shares Outstanding**. Values stay blank when the current quarter’s quarterly cell (or the prior quarter’s, when `qCol>1`) is missing, a formula, or empty.

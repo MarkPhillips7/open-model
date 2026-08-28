@@ -20,6 +20,7 @@ Quarterly results and supplements are the main source for “actual” rows in *
 | Average Sale Price (ASP) | Q2 2026 ASP ≈ **$377.5K** (sheet input) |
 | Contribution Margin | Q2 2026 CM ≈ **5.8%**; Q3 2026 guidance **4–4.5%** |
 | Stock-based compensation | Q3 2026 SBC guide ≈ **$110M** (modeled weekly as ~$8.5M) |
+| Basic shares / dilution | **Shares** tab — reusable event table (`Shares!A4:I20`). **Aug 2026 deal** ([8-K Aug 19, 2026](https://www.sec.gov/Archives/edgar/data/1801169/000114036126033739/ef20080596_8k.htm), [press release](https://investor.opendoor.com/news-releases/news-release-details/opendoor-reduces-shares-outstanding-5-first-ever-share-buyback)): **−45.3M** repurchase @ **$3.49**; **$650M** 0% converts (~**138M** shares @ **$4.71** conversion); capped calls through **$6.98**; **$10.38 net-zero price** = stock price where convert dilution restores repurchased shares (net Δ shares ≈ 0). **Weekly Financials**: **Share Count Adjustment - Model** (BYROW over table + SBC); **Basic Shares Outstanding - Model** = actual if present else prior + adjustment. |
 | Revenue | e.g. quarterly revenue ÷ 13 for weekly run-rate; Q3 2026 guide ≥ **+20% YoY** → ~$915M × 1.2 ≈ **$1.1B** |
 
 Management commentary captured in sheet comments (paraphrased / quoted):
