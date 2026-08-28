@@ -3,6 +3,8 @@
 
 Do not run routinely. The Sheets API cannot restore colors, log scale, or other
 UI chart settings. Charts are manual-only — see .cursor/rules/charts-manual-only.mdc.
+
+Series layout is defined in config/workbook_snapshot.json.
 """
 
 from __future__ import annotations
@@ -16,33 +18,10 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import sheet_id  # noqa: E402
+from sheets.workbook_snapshot import chart_series_tuples, charts_by_tab, load_snapshot  # noqa: E402
 
 WEEKLY_SHEET_ID = 0
-HOMES_CHART = "Homes Chart"
-MONEY_CHART = "Money Chart"
 CHART_FEED = "Chart Feed"
-
-# (weekly_row_1based, line_style, axis, end_column_index exclusive)
-HOMES_SERIES = [
-    (2, "SOLID", "LEFT_AXIS", 121),
-    (3, "DOTTED", "LEFT_AXIS", 121),
-    (8, "SOLID", "LEFT_AXIS", 129),
-    (9, "DOTTED", "LEFT_AXIS", 129),
-    (11, "SOLID", "LEFT_AXIS", 121),
-    (12, "DOTTED", "LEFT_AXIS", 121),
-    (14, "SOLID", "LEFT_AXIS", 121),
-    (16, "DOTTED", "LEFT_AXIS", 121),
-]
-
-MONEY_SERIES = [
-    (17, "SOLID", "LEFT_AXIS", 129),
-    (18, "DOTTED", "LEFT_AXIS", 129),
-    (35, "SOLID", "RIGHT_AXIS", 129),
-    (37, "DOTTED", "RIGHT_AXIS", 129),
-]
-
-DOMAIN_ROW = 1
-DOMAIN_END_COL = 121
 
 
 def grid_range(row_1based: int, end_col: int) -> dict:
@@ -66,15 +45,23 @@ def build_series(row: int, line_type: str, axis: str, end_col: int) -> dict:
     return entry
 
 
-def restore_chart(client: SheetsClient, tab: str, series_spec: list[tuple]) -> None:
+def restore_chart(
+    client: SheetsClient,
+    tab: str,
+    series_spec: list[tuple],
+    *,
+    chart_index: int = 0,
+    domain_row: int = 1,
+    domain_end_col: int = 121,
+) -> None:
     meta = client.spreadsheet.fetch_sheet_metadata()
     chart_tab = next(s for s in meta["sheets"] if s["properties"]["title"] == tab)
-    chart = chart_tab["charts"][0]
+    chart = chart_tab["charts"][chart_index]
     spec = copy.deepcopy(chart["spec"])
     basic = spec.setdefault("basicChart", {})
 
     basic["domains"] = [
-        {"domain": {"sourceRange": {"sources": [grid_range(DOMAIN_ROW, DOMAIN_END_COL)]}}}
+        {"domain": {"sourceRange": {"sources": [grid_range(domain_row, domain_end_col)]}}}
     ]
     basic["series"] = [
         build_series(row, line, axis, end_col) for row, line, axis, end_col in series_spec
@@ -89,7 +76,8 @@ def restore_chart(client: SheetsClient, tab: str, series_spec: list[tuple]) -> N
         {"requests": [{"updateChartSpec": {"chartId": chart["chartId"], "spec": spec}}]}
     )
     rows = [r for r, *_ in series_spec]
-    print(f"{tab}: restored Weekly Financials rows {rows} (domain row {DOMAIN_ROW})")
+    suffix = f" chart {chart_index}" if chart_index else ""
+    print(f"{tab}{suffix}: restored Weekly Financials rows {rows} (domain row {domain_row})")
 
 
 def delete_chart_feed(client: SheetsClient) -> None:
@@ -103,10 +91,19 @@ def delete_chart_feed(client: SheetsClient) -> None:
 
 def main() -> None:
     client = SheetsClient()
-    restore_chart(client, HOMES_CHART, HOMES_SERIES)
-    restore_chart(client, MONEY_CHART, MONEY_SERIES)
+    snapshot = load_snapshot()
+    for tab, charts in charts_by_tab(snapshot).items():
+        for chart_index, chart in enumerate(charts):
+            restore_chart(
+                client,
+                tab,
+                chart_series_tuples(chart),
+                chart_index=chart_index,
+                domain_row=chart["domain_row"],
+                domain_end_col=chart["domain_end_col"],
+            )
     delete_chart_feed(client)
-    print("Charts restored to Weekly Financials (pre–Chart Feed).")
+    print("Charts restored to Weekly Financials series ranges.")
 
 
 if __name__ == "__main__":

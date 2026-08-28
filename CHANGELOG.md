@@ -18,6 +18,21 @@ Entry template:
 
 ---
 
+## 2026-08-28 — Chart tab rename and series updates (manual)
+
+Renamed **Money Chart** → **Money Charts**; added a second chart and expanded **Homes Chart** series. Manual UI edits only (no agent/script chart API writes).
+
+- **Tab / range:** **Money Charts** (renamed from **Money Chart**); **Homes Chart** + **Money Charts** chart specs
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** none
+- **Side effects:**
+  - **Homes Chart** — 10 series on Weekly Financials rows 2, 3, 8, 9, 11, 12, 14, 16, 40, 41 (domain row 1); added Homes in Inventory actual + model
+  - **Money Charts** chart 0 (**Revenue and Shares**) — rows 17, 18, 35, 37 (domain row 1)
+  - **Money Charts** chart 1 (**Profit and Price**) — rows 20, 21, 47, 54, 55, 56 (domain row 1)
+
+---
+
 ## 2026-08-28 — Revert Chart Feed; restore charts to Weekly Financials
 
 Chart Feed repoint stripped legend/labels/colors via API partial spec. Undid: deleted **Chart Feed** tab; restored **Homes Chart** / **Money Chart** series to **Weekly Financials** (sheet id 0) with pre-change row indices and `headerCount` / `legendPosition`.

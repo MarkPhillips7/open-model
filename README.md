@@ -29,8 +29,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
 | **Seasonality** | Monthly home-sales seasonality weights; drives weekly seasonality multipliers. |
-| **Homes Chart** | Line chart of weekly home metrics (actual vs model for listings, acquisitions, sales). |
-| **Money Chart** | Line chart of weekly **Revenue** vs **Revenue - Model**. |
+| **Homes Chart** | Line chart of weekly home metrics (actual vs model for contracts, purchases, listings, sales, inventory). |
+| **Money Charts** | Two line charts: **Revenue and Shares** (revenue + basic shares) and **Profit and Price** (contribution profit, adjusted/GAAP net income). |
 
 ---
 
@@ -62,8 +62,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 ### Charts
 
-- **Homes Chart**: New Listings, New Listings - Model, Acquisition Contracts, Acquisition Contracts - Model, Home Sales, Home Sales - Model.
-- **Money Chart**: Revenue vs Revenue - Model.
+- **Homes Chart**: Acquisition Contracts, Homes Purchased, New Listings, Home Sales, Homes in Inventory (each actual + model).
+- **Money Charts** — **Revenue and Shares**: Revenue, Basic Shares Outstanding (actual + model). **Profit and Price**: Contribution Profit, Adjusted Net Income, Net Income Attributable to Common Shareholders (actual + model).
 
 **Manual only.** Chart styling (colors, log scale, axes, legend) is set in the Google Sheets UI. Agents and scripts must not edit these charts via the API — automated updates strip settings. After row inserts on Weekly / Quarterly Financials, fix chart series ranges by hand if a line points at the wrong row.
 
@@ -126,6 +126,7 @@ Then complete the [Google Cloud setup](#one-time-google-cloud-setup) below, save
 ```bash
 python scripts/auth_setup.py      # first-time sign-in
 python scripts/test_connection.py # verify access to your spreadsheet
+python scripts/validate_workbook_snapshot.py  # compare live tabs/charts to config/workbook_snapshot.json
 python scripts/validate_model_formulas.py        # check templates + live label alignment
 python scripts/restore_weekly_model_formulas.py  # restore * - Model row formulas
 ```
@@ -139,6 +140,8 @@ Canonical model-row formulas live in `sheets/weekly_model_formulas.py`. Template
 3. If spread rows moved, run `python scripts/update_weekly_quarterly_spread.py` (already label-based).
 
 Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --offline`
+
+Workbook layout (tab names, chart series rows) is snapshotted in `config/workbook_snapshot.json`. After intentional chart or tab changes, refresh with `python scripts/validate_workbook_snapshot.py --update` and commit the diff.
 
 After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
 
