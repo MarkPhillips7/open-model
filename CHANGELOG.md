@@ -18,7 +18,55 @@ Entry template:
 
 ---
 
-## 2026-08-28 — Label-based model formula restore (anti-regression)
+## 2026-08-28 — GAAP below-the-line - Model rows (forward run-rates)
+
+Added **- Model** rows for debt extinguishment, GAAP interest expense, and other income — same passthrough pattern as **Stock Based Compensation - Model**. **GAAP NI - Model** now reads only model rows so forward weeks work without quarterly actuals.
+
+- **Tab / range:** **Weekly Financials** and **Quarterly Financials** — inserted 3 rows before **Adjusted Net Income - Model** (weekly R51–R53, quarterly R52–R54); restored model formulas on weekly R51–R54, R56, R58
+- **Insert/delete:** 3 rows on each tab before **Adjusted Net Income - Model**
+- **Formulas:**
+  - **(Loss) Gain on Extinguishment of Debt - Model:** `IF(ISNUMBER(actual), actual, IF(wk="", "", 0))`
+  - **Interest Expense - Model:** passthrough actual else **−$27M ÷ 13** per week
+  - **Other Income - Net - Model:** passthrough actual else **$10.5M ÷ 13** per week
+  - **Net Income (Loss) Attributable to Common Shareholders - Model:** `={adj_ni}+{debt_model}+{interest_model}+{other_model}-{net_interest_model}` (was actual rows + **Net Interest Expense** actual)
+- **Data:** none
+- **Side effects:** Adj NI - Model, GAAP NI - Model, EPS - Model shift +3 rows
+
+### Repo
+
+- **`sheets/gaap_below_the_line.py`** — model label constants + guidance run-rates
+- **`sheets/formulas.py`** — `weekly_gaap_below_line_model_formula` (`ISNUMBER` for negative actuals)
+- **`sheets/weekly_model_formulas.py`** — three model rows + GAAP NI wiring
+- **`scripts/add_gaap_below_the_line_model_rows.py`** — live migration
+
+---
+
+Q4 2025 GAAP net loss (**−$1.096B**, **−$1.26** EPS) was dominated by a **−$933M** loss on debt extinguishment plus GAAP **interest expense** and **other income**, none of which were in the model. **Net Income (Loss) Attributable to Common Shareholders - Model** only reflected the operating stack (~**−$13M**/week), so it understated GAAP loss by ~**$71M**/week in Q4.
+
+- **Tab / range:** **Weekly Financials** and **Quarterly Financials** — inserted 4 rows before **Net Income (Loss) Attributable to Common Shareholders** (weekly R48–R51, quarterly R49–R52); spread formulas on weekly R48–R50; model formulas restored on R51 (**Adjusted Net Income - Model**) and R53 (**GAAP NI - Model**)
+- **Insert/delete:** 4 rows on each tab before **Net Income (Loss) Attributable to Common Shareholders**
+- **Formulas:**
+  - **Adjusted Net Income - Model:** `={cp}-{opex}-{sbc_model}-{interest_model}-{da}-{tax}` (former GAAP NI - Model operating stack)
+  - **Net Income (Loss) Attributable to Common Shareholders - Model:** `={adj_ni}+{debt}+{interest_gaap}+{other_income}-{net_interest}` (label-resolved)
+- **Data (Quarterly Financials, $ millions from Q4 2025 / 2026 earnings supplement & 10-Q):**
+
+| Quarter | (Loss) Gain on Extinguishment of Debt | Interest Expense | Other Income - Net |
+| --- | --- | --- | --- |
+| 2025 Q3 | −$1M | −$34M | $14M |
+| 2025 Q4 | **−$933M** | −$28M | $14M |
+| 2026 Q1 | −$1M | −$23M | $10M |
+| 2026 Q2 | $0 | −$29M | $11M |
+
+- **Side effects:** GAAP NI - Model, EPS - Model, and rows below shift +4; Q4 weekly GAAP NI - Model now ~**−$87M**/week vs reported ~**−$84M**/week (remaining gap = operating model vs reported Adjusted NI, not missing debt line)
+
+### Repo
+
+- **`sheets/gaap_below_the_line.py`** — quarterly actuals + label constants
+- **`sheets/weekly_model_formulas.py`** — split Adj NI - Model vs GAAP NI - Model
+- **`scripts/add_gaap_below_the_line_rows.py`** — live migration
+- **`scripts/update_weekly_quarterly_spread.py`**, **`scripts/load_quarter_2025_q3.py`**, **`scripts/load_quarters_2025_q4_2026_h1.py`** — spread + load below-the-line actuals
+
+---
 
 Re-applied all `* - Model` formulas from `sheets/weekly_model_formulas.py` using `{Label}` placeholders (no hardcoded weekly row numbers). Validation passed before restore.
 

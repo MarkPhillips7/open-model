@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from sheets import SheetsClient  # noqa: E402
+from sheets.gaap_below_the_line import DEBT_EXTINGUISHMENT_LABEL, INTEREST_EXPENSE_LABEL, OTHER_INCOME_LABEL
 from sheets.formulas import (  # noqa: E402
     weekly_asp_formula,
     weekly_from_quarterly_formula,
@@ -34,6 +34,9 @@ SPREAD_LABELS = (
     "Depreciation and Amortization",
     "Taxes",
     "Adjusted Net Income",
+    DEBT_EXTINGUISHMENT_LABEL,
+    INTEREST_EXPENSE_LABEL,
+    OTHER_INCOME_LABEL,
     "Net Income (Loss) Attributable to Common Shareholders",
     "Earnings per Share",
 )

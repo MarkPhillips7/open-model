@@ -9,7 +9,23 @@ from __future__ import annotations
 
 import re
 
-from sheets.formulas import SBC_MODEL_LABEL, SHARES_MODEL_LABEL, weekly_sbc_model_formula
+from sheets.formulas import (
+    SBC_MODEL_LABEL,
+    SHARES_MODEL_LABEL,
+    weekly_gaap_below_line_model_formula,
+    weekly_sbc_model_formula,
+)
+from sheets.gaap_below_the_line import (
+    ADJ_NET_INCOME_MODEL_LABEL,
+    DEBT_EXTINGUISHMENT_LABEL,
+    DEBT_EXTINGUISHMENT_MODEL_LABEL,
+    INTEREST_EXPENSE_LABEL,
+    INTEREST_EXPENSE_MODEL_LABEL,
+    INTEREST_EXPENSE_WEEKLY_RUN_RATE,
+    OTHER_INCOME_LABEL,
+    OTHER_INCOME_MODEL_LABEL,
+    OTHER_INCOME_WEEKLY_RUN_RATE,
+)
 from sheets.shares_events import (
     SHARES_ADJUSTMENT_LABEL,
     weekly_share_adjustment_formula,
@@ -141,9 +157,12 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     "Adjusted Operating Expenses - Model": (
         "={c}{Fixed Costs - Model}+(15000000/13)"
     ),
-    GAAP_NET_INCOME_MODEL_LABEL: (
+    ADJ_NET_INCOME_MODEL_LABEL: (
         "={c}{cp}-{c}{opex}-{c}{sbc}-{c}{interest}-{c}{da}-{c}{tax}"
     ),
+    GAAP_NET_INCOME_MODEL_LABEL: (
+        "={c}{adj_ni}+{c}{debt}+{c}{interest_gaap}+{c}{other_income}-{c}{net_interest}"
+    ),  # debt/interest/other/net_interest are all - Model rows
     "Earnings per Share - Model": (
         '=IF(N({c}{shares_row})=0,"",{c}{gaap_row}/{c}{shares_row})'
     ),
@@ -188,7 +207,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         }
     ),
     "Adjusted Operating Expenses - Model": frozenset({"Fixed Costs - Model"}),
-    GAAP_NET_INCOME_MODEL_LABEL: frozenset(
+    ADJ_NET_INCOME_MODEL_LABEL: frozenset(
         {
             "Contribution Profit - Model",
             "Adjusted Operating Expenses - Model",
@@ -198,6 +217,18 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             "Taxes",
         }
     ),
+    GAAP_NET_INCOME_MODEL_LABEL: frozenset(
+        {
+            ADJ_NET_INCOME_MODEL_LABEL,
+            DEBT_EXTINGUISHMENT_MODEL_LABEL,
+            INTEREST_EXPENSE_MODEL_LABEL,
+            OTHER_INCOME_MODEL_LABEL,
+            "Net Interest Expense - Model",
+        }
+    ),
+    DEBT_EXTINGUISHMENT_MODEL_LABEL: frozenset({DEBT_EXTINGUISHMENT_LABEL}),
+    INTEREST_EXPENSE_MODEL_LABEL: frozenset({INTEREST_EXPENSE_LABEL}),
+    OTHER_INCOME_MODEL_LABEL: frozenset({OTHER_INCOME_LABEL}),
     "Earnings per Share - Model": frozenset(
         {GAAP_NET_INCOME_MODEL_LABEL, SHARES_MODEL_LABEL}
     ),
@@ -224,6 +255,9 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     *UNIFORM_FORMULA_TEMPLATES.keys(),
     *COLUMN_RELATIVE_TEMPLATES.keys(),
     SBC_MODEL_LABEL,
+    DEBT_EXTINGUISHMENT_MODEL_LABEL,
+    INTEREST_EXPENSE_MODEL_LABEL,
+    OTHER_INCOME_MODEL_LABEL,
     SHARES_ADJUSTMENT_LABEL,
     SHARES_MODEL_LABEL,
     "Homes in Inventory - Model",
@@ -272,7 +306,7 @@ def column_relative_formula(
             gaap_row=label_to_row[GAAP_NET_INCOME_MODEL_LABEL],
             shares_row=label_to_row[SHARES_MODEL_LABEL],
         )
-    if label == GAAP_NET_INCOME_MODEL_LABEL:
+    if label == ADJ_NET_INCOME_MODEL_LABEL:
         return template.format(
             c=col,
             cp=label_to_row["Contribution Profit - Model"],
@@ -281,6 +315,15 @@ def column_relative_formula(
             interest=label_to_row["Net Interest Expense - Model"],
             da=label_to_row["Depreciation and Amortization"],
             tax=label_to_row["Taxes"],
+        )
+    if label == GAAP_NET_INCOME_MODEL_LABEL:
+        return template.format(
+            c=col,
+            adj_ni=label_to_row[ADJ_NET_INCOME_MODEL_LABEL],
+            debt=label_to_row[DEBT_EXTINGUISHMENT_MODEL_LABEL],
+            interest_gaap=label_to_row[INTEREST_EXPENSE_MODEL_LABEL],
+            other_income=label_to_row[OTHER_INCOME_MODEL_LABEL],
+            net_interest=label_to_row["Net Interest Expense - Model"],
         )
     return apply_row_labels(template, label_to_row).format(c=col)
 
@@ -368,6 +411,39 @@ def row_cells_for_label(
         actual_row = label_to_row["Stock Based Compensation"]
         return [
             weekly_sbc_model_formula(col_letter(col_idx + 2), weekly_actual_sbc_row=actual_row)
+            for col_idx in range(n_cols)
+        ]
+
+    if label == DEBT_EXTINGUISHMENT_MODEL_LABEL:
+        actual_row = label_to_row[DEBT_EXTINGUISHMENT_LABEL]
+        return [
+            weekly_gaap_below_line_model_formula(
+                col_letter(col_idx + 2),
+                weekly_actual_row=actual_row,
+                weekly_run_rate=0,
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label == INTEREST_EXPENSE_MODEL_LABEL:
+        actual_row = label_to_row[INTEREST_EXPENSE_LABEL]
+        return [
+            weekly_gaap_below_line_model_formula(
+                col_letter(col_idx + 2),
+                weekly_actual_row=actual_row,
+                weekly_run_rate=INTEREST_EXPENSE_WEEKLY_RUN_RATE,
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label == OTHER_INCOME_MODEL_LABEL:
+        actual_row = label_to_row[OTHER_INCOME_LABEL]
+        return [
+            weekly_gaap_below_line_model_formula(
+                col_letter(col_idx + 2),
+                weekly_actual_row=actual_row,
+                weekly_run_rate=OTHER_INCOME_WEEKLY_RUN_RATE,
+            )
             for col_idx in range(n_cols)
         ]
 

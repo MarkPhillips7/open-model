@@ -33,6 +33,11 @@ NON_LABEL_PLACEHOLDERS = frozenset(
         "tax",
         "gaap_row",
         "shares_row",
+        "adj_ni",
+        "debt",
+        "interest_gaap",
+        "other_income",
+        "net_interest",
     }
 )
 

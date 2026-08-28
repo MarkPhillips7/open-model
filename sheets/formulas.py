@@ -178,6 +178,20 @@ def weekly_sbc_model_formula(
     )
 
 
+def weekly_gaap_below_line_model_formula(
+    col: str,
+    *,
+    weekly_actual_row: int,
+    weekly_run_rate: float,
+    week_date_row: int = WEEK_DATE_ROW,
+) -> str:
+    """Passthrough spread actual (including negatives/zero); else flat weekly run-rate."""
+    return (
+        f"=IF(ISNUMBER({col}{weekly_actual_row}),{col}{weekly_actual_row},"
+        f'IF({col}${week_date_row}="","",{weekly_run_rate}))'
+    )
+
+
 def weekly_shares_formula(
     col: str,
     prev_col: str,
