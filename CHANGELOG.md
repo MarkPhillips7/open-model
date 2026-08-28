@@ -18,6 +18,43 @@ Entry template:
 
 ---
 
+## 2026-08-28 — Revert Chart Feed; restore charts to Weekly Financials
+
+Chart Feed repoint stripped legend/labels/colors via API partial spec. Undid: deleted **Chart Feed** tab; restored **Homes Chart** / **Money Chart** series to **Weekly Financials** (sheet id 0) with pre-change row indices and `headerCount` / `legendPosition`.
+
+- **Tab / range:** deleted **Chart Feed**; **Homes Chart** + **Money Chart** chart specs
+- **Insert/delete:** deleted **Chart Feed** sheet
+- **Formulas:** none
+- **Data:** none
+- **Side effects:**
+  - **Homes Chart** series → Weekly rows 2, 3, 8, 9, 11, 12, 14, 16 (domain row 1); 8 series restored
+  - **Money Chart** series → Weekly rows 17, 18, 35, 37 (domain row 1); share-count right axis restored
+  - `headerCount=1`, `legendPosition=RIGHT_LEGEND` set on both charts
+  - Removed `sheets/chart_feed.py`, `scripts/setup_chart_feed.py`; added `scripts/restore_charts.py`
+
+---
+
+## 2026-08-28 — Chart Feed tab (stable chart series) — **reverted**
+
+Charts previously referenced fixed row numbers on **Weekly Financials**; row inserts desynced series (wrong metric or missing line). Added **Chart Feed** with label-resolved `INDEX`/`MATCH` formulas and repointed both charts to fixed feed rows.
+
+- **Tab / range:** new **Chart Feed** `A1:DY11` (labels in A, formulas `B:DY` per row)
+- **Insert/delete:** none on Weekly / Quarterly
+- **Formulas:** per cell (example row 6 / Home Sales, column B):
+
+```
+=IFERROR(INDEX('Weekly Financials'!B:DY, MATCH($A6, 'Weekly Financials'!A:A, 0), 1), "")
+```
+
+  Same pattern with column index 1…128 across `B:DY`; copied for feed rows 1–11.
+- **Data:** column A labels — Week Ending (1), Acquisition Contracts (2), Acquisition Contracts - Model (3), New Listings (4), New Listings - Model (5), Home Sales (6), Home Sales - Model (7), Revenue (8), Revenue - Model (9), Basic Shares Outstanding (10), Basic Shares Outstanding - Model (11)
+- **Side effects:**
+  - **Homes Chart** series → Chart Feed rows 2–7 (domain row 1); dropped stale Homes Purchased series that had pointed at Weekly rows 8–9
+  - **Money Chart** series → Chart Feed rows 8–11 (domain row 1); share-count secondary axis preserved
+  - Repo: `sheets/chart_feed.py`, `scripts/setup_chart_feed.py`; README updated
+
+---
+
 ## 2026-08-28 — Fix New Listings - Model purchase lag input
 
 **New Listings - Model** was lagging **Homes Purchased** (actuals) instead of **Homes Purchased - Model**. Introduced in the 2026-08-28 label-placeholder refactor: old template used `$9:$9` (model row) but was mapped to `{Homes Purchased}`.

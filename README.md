@@ -65,6 +65,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 - **Homes Chart**: New Listings, New Listings - Model, Acquisition Contracts, Acquisition Contracts - Model, Home Sales, Home Sales - Model.
 - **Money Chart**: Revenue vs Revenue - Model.
 
+**Manual only.** Chart styling (colors, log scale, axes, legend) is set in the Google Sheets UI. Agents and scripts must not edit these charts via the API — automated updates strip settings. After row inserts on Weekly / Quarterly Financials, fix chart series ranges by hand if a line points at the wrong row.
+
 ---
 
 ## Key assumptions (as encoded)
