@@ -18,6 +18,18 @@ Entry template:
 
 ---
 
+## 2026-08-28 — Homes in Inventory - Model passthrough actual
+
+**Homes in Inventory - Model** now uses the published **Homes in Inventory** weekly value when present; otherwise it rolls forward from the prior week using actual-or-model purchases minus actual-or-model sales (unchanged fallback).
+
+- **Tab / range:** **Weekly Financials** `B41:DY41` (Homes in Inventory - Model)
+- **Insert/delete:** none
+- **Formulas:** `={prev}+if({col}8<>"",…,{col}9)−if({col}14<>"",…,{col}16)` → `=IF({col}40<>"",{col}40,{prev}+if({col}8<>"",…,{col}9)−if({col}14<>"",…,{col}16))`; `B41` anchor `3275` → `=IF(B40<>"",B40,3275)`
+- **Data:** none
+- **Side effects:** `sheets/weekly_model_formulas.py` — `inventory_model_formula()`; restored via `scripts/restore_weekly_model_formulas.py`
+
+---
+
 ## 2026-08-28 — Chart tab rename and series updates (manual)
 
 Renamed **Money Chart** → **Money Charts**; added a second chart and expanded **Homes Chart** series. Manual UI edits only (no agent/script chart API writes).

@@ -234,6 +234,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     ),
     "Homes in Inventory - Model": frozenset(
         {
+            "Homes in Inventory",
             "Homes Purchased",
             "Homes Purchased - Model",
             "Home Sales",
@@ -335,16 +336,24 @@ def inventory_model_formula(
     label_to_row: dict[str, int],
     inventory_row: int,
 ) -> str:
+    inventory_actual_row = label_to_row["Homes in Inventory"]
     purchases_row = label_to_row["Homes Purchased"]
     purchases_model_row = label_to_row["Homes Purchased - Model"]
     sales_row = label_to_row["Home Sales"]
     sales_model_row = label_to_row["Home Sales - Model"]
-    if col == "B":
-        return str(INVENTORY_MODEL_ANCHOR)
-    return (
-        f"={prev_col}{inventory_row}"
+    roll_forward = (
+        f"{prev_col}{inventory_row}"
         f"+if({col}{purchases_row}<>\"\",{col}{purchases_row},{col}{purchases_model_row})"
         f"-if({col}{sales_row}<>\"\",{col}{sales_row},{col}{sales_model_row})"
+    )
+    if col == "B":
+        return (
+            f"=IF(B{inventory_actual_row}<>\"\",B{inventory_actual_row},"
+            f"{INVENTORY_MODEL_ANCHOR})"
+        )
+    return (
+        f"=IF({col}{inventory_actual_row}<>\"\",{col}{inventory_actual_row},"
+        f"{roll_forward})"
     )
 
 
