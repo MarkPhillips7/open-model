@@ -18,6 +18,31 @@ Entry template:
 
 ---
 
+## 2026-08-29 — Ancillary products: mortgage, title, Doma refi
+
+Implemented ODL mortgage attach, purchase title/escrow CM, and separate Doma refi contribution per modeling recommendations.
+
+- **Tab / range:**
+  - **Transitions `A25:B30`** — ancillary unit-economics assumptions
+  - **Weekly Financials** — renamed **Open Title and Escrow (Doma) Percent** → **Open Title Purchase Percent** (row 40); inserted **Doma Refi Contribution - Model** before **Contribution Profit - Model** (row 21); restored formulas on CM stack, attach %, and profit rows
+  - **Quarterly Financials** — same rename (row 41); inserted **Doma Refi Contribution - Model** (row 22)
+- **Insert/delete:** 1 row before **Contribution Profit - Model** on Weekly + Quarterly
+- **Formulas:**
+  - **Open Mortgage Percent:** 0% before Jul 2026 → linear ramp 15%→45% by Jan 2028 (cap 50%)
+  - **Open Title Purchase Percent:** 0% before Jul 2026 → 95% forward
+  - **Contribution Margin - Mortgage:** `Open Mortgage Percent × Transitions!$B$25 ÷ ASP`
+  - **Contribution Margin - Title and Escrow:** `Open Title Purchase Percent × Transitions!$B$26 ÷ ASP`
+  - **Doma Refi Contribution - Model:** `Transitions!$B$28 × MIN(100, MAX(0, weeks since Apr 2026 × 1.5/wk))`
+  - **Contribution Profit - Model:** `Revenue × CM + Doma Refi Contribution`
+- **Data (`Transitions`):**
+  - B25 mortgage net $/loan **$2,000**
+  - B26 title net $/purchase close **$1,800**
+  - B28 Doma refi net $/close **$350**
+  - B29 Doma refi closings ramp **1.5/wk** (cap 100/wk in formula)
+- **Side effects:** Row insert may shift **Homes Chart** / **Money Charts** series — verify manually. Code: `sheets/ancillary_products.py`, `scripts/setup_ancillary_products.py`, `weekly_model_formulas.py`.
+
+---
+
 ## 2026-08-29 — Sync CM stack from live spreadsheet
 
 Pulled manual spreadsheet edits into git so the workbook is source of truth for CM seasonality and stack constants.

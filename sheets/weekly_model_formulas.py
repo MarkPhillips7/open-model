@@ -31,6 +31,19 @@ from sheets.cm_seasonality import (
     CM_SEASONALITY_SHEET,
     CM_SEASONALITY_VALUE_RANGE,
 )
+from sheets.ancillary_products import (
+    CM_MORTGAGE_LABEL,
+    CM_TITLE_LABEL,
+    DOMA_REFI_CONTRIBUTION_LABEL,
+    OPEN_MORTGAGE_PERCENT_LABEL,
+    OPEN_TITLE_PURCHASE_PERCENT_LABEL,
+    ASP_LABEL,
+    cm_mortgage_formula,
+    cm_title_formula,
+    doma_refi_contribution_formula,
+    open_mortgage_percent_formula,
+    open_title_purchase_percent_formula,
+)
 from sheets.shares_events import (
     SHARES_ADJUSTMENT_LABEL,
     weekly_share_adjustment_formula,
@@ -194,6 +207,7 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     ),
     "Contribution Profit - Model": (
         "={c}{Revenue - Model}*{c}{Contribution Margin - Model}"
+        "+{c}{Doma Refi Contribution - Model}"
     ),
     "Contribution Margin - Model": (
         "={c}{Contribution Margin - Core}+{c}{Contribution Margin - Mortgage}"
@@ -243,7 +257,11 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         {"Acquisition Contracts - no seasonality", "Seasonality Multiplier"}
     ),
     "Contribution Profit - Model": frozenset(
-        {"Revenue - Model", "Contribution Margin - Model"}
+        {
+            "Revenue - Model",
+            "Contribution Margin - Model",
+            DOMA_REFI_CONTRIBUTION_LABEL,
+        }
     ),
     "Contribution Margin - Model": frozenset(
         {
@@ -297,12 +315,22 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             SHARES_ADJUSTMENT_LABEL,
         }
     ),
+    OPEN_MORTGAGE_PERCENT_LABEL: frozenset(),
+    OPEN_TITLE_PURCHASE_PERCENT_LABEL: frozenset(),
+    CM_MORTGAGE_LABEL: frozenset({OPEN_MORTGAGE_PERCENT_LABEL, ASP_LABEL}),
+    CM_TITLE_LABEL: frozenset({OPEN_TITLE_PURCHASE_PERCENT_LABEL, ASP_LABEL}),
+    DOMA_REFI_CONTRIBUTION_LABEL: frozenset(),
 }
 
 MODEL_FORMULA_LABELS: tuple[str, ...] = (
     "Acquisition Contracts - Model",
     *UNIFORM_FORMULA_TEMPLATES.keys(),
     *COLUMN_RELATIVE_TEMPLATES.keys(),
+    OPEN_MORTGAGE_PERCENT_LABEL,
+    OPEN_TITLE_PURCHASE_PERCENT_LABEL,
+    CM_MORTGAGE_LABEL,
+    CM_TITLE_LABEL,
+    DOMA_REFI_CONTRIBUTION_LABEL,
     SBC_MODEL_LABEL,
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
     INTEREST_EXPENSE_MODEL_LABEL,
@@ -545,6 +573,32 @@ def row_cells_for_label(
                 )
             )
         return cells
+
+    if label == OPEN_MORTGAGE_PERCENT_LABEL:
+        return [open_mortgage_percent_formula(col_letter(col_idx + 2)) for col_idx in range(n_cols)]
+
+    if label == OPEN_TITLE_PURCHASE_PERCENT_LABEL:
+        return [
+            open_title_purchase_percent_formula(col_letter(col_idx + 2))
+            for col_idx in range(n_cols)
+        ]
+
+    if label == CM_MORTGAGE_LABEL:
+        return [
+            cm_mortgage_formula(col_letter(col_idx + 2), label_to_row=label_to_row)
+            for col_idx in range(n_cols)
+        ]
+
+    if label == CM_TITLE_LABEL:
+        return [
+            cm_title_formula(col_letter(col_idx + 2), label_to_row=label_to_row)
+            for col_idx in range(n_cols)
+        ]
+
+    if label == DOMA_REFI_CONTRIBUTION_LABEL:
+        return [
+            doma_refi_contribution_formula(col_letter(col_idx + 2)) for col_idx in range(n_cols)
+        ]
 
     return None
 

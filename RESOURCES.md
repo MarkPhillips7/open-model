@@ -32,8 +32,22 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 - Positive adjusted net income expected more from **volume + cost leverage** at a **~5–7% CM** target than from structurally higher unit margins.
 - Fixed opex called out for accountability; recent quarterly path cited as roughly **$37M → $35M → $33M → $35M** (Q3 2025–Q2 2026).
 - Acquisition contracts “typically close about a month later.”
+- Q2 2026: **>50%** of scheduled Colorado resale closes financed with Opendoor Home Loans; Texas **~20%** at ~6 weeks ([Q2 2026 earnings release](https://www.sec.gov/Archives/edgar/data/1801169/000180116926000019/q22026formxex991earningsre.htm)).
+- [Doma closing/escrow acquisition](https://www.opendoor.com/articles/doma-acquisition-complete) — Fannie Mae Title Acceptance refis; borrower savings cited **~$300–$1,500** / **~$1,100** per refi; modeled separately from home-sale CM.
 
-### Product / operations docs
+### Ancillary products (model assumptions)
+
+| Lever | Location | Default | Notes |
+| --- | --- | --- | --- |
+| Mortgage net $/attached loan | `Transitions!B25` | **$2,000** | CM add = **Open Mortgage Percent** × B25 ÷ ASP |
+| Title net $/purchase close | `Transitions!B26` | **$1,800** | CM add = **Open Title Purchase Percent** × B26 ÷ ASP |
+| ODL attach ramp | **Open Mortgage Percent** | 0% → 15% at Jul 2026 → 45% by Jan 2028 | Florida phased launch; cap 50% |
+| Title purchase attach | **Open Title Purchase Percent** | 95% from Jul 2026 | Purchase resales only |
+| Doma refi net $/close | `Transitions!B28` | **$350** | Not in home-sale CM |
+| Doma refi weekly closings | formula on **Doma Refi Contribution - Model** | ramp from Apr 2026 | Added to **Contribution Profit - Model** ($) |
+
+Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-rates-at-opendoor-are-so-much-lower), [Doma announcement](https://www.opendoor.com/articles/doma-announcement), MBA 2024 ~$443 net/loan (industry benchmark).
+
 
 - [Buyer closing & financing (Opendoor Help)](https://help.opendoor.com/buying/financing-closing/buyer-closing) — used for offer→close timing assumptions (financed ~30–45 days / ~6 weeks; cash as fast as ~14 days / ~3 weeks).
 

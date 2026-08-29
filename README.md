@@ -54,7 +54,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 ### Profitability stack
 
-- **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Adjustments (mortgage / title rows are stubs for attach-rate economics).
+- **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Seasonality + Adjustments. Mortgage/title CM rows = attach % × $/unit ÷ ASP (see **Transitions** ancillary assumptions).
+- **Doma Refi Contribution - Model** = weekly refi closings ramp × net $/close (not in home-sale CM); added to **Contribution Profit - Model**.
 - Core CM starts near low single digits and can step up via **Contribution Margin Improvement - Core**.
 - Near-term negative adjustments reflect older-cohort / inventory-clearing pressure called out in earnings commentary.
 - **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
@@ -89,6 +90,11 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Seasonality | Monthly weights summing via helper **73%** | Mimics national monthly sales seasonality. |
 | Acquisition growth (ops) | Weekly % ramp then fade | Growth / accountability scenarios. |
 | CM path | Core improving; temporary negative adjustments; guided mid-single digits | Matches earnings CM narrative (bottom Sept 2025, Q3 guide 4–4.5%, longer-term ~5–7%). |
+| Mortgage attach (ODL) | **0%** before Jul 2026 → ramp **15%→45%** by Jan 2028 (cap 50%) | Q2 2026: CO **>50%**, TX **~20%** on scheduled resale closes; FL phased launch. |
+| Mortgage $/attached loan | **$2,000** net (`Transitions!B25`) | Sensitivity ~$1k–$3.5k; CM add = attach × $/loan ÷ ASP. |
+| Title purchase attach | **0%** before Jul 2026 → **95%** forward | Internalized purchase title/escrow on resales (not Doma refi). |
+| Title $/purchase close | **$1,800** net savings (`Transitions!B26`) | CM add = attach × $/close ÷ ASP. |
+| Doma refi | From Apr 2026; **$350**/close net; closings ramp **1.5/wk** (cap 100/wk) | Fannie Title Acceptance refis — separate from home-sale revenue. |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |
 
 Where disclosure is missing, the sheet comments say so explicitly (likelihood to close, cash mix, some conversion totals).
