@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Refresh Seasonality tab CM Seasonal Adj row from sheets/cm_seasonality.py."""
+"""Push CM Seasonal Adj row from sheets/cm_seasonality.py to the spreadsheet.
+
+Prefer pull_cm_stack_from_sheet.py when the live workbook was edited manually.
+"""
 
 from __future__ import annotations
 

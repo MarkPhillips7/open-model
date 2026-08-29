@@ -43,16 +43,60 @@ GAAP_NET_INCOME_MODEL_LABEL = (
 
 INVENTORY_MODEL_ANCHOR = 3275
 
-CM_CORE_VALUES: dict[str, float] = {"B": 0.026, "C": 0.026, "D": 0.026, "E": 0.027}
+CM_CORE_VALUES: dict[str, float] = {"B": 0.038}
 CM_ADJUSTMENTS_VALUES: dict[str, float] = {
-    "B": -0.01,
-    "C": -0.01,
-    "D": -0.01,
+    "B": -0.03,
+    "C": -0.027,
+    "D": -0.025,
     "E": -0.013,
-    "F": -0.017,
-    "G": -0.02,
+    "F": -0.011,
+    "G": -0.009,
+    "H": -0.007,
+    "I": -0.005,
+    "J": -0.004,
+    "K": -0.003,
+    "L": -0.002,
+    "M": 0.0,
+    "N": 0.0,
+    "O": 0.0,
+    "P": 0.0,
+    "Q": 0.0,
+    "R": 0.0,
+    "S": 0.0,
+    "T": 0.0,
+    "U": 0.0,
+    "V": 0.0,
+    "W": 0.0,
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0,
+    "AA": -0.002,
+    "AB": -0.002,
+    "AC": -0.003,
+    "AD": -0.003,
+    "AE": -0.005,
+    "AF": -0.005,
+    "AG": -0.006,
+    "AH": -0.006,
+    "AI": -0.006,
+    "AJ": -0.007,
+    "AK": -0.008,
+    "AL": -0.008,
+    "AM": -0.008,
+    "AN": -0.008,
+    "AO": -0.008,
+    "AP": -0.007,
+    "AQ": -0.006,
 }
-CM_IMPROVEMENT_FROM_COL_F = 0.0005
+CM_IMPROVEMENT_ANCHORS: dict[str, float] = {
+    "F": 0.0001,
+    "U": 0.0002,
+    "AP": 0.0003,
+}
+# First column (0-based from B) with seasonality INDEX formula; B onward on live sheet.
+CM_SEASONALITY_FORMULA_FROM_COL_IDX = 0
+# First column (0-based from B) defaulting adjustments to 0 when not in CM_ADJUSTMENTS_VALUES.
+CM_ADJUSTMENTS_ZERO_FROM_COL_IDX = 42  # AR
 
 # {Label} → row number at restore time. Uses COLUMN() — same string in every column.
 UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
@@ -392,10 +436,15 @@ def cm_adjustments_cell(col: str) -> float | None:
     return CM_ADJUSTMENTS_VALUES.get(col)
 
 
-def cm_improvement_cell(col: str, col_idx: int) -> float | None:
-    if col_idx >= 5:
-        return CM_IMPROVEMENT_FROM_COL_F
-    return None
+def cm_improvement_cell(
+    col: str, col_idx: int, *, imp_row: int
+) -> str | float | None:
+    if col in CM_IMPROVEMENT_ANCHORS:
+        return CM_IMPROVEMENT_ANCHORS[col]
+    if col_idx < 4:
+        return None
+    prev_col = col_letter(col_idx + 1)
+    return f"={prev_col}{imp_row}"
 
 
 def row_cells_for_label(
@@ -526,10 +575,8 @@ def cm_stack_updates(
         seas_cells += [""] * (n_cols - len(seas_cells))
     for col_idx in range(n_cols):
         col = col_letter(col_idx + 2)
-        if col_idx >= 6:
+        if col_idx >= CM_SEASONALITY_FORMULA_FROM_COL_IDX:
             seas_cells[col_idx] = cm_seasonality_adjustments_formula(col)
-        elif not seas_cells[col_idx]:
-            seas_cells[col_idx] = 0
 
     adj_cells = list(existing.get(adj_row, [""] * n_cols))
     if len(adj_cells) < n_cols:
@@ -539,18 +586,17 @@ def cm_stack_updates(
         val = cm_adjustments_cell(col)
         if val is not None:
             adj_cells[col_idx] = val
-        elif col_idx >= 6:
+        elif col_idx >= CM_ADJUSTMENTS_ZERO_FROM_COL_IDX:
             adj_cells[col_idx] = 0
 
     imp_cells = list(existing.get(imp_row, [""] * n_cols))
     if len(imp_cells) < n_cols:
         imp_cells += [""] * (n_cols - len(imp_cells))
     for col_idx in range(n_cols):
-        val = cm_improvement_cell(col_letter(col_idx + 2), col_idx)
+        col = col_letter(col_idx + 2)
+        val = cm_improvement_cell(col, col_idx, imp_row=imp_row)
         if val is not None:
             imp_cells[col_idx] = val
-        elif col_idx >= 5:
-            imp_cells[col_idx] = CM_IMPROVEMENT_FROM_COL_F
 
     return {
         core_row: core_cells,

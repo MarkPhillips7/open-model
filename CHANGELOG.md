@@ -18,6 +18,23 @@ Entry template:
 
 ---
 
+## 2026-08-29 — Sync CM stack from live spreadsheet
+
+Pulled manual spreadsheet edits into git so the workbook is source of truth for CM seasonality and stack constants.
+
+- **Tab / range:** none (read-only pull from live sheet)
+- **Insert/delete:** none
+- **Formulas:** none on sheet
+- **Data synced into git:**
+  - **Seasonality `B6:M6`:** Jan `-1.00%` … Dec `-2.30%` (absolute monthly CM seasonal adj)
+  - **Weekly CM Core `B24`:** `3.8%` anchor (was `2.6%`)
+  - **Weekly CM Adjustments `B28:AQ28`:** inventory-clearing ramp through `AQ`, `0` from `AR`
+  - **Weekly CM Improvement anchors `F29`/`U29`/`AP29`:** `0.01%` / `0.02%` / `0.03%` with carry-forward
+  - **Seasonality row formula:** all weeks `B` onward (not only `H+`)
+- **Side effects:** `sheets/cm_seasonality.py`, `sheets/weekly_model_formulas.py`, `scripts/pull_cm_stack_from_sheet.py`; `sync_cm_seasonality_table.py` now documents push-only direction
+
+---
+
 ## 2026-08-29 — Retune CM monthly seasonality shape
 
 Second pass on **CM Seasonal Adj** monthly ramp: Feb↑ Mar↓, Apr↑ Jun↓ (Mar now below Apr), Jul↑ Sep↓; quarterly averages unchanged.
@@ -29,6 +46,8 @@ Second pass on **CM Seasonal Adj** monthly ramp: Feb↑ Mar↓, Apr↑ Jun↓ (M
 - **Side effects:** `sheets/cm_seasonality.py` — `CM_SEASONAL_MONTHLY_NUDGE_BPS` on home-sales baseline
 
 ---
+
+## 2026-08-28 — Smooth CM seasonality within quarters
 
 Monthly **CM Seasonal Adj** values now ramp within each quarter using U.S. home-sales seasonality (row 2) while preserving the same quarterly averages (+126 / +284 / -61 / -349 bps).
 

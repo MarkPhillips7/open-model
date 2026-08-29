@@ -36,9 +36,8 @@ def ensure_seasonality_table(client: SheetsClient, *, force_refresh: bool = Fals
     )
     ws.update(
         [[
-            "Ex-2023 quarterly CM mean deviation (bps): Q1 +126, Q2 +284, Q3 -61, Q4 -349. "
-            "Monthly values smooth within each quarter using U.S. home-sales seasonality "
-            "(row 2) while preserving quarterly averages. See sheets/cm_seasonality.py."
+            "Monthly CM seasonal adjustments (absolute %, not quarterly-mean deviation). "
+            "Spreadsheet is source of truth — run scripts/pull_cm_stack_from_sheet.py after edits."
         ]],
         range_name="A7",
         value_input_option="RAW",

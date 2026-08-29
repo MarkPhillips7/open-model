@@ -24,9 +24,21 @@
     "2026 Q2": 0.058
   },
   "seasonality_notes": {
-    "q2_to_q3_avg_bps_ex_2023": -517,
-    "management_q2_2026_comment_bps": -500,
-    "home_sales_seasonality_correlation": 0.088,
-    "calibration": "Monthly CM Seasonal Adj uses ex-2023 quarterly mean deviations (zero-sum over the year). Home Sales Percent seasonality is not used for CM — patterns diverge (CM peaks Q2, home sales peak late summer)."
+    "source": "Seasonality tab row 6 (CM Seasonal Adj); spreadsheet is source of truth",
+    "monthly_adj_decimal": {
+      "Jan": -0.01,
+      "Feb": 0.005,
+      "Mar": 0.017,
+      "Apr": 0.019,
+      "May": 0.022,
+      "Jun": 0.023,
+      "Jul": 0.01,
+      "Aug": -0.005,
+      "Sep": -0.014,
+      "Oct": -0.018,
+      "Nov": -0.023,
+      "Dec": -0.023
+    },
+    "pull_script": "scripts/pull_cm_stack_from_sheet.py"
   }
 }
