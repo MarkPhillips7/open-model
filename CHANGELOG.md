@@ -18,6 +18,46 @@ Entry template:
 
 ---
 
+## 2026-08-29 — Retune CM monthly seasonality shape
+
+Second pass on **CM Seasonal Adj** monthly ramp: Feb↑ Mar↓, Apr↑ Jun↓ (Mar now below Apr), Jul↑ Sep↓; quarterly averages unchanged.
+
+- **Tab / range:** **Seasonality** `B6:M6`, note `A7`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data (`B6:M6`, decimal):** Jan `0.0035`, Feb `0.0125`, Mar `0.0217`, Apr `0.0255`, May `0.0284`, Jun `0.0312`, Jul `-0.0019`, Aug `-0.0054`, Sep `-0.0109`, Oct `-0.0310`, Nov `-0.0347`, Dec `-0.0391`
+- **Side effects:** `sheets/cm_seasonality.py` — `CM_SEASONAL_MONTHLY_NUDGE_BPS` on home-sales baseline
+
+---
+
+Monthly **CM Seasonal Adj** values now ramp within each quarter using U.S. home-sales seasonality (row 2) while preserving the same quarterly averages (+126 / +284 / -61 / -349 bps).
+
+- **Tab / range:** **Seasonality** `B6:M6`, note `A7`
+- **Insert/delete:** none
+- **Formulas:** none (weekly `INDEX(Seasonality!$B$6:$M$6, MONTH(...))` unchanged)
+- **Data (`B6:M6`, decimal):** Jan `0.0029`, Feb `0.0099`, Mar `0.0249`, Apr `0.0217`, May `0.0287`, Jun `0.0347`, Jul `-0.0034`, Aug `-0.0044`, Sep `-0.0104`, Oct `-0.0316`, Nov `-0.0346`, Dec `-0.0386`
+- **Side effects:** `sheets/cm_seasonality.py` — `monthly_cm_seasonal_adj()`; `scripts/sync_cm_seasonality_table.py`
+
+---
+
+## 2026-08-28 — CM seasonality row and Seasonality tab CM table
+
+Isolated contribution margin seasonality from other CM adjustments. Historical quarterly CM since 2021 shows a distinct pattern from home-sales seasonality (CM peaks Q2; home sales peak late summer). Replaced flat **-2%** forward **Contribution Margin - Adjustments** values with a dedicated seasonality row driven by a new **Seasonality** table.
+
+- **Tab / range:** **Seasonality** `A6:M7`; **Weekly Financials** inserted row 27 (**Contribution Margin - Seasonality Adjustments**), `B27:DY27` (formula from H / week of 10/25/2025), `AR27:BE27` forward; **Contribution Margin - Adjustments** `H28:DY28` cleared from **-2%** → **0**; **Contribution Margin - Model** `B23:DY23` (`=core+mortgage+title+seasonality+adj`)
+- **Insert/delete:** **Weekly Financials** and **Quarterly Financials** — 1 row before **Contribution Margin - Adjustments** (weekly row 27, quarterly row 28)
+- **Formulas:**
+  - **Contribution Margin - Seasonality Adjustments:** `=INDEX(Seasonality!$B$6:$M$6, MONTH({col}$1))` from column H forward; B–G = 0
+  - **Contribution Margin - Model:** `=core+mortgage+title+adj` → `=core+mortgage+title+seasonality+adj`
+- **Data (Seasonality `B6:M6`, ex-2023 quarterly mean deviation from annual CM, decimal):**
+  - Jan–Mar: `0.0126` (+126 bps)
+  - Apr–Jun: `0.0284` (+284 bps)
+  - Jul–Sep: `-0.0061` (-61 bps)
+  - Oct–Dec: `-0.0349` (-349 bps)
+- **Side effects:** `data/contribution_margin_quarterly.json`, `sheets/cm_seasonality.py`, `scripts/add_cm_seasonality_row.py`; Q4 historical adj is inflated by 2022/2025 structural troughs — consider tuning `Seasonality!J6:L6` if forward Q4 should stay inside 5–7% at 6% core. Verify **Homes Chart** / **Money Charts** if CM model lines shifted.
+
+---
+
 ## 2026-08-28 — Homes in Inventory - Model passthrough actual
 
 **Homes in Inventory - Model** now uses the published **Homes in Inventory** weekly value when present; otherwise it rolls forward from the prior week using actual-or-model purchases minus actual-or-model sales (unchanged fallback).

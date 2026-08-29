@@ -26,6 +26,11 @@ from sheets.gaap_below_the_line import (
     OTHER_INCOME_MODEL_LABEL,
     OTHER_INCOME_WEEKLY_RUN_RATE,
 )
+from sheets.cm_seasonality import (
+    CM_SEASONALITY_ADJUSTMENTS_LABEL,
+    CM_SEASONALITY_SHEET,
+    CM_SEASONALITY_VALUE_RANGE,
+)
 from sheets.shares_events import (
     SHARES_ADJUSTMENT_LABEL,
     weekly_share_adjustment_formula,
@@ -148,7 +153,9 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     ),
     "Contribution Margin - Model": (
         "={c}{Contribution Margin - Core}+{c}{Contribution Margin - Mortgage}"
-        "+{c}{Contribution Margin - Title and Escrow}+{c}{Contribution Margin - Adjustments}"
+        "+{c}{Contribution Margin - Title and Escrow}"
+        "+{c}{Contribution Margin - Seasonality Adjustments}"
+        "+{c}{Contribution Margin - Adjustments}"
     ),
     "Adjusted Operating Expenses - Model": (
         "={c}{Fixed Costs - Model}+(15000000/13)"
@@ -199,6 +206,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             "Contribution Margin - Core",
             "Contribution Margin - Mortgage",
             "Contribution Margin - Title and Escrow",
+            "Contribution Margin - Seasonality Adjustments",
             "Contribution Margin - Adjustments",
         }
     ),
@@ -373,6 +381,13 @@ def cm_core_cell(
     )
 
 
+def cm_seasonality_adjustments_formula(col: str) -> str:
+    return (
+        f"=INDEX('{CM_SEASONALITY_SHEET}'!{CM_SEASONALITY_VALUE_RANGE}, "
+        f"MONTH({col}$1))"
+    )
+
+
 def cm_adjustments_cell(col: str) -> float | None:
     return CM_ADJUSTMENTS_VALUES.get(col)
 
@@ -492,6 +507,7 @@ def cm_stack_updates(
     existing: dict[int, list],
 ) -> dict[int, list]:
     core_row = label_to_row["Contribution Margin - Core"]
+    seas_row = label_to_row[CM_SEASONALITY_ADJUSTMENTS_LABEL]
     adj_row = label_to_row["Contribution Margin - Adjustments"]
     imp_row = label_to_row["Contribution Margin Improvement - Core"]
 
@@ -505,6 +521,16 @@ def cm_stack_updates(
             col, prev_col, core_row=core_row, improvement_row=imp_row
         )
 
+    seas_cells = list(existing.get(seas_row, [""] * n_cols))
+    if len(seas_cells) < n_cols:
+        seas_cells += [""] * (n_cols - len(seas_cells))
+    for col_idx in range(n_cols):
+        col = col_letter(col_idx + 2)
+        if col_idx >= 6:
+            seas_cells[col_idx] = cm_seasonality_adjustments_formula(col)
+        elif not seas_cells[col_idx]:
+            seas_cells[col_idx] = 0
+
     adj_cells = list(existing.get(adj_row, [""] * n_cols))
     if len(adj_cells) < n_cols:
         adj_cells += [""] * (n_cols - len(adj_cells))
@@ -513,8 +539,8 @@ def cm_stack_updates(
         val = cm_adjustments_cell(col)
         if val is not None:
             adj_cells[col_idx] = val
-        elif col_idx >= 7:
-            adj_cells[col_idx] = -0.02
+        elif col_idx >= 6:
+            adj_cells[col_idx] = 0
 
     imp_cells = list(existing.get(imp_row, [""] * n_cols))
     if len(imp_cells) < n_cols:
@@ -526,4 +552,9 @@ def cm_stack_updates(
         elif col_idx >= 5:
             imp_cells[col_idx] = CM_IMPROVEMENT_FROM_COL_F
 
-    return {core_row: core_cells, adj_row: adj_cells, imp_row: imp_cells}
+    return {
+        core_row: core_cells,
+        seas_row: seas_cells,
+        adj_row: adj_cells,
+        imp_row: imp_cells,
+    }

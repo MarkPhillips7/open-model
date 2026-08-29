@@ -39,6 +39,7 @@ def restore_model_formulas(client: SheetsClient) -> None:
 
     cm_labels = (
         "Contribution Margin - Core",
+        "Contribution Margin - Seasonality Adjustments",
         "Contribution Margin - Adjustments",
         "Contribution Margin Improvement - Core",
     )

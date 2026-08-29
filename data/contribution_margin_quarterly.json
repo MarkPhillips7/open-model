@@ -1,0 +1,32 @@
+{
+  "source": "Opendoor earnings supplements (SEC ex 99.3) and quarterly reports",
+  "metric": "Contribution Margin",
+  "quarters": {
+    "2021 Q3": 0.075,
+    "2021 Q4": 0.04,
+    "2022 Q1": 0.064,
+    "2022 Q2": 0.101,
+    "2022 Q3": -0.007,
+    "2022 Q4": -0.072,
+    "2023 Q1": -0.077,
+    "2023 Q2": -0.046,
+    "2023 Q3": 0.044,
+    "2023 Q4": 0.034,
+    "2024 Q1": 0.048,
+    "2024 Q2": 0.063,
+    "2024 Q3": 0.038,
+    "2024 Q4": 0.035,
+    "2025 Q1": 0.047,
+    "2025 Q2": 0.044,
+    "2025 Q3": 0.022,
+    "2025 Q4": 0.01,
+    "2026 Q1": 0.044,
+    "2026 Q2": 0.058
+  },
+  "seasonality_notes": {
+    "q2_to_q3_avg_bps_ex_2023": -517,
+    "management_q2_2026_comment_bps": -500,
+    "home_sales_seasonality_correlation": 0.088,
+    "calibration": "Monthly CM Seasonal Adj uses ex-2023 quarterly mean deviations (zero-sum over the year). Home Sales Percent seasonality is not used for CM — patterns diverge (CM peaks Q2, home sales peak late summer)."
+  }
+}
