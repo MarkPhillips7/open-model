@@ -94,7 +94,7 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Mortgage $/attached loan | **$2,000** net (`Transitions!B25`) | Sensitivity ~$1k–$3.5k; CM add = attach × $/loan ÷ ASP. |
 | Title purchase attach | **0%** before Jul 2026 → **95%** forward | Internalized purchase title/escrow on resales (not Doma refi). |
 | Title $/purchase close | **$1,800** net savings (`Transitions!B26`) | CM add = attach × $/close ÷ ASP. |
-| Doma refi | From Apr 2026; **$350**/close net; closings ramp **1.5/wk** (cap 100/wk) | Fannie Title Acceptance refis — separate from home-sale revenue. |
+| Doma refi | From Apr 2026; **$350**/close net (`Transitions!B28`); ramp **1.5/wk** (`B29`, cap 100/wk) | Fannie Title Acceptance refis — separate from home-sale revenue. |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |
 
 Where disclosure is missing, the sheet comments say so explicitly (likelihood to close, cash mix, some conversion totals).

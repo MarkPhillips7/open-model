@@ -8,6 +8,7 @@ TRANSITIONS = "Transitions"
 MORTGAGE_NET_PROFIT_PER_LOAN_CELL = f"{TRANSITIONS}!$B$25"
 TITLE_NET_SAVINGS_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$26"
 DOMA_REFI_NET_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$28"
+DOMA_REFI_WEEKLY_CLOSINGS_RAMP_CELL = f"{TRANSITIONS}!$B$29"
 
 MORTGAGE_NET_PROFIT_PER_LOAN = 2000
 TITLE_NET_SAVINGS_PER_CLOSE = 1800
@@ -41,7 +42,6 @@ TRANSITIONS_ANCILLARY_ROWS: list[tuple[str, str | int | float]] = [
     ("Mortgage net profit per attached loan ($)", MORTGAGE_NET_PROFIT_PER_LOAN),
     ("Title net savings per purchase close ($)", TITLE_NET_SAVINGS_PER_CLOSE),
     ("", ""),
-    ("Doma refi (separate from home-sale CM)", ""),
     ("Doma refi net per close ($)", DOMA_REFI_NET_PER_CLOSE),
     (
         "Doma refi weekly closings ramp (/wk per wk from start)",
@@ -90,5 +90,5 @@ def doma_refi_contribution_formula(col: str) -> str:
         f'=IF({col}$1="","",IF({col}$1<{DOMA_REFI_START_DATE},0,'
         f"{DOMA_REFI_NET_PER_CLOSE_CELL}*MIN({DOMA_REFI_WEEKLY_CLOSINGS_CAP},"
         f"MAX(0,({col}$1-{DOMA_REFI_START_DATE})/7*"
-        f"{DOMA_REFI_WEEKLY_CLOSINGS_RAMP_PER_WEEK}))))"
+        f"{DOMA_REFI_WEEKLY_CLOSINGS_RAMP_CELL}))))"
     )

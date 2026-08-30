@@ -44,7 +44,7 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 | ODL attach ramp | **Open Mortgage Percent** | 0% → 15% at Jul 2026 → 45% by Jan 2028 | Florida phased launch; cap 50% |
 | Title purchase attach | **Open Title Purchase Percent** | 95% from Jul 2026 | Purchase resales only |
 | Doma refi net $/close | `Transitions!B28` | **$350** | Not in home-sale CM |
-| Doma refi weekly closings | formula on **Doma Refi Contribution - Model** | ramp from Apr 2026 | Added to **Contribution Profit - Model** ($) |
+| Doma refi weekly closings ramp | `Transitions!B29` | **1.5**/wk (cap 100/wk in formula) | Weeks since Apr 2026 × B29; added on **Doma Refi Contribution - Model** |
 
 Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-rates-at-opendoor-are-so-much-lower), [Doma announcement](https://www.opendoor.com/articles/doma-announcement), MBA 2024 ~$443 net/loan (industry benchmark).
 

@@ -43,6 +43,18 @@ Implemented ODL mortgage attach, purchase title/escrow CM, and separate Doma ref
 
 ---
 
+## 2026-08-30 — Fix Doma refi Transitions row alignment
+
+Removed section-header row that left **B28** blank; Doma inputs now match formula cell refs. Ramp reads **B29** instead of a hardcoded constant.
+
+- **Tab / range:** **Transitions `A25:B29`**; **Doma Refi Contribution - Model** (weekly + quarterly)
+- **Insert/delete:** none
+- **Formulas:** `… × Transitions!$B$29` (was hardcoded `1.5`) for weekly closings ramp
+- **Data:** B28 **$350** net/close; B29 **1.5** closings/wk ramp; cleared stale **A30:B30**
+- **Side effects:** none on charts
+
+---
+
 ## 2026-08-29 — Sync CM stack from live spreadsheet
 
 Pulled manual spreadsheet edits into git so the workbook is source of truth for CM seasonality and stack constants.

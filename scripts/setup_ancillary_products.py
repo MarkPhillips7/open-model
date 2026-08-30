@@ -25,8 +25,11 @@ def write_transitions_assumptions(client: SheetsClient) -> None:
     ws = client.worksheet(TRANSITIONS)
     start_row = 25
     values = [[label, value] for label, value in TRANSITIONS_ANCILLARY_ROWS]
-    ws.update(values, range_name=f"A{start_row}:B{start_row + len(values) - 1}", value_input_option="RAW")
-    print(f"{TRANSITIONS}: wrote ancillary assumptions A{start_row}:B{start_row + len(values) - 1}")
+    end_row = start_row + len(values) - 1
+    ws.update(values, range_name=f"A{start_row}:B{end_row}", value_input_option="RAW")
+    # Clear stale row from prior layout (section header pushed Doma inputs to B29:B30).
+    ws.batch_clear([f"A{end_row + 1}:B{end_row + 1}"])
+    print(f"{TRANSITIONS}: wrote ancillary assumptions A{start_row}:B{end_row}")
 
 
 def rename_title_attach_label(client: SheetsClient) -> None:
