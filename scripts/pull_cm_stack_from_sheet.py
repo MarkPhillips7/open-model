@@ -58,10 +58,12 @@ def _replace_block(path: Path, start_marker: str, end_marker: str, new_block: st
 
 
 def pull_seasonality_monthly(client: SheetsClient) -> list[float]:
-    row = client.read_range(CM_SEASONALITY_SHEET, "A6:M6")[0]
-    if row[0] != CM_SEASONALITY_ROW_LABEL:
-        raise ValueError(f"Expected {CM_SEASONALITY_ROW_LABEL!r} in Seasonality!A6, got {row[0]!r}")
-    return [float(v) for v in row[1:]]
+    ws = client.worksheet(CM_SEASONALITY_SHEET)
+    label_cell = ws.get("A6", value_render_option="UNFORMATTED_VALUE")[0][0]
+    if label_cell != CM_SEASONALITY_ROW_LABEL:
+        raise ValueError(f"Expected {CM_SEASONALITY_ROW_LABEL!r} in Seasonality!A6, got {label_cell!r}")
+    row = ws.get("B6:M6", value_render_option="UNFORMATTED_VALUE")[0]
+    return [float(v) for v in row]
 
 
 def pull_weekly_cm_stack(client: SheetsClient) -> tuple[dict[str, float], dict[str, float], dict[str, float]]:
@@ -110,16 +112,11 @@ def pull_weekly_cm_stack(client: SheetsClient) -> tuple[dict[str, float], dict[s
 
 
 def write_cm_seasonality(monthly: list[float]) -> None:
-    block = (
-        "# Seasonality!B6:M6 (UNFORMATTED). Spreadsheet is source of truth; run\n"
-        "# scripts/pull_cm_stack_from_sheet.py to refresh from the live workbook.\n"
-        + _format_monthly_tuple(monthly)
-    )
     _replace_block(
         CM_SEASONALITY,
         "CM_SEASONAL_ADJ_BY_MONTH: tuple[float, ...] = (",
         ")",
-        block,
+        _format_monthly_tuple(monthly),
     )
 
 

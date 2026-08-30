@@ -18,6 +18,32 @@ Entry template:
 
 ---
 
+## 2026-08-30 — Sync repo from live spreadsheet (manual edits)
+
+Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.
+
+- **Tab / range:** read-only pull from live sheet (no sheet writes)
+- **Insert/delete:** none detected beyond prior ancillary-product row shifts already on the sheet
+- **Formulas:** model-row templates still align (`validate_model_formulas.py` passed)
+- **Data synced into git:**
+  - **Workbook snapshot:** chart series rows updated for row shifts — Homes Chart inventory **42/43** (was 40/41); Money Charts shares **37/39** (was 35/37), Contribution Profit - Model **22** (was 21), Adjusted/GAAP net income **49/56–58** (was 47/54–56)
+  - **CM stack:** explicit **AR:DY** adjustment zeros on live sheet pulled into `CM_ADJUSTMENTS_VALUES`; seasonality monthly values unchanged
+- **Side effects:** `scripts/pull_cm_stack_from_sheet.py` now reads Seasonality with `UNFORMATTED_VALUE` (percent-formatted display no longer breaks pull)
+
+---
+
+## 2026-08-30 — Fix Doma refi Transitions row alignment
+
+Removed section-header row that left **B28** blank; Doma inputs now match formula cell refs. Ramp reads **B29** instead of a hardcoded constant.
+
+- **Tab / range:** **Transitions `A25:B29`**; **Doma Refi Contribution - Model** (weekly + quarterly)
+- **Insert/delete:** none
+- **Formulas:** `… × Transitions!$B$29` (was hardcoded `1.5`) for weekly closings ramp
+- **Data:** B28 **$350** net/close; B29 **1.5** closings/wk ramp; cleared stale **A30:B30**
+- **Side effects:** none on charts
+
+---
+
 ## 2026-08-29 — Ancillary products: mortgage, title, Doma refi
 
 Implemented ODL mortgage attach, purchase title/escrow CM, and separate Doma refi contribution per modeling recommendations.
@@ -40,18 +66,6 @@ Implemented ODL mortgage attach, purchase title/escrow CM, and separate Doma ref
   - B28 Doma refi net $/close **$350**
   - B29 Doma refi closings ramp **1.5/wk** (cap 100/wk in formula)
 - **Side effects:** Row insert may shift **Homes Chart** / **Money Charts** series — verify manually. Code: `sheets/ancillary_products.py`, `scripts/setup_ancillary_products.py`, `weekly_model_formulas.py`.
-
----
-
-## 2026-08-30 — Fix Doma refi Transitions row alignment
-
-Removed section-header row that left **B28** blank; Doma inputs now match formula cell refs. Ramp reads **B29** instead of a hardcoded constant.
-
-- **Tab / range:** **Transitions `A25:B29`**; **Doma Refi Contribution - Model** (weekly + quarterly)
-- **Insert/delete:** none
-- **Formulas:** `… × Transitions!$B$29` (was hardcoded `1.5`) for weekly closings ramp
-- **Data:** B28 **$350** net/close; B29 **1.5** closings/wk ramp; cleared stale **A30:B30**
-- **Side effects:** none on charts
 
 ---
 
