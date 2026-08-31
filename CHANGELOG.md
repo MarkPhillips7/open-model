@@ -18,6 +18,44 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Stale sheet comments + quarterly Doma label
+
+Corrected notes that no longer matched formulas after private-sales and Doma row changes.
+
+- **Tab / range:** **Transitions** `A5`, `B6`, `A23`, `B23`; **Weekly Financials** `A18`; **Quarterly Financials** `A30`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** **Quarterly Financials** `A30` label **Doma Refi Contribution - Model** → **Doma Refi Profit - Model** (matches weekly)
+- **Notes:**
+  - **Transitions A5:** replaced stale “no longer used / acquisitions canceled” text → documents **OPEN 1.0** listing timing for **New Listings - 1.0 Model** (not private sales)
+  - **Transitions B6:** cleared — model uses weekly `(1 − Likelihood to List)`, not `B6`
+  - **Transitions A23 / B23:** removed `B6` private-share references; timing-only curve for **Private Home Sales - Model**
+  - **Weekly A18:** `B6 × purchases × row 5` → `(1 − Likelihood to List) × purchases × **row 23**`
+- **Side effects:** none
+
+### Repo
+
+- **`README.md`** — assumptions table: row 5 scope, private share via L2L not `B6`
+
+---
+
+## 2026-08-31 — Private Home Sales: purchase→close curve row 23 (not row 5)
+
+**Private Home Sales - Model** was lagging never-listed purchases on **OPEN 1.0 listing timing** (`Transitions!B5:J5`). It now uses the dedicated **purchase→private-close** curve on row 23 (`Percent of Private Completions Sold by Week`).
+
+- **Tab / range:** **Weekly Financials** `B18:DY18` (**Private Home Sales - Model**)
+- **Insert/delete:** none
+- **Formulas:** lag weights `Transitions!$B$5:$J$5` → `Transitions!$B$23:$J$23` (purchases × `(1 − Likelihood to List)` unchanged)
+- **Data:** none
+- **Side effects:** none (charts unchanged)
+
+### Repo
+
+- **`sheets/open_transition.py`** — `PRIVATE_CLOSE_ROW = 23`, `PRIVATE_CLOSE_BY_WEEK`; `private_home_sales_model_formula()` default lag row **23**
+- **`README.md`**, **`RESOURCES.md`** — private-sale timing docs
+
+---
+
 ## 2026-08-31 — Doma Refi Profit row: compound formulas AT:DY
 
 Manual fix on live sheet: **AT29:DY29** were hardcoded dollar values from the revision-2866 recovery; replaced with week-over-week compound formulas (`=prev29*col28`).

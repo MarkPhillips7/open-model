@@ -10,6 +10,7 @@ OPEN_1_0_SOLD_WEEKS = 39
 # Transitions row layout after setup_open_transition.py (4 rows inserted below row 12).
 OPEN_2_0_LISTING_ROW = 4
 OPEN_1_0_LISTING_ROW = 5
+PRIVATE_CLOSE_ROW = 23
 OPEN_2_0_SOLD_ROW = 10
 OPEN_2_0_RETENTION_ROW = 12
 OPEN_1_0_SOLD_ROW = 14
@@ -43,6 +44,19 @@ OPEN_1_0_LISTING_BY_WEEK: list[float] = [
     0.2,
     0.13,
     0.07,
+]
+
+# Never-listed purchases → private close (Transitions row 23; mean lag ≈ 6.1 weeks).
+PRIVATE_CLOSE_BY_WEEK: list[float] = [
+    0,
+    0.02,
+    0.06,
+    0.12,
+    0.18,
+    0.2,
+    0.18,
+    0.14,
+    0.1,
 ]
 
 # ~51% cumulative sell-through by week 17; tail extended to week 39 (sums to 100%).
@@ -211,8 +225,8 @@ def blend_model_formula(
     )
 
 
-def private_home_sales_model_formula(*, lag_row: int = OPEN_1_0_LISTING_ROW) -> str:
-    """Non-listed share of purchases, lagged on the 1.0 purchase→listing timing curve."""
+def private_home_sales_model_formula(*, lag_row: int = PRIVATE_CLOSE_ROW) -> str:
+    """Non-listed share of purchases, lagged on purchase→private-close timing (row 23)."""
     return f"""=(SUMPRODUCT(
   MAP(SEQUENCE(1,9), LAMBDA(lag,
     LET(

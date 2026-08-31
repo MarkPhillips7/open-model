@@ -47,8 +47,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × seasonality × weekly operational growth.
 2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row.
-3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B21`, default 450) draining on row 23. Complements private sales via Likelihood to List / `B6`.
-4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (~21 weeks) **+** private sales. Private sales = lagged purchases × `B6` × **Percent of Private Completions Sold by Week** (9-week purchase→close curve).
+3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B25`, default 450) draining on row 27. Never-listed share is `(1 − Likelihood to List)` on the weekly row (not a fixed Transitions %).
+4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (~21 weeks) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
 5. **Revenue** — Listed path = listings × ASP × sell-through × **price retention**, split by cash vs financed close lags. Private path = that week’s private sales × ASP (close already in the private curve; no DOM decay).
 6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present).
 
@@ -82,10 +82,10 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Likelihood to Close (per contract week) | **78%** in 2025 → **67%** from Q2 2026 (Q1 2026 interpolates) | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit `B8` / `AE8`. |
 | Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
 | OPEN 1.0 → 2.0 transition | **0%** at Feb 2026 → **100%** by Jan 2027 | Blends listing / sales / revenue models between **OPEN 1.0** (pre-Kaz DOM ~51% @ 120d) and **OPEN 2.0** curves on **Transitions**. Edit completeness row or 1.0/2.0 sub-model rows. |
-| Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. **2.0** listing lag: `Transitions` row 4; **1.0**: row 5. |
-| Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B21` / `B23:I23`. Does not add to purchases. |
-| Private / non-listed completions | ~**25%** (`Transitions!B6`; model uses **1 − Likelihood to List** on row 10) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
-| Private sale timing (purchase → close) | 9 weeks on **1.0 listing lag** (`Transitions!B5:J5`) | Non-listed share uses the pre-Kaz purchase→listing curve; edit row 5. |
+| Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | **2.0** listing lag: `Transitions` row 4; **1.0**: row 5 (New Listings - 1.0 Model only). |
+| Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B25` / `B27:I27`. Does not add to purchases. |
+| Private / non-listed completions | **`1 − Likelihood to List`** on weekly row 10 | Share of purchases that never list. Feeds **Private Home Sales - Model** (not `Transitions!B6`, which is unused). |
+| Private sale timing (purchase → close) | 9 weeks (`Transitions!B23:J23`) | Never-listed share lagged on **Percent of Private Completions Sold by Week**; edit row 23. |
 | Listing → sale curve | ~21 weeks; ~**91%** by ~120 days (2.0) | Calibrated to Q2 2026 DOM commentary. **1.0** path ~**51%** by week 17, **100%** by week **39** (~9 months) on `Transitions` rows 13–16. |
 | Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
 | Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |
