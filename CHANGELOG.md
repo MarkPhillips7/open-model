@@ -18,6 +18,22 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Sync repo from live spreadsheet (manual edits, pass 2)
+
+Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.
+
+- **Tab / range:** read-only pull from live sheet (no sheet writes)
+- **Insert/delete:** none
+- **Formulas:** none (templates still align; `validate_model_formulas.py` passed)
+- **Data synced into git:**
+  - **Seasonality B6:M6:** CM seasonal adj monthly weights updated (Feb +0.003, Mar +0.013, etc.)
+  - **Weekly Financials CM stack:** `pull_cm_stack_from_sheet.py` — adjustments **AU:AZ** extended at **-0.7%**; improvement anchors **BC**/**BE**/**BS** updated
+  - **Transitions row 5:** OPEN 1.0 listing curve — week 1 **0%**, revised weeks 2–9 (peak **22%** wk 6; **20%** wk 7)
+  - **Transitions rows 13–14:** OPEN 1.0 sell-through multipliers (wk 4 **94%**; wks 18–38 **99.5%**; wk 39 **92%**) and recalculated weekly sold rates
+- **Side effects:** `config/workbook_snapshot.json` unchanged; ancillary **B29:B33** unchanged
+
+---
+
 ## 2026-08-31 — Sync repo from live spreadsheet (manual edits)
 
 Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.

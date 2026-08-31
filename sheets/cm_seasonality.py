@@ -6,17 +6,17 @@ from __future__ import annotations
 # scripts/pull_cm_stack_from_sheet.py to refresh from the live workbook.
 CM_SEASONAL_ADJ_BY_MONTH: tuple[float, ...] = (
     -0.01,
-    0.005,
+    0.003,
+    0.013,
     0.017,
-    0.019,
-    0.022,
-    0.023,
-    0.01,
-    -0.005,
-    -0.014,
-    -0.018,
-    -0.023,
-    -0.023,
+    0.02,
+    0.021,
+    0.011,
+    -0.003,
+    -0.013,
+    -0.017,
+    -0.021,
+    -0.021,
 )
 
 CM_SEASONALITY_ROW_LABEL = "CM Seasonal Adj"
