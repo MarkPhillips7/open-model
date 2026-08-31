@@ -7,9 +7,7 @@ TRANSITIONS = "Transitions"
 # Unit economics on Transitions (spreadsheet is source of truth after setup).
 MORTGAGE_NET_PROFIT_PER_LOAN_CELL = f"{TRANSITIONS}!$B$29"
 TITLE_NET_SAVINGS_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$30"
-# Legacy weekly Doma formulas still reference these cells; inputs removed from Transitions.
-DOMA_REFI_NET_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$32"
-DOMA_REFI_WEEKLY_CLOSINGS_RAMP_CELL = f"{TRANSITIONS}!$B$33"
+# Manual Doma row cells live in sheets/doma_manual_cells.py (not Transitions-driven).
 
 MORTGAGE_NET_PROFIT_PER_LOAN = 4000
 TITLE_NET_SAVINGS_PER_CLOSE = 2400
@@ -34,11 +32,6 @@ MORTGAGE_ATTACH_PHASE4_END = "DATE(2029,1,2)"
 
 TITLE_PURCHASE_ATTACH_START_DATE = "DATE(2025,1,1)"
 TITLE_PURCHASE_ATTACH_END_DATE = "DATE(2027,6,1)"
-
-DOMA_REFI_START_DATE = "DATE(2026,4,1)"
-DOMA_REFI_WEEKLY_CLOSINGS_CAP = 100
-
-DOMA_GROWTH_MULTIPLIER_SEED = 0
 
 TRANSITIONS_ANCILLARY_ROWS: list[tuple[str, str | int | float]] = [
     ("Max Mortgage net contribution profit per attached loan ($)", MORTGAGE_NET_PROFIT_PER_LOAN),
@@ -89,27 +82,3 @@ def cm_title_formula(col: str, *, label_to_row: dict[str, int]) -> str:
         f'=IF(OR(N({col}{asp})=0,N({col}{attach})=0),"",'
         f"{col}{attach}*{TITLE_NET_SAVINGS_PER_CLOSE_CELL}/{col}{asp})"
     )
-
-
-def doma_refi_base_formula(col: str) -> str:
-    return (
-        f'=IF({col}$1="","",IF({col}$1<{DOMA_REFI_START_DATE},0,'
-        f"{DOMA_REFI_NET_PER_CLOSE_CELL}*MIN({DOMA_REFI_WEEKLY_CLOSINGS_CAP},"
-        f"MAX(0,({col}$1-{DOMA_REFI_START_DATE})/7*"
-        f"{DOMA_REFI_WEEKLY_CLOSINGS_RAMP_CELL}))))"
-    )
-
-
-def doma_growth_multiplier_cell(col: str, prev_col: str, *, label_to_row: dict[str, int]) -> str | float:
-    if col == "B":
-        return DOMA_GROWTH_MULTIPLIER_SEED
-    mult_row = label_to_row[DOMA_GROWTH_MULTIPLIER_LABEL]
-    return f"={prev_col}{mult_row}"
-
-
-def doma_refi_profit_formula(col: str, prev_col: str, *, label_to_row: dict[str, int]) -> str:
-    if col == "B":
-        return doma_refi_base_formula(col)
-    profit_row = label_to_row[DOMA_REFI_PROFIT_LABEL]
-    mult_row = label_to_row[DOMA_GROWTH_MULTIPLIER_LABEL]
-    return f"={prev_col}{profit_row}*{col}{mult_row}"

@@ -54,8 +54,6 @@ from sheets.ancillary_products import (
     ASP_LABEL,
     cm_mortgage_formula,
     cm_title_formula,
-    doma_growth_multiplier_cell,
-    doma_refi_profit_formula,
     open_mortgage_percent_formula,
     open_title_purchase_percent_formula,
 )
@@ -64,6 +62,7 @@ from sheets.shares_events import (
     weekly_share_adjustment_formula,
     weekly_shares_model_formula,
 )
+from sheets.doma_manual_cells import DOMA_GROWTH_MULTIPLIER_CELLS, DOMA_REFI_PROFIT_CELLS
 from sheets.open_transition import (
     HOME_SALES_1_0_MODEL_LABEL,
     HOME_SALES_2_0_MODEL_LABEL,
@@ -805,24 +804,10 @@ def row_cells_for_label(
         ]
 
     if label == DOMA_GROWTH_MULTIPLIER_LABEL:
-        cells: list[str | float] = []
-        for col_idx in range(n_cols):
-            col = col_letter(col_idx + 2)
-            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
-            cells.append(
-                doma_growth_multiplier_cell(col, prev_col, label_to_row=label_to_row)
-            )
-        return cells
+        return list(DOMA_GROWTH_MULTIPLIER_CELLS[:n_cols])
 
     if label == DOMA_REFI_PROFIT_LABEL:
-        cells = []
-        for col_idx in range(n_cols):
-            col = col_letter(col_idx + 2)
-            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
-            cells.append(
-                doma_refi_profit_formula(col, prev_col, label_to_row=label_to_row)
-            )
-        return cells
+        return list(DOMA_REFI_PROFIT_CELLS[:n_cols])
 
     return None
 

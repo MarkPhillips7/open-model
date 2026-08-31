@@ -18,6 +18,41 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Doma Refi Profit row: compound formulas AT:DY
+
+Manual fix on live sheet: **AT29:DY29** were hardcoded dollar values from the revision-2866 recovery; replaced with week-over-week compound formulas (`=prev29*col28`).
+
+- **Tab / range:** **Weekly Financials** `AT29:DY29`
+- **Insert/delete:** none
+- **Formulas:** hardcoded $ (e.g. AT **14884**) → `=AS29*AT28` (template copied through **DY** as `=prev29*col28`)
+- **Data:** **AR29** remains **$10,000** seed; **AS29** unchanged (`=AR29*AS28`)
+- **Side effects:** repo-only sync (`sheets/doma_manual_cells.py`); live sheet already correct
+
+### Repo
+
+- **`sheets/doma_manual_cells.py`** — **DOMA_REFI_PROFIT_CELLS** AT:DY now formulas
+
+---
+
+## 2026-08-31 — Restore manual Doma Growth Multiplier and Refi Profit rows
+
+Recovered **Doma Growth Multiplier** and **Doma Refi Profit - Model** from Google Sheets revision **2866** (~12:53 PM EDT) after `restore_weekly_model_formulas.py` had overwritten manual cells with the generic Transitions-ramp template (all zeros once Transitions B32/B33 were deleted).
+
+- **Tab / range:** **Weekly Financials** `B28:DY29`
+- **Insert/delete:** none
+- **Formulas / data restored:**
+  - **Doma Growth Multiplier:** zeros B–AQ; stepwise multipliers from **AR** (1.22 → 1.1 → 1.07 → 1.05 → 1.03 → 1.015 → 1.02 → 1.0 through **DY**); occasional carry-forward formulas (e.g. `=AR28`, `=BF28`)
+  - **Doma Refi Profit - Model:** **$10,000** seed at **AR29**; `=AR29*AS28` at **AS**; hardcoded compounded $ through **DD**; plateau **~$1.337M/wk** **DE:DY**; early columns retain legacy Transitions ramp formula at **B** (evaluates to 0 without Transitions inputs)
+- **Side effects:** repo now stores cells in `sheets/doma_manual_cells.py` so future restores preserve this layout
+
+### Repo
+
+- **`sheets/doma_manual_cells.py`** — canonical B:DY cell list (recovered snapshot)
+- **`sheets/weekly_model_formulas.py`** — Doma rows use manual cells, not generic template
+- **`sheets/ancillary_products.py`** — removed unused Transitions-ramp Doma helpers
+
+---
+
 ## 2026-08-31 — Sync repo from live spreadsheet (manual edits, pass 3)
 
 Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.
