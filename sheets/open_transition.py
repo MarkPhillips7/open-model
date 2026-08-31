@@ -211,6 +211,24 @@ def blend_model_formula(
     )
 
 
+def private_home_sales_model_formula(*, lag_row: int = OPEN_2_0_LISTING_ROW) -> str:
+    """Non-listed share of purchases, lagged on the 2.0 purchase→listing timing curve."""
+    return f"""=(SUMPRODUCT(
+  MAP(SEQUENCE(1,9), LAMBDA(lag,
+    LET(
+      col, COLUMN() - lag,
+      IF(col < 2, 15,
+        IF(INDEX(${{Homes Purchased}}:${{Homes Purchased}}, 1, col) = "",
+          INDEX(${{Homes Purchased - Model}}:${{Homes Purchased - Model}}, 1, col),
+          INDEX(${{Homes Purchased}}:${{Homes Purchased}}, 1, col)
+        )*(1-INDEX(${{Likelihood to List}}:${{Likelihood to List}}, 1, col))
+      )
+    )
+  )),
+  {_listing_range(lag_row)}
+))"""
+
+
 def new_listings_model_formula(*, listing_row: int, include_backlog: bool) -> str:
     backlog = (
         f"+IF(COLUMN()-1<=8, {UNLISTED_BACKLOG_CELL}*"

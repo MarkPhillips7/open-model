@@ -18,6 +18,56 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Private Home Sales - Model: listing lag row 4 (not row 19)
+
+Repo template still pointed **Private Home Sales - Model** at `Transitions!$B$19:$J$19` (private close curve). Live sheet was manually corrected to **`Transitions!$B$4:$J$4`** (2.0 purchase→listing timing). Restored from canonical template.
+
+- **Tab / range:** **Weekly Financials** `B18:DY18` (**Private Home Sales - Model**)
+- **Insert/delete:** none
+- **Formulas:** lag weights `Transitions!$B$19:$J$19` → `Transitions!$B$4:$J$4` (purchases × `(1 − Likelihood to List)` unchanged)
+- **Data:** none
+- **Side effects:** downstream **Home Sales - Model** / **Revenue - Model** pick up corrected private path on restore
+
+### Repo
+
+- **`sheets/open_transition.py`** — `private_home_sales_model_formula()`
+- **`sheets/weekly_model_formulas.py`** — uses row **4** via helper
+- **`README.md`**, **`RESOURCES.md`** — private timing docs
+
+---
+
+## 2026-08-31 — Adjusted EBITDA - Model; fix Adj NI - Model (drop SBC)
+
+**Adjusted Net Income - Model** subtracted **Stock Based Compensation - Model** (~$108–123M/qtr), but Opendoor’s reported Adjusted Net Income does not — SBC is above EBITDA in the Non-GAAP bridge. That drove ~**$110M**/qtr model error vs reported. Added **Adjusted EBITDA - Model** and rewired Adj NI to match the company definition.
+
+- **Tab / range:** **Weekly Financials** and **Quarterly Financials** — inserted 1 row before **Net Interest Expense** (weekly R53, quarterly R54); restored **Adjusted EBITDA - Model** and **Adjusted Net Income - Model** on weekly model rows
+- **Insert/delete:** 1 row on each tab before **Net Interest Expense**
+- **Formulas:**
+  - **Adjusted EBITDA - Model:** `={cp_model}-{adj_opex_model}` (Contribution Profit − Adjusted Operating Expenses)
+  - **Adjusted Net Income - Model:** `={adj_ebitda_model}-{net_interest_model}-{da}-{tax}` (was `={cp}-{opex}-{sbc}-{interest}-{da}-{tax}`)
+- **Data:** none
+- **Side effects:** rows below **Net Interest Expense** shift +1 on both tabs (Adj NI - Model, GAAP NI - Model, EPS - Model, etc.). **Money Charts** / **Homes Chart** series may need manual repoint if lines look wrong.
+
+### Repo
+
+- **`sheets/gaap_below_the_line.py`** — `ADJ_EBITDA_MODEL_LABEL`
+- **`sheets/weekly_model_formulas.py`** — Adj EBITDA + Adj NI formulas and dependencies
+- **`scripts/add_adj_ebitda_model_row.py`** — live migration
+
+---
+
+## 2026-08-31 — Remove Doma Transitions inputs; sync mortgage attach ramp
+
+Manual cleanup on live workbook; repo updated to match.
+
+- **Tab / range:** **Transitions `A31:B33`** (deleted); **Open Mortgage Percent** (Weekly Financials)
+- **Insert/delete:** deleted Doma refi assumption rows (blank separator + **B32** net $/close + **B33** closings ramp)
+- **Formulas:** **Open Mortgage Percent** smoothstep phase targets **10%→40%→80%** (was **10%→30%→75%**); terminal **80%** (was **75%**)
+- **Data:** **Transitions** ancillary block now **B29:B30** only (mortgage **$4,000**, title **$2,400**). **Doma Growth Multiplier** / **Doma Refi Profit - Model** weekly rows remain but evaluate to **0**
+- **Side effects:** `sheets/ancillary_products.py`, `scripts/setup_ancillary_products.py`, **README.md**, **RESOURCES.md**
+
+---
+
 ## 2026-08-31 — Sync repo from live spreadsheet (manual edits, pass 2)
 
 Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.

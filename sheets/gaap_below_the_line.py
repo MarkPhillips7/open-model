@@ -5,6 +5,7 @@ from __future__ import annotations
 DEBT_EXTINGUISHMENT_LABEL = "(Loss) Gain on Extinguishment of Debt"
 INTEREST_EXPENSE_LABEL = "Interest Expense"
 OTHER_INCOME_LABEL = "Other Income - Net"
+ADJ_EBITDA_MODEL_LABEL = "Adjusted EBITDA - Model"
 ADJ_NET_INCOME_MODEL_LABEL = "Adjusted Net Income - Model"
 
 DEBT_EXTINGUISHMENT_MODEL_LABEL = "(Loss) Gain on Extinguishment of Debt - Model"

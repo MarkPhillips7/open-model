@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Set up mortgage, title, and Doma refi ancillary modeling on the live sheet."""
+"""Set up mortgage and title ancillary modeling on the live sheet."""
 
 from __future__ import annotations
 
@@ -28,8 +28,8 @@ def write_transitions_assumptions(client: SheetsClient) -> None:
     values = [[label, value] for label, value in TRANSITIONS_ANCILLARY_ROWS]
     end_row = start_row + len(values) - 1
     ws.update(values, range_name=f"A{start_row}:B{end_row}", value_input_option="RAW")
-    # Clear stale row from prior layout (section header pushed Doma inputs to B29:B30).
-    ws.batch_clear([f"A{end_row + 1}:B{end_row + 1}"])
+    # Clear removed Doma inputs (legacy layout had blank + B32:B33 through row 33).
+    ws.batch_clear([f"A{end_row + 1}:B33"])
     print(f"{TRANSITIONS}: wrote ancillary assumptions A{start_row}:B{end_row}")
 
 

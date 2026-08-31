@@ -16,6 +16,7 @@ from sheets.formulas import (
     weekly_sbc_model_formula,
 )
 from sheets.gaap_below_the_line import (
+    ADJ_EBITDA_MODEL_LABEL,
     ADJ_NET_INCOME_MODEL_LABEL,
     DEBT_EXTINGUISHMENT_LABEL,
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
@@ -69,6 +70,7 @@ from sheets.open_transition import (
     TRANSITION_COMPLETENESS_LABEL,
     home_sales_model_formula,
     new_listings_model_formula,
+    private_home_sales_model_formula,
     revenue_model_formula,
     transition_completeness_formula,
     blend_model_formula,
@@ -250,20 +252,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "New Listings - 1.0 Model": new_listings_model_formula(
         listing_row=OPEN_1_0_LISTING_ROW, include_backlog=True
     ),
-    "Private Home Sales - Model": """=(SUMPRODUCT(
-  MAP(SEQUENCE(1,9), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag,
-      IF(col < 2, 15,
-        IF(INDEX(${Homes Purchased}:${Homes Purchased}, 1, col) = "",
-          INDEX(${Homes Purchased - Model}:${Homes Purchased - Model}, 1, col),
-          INDEX(${Homes Purchased}:${Homes Purchased}, 1, col)
-        )*(1-INDEX(${Likelihood to List}:${Likelihood to List}, 1, col))
-      )
-    )
-  )),
-  Transitions!$B$19:$J$19
-))""",
+    "Private Home Sales - Model": private_home_sales_model_formula(),
     "Home Sales - 2.0 Model": home_sales_model_formula(
         sold_row=OPEN_2_0_SOLD_ROW, sold_weeks=OPEN_2_0_SOLD_WEEKS
     ),
@@ -300,8 +289,12 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     "Adjusted Operating Expenses - Model": (
         "={c}{Fixed Costs - Model}+(15000000/13)"
     ),
+    ADJ_EBITDA_MODEL_LABEL: (
+        "={c}{Contribution Profit - Model}-{c}{Adjusted Operating Expenses - Model}"
+    ),
     ADJ_NET_INCOME_MODEL_LABEL: (
-        "={c}{cp}-{c}{opex}-{c}{sbc}-{c}{interest}-{c}{da}-{c}{tax}"
+        "={c}{Adjusted EBITDA - Model}-{c}{Net Interest Expense - Model}"
+        "-{c}{Depreciation and Amortization}-{c}{Taxes}"
     ),
     GAAP_NET_INCOME_MODEL_LABEL: (
         "={c}{adj_ni}+{c}{debt}+{c}{interest_gaap}+{c}{other_income}-{c}{net_interest}"
@@ -401,11 +394,15 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         }
     ),
     "Adjusted Operating Expenses - Model": frozenset({"Fixed Costs - Model"}),
-    ADJ_NET_INCOME_MODEL_LABEL: frozenset(
+    ADJ_EBITDA_MODEL_LABEL: frozenset(
         {
             "Contribution Profit - Model",
             "Adjusted Operating Expenses - Model",
-            SBC_MODEL_LABEL,
+        }
+    ),
+    ADJ_NET_INCOME_MODEL_LABEL: frozenset(
+        {
+            ADJ_EBITDA_MODEL_LABEL,
             "Net Interest Expense - Model",
             "Depreciation and Amortization",
             "Taxes",
@@ -533,16 +530,6 @@ def column_relative_formula(
             c=col,
             gaap_row=label_to_row[GAAP_NET_INCOME_MODEL_LABEL],
             shares_row=label_to_row[SHARES_MODEL_LABEL],
-        )
-    if label == ADJ_NET_INCOME_MODEL_LABEL:
-        return template.format(
-            c=col,
-            cp=label_to_row["Contribution Profit - Model"],
-            opex=label_to_row["Adjusted Operating Expenses - Model"],
-            sbc=label_to_row[SBC_MODEL_LABEL],
-            interest=label_to_row["Net Interest Expense - Model"],
-            da=label_to_row["Depreciation and Amortization"],
-            tax=label_to_row["Taxes"],
         )
     if label == GAAP_NET_INCOME_MODEL_LABEL:
         return template.format(

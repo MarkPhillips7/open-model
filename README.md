@@ -55,10 +55,12 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Profitability stack
 
 - **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Seasonality + Adjustments. Mortgage/title CM rows = attach % × $/unit ÷ ASP (see **Transitions** ancillary assumptions).
-- **Doma Refi Profit - Model** = weekly refi closings ramp × net $/close, compounded by **Doma Growth Multiplier** (carry-forward seed in column B). Separate from **Contribution Profit - Model** (`Revenue × CM` only).
+- **Doma Refi Profit - Model** / **Doma Growth Multiplier** — legacy weekly rows (zeroed; Transitions inputs removed).
 - Core CM starts near low single digits and can step up via **Contribution Margin Improvement - Core**.
 - Near-term negative adjustments reflect older-cohort / inventory-clearing pressure called out in earnings commentary.
 - **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
+- **Adjusted EBITDA - Model** = Contribution Profit − Adjusted Operating Expenses (matches Opendoor Non-GAAP EBITDA).
+- **Adjusted Net Income - Model** = Adjusted EBITDA − Net Interest − D&A − Taxes (SBC is **not** subtracted again; it sits above EBITDA in the company reconciliation).
 - **Earnings per Share - Model** = GAAP net income ÷ **Basic Shares Outstanding - Model** (actual passthrough when reported; else prior week + **Share Count Adjustment - Model** from the **Shares** event table).
 
 ### Charts
@@ -82,7 +84,7 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. **2.0** listing lag: `Transitions` row 4; **1.0**: row 5. |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B21` / `B23:I23`. Does not add to purchases. |
 | Private / non-listed completions | ~**25%** (`Transitions!B6`; model uses **1 − Likelihood to List** on row 10) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
-| Private sale timing (purchase → close) | 9 weeks; mode ~week 6; mean ~**6.1 weeks** | 2.0 prior, not disclosed. Edit `Transitions!B19:J19`. |
+| Private sale timing (purchase → close) | 9 weeks on **2.0 listing lag** (`Transitions!B4:J4`) | Non-listed share uses the same purchase→listing curve as public listings; edit row 4. |
 | Listing → sale curve | ~21 weeks; ~**91%** by ~120 days (2.0) | Calibrated to Q2 2026 DOM commentary. **1.0** path ~**51%** by week 17, **100%** by week **39** (~9 months) on `Transitions` rows 13–16. |
 | Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
 | Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |
@@ -91,11 +93,10 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Seasonality | Monthly weights summing via helper **73%** | Mimics national monthly sales seasonality. |
 | Acquisition growth (ops) | Weekly % ramp then fade | Growth / accountability scenarios. |
 | CM path | Core improving; temporary negative adjustments; guided mid-single digits | Matches earnings CM narrative (bottom Sept 2025, Q3 guide 4–4.5%, longer-term ~5–7%). |
-| Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **75%** by Jan 2029 | Four-phase smoothstep on **Open Mortgage Percent** (10% / 30% / 75% phase targets). |
+| Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **80%** by Jan 2029 | Four-phase smoothstep on **Open Mortgage Percent** (10% / 40% / 80% phase targets). |
 | Mortgage $/attached loan | **$4,000** max net (`Transitions!B29`) | CM add = attach × $/loan ÷ ASP. |
 | Title purchase attach | **0%** before Jan 2025 → **100%** by Jun 2027 | Linear ramp on **Open Title Purchase Percent**. |
 | Title $/purchase close | **$2,400** max net savings (`Transitions!B30`) | CM add = attach × $/close ÷ ASP. |
-| Doma refi | From Apr 2026; **$350**/close net (`Transitions!B32`); ramp **1.5/wk** (`B33`, cap 100/wk) | Fannie Title Acceptance refis — **Doma Refi Profit - Model** with optional **Doma Growth Multiplier**. |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |
 
 Where disclosure is missing, the sheet comments say so explicitly (likelihood to close, cash mix, some conversion totals).

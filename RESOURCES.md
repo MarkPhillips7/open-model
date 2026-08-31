@@ -41,10 +41,8 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 | --- | --- | --- | --- |
 | Max mortgage net $/attached loan | `Transitions!B29` | **$4,000** | CM add = **Open Mortgage Percent** × B29 ÷ ASP |
 | Max title net $/purchase close | `Transitions!B30` | **$2,400** | CM add = **Open Title Purchase Percent** × B30 ÷ ASP |
-| ODL attach ramp | **Open Mortgage Percent** | smoothstep **0% → 75%** (Jan 2026 – Jan 2029) | Four-phase smoothstep |
+| ODL attach ramp | **Open Mortgage Percent** | smoothstep **0% → 80%** (Jan 2026 – Jan 2029) | Four-phase smoothstep |
 | Title purchase attach | **Open Title Purchase Percent** | linear **0% → 100%** (Jan 2025 – Jun 2027) | Purchase resales only |
-| Doma refi net $/close | `Transitions!B32` | **$350** | Not in home-sale CM |
-| Doma refi weekly closings ramp | `Transitions!B33` | **1.5**/wk (cap 100/wk in formula) | Weeks since Apr 2026 × B33; **Doma Refi Profit - Model** |
 
 Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-rates-at-opendoor-are-so-much-lower), [Doma announcement](https://www.opendoor.com/articles/doma-announcement), MBA 2024 ~$443 net/loan (industry benchmark).
 
@@ -61,7 +59,7 @@ Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-ra
 
 | Resource | Role in model |
 | --- | --- |
-| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Financials** (~78% in 2025 → ~67% by Q2 2026). **% private** (`Transitions!B6`) and the **purchase→close private curve** (`B19:J19`) are a 2.0 prior, distinct from the listing DOM curve; not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B21`). |
+| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Financials** (~78% in 2025 → ~67% by Q2 2026). **Private Home Sales - Model** = purchases × `(1 − Likelihood to List)` lagged on **2.0 listing timing** (`Transitions!B4:J4`); not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B21`). |
 | [Wealthmatica — cohort sell-through by listing week](https://wealthmatica.substack.com/i/204433858) | Shape of **Percent Sold by Listing Week** / sell-through curve (listed homes only); combined with Q2 2026 “~91% by ~120 days” commentary. |
 | [X / mudirshin article media](https://x.com/mudirshin/article/2090092238499926511/media/2090092137169760256) | Seed / calibration values for early weeks (e.g. commented “220” listing baseline). |
 

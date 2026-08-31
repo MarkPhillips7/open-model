@@ -1,4 +1,4 @@
-"""Mortgage, title/escrow, and Doma refi ancillary product modeling."""
+"""Mortgage and title/escrow ancillary product modeling."""
 
 from __future__ import annotations
 
@@ -7,12 +7,12 @@ TRANSITIONS = "Transitions"
 # Unit economics on Transitions (spreadsheet is source of truth after setup).
 MORTGAGE_NET_PROFIT_PER_LOAN_CELL = f"{TRANSITIONS}!$B$29"
 TITLE_NET_SAVINGS_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$30"
+# Legacy weekly Doma formulas still reference these cells; inputs removed from Transitions.
 DOMA_REFI_NET_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$32"
 DOMA_REFI_WEEKLY_CLOSINGS_RAMP_CELL = f"{TRANSITIONS}!$B$33"
 
 MORTGAGE_NET_PROFIT_PER_LOAN = 4000
 TITLE_NET_SAVINGS_PER_CLOSE = 2400
-DOMA_REFI_NET_PER_CLOSE = 350
 
 DOMA_GROWTH_MULTIPLIER_LABEL = "Doma Growth Multiplier"
 DOMA_REFI_PROFIT_LABEL = "Doma Refi Profit - Model"
@@ -36,7 +36,6 @@ TITLE_PURCHASE_ATTACH_START_DATE = "DATE(2025,1,1)"
 TITLE_PURCHASE_ATTACH_END_DATE = "DATE(2027,6,1)"
 
 DOMA_REFI_START_DATE = "DATE(2026,4,1)"
-DOMA_REFI_WEEKLY_CLOSINGS_RAMP_PER_WEEK = 1.5
 DOMA_REFI_WEEKLY_CLOSINGS_CAP = 100
 
 DOMA_GROWTH_MULTIPLIER_SEED = 0
@@ -44,12 +43,6 @@ DOMA_GROWTH_MULTIPLIER_SEED = 0
 TRANSITIONS_ANCILLARY_ROWS: list[tuple[str, str | int | float]] = [
     ("Max Mortgage net contribution profit per attached loan ($)", MORTGAGE_NET_PROFIT_PER_LOAN),
     ("Max Title/ESCROW net contribution profit per purchase close ($)", TITLE_NET_SAVINGS_PER_CLOSE),
-    ("", ""),
-    ("Doma refi net per close ($)", DOMA_REFI_NET_PER_CLOSE),
-    (
-        "Doma refi weekly closings ramp (/wk per wk from start)",
-        DOMA_REFI_WEEKLY_CLOSINGS_RAMP_PER_WEEK,
-    ),
 ]
 
 
@@ -66,9 +59,9 @@ def open_mortgage_percent_formula(col: str) -> str:
     return (
         f"=IFS({col}$1<={s1},0%,"
         f"{col}$1<={s2},10%*{_smoothstep(col, s1, s2)},"
-        f"{col}$1<={s3},10%+20%*{_smoothstep(col, s2, s3)},"
-        f"{col}$1<={s4},30%+45%*{_smoothstep(col, s3, s4)},"
-        f"TRUE,75%)"
+        f"{col}$1<={s3},10%+30%*{_smoothstep(col, s2, s3)},"
+        f"{col}$1<={s4},40%+40%*{_smoothstep(col, s3, s4)},"
+        f"TRUE,80%)"
     )
 
 
