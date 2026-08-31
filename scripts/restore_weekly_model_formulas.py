@@ -47,7 +47,7 @@ def restore_model_formulas(client: SheetsClient) -> None:
         if lbl not in labels:
             raise KeyError(f"CM stack label not found on {WEEKLY}: {lbl!r}")
 
-    data = ws.get("A1:DY60", value_render_option="FORMULA")
+    data = ws.get("A1:DY80", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 

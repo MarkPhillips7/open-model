@@ -23,7 +23,7 @@ from sheets.labels import QUARTERLY, WEEKLY, insert_rows_before_label, label_row
 
 def write_transitions_assumptions(client: SheetsClient) -> None:
     ws = client.worksheet(TRANSITIONS)
-    start_row = 25
+    start_row = 29
     values = [[label, value] for label, value in TRANSITIONS_ANCILLARY_ROWS]
     end_row = start_row + len(values) - 1
     ws.update(values, range_name=f"A{start_row}:B{end_row}", value_input_option="RAW")

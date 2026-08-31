@@ -78,12 +78,13 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | --- | --- | --- |
 | Likelihood to Close (per contract week) | **78%** in 2025 → **67%** from Q2 2026 (Q1 2026 interpolates) | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit `B8` / `AE8`. |
 | Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
-| Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. |
+| OPEN 1.0 → 2.0 transition | **0%** at Sep 2025 → **100%** by Jul 2026 | Blends listing / sales / revenue models between **OPEN 1.0** (pre-Kaz DOM ~51% @ 120d) and **OPEN 2.0** curves on **Transitions**. Edit completeness row or 1.0/2.0 sub-model rows. |
+| Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. **2.0** listing lag: `Transitions` row 4; **1.0**: row 5. |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B21` / `B23:I23`. Does not add to purchases. |
 | Private / non-listed completions | ~**25%** (`Transitions!B6`; model uses **1 − Likelihood to List** on row 10) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
 | Private sale timing (purchase → close) | 9 weeks; mode ~week 6; mean ~**6.1 weeks** | 2.0 prior, not disclosed. Edit `Transitions!B19:J19`. |
-| Listing → sale curve | ~21 weeks; ~**91%** by ~120 days | Calibrated to Q2 2026 DOM commentary + cohort sell-through charts. Listed path only. |
-| Price retention by week on market | 100% → ~**93.5%** by week 21 | Longer DOM → lower effective price. |
+| Listing → sale curve | ~21 weeks; ~**91%** by ~120 days (2.0) | Calibrated to Q2 2026 DOM commentary. **1.0** path ~**51%** by week 17, **100%** by week **39** (~9 months) on `Transitions` rows 13–16. |
+| Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
 | Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |
 | Cash purchase share | ~**31.5%** | National U.S. mix; OPEN does not disclose. |
 | ASP | **$377,500** | Q2 2026. |

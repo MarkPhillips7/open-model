@@ -18,6 +18,71 @@ Entry template:
 
 ---
 
+## 2026-08-30 — OPEN 1.0 vs 2.0 transition blending
+
+Split listing, sales, and revenue models into OPEN 1.0 and OPEN 2.0 cohort paths with a linear transition-completeness ramp (0% at horizon start → 100% by week ending **2026-07-04**).
+
+### Transitions
+
+- **Tab / range:** `A4:K5`, `A9:V16`; downstream rows **+4** from insert after row 12 (cash-mix **B18:B20**, unlisted backlog **B25/B27**, ancillary **B29:B33**)
+- **Insert/delete:** 4 rows at row 13 (`startIndex` 12, count 4)
+- **Data:**
+  - Renamed rows 4, 9–12 → **OPEN 2.0 …** (listing timing, sell-through multiplier, % sold, running total, price retention)
+  - **Row 5** `OPEN 1.0 Percent of Ultimate Listers by Week` — slower purchase→listing curve (peak weeks 6–7; ~45-day reno prior)
+  - **Rows 13–16** OPEN 1.0 sell-through block — ~**51%** cumulative sold by week 17 (~120 DOM; pre-Kaz) vs ~**92%** for 2.0; price retention **100% → 88.6%** by week 21 (vs 2.0 **93.5%**)
+- **Formulas:** none changed on Transitions (values only)
+
+### Weekly Financials
+
+- **Insert/delete:** 7 rows total — 1 before **New Listings - Model**, 2 before **ASP**, 2 before **Revenue**, 2 before **Gross Profit**
+- **New rows:** **OPEN 1.0-2.0 Transition Completeness** (R12); **New Listings - 2.0 Model** / **- 1.0 Model** (R14–15); **Home Sales - 2.0 / - 1.0 Model** (R20–21); **Revenue - 2.0 / - 1.0 Model** (R24–25)
+- **Formulas:**
+  - **Transition Completeness:** `MIN(1, MAX(0, (week − DATE(2025,9,13)) / (DATE(2026,7,4) − DATE(2025,9,13))))`
+  - **New Listings - 2.0 Model:** prior **New Listings - Model** on `Transitions!B4` (no 1.0 backlog)
+  - **New Listings - 1.0 Model:** same lag on `Transitions!B5` **+** unlisted backlog drain (`B25` × `B27:I27`, weeks 1–8)
+  - **New Listings - Model:** `completeness × 2.0 + (1 − completeness) × 1.0` (same pattern for **Home Sales - Model** and **Revenue - Model**)
+  - **Home Sales / Revenue 2.0** use `Transitions` rows **10/12**; **1.0** use rows **14/16**; cash lags now **B18–B20**
+
+### Quarterly Financials
+
+- **Insert/delete:** same 7-row pattern (labels only; model cells left blank)
+
+### Side effects
+
+- **Homes Chart** / **Money Charts** series repointed after row inserts (user-verified):
+  - **Homes Chart:** NL actual **11** / dotted **12** (**OPEN 1.0-2.0 Transition Completeness**), HS **17** / model **19**, inventory **49/50**
+  - **Money Charts — Revenue and Shares:** revenue **22/23**, shares **44/46**
+  - **Money Charts — Profit and Price:** gross profit **27**, contribution profit model **29**, adj NI **56/63**, GAAP NI **64/65**
+- Repo: `sheets/open_transition.py`, `scripts/setup_open_transition.py`, `weekly_model_formulas.py`; ancillary Transitions refs **B29:B33**; `label_rows` default `max_row` **80**; `config/workbook_snapshot.json` synced to live chart series
+
+---
+
+## 2026-08-30 — OPEN 1.0 sell-through extended to 39 weeks
+
+1.0 cohort curves now sum to **100%**; **Home Sales - 1.0 Model** and **Revenue - 1.0 Model** use a **39-week** listing lag (2.0 unchanged at 21).
+
+- **Tab / range:** **Transitions** `A8:AO16` (week headers + OPEN 1.0 rows 13–16); **Weekly Financials** **Home Sales - 1.0 Model** and **Revenue - 1.0 Model** formulas
+- **Insert/delete:** none
+- **Formulas:** 1.0 home-sales/revenue `MAP(SEQUENCE(1,39), …)` over `Transitions!B14:AN14` / `B16:AN16` (was 21 weeks / `B:V`)
+- **Data:**
+  - Weeks **1–21** unchanged (~**51%** cumulative @ week 17)
+  - Weeks **22–39** decaying tail (weekly multiplier **97.5%** on prior week’s rate) so row 14 sums to **100%**
+  - Price retention extended through week **39** (continues **−0.57%/wk**, floor **78%**)
+  - Row 8 week index extended **1…39** (+ Total in **AO**)
+- **Side effects:** none on charts. Repo: `scripts/extend_open_1_0_sell_through.py`, `sheets/open_transition.py`
+
+---
+
+User repointed chart series on the live workbook after the OPEN 1.0/2.0 row inserts; pulled into git.
+
+- **Tab / range:** read-only chart metadata pull (no sheet writes)
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `config/workbook_snapshot.json` updated to match live **Homes Chart** / **Money Charts** series rows (notably Homes Chart dotted series remains **row 12** = transition completeness, not **New Listings - Model** on row 13)
+- **Side effects:** `validate_workbook_snapshot.py` passes against live sheet
+
+---
+
 ## 2026-08-30 — Sync repo from live spreadsheet (manual edits)
 
 Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.

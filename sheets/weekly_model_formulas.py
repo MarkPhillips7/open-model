@@ -49,6 +49,28 @@ from sheets.shares_events import (
     weekly_share_adjustment_formula,
     weekly_shares_model_formula,
 )
+from sheets.open_transition import (
+    HOME_SALES_1_0_MODEL_LABEL,
+    HOME_SALES_2_0_MODEL_LABEL,
+    NEW_LISTINGS_1_0_MODEL_LABEL,
+    NEW_LISTINGS_2_0_MODEL_LABEL,
+    OPEN_1_0_LISTING_ROW,
+    OPEN_1_0_RETENTION_ROW,
+    OPEN_1_0_SOLD_ROW,
+    OPEN_1_0_SOLD_WEEKS,
+    OPEN_2_0_LISTING_ROW,
+    OPEN_2_0_RETENTION_ROW,
+    OPEN_2_0_SOLD_ROW,
+    OPEN_2_0_SOLD_WEEKS,
+    REVENUE_1_0_MODEL_LABEL,
+    REVENUE_2_0_MODEL_LABEL,
+    TRANSITION_COMPLETENESS_LABEL,
+    home_sales_model_formula,
+    new_listings_model_formula,
+    revenue_model_formula,
+    transition_completeness_formula,
+    blend_model_formula,
+)
 
 GAAP_NET_INCOME_MODEL_LABEL = (
     "Net Income (Loss) Attributable to Common Shareholders - Model"
@@ -217,16 +239,12 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
   )),
   Transitions!$B$2:$J$2
 ))""",
-    "New Listings - Model": """=(SUMPRODUCT(
-  MAP(SEQUENCE(1,9), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag,
-      purchases, IF(col < 2, 90, INDEX(${Homes Purchased - Model}:${Homes Purchased - Model}, 1, col)*INDEX(${Likelihood to List}:${Likelihood to List}, 1, col)),
-      purchases
-    )
-  )),
-  Transitions!$B$4:$J$4
-)+IF(COLUMN()-1<=8, Transitions!$B$21*INDEX(Transitions!$B$23:$I$23, 1, COLUMN()-1), 0))""",
+    "New Listings - 2.0 Model": new_listings_model_formula(
+        listing_row=OPEN_2_0_LISTING_ROW, include_backlog=False
+    ),
+    "New Listings - 1.0 Model": new_listings_model_formula(
+        listing_row=OPEN_1_0_LISTING_ROW, include_backlog=True
+    ),
     "Private Home Sales - Model": """=(SUMPRODUCT(
   MAP(SEQUENCE(1,9), LAMBDA(lag,
     LET(
@@ -241,50 +259,22 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
   )),
   Transitions!$B$19:$J$19
 ))""",
-    "Home Sales - Model": """=(SUMPRODUCT(
-  MAP(SEQUENCE(1,21), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag,
-      IF(col < 2, 140,
-        IF(INDEX(${New Listings}:${New Listings}, 1, col) = "",
-          INDEX(${New Listings - Model}:${New Listings - Model}, 1, col),
-          INDEX(${New Listings}:${New Listings}, 1, col)
-        )*INDEX(${Likelihood to List}:${Likelihood to List}, 1, col)
-      )
-    )
-  )),
-  Transitions!$B$10:$V$10
-)+INDEX(${Private Home Sales - Model}:${Private Home Sales - Model}, 1, COLUMN()))""",
-    "Revenue - Model": """=(SUMPRODUCT(
-  MAP(SEQUENCE(1,21), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag - Transitions!$B$15,
-      IF(col < 2, 160*356000,
-        IF(INDEX(${New Listings}:${New Listings}, 1, col) = "",
-          INDEX(${New Listings - Model}:${New Listings - Model}, 1, col),
-          INDEX(${New Listings}:${New Listings}, 1, col)
-        )*INDEX(${Average Sale Price (homes sold by OPEN)}:${Average Sale Price (homes sold by OPEN)}, 1, col)
-      )
-    )
-  )),
-  Transitions!$B$10:$V$10,
-  Transitions!$B$12:$V$12
-)*Transitions!$B$16+
- SUMPRODUCT(
-  MAP(SEQUENCE(1,21), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag - Transitions!$B$14,
-      IF(col < 2, 160*356000,
-        IF(INDEX(${New Listings}:${New Listings}, 1, col) = "",
-          INDEX(${New Listings - Model}:${New Listings - Model}, 1, col),
-          INDEX(${New Listings}:${New Listings}, 1, col)
-        )*INDEX(${Average Sale Price (homes sold by OPEN)}:${Average Sale Price (homes sold by OPEN)}, 1, col)
-      )
-    )
-  )),
-  Transitions!$B$10:$V$10,
-  Transitions!$B$12:$V$12
-)*(1-Transitions!$B$16)+INDEX(${Private Home Sales - Model}:${Private Home Sales - Model}, 1, COLUMN())*INDEX(${Average Sale Price (homes sold by OPEN)}:${Average Sale Price (homes sold by OPEN)}, 1, COLUMN()))""",
+    "Home Sales - 2.0 Model": home_sales_model_formula(
+        sold_row=OPEN_2_0_SOLD_ROW, sold_weeks=OPEN_2_0_SOLD_WEEKS
+    ),
+    "Home Sales - 1.0 Model": home_sales_model_formula(
+        sold_row=OPEN_1_0_SOLD_ROW, sold_weeks=OPEN_1_0_SOLD_WEEKS
+    ),
+    "Revenue - 2.0 Model": revenue_model_formula(
+        sold_row=OPEN_2_0_SOLD_ROW,
+        retention_row=OPEN_2_0_RETENTION_ROW,
+        sold_weeks=OPEN_2_0_SOLD_WEEKS,
+    ),
+    "Revenue - 1.0 Model": revenue_model_formula(
+        sold_row=OPEN_1_0_SOLD_ROW,
+        retention_row=OPEN_1_0_RETENTION_ROW,
+        sold_weeks=OPEN_1_0_SOLD_WEEKS,
+    ),
     "Fixed Costs - Model": "=35000000/13",
     "Net Interest Expense - Model": "=20000000/13",
 }
@@ -323,15 +313,60 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         {"Acquisition Contracts", "Acquisition Contracts - Model", "Likelihood to Close"}
     ),
     "New Listings - Model": frozenset(
+        {
+            TRANSITION_COMPLETENESS_LABEL,
+            NEW_LISTINGS_2_0_MODEL_LABEL,
+            NEW_LISTINGS_1_0_MODEL_LABEL,
+        }
+    ),
+    NEW_LISTINGS_2_0_MODEL_LABEL: frozenset(
+        {"Homes Purchased - Model", "Likelihood to List"}
+    ),
+    NEW_LISTINGS_1_0_MODEL_LABEL: frozenset(
         {"Homes Purchased - Model", "Likelihood to List"}
     ),
     "Private Home Sales - Model": frozenset(
         {"Homes Purchased", "Homes Purchased - Model", "Likelihood to List"}
     ),
     "Home Sales - Model": frozenset(
-        {"New Listings", "New Listings - Model", "Likelihood to List", "Private Home Sales - Model"}
+        {
+            TRANSITION_COMPLETENESS_LABEL,
+            HOME_SALES_2_0_MODEL_LABEL,
+            HOME_SALES_1_0_MODEL_LABEL,
+        }
+    ),
+    HOME_SALES_2_0_MODEL_LABEL: frozenset(
+        {
+            "New Listings",
+            "New Listings - Model",
+            "Likelihood to List",
+            "Private Home Sales - Model",
+        }
+    ),
+    HOME_SALES_1_0_MODEL_LABEL: frozenset(
+        {
+            "New Listings",
+            "New Listings - Model",
+            "Likelihood to List",
+            "Private Home Sales - Model",
+        }
     ),
     "Revenue - Model": frozenset(
+        {
+            TRANSITION_COMPLETENESS_LABEL,
+            REVENUE_2_0_MODEL_LABEL,
+            REVENUE_1_0_MODEL_LABEL,
+        }
+    ),
+    REVENUE_2_0_MODEL_LABEL: frozenset(
+        {
+            "New Listings",
+            "New Listings - Model",
+            "Average Sale Price (homes sold by OPEN)",
+            "Private Home Sales - Model",
+        }
+    ),
+    REVENUE_1_0_MODEL_LABEL: frozenset(
         {
             "New Listings",
             "New Listings - Model",
@@ -408,11 +443,34 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     CM_MORTGAGE_LABEL: frozenset({OPEN_MORTGAGE_PERCENT_LABEL, ASP_LABEL}),
     CM_TITLE_LABEL: frozenset({OPEN_TITLE_PURCHASE_PERCENT_LABEL, ASP_LABEL}),
     DOMA_REFI_CONTRIBUTION_LABEL: frozenset(),
+    TRANSITION_COMPLETENESS_LABEL: frozenset(),
 }
 
 MODEL_FORMULA_LABELS: tuple[str, ...] = (
     "Acquisition Contracts - Model",
-    *UNIFORM_FORMULA_TEMPLATES.keys(),
+    TRANSITION_COMPLETENESS_LABEL,
+    "New Listings - Model",
+    NEW_LISTINGS_2_0_MODEL_LABEL,
+    NEW_LISTINGS_1_0_MODEL_LABEL,
+    *(
+        label
+        for label in UNIFORM_FORMULA_TEMPLATES.keys()
+        if label
+        not in {
+            NEW_LISTINGS_2_0_MODEL_LABEL,
+            NEW_LISTINGS_1_0_MODEL_LABEL,
+            HOME_SALES_2_0_MODEL_LABEL,
+            HOME_SALES_1_0_MODEL_LABEL,
+            REVENUE_2_0_MODEL_LABEL,
+            REVENUE_1_0_MODEL_LABEL,
+        }
+    ),
+    "Home Sales - Model",
+    HOME_SALES_2_0_MODEL_LABEL,
+    HOME_SALES_1_0_MODEL_LABEL,
+    "Revenue - Model",
+    REVENUE_2_0_MODEL_LABEL,
+    REVENUE_1_0_MODEL_LABEL,
     *COLUMN_RELATIVE_TEMPLATES.keys(),
     OPEN_MORTGAGE_PERCENT_LABEL,
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
@@ -576,6 +634,30 @@ def row_cells_for_label(
     if label in COLUMN_RELATIVE_TEMPLATES:
         return [
             column_relative_formula(label, col_letter(col_idx + 2), label_to_row=label_to_row)
+            for col_idx in range(n_cols)
+        ]
+
+    if label == TRANSITION_COMPLETENESS_LABEL:
+        return [
+            transition_completeness_formula(col_letter(col_idx + 2))
+            for col_idx in range(n_cols)
+        ]
+
+    blend_specs: dict[str, tuple[str, str]] = {
+        "New Listings - Model": (NEW_LISTINGS_2_0_MODEL_LABEL, NEW_LISTINGS_1_0_MODEL_LABEL),
+        "Home Sales - Model": (HOME_SALES_2_0_MODEL_LABEL, HOME_SALES_1_0_MODEL_LABEL),
+        "Revenue - Model": (REVENUE_2_0_MODEL_LABEL, REVENUE_1_0_MODEL_LABEL),
+    }
+    if label in blend_specs:
+        model_2_0, model_1_0 = blend_specs[label]
+        return [
+            blend_model_formula(
+                col_letter(col_idx + 2),
+                label_to_row=label_to_row,
+                blended_label=label,
+                model_2_0_label=model_2_0,
+                model_1_0_label=model_1_0,
+            )
             for col_idx in range(n_cols)
         ]
 
