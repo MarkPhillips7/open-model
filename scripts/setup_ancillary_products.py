@@ -12,7 +12,8 @@ sys.path.insert(0, str(ROOT))
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
 from sheets.ancillary_products import (  # noqa: E402
-    DOMA_REFI_CONTRIBUTION_LABEL,
+    DOMA_GROWTH_MULTIPLIER_LABEL,
+    DOMA_REFI_PROFIT_LABEL,
     OLD_OPEN_TITLE_LABEL,
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
     TRANSITIONS,
@@ -47,23 +48,31 @@ def rename_title_attach_label(client: SheetsClient) -> None:
             print(f"{tab}: {OPEN_TITLE_PURCHASE_PERCENT_LABEL!r} already present")
 
 
-def ensure_doma_refi_row(client: SheetsClient) -> None:
+def ensure_doma_rows(client: SheetsClient) -> None:
     weekly_labels = label_rows(client, WEEKLY)
-    if DOMA_REFI_CONTRIBUTION_LABEL in weekly_labels:
-        print(f"{WEEKLY}: {DOMA_REFI_CONTRIBUTION_LABEL!r} already present")
+    if DOMA_GROWTH_MULTIPLIER_LABEL in weekly_labels and DOMA_REFI_PROFIT_LABEL in weekly_labels:
+        print(f"{WEEKLY}: Doma rows already present")
+        return
+
+    labels_to_insert = []
+    if DOMA_GROWTH_MULTIPLIER_LABEL not in weekly_labels:
+        labels_to_insert.append(DOMA_GROWTH_MULTIPLIER_LABEL)
+    if DOMA_REFI_PROFIT_LABEL not in weekly_labels:
+        labels_to_insert.append(DOMA_REFI_PROFIT_LABEL)
+    if not labels_to_insert:
         return
 
     insert_rows_before_label(
         client,
         tab=WEEKLY,
         before_label="Contribution Profit - Model",
-        labels=[DOMA_REFI_CONTRIBUTION_LABEL],
+        labels=labels_to_insert,
     )
     insert_rows_before_label(
         client,
         tab=QUARTERLY,
         before_label="Contribution Profit - Model",
-        labels=[DOMA_REFI_CONTRIBUTION_LABEL],
+        labels=labels_to_insert,
     )
 
 
@@ -71,7 +80,7 @@ def main() -> None:
     client = SheetsClient()
     write_transitions_assumptions(client)
     rename_title_attach_label(client)
-    ensure_doma_refi_row(client)
+    ensure_doma_rows(client)
     restore_model_formulas(client)
     print("Done.")
 

@@ -34,13 +34,15 @@ from sheets.cm_seasonality import (
 from sheets.ancillary_products import (
     CM_MORTGAGE_LABEL,
     CM_TITLE_LABEL,
-    DOMA_REFI_CONTRIBUTION_LABEL,
+    DOMA_GROWTH_MULTIPLIER_LABEL,
+    DOMA_REFI_PROFIT_LABEL,
     OPEN_MORTGAGE_PERCENT_LABEL,
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
     ASP_LABEL,
     cm_mortgage_formula,
     cm_title_formula,
-    doma_refi_contribution_formula,
+    doma_growth_multiplier_cell,
+    doma_refi_profit_formula,
     open_mortgage_percent_formula,
     open_title_purchase_percent_formula,
 )
@@ -79,23 +81,23 @@ GAAP_NET_INCOME_MODEL_LABEL = (
 INVENTORY_MODEL_ANCHOR = 3275
 
 CM_CORE_VALUES: dict[str, float] = {
-    "B": 0.038,
+    "B": 0.036,
 }
 CM_ADJUSTMENTS_VALUES: dict[str, float] = {
-    "B": -0.03,
-    "C": -0.027,
-    "D": -0.025,
-    "E": -0.013,
-    "F": -0.011,
-    "G": -0.009,
-    "H": -0.007,
-    "I": -0.005,
-    "J": -0.004,
-    "K": -0.003,
-    "L": -0.002,
-    "M": 0,
-    "N": 0,
-    "O": 0,
+    "B": -0.02,
+    "C": -0.019,
+    "D": -0.016,
+    "E": -0.014,
+    "F": -0.014,
+    "G": -0.013,
+    "H": -0.011,
+    "I": -0.009,
+    "J": -0.007,
+    "K": -0.005,
+    "L": -0.004,
+    "M": -0.004,
+    "N": -0.003,
+    "O": -0.002,
     "P": 0,
     "Q": 0,
     "R": 0,
@@ -123,12 +125,12 @@ CM_ADJUSTMENTS_VALUES: dict[str, float] = {
     "AN": -0.008,
     "AO": -0.008,
     "AP": -0.007,
-    "AQ": -0.006,
-    "AR": 0,
-    "AS": 0,
-    "AT": 0,
-    "AU": 0,
-    "AV": 0,
+    "AQ": -0.007,
+    "AR": -0.007,
+    "AS": -0.007,
+    "AT": -0.007,
+    "AU": -0.006,
+    "AV": -0.006,
     "AW": 0,
     "AX": 0,
     "AY": 0,
@@ -215,6 +217,7 @@ CM_IMPROVEMENT_ANCHORS: dict[str, float] = {
     "F": 0.0001,
     "U": 0.0002,
     "AP": 0.0003,
+    "BE": 0.0004,
 }
 # First column (0-based from B) with seasonality INDEX formula; B onward on live sheet.
 CM_SEASONALITY_FORMULA_FROM_COL_IDX = 0
@@ -285,7 +288,6 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     ),
     "Contribution Profit - Model": (
         "={c}{Revenue - Model}*{c}{Contribution Margin - Model}"
-        "+{c}{Doma Refi Contribution - Model}"
     ),
     "Contribution Margin - Model": (
         "={c}{Contribution Margin - Core}+{c}{Contribution Margin - Mortgage}"
@@ -383,9 +385,10 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         {
             "Revenue - Model",
             "Contribution Margin - Model",
-            DOMA_REFI_CONTRIBUTION_LABEL,
         }
     ),
+    DOMA_GROWTH_MULTIPLIER_LABEL: frozenset(),
+    DOMA_REFI_PROFIT_LABEL: frozenset({DOMA_GROWTH_MULTIPLIER_LABEL}),
     "Contribution Margin - Model": frozenset(
         {
             "Contribution Margin - Core",
@@ -442,7 +445,6 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     OPEN_TITLE_PURCHASE_PERCENT_LABEL: frozenset(),
     CM_MORTGAGE_LABEL: frozenset({OPEN_MORTGAGE_PERCENT_LABEL, ASP_LABEL}),
     CM_TITLE_LABEL: frozenset({OPEN_TITLE_PURCHASE_PERCENT_LABEL, ASP_LABEL}),
-    DOMA_REFI_CONTRIBUTION_LABEL: frozenset(),
     TRANSITION_COMPLETENESS_LABEL: frozenset(),
 }
 
@@ -476,7 +478,8 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
     CM_MORTGAGE_LABEL,
     CM_TITLE_LABEL,
-    DOMA_REFI_CONTRIBUTION_LABEL,
+    DOMA_GROWTH_MULTIPLIER_LABEL,
+    DOMA_REFI_PROFIT_LABEL,
     SBC_MODEL_LABEL,
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
     INTEREST_EXPENSE_MODEL_LABEL,
@@ -765,10 +768,25 @@ def row_cells_for_label(
             for col_idx in range(n_cols)
         ]
 
-    if label == DOMA_REFI_CONTRIBUTION_LABEL:
-        return [
-            doma_refi_contribution_formula(col_letter(col_idx + 2)) for col_idx in range(n_cols)
-        ]
+    if label == DOMA_GROWTH_MULTIPLIER_LABEL:
+        cells: list[str | float] = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
+            cells.append(
+                doma_growth_multiplier_cell(col, prev_col, label_to_row=label_to_row)
+            )
+        return cells
+
+    if label == DOMA_REFI_PROFIT_LABEL:
+        cells = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
+            cells.append(
+                doma_refi_profit_formula(col, prev_col, label_to_row=label_to_row)
+            )
+        return cells
 
     return None
 

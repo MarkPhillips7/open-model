@@ -46,7 +46,7 @@
           "end_column": 121
         },
         {
-          "weekly_row": 12,
+          "weekly_row": 13,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 121
@@ -64,13 +64,13 @@
           "end_column": 121
         },
         {
-          "weekly_row": 49,
+          "weekly_row": 50,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 50,
+          "weekly_row": 51,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
@@ -96,13 +96,13 @@
           "end_column": 129
         },
         {
-          "weekly_row": 44,
+          "weekly_row": 45,
           "line_style": "SOLID",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 46,
+          "weekly_row": 47,
           "line_style": "DOTTED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
@@ -122,31 +122,31 @@
           "end_column": 129
         },
         {
-          "weekly_row": 29,
+          "weekly_row": 30,
           "line_style": "DOTTED",
-          "axis": "LEFT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 64,
-          "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
           "weekly_row": 65,
-          "line_style": "DOTTED",
-          "axis": "LEFT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 56,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 63,
+          "weekly_row": 66,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 57,
+          "line_style": "SOLID",
+          "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 64,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129

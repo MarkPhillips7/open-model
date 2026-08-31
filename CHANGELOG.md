@@ -18,7 +18,26 @@ Entry template:
 
 ---
 
-## 2026-08-30 — OPEN 1.0 vs 2.0 transition blending
+## 2026-08-31 — Sync repo from live spreadsheet (manual edits)
+
+Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.
+
+- **Tab / range:** read-only pull from live sheet (no sheet writes)
+- **Insert/delete:** 1 row before **Contribution Profit - Model** — **Doma Growth Multiplier** (Weekly + Quarterly)
+- **Formulas:**
+  - **Doma Refi Contribution - Model** renamed → **Doma Refi Profit - Model**; column B = refi ramp; column C+ = prior profit × current **Doma Growth Multiplier**
+  - **Doma Growth Multiplier:** B = **0** seed; C+ carries forward prior column
+  - **Contribution Profit - Model:** `Revenue × CM` only (Doma refi no longer added)
+  - **Open Mortgage Percent:** four-phase smoothstep ramp **0% → 10% → 30% → 75%** (Jan 2026 – Jan 2029)
+  - **Open Title Purchase Percent:** linear **0% → 100%** (Jan 2025 – Jun 2027)
+  - **OPEN 1.0-2.0 Transition Completeness:** ramp **Feb 2026 → Jan 2027** (was Sep 2025 → Jul 2026)
+- **Data synced into git:**
+  - **Transitions B29/B30:** max mortgage **$4,000** / max title **$2,400** per close
+  - **CM stack:** `pull_cm_stack_from_sheet.py` refreshed `CM_*` constants
+  - **Workbook snapshot:** chart series rows — Homes Chart NL dotted **13**, inventory **50/51**; Money Charts shares **45/47**, Contribution Profit model **30**, GAAP NI **65/66**, adj NI **57/64**
+- **Side effects:** `validate_workbook_snapshot.py` and `validate_model_formulas.py` pass against live sheet
+
+---
 
 Split listing, sales, and revenue models into OPEN 1.0 and OPEN 2.0 cohort paths with a linear transition-completeness ramp (0% at horizon start → 100% by week ending **2026-07-04**).
 
