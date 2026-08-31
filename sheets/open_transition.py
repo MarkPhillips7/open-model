@@ -211,8 +211,8 @@ def blend_model_formula(
     )
 
 
-def private_home_sales_model_formula(*, lag_row: int = OPEN_2_0_LISTING_ROW) -> str:
-    """Non-listed share of purchases, lagged on the 2.0 purchase→listing timing curve."""
+def private_home_sales_model_formula(*, lag_row: int = OPEN_1_0_LISTING_ROW) -> str:
+    """Non-listed share of purchases, lagged on the 1.0 purchase→listing timing curve."""
     return f"""=(SUMPRODUCT(
   MAP(SEQUENCE(1,9), LAMBDA(lag,
     LET(

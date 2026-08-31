@@ -18,6 +18,27 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Sync repo from live spreadsheet (manual edits, pass 3)
+
+Compared live workbook to git and refreshed tracked artifacts so the spreadsheet remains source of truth.
+
+- **Tab / range:** read-only pull from live sheet (no sheet writes)
+- **Insert/delete:** none
+- **Formulas:**
+  - **Private Home Sales - Model** (`B18:DY18`): lag weights `Transitions!$B$4:$J$4` → `Transitions!$B$5:$J$5` (1.0 purchase→listing timing; purchases × `(1 − Likelihood to List)` unchanged)
+- **Data synced into git:**
+  - **Contribution Margin - Core:** horizon start **3.4%** (was **3.6%**); **AA** anchor **3.6%**
+  - **Contribution Margin - Adjustments:** early weeks less negative (**B −1.5%**, **C/D −1.4%**; was **−2.0% / −1.9% / −1.6%**)
+- **Side effects:** **Money Charts** — **Profit and Price** series repointed to post-reconciliation rows (GAAP NI **76/77**, Adj NI **58/65**); `config/workbook_snapshot.json` updated; `validate_model_formulas.py` passes
+
+### Repo
+
+- **`sheets/open_transition.py`** — `private_home_sales_model_formula()` default lag row **5**
+- **`sheets/weekly_model_formulas.py`** — `CM_CORE_VALUES`, `CM_ADJUSTMENTS_VALUES`
+- **`README.md`**, **`RESOURCES.md`** — private-sale timing docs
+
+---
+
 ## 2026-08-31 — Revenue cash/financed close lag pairing + formula drift checks
 
 **Revenue - 2.0 Model** and **Revenue - 1.0 Model** paired financed close lag (`Transitions!$B$18`) with cash purchase % (`$B$20`) and cash lag (`$B$19`) with financed share — reversed. Cash lag now pairs with `$B$20`; financed lag with `(1-$B$20)`.

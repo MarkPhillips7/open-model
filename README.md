@@ -85,7 +85,7 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | Complements private %; `B6` is still the private-sales share. **2.0** listing lag: `Transitions` row 4; **1.0**: row 5. |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B21` / `B23:I23`. Does not add to purchases. |
 | Private / non-listed completions | ~**25%** (`Transitions!B6`; model uses **1 − Likelihood to List** on row 10) | Share of purchases that never list. Feeds **Private Home Sales - Model**. |
-| Private sale timing (purchase → close) | 9 weeks on **2.0 listing lag** (`Transitions!B4:J4`) | Non-listed share uses the same purchase→listing curve as public listings; edit row 4. |
+| Private sale timing (purchase → close) | 9 weeks on **1.0 listing lag** (`Transitions!B5:J5`) | Non-listed share uses the pre-Kaz purchase→listing curve; edit row 5. |
 | Listing → sale curve | ~21 weeks; ~**91%** by ~120 days (2.0) | Calibrated to Q2 2026 DOM commentary. **1.0** path ~**51%** by week 17, **100%** by week **39** (~9 months) on `Transitions` rows 13–16. |
 | Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
 | Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |

@@ -95,12 +95,13 @@ GAAP_NET_INCOME_MODEL_LABEL = (
 INVENTORY_MODEL_ANCHOR = 3275
 
 CM_CORE_VALUES: dict[str, float] = {
-    "B": 0.036,
+    "B": 0.034,
+    "AA": 0.036,
 }
 CM_ADJUSTMENTS_VALUES: dict[str, float] = {
-    "B": -0.02,
-    "C": -0.019,
-    "D": -0.016,
+    "B": -0.015,
+    "C": -0.014,
+    "D": -0.014,
     "E": -0.014,
     "F": -0.014,
     "G": -0.013,
