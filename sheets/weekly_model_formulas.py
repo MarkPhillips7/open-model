@@ -18,14 +18,26 @@ from sheets.formulas import (
 from sheets.gaap_below_the_line import (
     ADJ_EBITDA_MODEL_LABEL,
     ADJ_NET_INCOME_MODEL_LABEL,
+    CEO_MAKE_WHOLE_LABEL,
+    CEO_MAKE_WHOLE_MODEL_LABEL,
     DEBT_EXTINGUISHMENT_LABEL,
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
     INTEREST_EXPENSE_LABEL,
     INTEREST_EXPENSE_MODEL_LABEL,
     INTEREST_EXPENSE_WEEKLY_RUN_RATE,
+    INV_VAL_CURRENT_LABEL,
+    INV_VAL_CURRENT_MODEL_LABEL,
+    INV_VAL_CURRENT_WEEKLY_RUN_RATE,
+    INV_VAL_PRIOR_LABEL,
+    INV_VAL_PRIOR_MODEL_LABEL,
+    INV_VAL_PRIOR_WEEKLY_RUN_RATE,
+    OTHER_GAAP_ADJ_LABEL,
+    OTHER_GAAP_ADJ_MODEL_LABEL,
     OTHER_INCOME_LABEL,
     OTHER_INCOME_MODEL_LABEL,
     OTHER_INCOME_WEEKLY_RUN_RATE,
+    RESTRUCTURING_LABEL,
+    RESTRUCTURING_MODEL_LABEL,
 )
 from sheets.cm_seasonality import (
     CM_SEASONALITY_ADJUSTMENTS_LABEL,
@@ -297,8 +309,13 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
         "-{c}{Depreciation and Amortization}-{c}{Taxes}"
     ),
     GAAP_NET_INCOME_MODEL_LABEL: (
-        "={c}{adj_ni}+{c}{debt}+{c}{interest_gaap}+{c}{other_income}-{c}{net_interest}"
-    ),  # debt/interest/other/net_interest are all - Model rows
+        "={c}{Adjusted Net Income - Model}+{c}{(Loss) Gain on Extinguishment of Debt - Model}"
+        "-{c}{Stock Based Compensation - Model}"
+        "-{c}{Inventory Valuation Adjustment - Current Period - Model}"
+        "-{c}{Inventory Valuation Adjustment - Prior Periods - Model}"
+        "-{c}{Restructuring - Model}-{c}{CEO Make-Whole Provision - Model}"
+        "-{c}{Other GAAP Adjustments - Model}"
+    ),
     "Earnings per Share - Model": (
         '=IF(N({c}{shares_row})=0,"",{c}{gaap_row}/{c}{shares_row})'
     ),
@@ -412,14 +429,22 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         {
             ADJ_NET_INCOME_MODEL_LABEL,
             DEBT_EXTINGUISHMENT_MODEL_LABEL,
-            INTEREST_EXPENSE_MODEL_LABEL,
-            OTHER_INCOME_MODEL_LABEL,
-            "Net Interest Expense - Model",
+            SBC_MODEL_LABEL,
+            INV_VAL_CURRENT_MODEL_LABEL,
+            INV_VAL_PRIOR_MODEL_LABEL,
+            RESTRUCTURING_MODEL_LABEL,
+            CEO_MAKE_WHOLE_MODEL_LABEL,
+            OTHER_GAAP_ADJ_MODEL_LABEL,
         }
     ),
     DEBT_EXTINGUISHMENT_MODEL_LABEL: frozenset({DEBT_EXTINGUISHMENT_LABEL}),
     INTEREST_EXPENSE_MODEL_LABEL: frozenset({INTEREST_EXPENSE_LABEL}),
     OTHER_INCOME_MODEL_LABEL: frozenset({OTHER_INCOME_LABEL}),
+    INV_VAL_CURRENT_MODEL_LABEL: frozenset({INV_VAL_CURRENT_LABEL}),
+    INV_VAL_PRIOR_MODEL_LABEL: frozenset({INV_VAL_PRIOR_LABEL}),
+    RESTRUCTURING_MODEL_LABEL: frozenset({RESTRUCTURING_LABEL}),
+    CEO_MAKE_WHOLE_MODEL_LABEL: frozenset({CEO_MAKE_WHOLE_LABEL}),
+    OTHER_GAAP_ADJ_MODEL_LABEL: frozenset({OTHER_GAAP_ADJ_LABEL}),
     "Earnings per Share - Model": frozenset(
         {GAAP_NET_INCOME_MODEL_LABEL, SHARES_MODEL_LABEL}
     ),
@@ -483,6 +508,11 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
     INTEREST_EXPENSE_MODEL_LABEL,
     OTHER_INCOME_MODEL_LABEL,
+    INV_VAL_CURRENT_MODEL_LABEL,
+    INV_VAL_PRIOR_MODEL_LABEL,
+    RESTRUCTURING_MODEL_LABEL,
+    CEO_MAKE_WHOLE_MODEL_LABEL,
+    OTHER_GAAP_ADJ_MODEL_LABEL,
     SHARES_ADJUSTMENT_LABEL,
     SHARES_MODEL_LABEL,
     "Homes in Inventory - Model",
@@ -530,15 +560,6 @@ def column_relative_formula(
             c=col,
             gaap_row=label_to_row[GAAP_NET_INCOME_MODEL_LABEL],
             shares_row=label_to_row[SHARES_MODEL_LABEL],
-        )
-    if label == GAAP_NET_INCOME_MODEL_LABEL:
-        return template.format(
-            c=col,
-            adj_ni=label_to_row[ADJ_NET_INCOME_MODEL_LABEL],
-            debt=label_to_row[DEBT_EXTINGUISHMENT_MODEL_LABEL],
-            interest_gaap=label_to_row[INTEREST_EXPENSE_MODEL_LABEL],
-            other_income=label_to_row[OTHER_INCOME_MODEL_LABEL],
-            net_interest=label_to_row["Net Interest Expense - Model"],
         )
     return apply_row_labels(template, label_to_row).format(c=col)
 
@@ -702,6 +723,31 @@ def row_cells_for_label(
                 col_letter(col_idx + 2),
                 weekly_actual_row=actual_row,
                 weekly_run_rate=OTHER_INCOME_WEEKLY_RUN_RATE,
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    _adj_to_gaap_model_specs: dict[str, tuple[str, float]] = {
+        INV_VAL_CURRENT_MODEL_LABEL: (
+            INV_VAL_CURRENT_LABEL,
+            INV_VAL_CURRENT_WEEKLY_RUN_RATE,
+        ),
+        INV_VAL_PRIOR_MODEL_LABEL: (
+            INV_VAL_PRIOR_LABEL,
+            INV_VAL_PRIOR_WEEKLY_RUN_RATE,
+        ),
+        RESTRUCTURING_MODEL_LABEL: (RESTRUCTURING_LABEL, 0),
+        CEO_MAKE_WHOLE_MODEL_LABEL: (CEO_MAKE_WHOLE_LABEL, 0),
+        OTHER_GAAP_ADJ_MODEL_LABEL: (OTHER_GAAP_ADJ_LABEL, 0),
+    }
+    if label in _adj_to_gaap_model_specs:
+        actual_label, run_rate = _adj_to_gaap_model_specs[label]
+        actual_row = label_to_row[actual_label]
+        return [
+            weekly_gaap_below_line_model_formula(
+                col_letter(col_idx + 2),
+                weekly_actual_row=actual_row,
+                weekly_run_rate=run_rate,
             )
             for col_idx in range(n_cols)
         ]

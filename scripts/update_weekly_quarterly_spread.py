@@ -9,9 +9,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from sheets.gaap_below_the_line import DEBT_EXTINGUISHMENT_LABEL, INTEREST_EXPENSE_LABEL, OTHER_INCOME_LABEL
+from sheets import SheetsClient  # noqa: E402
+from sheets.gaap_below_the_line import (
+    ADJ_TO_GAAP_LABELS,
+    DEBT_EXTINGUISHMENT_LABEL,
+    INTEREST_EXPENSE_LABEL,
+    OTHER_INCOME_LABEL,
+)
 from sheets.formulas import (  # noqa: E402
     weekly_asp_formula,
+    weekly_from_quarterly_end_quarter_formula,
     weekly_from_quarterly_formula,
     weekly_inventory_formula,
     weekly_quarterly_rate_formula,
@@ -34,11 +41,16 @@ SPREAD_LABELS = (
     "Depreciation and Amortization",
     "Taxes",
     "Adjusted Net Income",
-    DEBT_EXTINGUISHMENT_LABEL,
     INTEREST_EXPENSE_LABEL,
     OTHER_INCOME_LABEL,
     "Net Income (Loss) Attributable to Common Shareholders",
     "Earnings per Share",
+)
+
+# One-time quarterly reconciliation items: week-ending quarter only (no boundary blend).
+END_QUARTER_SPREAD_LABELS = (
+    DEBT_EXTINGUISHMENT_LABEL,
+    *ADJ_TO_GAAP_LABELS,
 )
 
 # Percent / rate rows: day-weighted blend, no ÷13.
@@ -60,10 +72,17 @@ def col_letter(n: int) -> str:
 
 def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
     """Return label -> (weekly_row, quarterly_row)."""
-    weekly_labels = label_rows(client, WEEKLY)
-    quarterly_labels = label_rows(client, QUARTERLY)
+    weekly_labels = label_rows(client, WEEKLY, max_row=100)
+    quarterly_labels = label_rows(client, QUARTERLY, max_row=100)
     mapping: dict[str, tuple[int, int]] = {}
-    for label in (*SPREAD_LABELS, *RATE_LABELS, SHARES_LABEL, INVENTORY_LABEL, ASP_LABEL):
+    for label in (
+        *SPREAD_LABELS,
+        *END_QUARTER_SPREAD_LABELS,
+        *RATE_LABELS,
+        SHARES_LABEL,
+        INVENTORY_LABEL,
+        ASP_LABEL,
+    ):
         mapping[label] = (
             row_by_label(weekly_labels, label, WEEKLY),
             row_by_label(quarterly_labels, label, QUARTERLY),
@@ -81,7 +100,7 @@ def update_weekly_formulas(client: SheetsClient) -> None:
     ws = client.worksheet(WEEKLY)
     row_map = build_row_map(client)
 
-    data = ws.get("A1:DY60", value_render_option="FORMULA")
+    data = ws.get("A1:DY90", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 
@@ -95,6 +114,20 @@ def update_weekly_formulas(client: SheetsClient) -> None:
         for col_idx in range(n_cols):
             col = col_letter(col_idx + 2)
             new_val = weekly_from_quarterly_formula(quarterly_row, col)
+            if str(cells[col_idx]) != new_val:
+                cells[col_idx] = new_val
+                changed = True
+        if changed:
+            rows_to_update[weekly_row] = cells
+
+    for label in END_QUARTER_SPREAD_LABELS:
+        weekly_row, quarterly_row = row_map[label]
+        existing = list(data[weekly_row - 1][1:]) if len(data[weekly_row - 1]) > 1 else []
+        cells = existing + [""] * (n_cols - len(existing))
+        changed = len(existing) < n_cols
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            new_val = weekly_from_quarterly_end_quarter_formula(quarterly_row, col)
             if str(cells[col_idx]) != new_val:
                 cells[col_idx] = new_val
                 changed = True
@@ -190,7 +223,7 @@ def update_weekly_formulas(client: SheetsClient) -> None:
 def clear_misplaced_spread_formulas(client: SheetsClient) -> None:
     """Remove quarterly spread formulas that landed on model rows after layout shifts."""
     ws = client.worksheet(WEEKLY)
-    data = ws.get("A1:DY60", value_render_option="FORMULA")
+    data = ws.get("A1:DY90", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 

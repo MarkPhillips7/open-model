@@ -137,7 +137,7 @@ def validate(client: SheetsClient | None = None, *, offline: bool = False) -> li
         return issues
 
     client = client or SheetsClient()
-    label_to_row = label_rows(client, WEEKLY)
+    label_to_row = label_rows(client, WEEKLY, max_row=100)
     issues.extend(collect_template_issues(label_to_row))
     issues.extend(collect_generated_formula_issues(label_to_row))
     return issues

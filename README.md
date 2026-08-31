@@ -39,7 +39,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Weekly spine
 
 - Columns are **week ending** dates (`Week Ending`, then `+7` across the horizon).
-- **Quarterly-reported actuals** (homes purchased, home sales, revenue, opex, SBC, inventory, etc.) live on **Quarterly Financials** as quarter totals. **Weekly Financials** spreads them (`quarterly ÷ 13`, weighted by days when a week spans two quarters) when the quarterly cell is a hardcoded value.
+- **Quarterly-reported actuals** (homes purchased, home sales, revenue, opex, SBC, inventory, etc.) live on **Quarterly Financials** as quarter totals. **Weekly Financials** spreads them (`quarterly ÷ 13`, day-weighted at quarter boundaries when a week spans two quarters) when the quarterly cell is a hardcoded value. **One-time GAAP items** (debt extinguishment, inventory valuation timing, restructuring, CEO make-whole) use the **week-ending quarter only**—no cross-quarter blend—so a Q4 debt charge does not leak into Q1 boundary weeks.
 - **Weekly-reported actuals** (e.g. acquisition contracts, sparse new-listing counts) are entered on **Weekly Financials**. **Quarterly Financials** sums the matching weeks when the quarterly cell is a formula.
 - **Model** rows stay on **Weekly Financials**; formulas fall back between actual and model rows as before.
 
@@ -61,6 +61,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 - **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
 - **Adjusted EBITDA - Model** = Contribution Profit − Adjusted Operating Expenses (matches Opendoor Non-GAAP EBITDA).
 - **Adjusted Net Income - Model** = Adjusted EBITDA − Net Interest − D&A − Taxes (SBC is **not** subtracted again; it sits above EBITDA in the company reconciliation).
+- **Net Income (Loss) Attributable to Common Shareholders - Model** = Adjusted Net Income + debt extinguishment − SBC − inventory valuation (current + prior periods) − restructuring − CEO make-whole − other GAAP adjustments (matches Opendoor’s Adj ↔ GAAP reconciliation in the earnings supplement).
 - **Earnings per Share - Model** = GAAP net income ÷ **Basic Shares Outstanding - Model** (actual passthrough when reported; else prior week + **Share Count Adjustment - Model** from the **Shares** event table).
 
 ### Charts

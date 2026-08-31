@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.gaap_below_the_line import BELOW_THE_LINE_BY_COL
+from sheets.gaap_below_the_line import ADJ_TO_GAAP_BY_COL, BELOW_THE_LINE_BY_COL
 from sheets.labels import QUARTERLY, label_rows, row_by_label, write_quarterly_by_label  # noqa: E402
 
 Q3_COL = "B"  # 2025 Q3
@@ -38,6 +38,7 @@ Q3_EOP_SHARES = 771_534_057
 def write_quarterly_q3(client: SheetsClient) -> None:
     write_quarterly_by_label(client, Q3_COL, Q3_VALUES_BY_LABEL)
     write_quarterly_by_label(client, Q3_COL, BELOW_THE_LINE_BY_COL[Q3_COL])
+    write_quarterly_by_label(client, Q3_COL, ADJ_TO_GAAP_BY_COL[Q3_COL])
     labels = label_rows(client, QUARTERLY)
     eop_row = row_by_label(labels, EOP_SHARES_LABEL, QUARTERLY)
     client.worksheet(QUARTERLY).update(

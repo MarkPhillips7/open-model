@@ -18,6 +18,55 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Adj→GAAP reconciliation rows (inventory, restructuring, CEO, other)
+
+Closed remaining **GAAP NI - Model** gaps by adding earnings-supplement reconciliation lines between Adjusted Net Income and GAAP net loss: inventory valuation timing (current + prior periods), restructuring, CEO make-whole, and other GAAP adjustments.
+
+- **Tab / range:** **Weekly Financials** and **Quarterly Financials** — inserted 10 rows before **Net Income (Loss) Attributable to Common Shareholders** (5 actual + 5 `- Model`); spread actuals; restored **GAAP NI - Model**
+- **Insert/delete:** 10 rows on each tab before **Net Income (Loss) Attributable to Common Shareholders**
+- **Formulas:**
+  - **GAAP NI - Model:** `={adj_ni}+{debt}-{sbc}-{inv_curr}-{inv_prior}-{restruct}-{ceo}-{other}` (label-resolved; was `={adj_ni}+{debt}-{sbc}`)
+  - **`* - Model` passthrough rows:** actual if spread else forward run-rate (**~$12M/qtr** current-period inventory, **~−$15M/qtr** prior-period release; restructuring / CEO / other default **0**)
+- **Data (Quarterly Financials, reconciliation add-back signs from supplements, $):**
+
+| Quarter | Inv val current | Inv val prior | Restructuring | CEO make-whole | Other |
+| --- | --- | --- | --- | --- | --- |
+| 2025 Q3 | 15M | −17M | 1M | 0 | −2M |
+| 2025 Q4 | 9M | −21M | 0 | 5M | 0 |
+| 2026 Q1 | 9M | −14M | 0 | 5M | 0 |
+| 2026 Q2 | 14M | −9M | 3M | 4M | −2M |
+
+- **Side effects:** GAAP NI - Model, EPS - Model shift +10 rows; **Money Charts** may need manual repoint. Debt / reconciliation actual rows use **week-ending-quarter ÷13** spread (no cross-quarter day blend) so Q4 debt does not leak into Q1 boundary weeks.
+
+**Post-fix GAAP NI - Model vs quarterly reported ($M):** 2025 Q4 **−1.7** (was ~+29); 2026 Q1 **+6.6** (was ~−34); 2026 Q2 **+14.1** (unchanged). Remaining Q2 gap ≈ operating **Adjusted Net Income - Model** vs reported (−18 vs −30).
+
+### Repo
+
+- **`sheets/gaap_below_the_line.py`** — labels, quarterly actuals, forward run-rates
+- **`sheets/formulas.py`** — `weekly_from_quarterly_end_quarter_formula` for one-time GAAP items
+- **`sheets/weekly_model_formulas.py`** — GAAP NI formula + five model rows
+- **`scripts/add_gaap_adj_to_gaap_rows.py`** — live migration
+- **`scripts/update_weekly_quarterly_spread.py`** — end-quarter spread for debt + reconciliation rows; `max_row` / range fixes
+
+---
+
+## 2026-08-31 — Fix GAAP NI - Model: Adj + debt − SBC (drop interest double-count)
+
+**Net Income (Loss) Attributable to Common Shareholders - Model** added GAAP interest expense, other income, and net interest on top of **Adjusted Net Income - Model**, but Adj NI already embeds EBITDA-bridge net interest. It also omitted **SBC**, which must be subtracted on the Adj → GAAP path (mirror of the Adj NI fix). Rewired to Opendoor’s reconciliation: **Adj NI + debt extinguishment − SBC**.
+
+- **Tab / range:** **Weekly Financials** **Net Income (Loss) Attributable to Common Shareholders - Model** (`B67:DY67` after restore)
+- **Insert/delete:** none
+- **Formulas:** `={adj_ni}+{debt}+{interest_gaap}+{other}-{net_interest}` → `={adj_ni}+{debt}-{sbc_model}` (label-resolved)
+- **Data:** none
+- **Side effects:** **Interest Expense - Model** / **Other Income - Net - Model** rows unchanged (still passthrough/guidance for reference); **Earnings per Share - Model** picks up corrected GAAP NI denominator stack
+
+### Repo
+
+- **`sheets/weekly_model_formulas.py`** — GAAP NI formula + dependencies
+- **`README.md`** — GAAP NI - Model definition
+
+---
+
 ## 2026-08-31 — Private Home Sales - Model: listing lag row 4 (not row 19)
 
 Repo template still pointed **Private Home Sales - Model** at `Transitions!$B$19:$J$19` (private close curve). Live sheet was manually corrected to **`Transitions!$B$4:$J$4`** (2.0 purchase→listing timing). Restored from canonical template.

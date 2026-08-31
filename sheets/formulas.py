@@ -86,6 +86,30 @@ def weekly_from_quarterly_formula(
     )
 
 
+def weekly_from_quarterly_end_quarter_formula(
+    quarterly_row: int,
+    col: str,
+    *,
+    week_date_row: int = WEEK_DATE_ROW,
+) -> str:
+    """Spread using the week-ending quarter only (÷13, no cross-quarter day blend).
+
+    One-time quarterly reconciliation items (debt extinguishment, restructuring,
+    inventory valuation timing) should not pull the prior quarter's spike into
+    boundary weeks of the next quarter.
+    """
+    quarter_cell = f"OFFSET('{QUARTERLY}'!$B${quarterly_row},0,qCol-1)"
+    return (
+        f'=LET('
+        f"wk,{col}${week_date_row},"
+        f'qKey,IF(wk="","",YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0)),'
+        f"qCol,IFERROR(MATCH(qKey,'{QUARTERLY}'!$B$1:$1,0),0),"
+        f"qHas,AND(qCol>0,NOT(ISFORMULA({quarter_cell})),{quarter_cell}<>\"\"),"
+        f'IF(wk="","",IF(NOT(qHas),"",{quarter_cell}/13))'
+        f")"
+    )
+
+
 def weekly_quarterly_rate_formula(
     quarterly_row: int,
     col: str,

@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.gaap_below_the_line import BELOW_THE_LINE_BY_COL
+from sheets.gaap_below_the_line import ADJ_TO_GAAP_BY_COL, BELOW_THE_LINE_BY_COL
 from sheets.labels import QUARTERLY, label_rows, row_by_label, write_quarterly_by_label  # noqa: E402
 
 EOP_SHARES_LABEL = "Shares Outstanding (Quarter End)"
@@ -88,6 +88,8 @@ def write_quarters(client: SheetsClient) -> None:
         write_quarterly_by_label(client, col, values)
         if col in BELOW_THE_LINE_BY_COL:
             write_quarterly_by_label(client, col, BELOW_THE_LINE_BY_COL[col])
+        if col in ADJ_TO_GAAP_BY_COL:
+            write_quarterly_by_label(client, col, ADJ_TO_GAAP_BY_COL[col])
         if col in EOP_SHARES_BY_COL:
             ws.update(
                 [[EOP_SHARES_BY_COL[col]]],
