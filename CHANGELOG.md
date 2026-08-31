@@ -18,6 +18,25 @@ Entry template:
 
 ---
 
+## 2026-08-31 — Revenue cash/financed close lag pairing + formula drift checks
+
+**Revenue - 2.0 Model** and **Revenue - 1.0 Model** paired financed close lag (`Transitions!$B$18`) with cash purchase % (`$B$20`) and cash lag (`$B$19`) with financed share — reversed. Cash lag now pairs with `$B$20`; financed lag with `(1-$B$20)`.
+
+- **Tab / range:** **Weekly Financials** `B24:DY24`, `B25:DY25` (**Revenue - 2.0 Model**, **Revenue - 1.0 Model**)
+- **Insert/delete:** none
+- **Formulas:** first SUMPRODUCT lag `Transitions!$B$18` → `Transitions!$B$19` (× `$B$20`); second lag `$B$19` → `$B$18` (× `(1-$B$20)`)
+- **Data:** none
+- **Side effects:** **Revenue - Model** (blend row) unchanged structurally; repo now validates live `* - Model` formulas match templates so manual fixes are not lost on restore
+
+### Repo
+
+- **`sheets/open_transition.py`** — `revenue_model_formula()` lag pairing
+- **`scripts/validate_model_formulas.py`** — `collect_live_formula_drift()`; restore skips drift check
+- **`scripts/sync_repo_from_live_sheet.py`** — pull CM stack + snapshot validate + drift check after manual edits
+- **`README.md`** — document sync workflow
+
+---
+
 ## 2026-08-31 — Adj→GAAP reconciliation rows (inventory, restructuring, CEO, other)
 
 Closed remaining **GAAP NI - Model** gaps by adding earnings-supplement reconciliation lines between Adjusted Net Income and GAAP net loss: inventory valuation timing (current + prior periods), restructuring, CEO make-whole, and other GAAP adjustments.

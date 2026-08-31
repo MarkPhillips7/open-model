@@ -136,8 +136,9 @@ Then complete the [Google Cloud setup](#one-time-google-cloud-setup) below, save
 python scripts/auth_setup.py      # first-time sign-in
 python scripts/test_connection.py # verify access to your spreadsheet
 python scripts/validate_workbook_snapshot.py  # compare live tabs/charts to config/workbook_snapshot.json
-python scripts/validate_model_formulas.py        # check templates + live label alignment
+python scripts/validate_model_formulas.py        # check templates, labels, and live formula drift
 python scripts/restore_weekly_model_formulas.py  # restore * - Model row formulas
+python scripts/sync_repo_from_live_sheet.py      # after manual sheet edits: pull CM stack + validate drift
 ```
 
 Canonical model-row formulas live in `sheets/weekly_model_formulas.py`. Templates use `{Label}` placeholders resolved at restore time via `sheets/labels.py` — never hardcoded weekly row numbers.
@@ -151,6 +152,8 @@ Canonical model-row formulas live in `sheets/weekly_model_formulas.py`. Template
 Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --offline`
 
 Workbook layout (tab names, chart series rows) is snapshotted in `config/workbook_snapshot.json`. After intentional chart or tab changes, refresh with `python scripts/validate_workbook_snapshot.py --update` and commit the diff.
+
+**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py` (add `--update-snapshot` if chart series rows changed). That pulls CM seasonality/stack constants and fails if any `* - Model` formula on the live sheet differs from `sheets/weekly_model_formulas.py` / `sheets/open_transition.py` — so manual formula fixes are not silently lost on the next restore.
 
 After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
 

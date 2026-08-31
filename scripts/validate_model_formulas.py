@@ -15,7 +15,7 @@ from sheets.labels import WEEKLY, label_rows  # noqa: E402
 from sheets.weekly_model_formulas import (  # noqa: E402
     MODEL_FORMULA_LABELS,
     UNIFORM_FORMULA_TEMPLATES,
-    column_relative_formula,
+    col_letter,
     formula_row_dependencies,
     row_cells_for_label,
     uniform_formula_template,
@@ -53,6 +53,12 @@ def _labels_from_template(template: str) -> set[str]:
         for m in re.finditer(r"\{([^{}]+)\}", template)
         if m.group(1) not in NON_LABEL_PLACEHOLDERS
     }
+
+
+def normalize_formula(value: object) -> str:
+    if not isinstance(value, str):
+        return str(value)
+    return re.sub(r"\s+", "", value.strip())
 
 
 def collect_template_issues(label_to_row: dict[str, int]) -> list[str]:
@@ -102,6 +108,46 @@ def collect_generated_formula_issues(
     return issues
 
 
+def collect_live_formula_drift(
+    client: SheetsClient,
+    label_to_row: dict[str, int],
+    *,
+    max_row: int = 90,
+) -> list[str]:
+    """Compare live * - Model formulas to repo templates (catches un-synced manual edits)."""
+    ws = client.worksheet(WEEKLY)
+    data = ws.get(f"A1:DY{max_row}", value_render_option="FORMULA")
+    n_cols = max((len(row) - 1 for row in data if row), default=0)
+    issues: list[str] = []
+
+    for label in MODEL_FORMULA_LABELS:
+        cells = row_cells_for_label(label, n_cols, label_to_row=label_to_row)
+        if cells is None:
+            continue
+        row_num = label_to_row[label]
+        if row_num > len(data):
+            issues.append(f"{label!r}: row {row_num} missing on sheet")
+            continue
+        live_row = data[row_num - 1][1 : 1 + n_cols]
+        for col_idx, expected in enumerate(cells):
+            live = live_row[col_idx] if col_idx < len(live_row) else ""
+            if isinstance(expected, str) and expected.startswith("="):
+                if normalize_formula(expected) != normalize_formula(live):
+                    col = col_letter(col_idx + 2)
+                    issues.append(
+                        f"{label!r} row {row_num} col {col}: live sheet differs from "
+                        f"repo template (update sheets/*.py or run restore after fixing repo)"
+                    )
+                    break
+            elif expected != "" and expected != live:
+                col = col_letter(col_idx + 2)
+                issues.append(
+                    f"{label!r} row {row_num} col {col}: live value {live!r} != repo {expected!r}"
+                )
+                break
+    return issues
+
+
 def _weekly_row_literal_issues(label: str, tmpl: str) -> list[str]:
     """Find $N weekly row literals outside Transitions! references."""
     issues: list[str] = []
@@ -130,7 +176,12 @@ def collect_hardcoded_template_rows() -> list[str]:
     return issues
 
 
-def validate(client: SheetsClient | None = None, *, offline: bool = False) -> list[str]:
+def validate(
+    client: SheetsClient | None = None,
+    *,
+    offline: bool = False,
+    check_live_drift: bool = True,
+) -> list[str]:
     issues: list[str] = []
     issues.extend(collect_hardcoded_template_rows())
     if offline:
@@ -140,18 +191,23 @@ def validate(client: SheetsClient | None = None, *, offline: bool = False) -> li
     label_to_row = label_rows(client, WEEKLY, max_row=100)
     issues.extend(collect_template_issues(label_to_row))
     issues.extend(collect_generated_formula_issues(label_to_row))
+    if check_live_drift:
+        issues.extend(collect_live_formula_drift(client, label_to_row))
     return issues
 
 
 def main() -> None:
     offline = "--offline" in sys.argv
-    issues = validate(offline=offline)
+    check_live_drift = "--skip-drift" not in sys.argv
+    issues = validate(offline=offline, check_live_drift=check_live_drift)
     if issues:
         print("Model formula validation FAILED:")
         for item in issues:
             print(f"  - {item}")
         sys.exit(1)
     suffix = " (offline template checks only)" if offline else ""
+    if not check_live_drift:
+        suffix += " (live drift check skipped)"
     print(f"Model formula validation passed{suffix}.")
 
 

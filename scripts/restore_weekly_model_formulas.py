@@ -26,7 +26,7 @@ def restore_model_formulas(client: SheetsClient) -> None:
     ws = client.worksheet(WEEKLY)
     labels = label_rows(client, WEEKLY, max_row=100)
 
-    issues = validate(client)
+    issues = validate(client, check_live_drift=False)
     if issues:
         raise RuntimeError(
             "Model formula validation failed before restore:\n"

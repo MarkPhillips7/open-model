@@ -271,7 +271,7 @@ def revenue_model_formula(*, sold_row: int, retention_row: int, sold_weeks: int)
     return f"""=(SUMPRODUCT(
   MAP(SEQUENCE(1,{sold_weeks}), LAMBDA(lag,
     LET(
-      col, COLUMN() - lag - {FINANCED_CLOSE_LAG_CELL},
+      col, COLUMN() - lag - {CASH_CLOSE_LAG_CELL},
       IF(col < 2, 160*356000,
         IF(INDEX(${{New Listings}}:${{New Listings}}, 1, col) = "",
           INDEX(${{New Listings - Model}}:${{New Listings - Model}}, 1, col),
@@ -286,7 +286,7 @@ def revenue_model_formula(*, sold_row: int, retention_row: int, sold_weeks: int)
  SUMPRODUCT(
   MAP(SEQUENCE(1,{sold_weeks}), LAMBDA(lag,
     LET(
-      col, COLUMN() - lag - {CASH_CLOSE_LAG_CELL},
+      col, COLUMN() - lag - {FINANCED_CLOSE_LAG_CELL},
       IF(col < 2, 160*356000,
         IF(INDEX(${{New Listings}}:${{New Listings}}, 1, col) = "",
           INDEX(${{New Listings - Model}}:${{New Listings - Model}}, 1, col),
