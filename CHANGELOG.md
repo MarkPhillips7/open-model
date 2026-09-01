@@ -18,6 +18,16 @@ Entry template:
 
 ---
 
+## 2026-09-01 — Sync repo from live spreadsheet (tab reorder)
+
+Ran `sync_repo_from_live_sheet.py --update-snapshot` after user moved tabs and changed formatting in the UI.
+
+- **Tab / range:** read-only pull (no sheet writes)
+- **Insert/delete:** none
+- **Formulas:** none — model formula validation passed (live `* - Model` rows match repo templates)
+- **Data:** CM seasonality, CM stack anchors, and **Financials Definitions** notes already matched live; no git diff on those files
+- **Side effects:** `config/workbook_snapshot.json` — worksheet tab order updated: **Financials Definitions** first; **Homes Chart** / **Money Charts** moved before **Transitions** / **Shares**. Chart series rows unchanged. Formatting-only UI edits are not tracked in git.
+
 ## 2026-09-01 — Price (at Close): blank future weeks
 
 - **Tab / range:** **Weekly Financials** `B80:DY80` (Price at Close)

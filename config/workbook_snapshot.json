@@ -1,12 +1,12 @@
 {
   "worksheets": [
+    "Financials Definitions",
     "Weekly Financials",
     "Quarterly Financials",
-    "Financials Definitions",
-    "Transitions",
-    "Shares",
     "Homes Chart",
     "Money Charts",
+    "Transitions",
+    "Shares",
     "Seasonality",
     "Price History"
   ],
