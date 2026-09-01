@@ -310,8 +310,10 @@ FIELD_NOTES: dict[str, str] = {
         "Formula: GAAP NI - Model ÷ Basic Shares Outstanding - Model (blank if shares = 0)."
     ),
     "Price (at Close)": (
-        "OPEN stock price for the week (GOOGLEFINANCE, week-ending Saturday). "
-        "Formula only; updates from market data. Shown on Money Charts right axis."
+        "OPEN close on the last trading day on or before the week-ending date. "
+        "Blank when the week-ending date is after TODAY() (forward projection columns). "
+        "XLOOKUP from **Price History** (single GOOGLEFINANCE daily spill). "
+        "Shown on Money Charts right axis."
     ),
     "Trailing Twelve Months Revenue": (
         "Rolling 12-month revenue for valuation. Uses reported TTM at quarter ends from earnings; "

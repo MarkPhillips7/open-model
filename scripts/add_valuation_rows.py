@@ -34,6 +34,12 @@ from sheets.valuation import (  # noqa: E402
 )
 from sheets.weekly_model_formulas import col_letter  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "scripts"))
+from setup_price_history import (  # noqa: E402
+    ensure_price_history_sheet,
+    write_price_history_query,
+)
+
 EPS_MODEL_LABEL = "Earnings per Share - Model"
 
 
@@ -136,6 +142,8 @@ def write_weekly_valuation_formulas(client: SheetsClient) -> None:
 def main() -> None:
     client = SheetsClient()
     ensure_valuation_rows(client)
+    ensure_price_history_sheet(client)
+    write_price_history_query(client)
     write_quarterly_ttm_actuals(client)
     write_weekly_valuation_formulas(client)
     print("Done.")

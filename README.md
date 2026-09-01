@@ -30,6 +30,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
 | **Seasonality** | Monthly home-sales seasonality weights; drives weekly seasonality multipliers. |
+| **Price History** | One `GOOGLEFINANCE` spill of OPEN daily OHLCV; **Price (at Close)** on Weekly Financials XLOOKUPs the close column by week-ending date. |
 | **Homes Chart** | Line chart of weekly home metrics (actual vs model for contracts, purchases, listings, sales, inventory). |
 | **Money Charts** | Two line charts: **Revenue and Shares** (revenue + basic shares) and **Profit and Price** (contribution profit, adjusted/GAAP net income). |
 

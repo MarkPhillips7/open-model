@@ -18,6 +18,26 @@ Entry template:
 
 ---
 
+## 2026-09-01 — Price (at Close): blank future weeks
+
+- **Tab / range:** **Weekly Financials** `B80:DY80` (Price at Close)
+- **Insert/delete:** none
+- **Formulas:** `=IF(OR(col$1="",col$1>TODAY()),"",IFERROR(XLOOKUP(...),""))` — no price when week-ending date is after today
+- **Data:** none
+- **Side effects:** `sheets/price_history.py`; **Financials Definitions** note updated
+
+## 2026-09-01 — Price History tab (fix blank Price cells)
+
+Replaced per-column `GOOGLEFINANCE` on **Price (at Close)** with one daily-price spill and weekly `XLOOKUP` (avoids Google rate-limit blanks).
+
+- **Tab / range:** new **Price History** `A1` spill + `G1` note; **Weekly Financials** `B80:DY80` (Price at Close)
+- **Insert/delete:** new worksheet **Price History** (500×8 grid at index 8)
+- **Formulas:**
+  - **Price History** `A1`: `=GOOGLEFINANCE("OPEN","all",MIN(FILTER(weeks))-30,MIN(MAX(weeks),TODAY()),"DAILY")` — one spill (Date…Close in cols A–F)
+  - **Price (at Close)** `B80`: `=IF(B$1="","",IFERROR(XLOOKUP(B$1,'Price History'!$A$2:$A,'Price History'!$E$2:$E,"",-1),""))` (copied across)
+- **Data:** none
+- **Side effects:** `sheets/price_history.py`, `scripts/setup_price_history.py`; `add_valuation_rows.py` ensures Price History; **Financials Definitions** note updated; `config/workbook_snapshot.json` updated
+
 ## 2026-09-01 — Sync repo from live spreadsheet (manual edits)
 
 Ran `sync_repo_from_live_sheet.py --update-snapshot` after user manual workbook edits.

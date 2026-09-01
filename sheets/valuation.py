@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from sheets.formulas import QUARTERLY, WEEK_DATE_ROW
+from sheets.price_history import weekly_price_at_close_formula
 
 PRICE_AT_CLOSE_LABEL = "Price (at Close)"
 TTM_REVENUE_LABEL = "Trailing Twelve Months Revenue"
@@ -41,17 +42,6 @@ REPORTED_QUARTERLY_REVENUE: dict[str, int] = {
 
 # Weeks of columns before a rolling sum spans a full year (B = week 1).
 FULL_YEAR_WEEKS = 52
-
-
-def weekly_price_at_close_formula(col: str, *, week_date_row: int = WEEK_DATE_ROW) -> str:
-    wk = f"{col}${week_date_row}"
-    return (
-        f"=LET("
-        f"wk,{wk},"
-        f'px,GOOGLEFINANCE("OPEN","price",wk-6,wk),'
-        f'IF(wk="","",IFERROR(INDEX(px,ROWS(px),2),""))'
-        f")"
-    )
 
 
 def _historical_quarterly_revenue_ifs() -> str:
