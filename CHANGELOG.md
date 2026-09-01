@@ -18,6 +18,40 @@ Entry template:
 
 ---
 
+## 2026-09-01 — TTM revenue: day-weighted quarterly proration before full year
+
+Replaced the partial rolling 52-week sum (which read ~$1B in early 2026) with day-weighted quarterly revenue for columns with fewer than 52 weeks of history.
+
+- **Tab / range:** **Weekly Financials** `B81:DY81` (TTM), `B82:DY83` (P/S)
+- **Insert/delete:** none
+- **Formulas:** TTM when `weeksAvail < 52` — sum over 6 quarters of `(overlap days ÷ quarter days) × quarter revenue`, where overlap is `[wk−365, wk]` ∩ quarter; quarter revenue = **Quarterly Financials** **Revenue** if populated → historical GAAP constants (**2024 Q4** $1.084B through **2025 Q4** $736M) → sum of weekly **Revenue** / **Revenue - Model** for that quarter. When `weeksAvail ≥ 52`, rolling 52-week sum. Week-ending quarters **2024 Q4–2025 Q4** still use flat reported TTM from earnings.
+- **Data:** none
+- **Side effects:** `sheets/valuation.py`; sample Jan 2026 TTM ≈ **$4.30B** (was ~$1.1B)
+
+## 2026-08-31 — Fix TTM revenue errors; use reported TTM for Q4 2024–Q4 2025
+
+Fixed `#NUM!` / `#VALUE!` on **Trailing Twelve Months Revenue** and dependent P/S rows; early weeks now use quarterly-reported TTM.
+
+- **Tab / range:** **Weekly Financials** `B81:DY81` (TTM), `B82:DY83` (P/S); **Quarterly Financials** `B82`, `C82` (TTM actuals for 2025 Q3–Q4)
+- **Insert/delete:** none
+- **Formulas:** TTM `B81` — `IFS` on week-ending quarter for reported TTM (**2024 Q4** $5.15B, **2025 Q1** $5.13B, **2025 Q2** $5.18B, **2025 Q3** $4.72B, **2025 Q4** $4.37B from earnings supplements); else rolling 52-week sum with `INDEX` column offset `ci=c-COLUMN($B$1)+1` and `SEQUENCE(1,n-s+1,s,1)` (was wrongly `SEQUENCE(s,n)` and absolute column index)
+- **Data:** **Quarterly Financials** `B82`=4,720,000,000 (2025 Q3), `C82`=4,370,000,000 (2025 Q4)
+- **Side effects:** `sheets/valuation.py` updated; re-run `scripts/add_valuation_rows.py` to refresh
+
+## 2026-08-31 — Valuation rows (price, TTM revenue, implied P/S)
+
+Added four valuation metrics after **Earnings per Share - Model** on both financials tabs; weekly formulas populated.
+
+- **Tab / range:** **Weekly Financials** and **Quarterly Financials** — inserted 4 rows after **Earnings per Share - Model** (weekly R80–R83, quarterly R81–R84); **Shares Outstanding (Quarter End)** on quarterly shifted to R85
+- **Insert/delete:** ROWS after weekly R79 / quarterly R80, count 4
+- **Formulas (weekly):**
+  - **Price (at Close)** `B80`: `=LET(wk,B$1,px,GOOGLEFINANCE("OPEN","price",wk-6,wk),IF(wk="","",IFERROR(INDEX(px,ROWS(px),2),"")))` — last trading-day close in the 7-day window ending on the week date (Saturdays)
+  - **Trailing Twelve Months Revenue** `B81`: rolling 52-week sum of **Revenue** with **Revenue - Model** fallback
+  - **Price @ P/S = 2** `B82`: `=IF(OR(N(B81)=0,N(shares)=0),"",2*B81/shares)` where shares = **Basic Shares Outstanding** if present else **Basic Shares Outstanding - Model**
+  - **Price @ P/S = 3** `B83`: same as P/S=2 with multiplier 3
+- **Data:** none (formula-driven)
+- **Side effects:** `scripts/add_valuation_rows.py`, `sheets/valuation.py`, `insert_rows_after_label` in `sheets/labels.py`; `validate_model_formulas.py` passes. **Homes Chart** / **Money Charts** unchanged — repoint manually if you add these series.
+
 ## 2026-08-31 — Stale sheet comments + quarterly Doma label
 
 Corrected notes that no longer matched formulas after private-sales and Doma row changes.

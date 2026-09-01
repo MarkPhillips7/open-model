@@ -76,6 +76,51 @@ def insert_rows_before_label(
     return insert_at
 
 
+def insert_rows_after_label(
+    client: SheetsClient,
+    *,
+    tab: str,
+    after_label: str,
+    labels: list[str],
+) -> int:
+    """Insert blank rows after *after_label* and write *labels* in column A. Returns insert row."""
+    ws = client.worksheet(tab)
+    label_map = label_rows(client, tab)
+    try:
+        insert_at = label_map[after_label] + 1
+    except KeyError as exc:
+        raise KeyError(f"{after_label!r} not found on {tab!r}") from exc
+
+    sid = sheet_id(client, tab)
+    client.spreadsheet.batch_update(
+        {
+            "requests": [
+                {
+                    "insertDimension": {
+                        "range": {
+                            "sheetId": sid,
+                            "dimension": "ROWS",
+                            "startIndex": insert_at - 1,
+                            "endIndex": insert_at - 1 + len(labels),
+                        },
+                        "inheritFromBefore": True,
+                    }
+                }
+            ]
+        }
+    )
+
+    ws = client.worksheet(tab)
+    for offset, label in enumerate(labels):
+        ws.update(
+            [[label]],
+            range_name=f"A{insert_at + offset}",
+            value_input_option="RAW",
+        )
+    print(f"{tab}: inserted {len(labels)} row(s) after {after_label!r} at row {insert_at}")
+    return insert_at
+
+
 def write_quarterly_by_label(
     client: SheetsClient,
     col: str,
