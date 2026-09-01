@@ -2,7 +2,7 @@
 """Pull tracked spreadsheet state into git after manual workbook edits.
 
 The live Google Sheet is the source of truth for CM stack constants, seasonality,
-and chart series layout. Model-row formulas are defined in sheets/*.py — if this
+Financials Definitions notes, and chart series layout. Model-row formulas are defined in sheets/*.py — if this
 script reports formula drift, update those modules (or run restore after fixing
 the repo) before committing.
 """
@@ -33,6 +33,7 @@ def _run(script: str, *args: str, check: bool = True) -> int:
 
 def main() -> None:
     _run("pull_cm_stack_from_sheet.py")
+    _run("pull_financials_definitions_from_sheet.py")
 
     if "--update-snapshot" in sys.argv:
         _run("validate_workbook_snapshot.py", "--update")

@@ -26,6 +26,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 | --- | --- |
 | **Weekly Financials** | Main time series (week-ending columns). Actuals + model rows for contracts, **likelihood to close**, purchases, listings, **private sales**, listed+private home sales, ASP, revenue, CM stack, opex, SBC, **GAAP net income / EPS**, inventory. Weekly-reported actuals are entered here; quarterly-reported actuals are spread from **Quarterly Financials**. |
 | **Quarterly Financials** | Same row layout as Weekly Financials, one column per quarter. Enter quarterly earnings actuals here; they spread across weeks (`÷13`, day-weighted at quarter boundaries). Rows like Acquisition Contracts **sum from weekly** when no quarterly report exists. |
+| **Financials Definitions** | Reference tab: column A mirrors Weekly Financials row labels; column B documents each field (Opendoor context, manual vs formula sourcing). Canonical text in `sheets/financials_definitions.py`; pull after UI edits with `scripts/pull_financials_definitions_from_sheet.py`. |
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
 | **Seasonality** | Monthly home-sales seasonality weights; drives weekly seasonality multipliers. |
@@ -153,7 +154,7 @@ Offline template checks (no Google credentials): `python scripts/validate_model_
 
 Workbook layout (tab names, chart series rows) is snapshotted in `config/workbook_snapshot.json`. After intentional chart or tab changes, refresh with `python scripts/validate_workbook_snapshot.py --update` and commit the diff.
 
-**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py` (add `--update-snapshot` if chart series rows changed). That pulls CM seasonality/stack constants and fails if any `* - Model` formula on the live sheet differs from `sheets/weekly_model_formulas.py` / `sheets/open_transition.py` — so manual formula fixes are not silently lost on the next restore.
+**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py` (add `--update-snapshot` if chart series rows changed). That pulls CM seasonality/stack constants, **Financials Definitions** notes, and fails if any `* - Model` formula on the live sheet differs from `sheets/weekly_model_formulas.py` / `sheets/open_transition.py` — so manual formula fixes are not silently lost on the next restore.
 
 After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
 

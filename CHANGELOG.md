@@ -18,6 +18,16 @@ Entry template:
 
 ---
 
+## 2026-09-01 — Sync repo from live spreadsheet (manual edits)
+
+Ran `sync_repo_from_live_sheet.py --update-snapshot` after user manual workbook edits.
+
+- **Tab / range:** read-only pull (no sheet writes)
+- **Insert/delete:** none
+- **Formulas:** none — model formula validation passed (live `* - Model` rows match repo templates)
+- **Data:** verified in sync — CM seasonality (`sheets/cm_seasonality.py`), CM stack anchors (`sheets/weekly_model_formulas.py`), **Financials Definitions** notes (`sheets/financials_definitions.py`), and `config/workbook_snapshot.json` already matched live. Added `scripts/pull_financials_definitions_from_sheet.py` and wired it into sync for future note edits in the UI.
+- **Side effects:** `README.md` workbook map documents **Financials Definitions**
+
 ## 2026-09-01 — Financials Definitions tab
 
 New reference tab documenting every Weekly Financials row label with Opendoor-specific notes on sourcing and formulas.
