@@ -18,6 +18,18 @@ Entry template:
 
 ---
 
+## 2026-09-01 — Sync repo from live spreadsheet (manual chart edits)
+
+User repointed **Money Charts** on the live workbook; pulled into git.
+
+- **Tab / range:** read-only chart metadata pull (no sheet writes)
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `config/workbook_snapshot.json` — **Profit and Price** added 5 series on **Weekly Financials**:
+  - **Adjusted EBITDA** actual **52** / model **53** (left axis)
+  - **Price (at Close)** **80**, **Price @ P/S = 2** **82**, **Price @ P/S = 3** **83** (right axis; P/S lines medium-dashed)
+- **Side effects:** **Homes Chart** unchanged; CM stack unchanged
+
 ## 2026-09-01 — TTM revenue: day-weighted quarterly proration before full year
 
 Replaced the partial rolling 52-week sum (which read ~$1B in early 2026) with day-weighted quarterly revenue for columns with fewer than 52 weeks of history.

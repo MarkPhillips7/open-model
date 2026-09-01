@@ -150,6 +150,36 @@
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
+        },
+        {
+          "weekly_row": 52,
+          "line_style": "SOLID",
+          "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 53,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 80,
+          "line_style": "SOLID",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 82,
+          "line_style": "MEDIUM_DASHED",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 83,
+          "line_style": "MEDIUM_DASHED",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
         }
       ]
     }

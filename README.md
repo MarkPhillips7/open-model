@@ -67,7 +67,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Charts
 
 - **Homes Chart**: Acquisition Contracts, Homes Purchased, New Listings, Home Sales, Homes in Inventory (each actual + model).
-- **Money Charts** — **Revenue and Shares**: Revenue, Basic Shares Outstanding (actual + model). **Profit and Price**: Contribution Profit, Adjusted Net Income, Net Income Attributable to Common Shareholders (actual + model).
+- **Money Charts** — **Revenue and Shares**: Revenue, Basic Shares Outstanding (actual + model). **Profit and Price**: Contribution Profit, Adjusted EBITDA, Adjusted Net Income, Net Income Attributable to Common Shareholders (each actual + model), plus **Price (at Close)** and implied prices at **P/S = 2** and **P/S = 3** on the right axis.
 
 **Manual only.** Chart styling (colors, log scale, axes, legend) is set in the Google Sheets UI. Agents and scripts must not edit these charts via the API — automated updates strip settings. After row inserts on Weekly / Quarterly Financials, fix chart series ranges by hand if a line points at the wrong row.
 
