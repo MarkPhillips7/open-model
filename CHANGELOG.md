@@ -18,6 +18,16 @@ Entry template:
 
 ---
 
+## 2026-09-01 — Financials Definitions tab
+
+New reference tab documenting every Weekly Financials row label with Opendoor-specific notes on sourcing and formulas.
+
+- **Tab / range:** **Financials Definitions** `A1:B83` (new sheet at index 2)
+- **Insert/delete:** new worksheet **Financials Definitions** (120×4 grid)
+- **Formulas:** none
+- **Data:** column A mirrors **Weekly Financials** labels (rows 1–83); column B holds field definitions (manual text). Definitions maintained in `sheets/financials_definitions.py`; re-run `scripts/setup_financials_definitions.py` after row-label changes.
+- **Side effects:** `config/workbook_snapshot.json` updated with new tab name
+
 ## 2026-09-01 — Sync repo from live spreadsheet (manual chart edits)
 
 User repointed **Money Charts** on the live workbook; pulled into git.
