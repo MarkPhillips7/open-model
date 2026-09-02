@@ -24,6 +24,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 | Tab | Role |
 | --- | --- |
+| **Welcome** | Starting point for visitors: disclaimer, goals, resources, tab guide with links, and feedback invitation. Canonical copy in `sheets/welcome.py`; refresh with `scripts/setup_welcome.py`. |
 | **Weekly Financials** | Main time series (week-ending columns). Actuals + model rows for contracts, **likelihood to close**, purchases, listings, **private sales**, listed+private home sales, ASP, revenue, CM stack, opex, SBC, **GAAP net income / EPS**, inventory. Weekly-reported actuals are entered here; quarterly-reported actuals are spread from **Quarterly Financials**. |
 | **Quarterly Financials** | Same row layout as Weekly Financials, one column per quarter. Enter quarterly earnings actuals here; they spread across weeks (`÷13`, day-weighted at quarter boundaries). Rows like Acquisition Contracts **sum from weekly** when no quarterly report exists. |
 | **Financials Definitions** | Reference tab: column A mirrors Weekly Financials row labels; column B documents each field (Opendoor context, manual vs formula sourcing). Canonical text in `sheets/financials_definitions.py`; pull after UI edits with `scripts/pull_financials_definitions_from_sheet.py`. |

@@ -18,6 +18,22 @@ Entry template:
 
 ---
 
+## 2026-09-01 — Welcome tab copy tweaks
+
+- **Tab / range:** **Welcome** `A9`, `B20` (Resources paragraph; Money Charts description)
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** CEO name → Kaz Nejatian; **Money Charts** description now names both charts (**Revenue and Shares**, **Profit and Price**) and lists displayed series
+- **Side effects:** `sheets/welcome.py`; re-ran `scripts/setup_welcome.py`
+
+## 2026-09-01 — Welcome tab (visitor starting point)
+
+- **Tab / range:** new worksheet **Welcome** `A1:B26` (leftmost tab, index 0)
+- **Insert/delete:** new worksheet **Welcome** (60×3 grid at index 0); existing tabs shifted right by one
+- **Formulas:** `HYPERLINK` links to X profile (`@MarkPhillips7`), each workbook tab (`#gid=…`), and inline feedback/resources text
+- **Data:** visitor-facing intro — disclaimer (not financial advice), thanks to OPEN Army/management, resources (Cursor, GitHub repo, earnings, Accountable), goals/assumptions (facts + Kaz guidance), tab guide with concise descriptions, request for feedback
+- **Side effects:** column A width ~220px, column B ~720px; title row bold 14pt; tab-guide header row bold; wrap text on body. Canonical copy in `sheets/welcome.py`; `scripts/setup_welcome.py`. `config/workbook_snapshot.json` — **Welcome** first in tab order.
+
 ## 2026-09-01 — Sync repo from live spreadsheet (tab reorder)
 
 Ran `sync_repo_from_live_sheet.py --update-snapshot` after user moved tabs and changed formatting in the UI.
