@@ -16,15 +16,11 @@ from sheets.financials_definitions import (  # noqa: E402
     FIELD_NOTES,
     FINANCIALS_DEFINITIONS_SHEET,
 )
-from sheets.labels import WEEKLY, label_rows  # noqa: E402
 
 DEFINITIONS_FILE = ROOT / "sheets" / "financials_definitions.py"
 
-
 def pull_notes(client: SheetsClient) -> dict[str, str]:
-    weekly_labels = label_rows(client, WEEKLY, max_row=120)
-    n_rows = max(weekly_labels.values()) if weekly_labels else 0
-    rows = client.read_range(FINANCIALS_DEFINITIONS_SHEET, f"A1:B{n_rows}")
+    rows = client.batch_get([f"{FINANCIALS_DEFINITIONS_SHEET}!A1:B120"])[0]
     notes: dict[str, str] = {}
     for row in rows:
         if not row or not row[0]:

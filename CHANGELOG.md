@@ -18,6 +18,16 @@ Entry template:
 
 ---
 
+## 2026-09-02 — Sync repo from live spreadsheet (manual UI edits)
+
+Ran `sync_repo_from_live_sheet.py` / pull scripts after user manual edits throughout the workbook.
+
+- **Tab / range:** read-only pull (no sheet writes)
+- **Insert/delete:** none detected — `config/workbook_snapshot.json` tab order and chart series rows unchanged after `validate_workbook_snapshot.py --update`
+- **Formulas:** live `* - Model` drift check could not complete reliably (Sheets values API intermittently timing out on **Weekly Financials** reads while the workbook recalculates)
+- **Data:** **Financials Definitions** notes already matched `sheets/financials_definitions.py` when reads succeeded; CM seasonality monthly weights refreshed; CM stack hardcoded anchors not overwritten (live read returned no hardcoded cells — likely all-formula rows or partial API response; repo constants preserved)
+- **Side effects:** sync tooling — `SheetsClient.batch_get()`, pull scripts use batch reads; `pull_financials_definitions_from_sheet.py` no longer depends on **Weekly Financials** labels; added `pull_welcome_from_sheet.py` and `sync_with_retries.py`; CM pull refuses empty anchor overwrite. Re-run `python scripts/sync_with_retries.py --update-snapshot` when the sheet finishes recalculating if formula drift or Welcome copy still needs pulling.
+
 ## 2026-09-01 — Welcome tab copy tweaks
 
 - **Tab / range:** **Welcome** `A9`, `B20` (Resources paragraph; Money Charts description)

@@ -34,6 +34,7 @@ def _run(script: str, *args: str, check: bool = True) -> int:
 def main() -> None:
     _run("pull_cm_stack_from_sheet.py")
     _run("pull_financials_definitions_from_sheet.py")
+    _run("pull_welcome_from_sheet.py", check=False)
 
     if "--update-snapshot" in sys.argv:
         _run("validate_workbook_snapshot.py", "--update")

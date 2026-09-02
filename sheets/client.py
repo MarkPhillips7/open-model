@@ -65,8 +65,26 @@ class SheetsClient:
     def worksheet(self, title: str) -> gspread.Worksheet:
         return self._spreadsheet.worksheet(title)
 
-    def read_range(self, sheet_name: str, cell_range: str) -> list[list]:
-        return self.worksheet(sheet_name).get(cell_range)
+    def read_range(
+        self,
+        sheet_name: str,
+        cell_range: str,
+        *,
+        as_formulas: bool = False,
+    ) -> list[list]:
+        option = "FORMULA" if as_formulas else "UNFORMATTED_VALUE"
+        return self.worksheet(sheet_name).get(cell_range, value_render_option=option)
+
+    def batch_get(
+        self,
+        ranges: list[str],
+        *,
+        as_formulas: bool = False,
+    ) -> list[list[list]]:
+        """Read multiple A1 ranges in one API call. Returns one values grid per range."""
+        params = {"valueRenderOption": "FORMULA" if as_formulas else "UNFORMATTED_VALUE"}
+        result = self._spreadsheet.values_batch_get(ranges, params=params)
+        return [vr.get("values", []) for vr in result.get("valueRanges", [])]
 
     def write_range(
         self,

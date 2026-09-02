@@ -115,20 +115,21 @@ def collect_live_formula_drift(
     max_row: int = 90,
 ) -> list[str]:
     """Compare live * - Model formulas to repo templates (catches un-synced manual edits)."""
-    ws = client.worksheet(WEEKLY)
-    data = ws.get(f"A1:DY{max_row}", value_render_option="FORMULA")
-    n_cols = max((len(row) - 1 for row in data if row), default=0)
+    n_cols = 128  # B:DY
+    end_col = col_letter(n_cols + 1)
+    model_labels = [label for label in MODEL_FORMULA_LABELS if label in label_to_row]
+    ranges = [f"{WEEKLY}!B{label_to_row[label]}:{end_col}{label_to_row[label]}" for label in model_labels]
+    if not ranges:
+        return []
+    live_rows = client.batch_get(ranges, as_formulas=True)
     issues: list[str] = []
 
-    for label in MODEL_FORMULA_LABELS:
+    for label, live_grid in zip(model_labels, live_rows, strict=True):
         cells = row_cells_for_label(label, n_cols, label_to_row=label_to_row)
         if cells is None:
             continue
         row_num = label_to_row[label]
-        if row_num > len(data):
-            issues.append(f"{label!r}: row {row_num} missing on sheet")
-            continue
-        live_row = data[row_num - 1][1 : 1 + n_cols]
+        live_row = live_grid[0] if live_grid else []
         for col_idx, expected in enumerate(cells):
             live = live_row[col_idx] if col_idx < len(live_row) else ""
             if isinstance(expected, str) and expected.startswith("="):

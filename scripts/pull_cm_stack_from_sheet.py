@@ -16,11 +16,12 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.cm_seasonality import CM_SEASONALITY_ROW_LABEL, CM_SEASONALITY_SHEET  # noqa: E402
-from sheets.labels import WEEKLY, label_rows  # noqa: E402
+from sheets.labels import WEEKLY  # noqa: E402
 from sheets.weekly_model_formulas import col_letter  # noqa: E402
 
 WEEKLY_FORMULAS = ROOT / "sheets" / "weekly_model_formulas.py"
 CM_SEASONALITY = ROOT / "sheets" / "cm_seasonality.py"
+N_COLS = 128  # B:DY
 
 
 def _format_float(value: float) -> str:
@@ -57,57 +58,60 @@ def _replace_block(path: Path, start_marker: str, end_marker: str, new_block: st
     path.write_text(pattern.sub(new_block, text, count=1))
 
 
+def _label_rows_from_column(rows: list[list]) -> dict[str, int]:
+    found: dict[str, int] = {}
+    for idx, row in enumerate(rows, start=1):
+        if row and row[0]:
+            found[row[0]] = idx
+    return found
+
+
 def pull_seasonality_monthly(client: SheetsClient) -> list[float]:
-    ws = client.worksheet(CM_SEASONALITY_SHEET)
-    label_cell = ws.get("A6", value_render_option="UNFORMATTED_VALUE")[0][0]
+    seasonality, monthly = client.batch_get(
+        [f"{CM_SEASONALITY_SHEET}!A6", f"{CM_SEASONALITY_SHEET}!B6:M6"],
+    )
+    label_cell = seasonality[0][0] if seasonality and seasonality[0] else ""
     if label_cell != CM_SEASONALITY_ROW_LABEL:
         raise ValueError(f"Expected {CM_SEASONALITY_ROW_LABEL!r} in Seasonality!A6, got {label_cell!r}")
-    row = ws.get("B6:M6", value_render_option="UNFORMATTED_VALUE")[0]
+    row = monthly[0] if monthly else []
     return [float(v) for v in row]
 
 
 def pull_weekly_cm_stack(client: SheetsClient) -> tuple[dict[str, float], dict[str, float], dict[str, float]]:
-    labels = label_rows(client, WEEKLY, max_row=65)
-    ws = client.worksheet(WEEKLY)
-    n_cols = 128  # B:DY
+    label_rows = client.batch_get([f"{WEEKLY}!A1:A65"])[0]
+    labels = _label_rows_from_column(label_rows)
+    end_col = col_letter(N_COLS + 1)
 
-    def row_values(label: str) -> list:
+    def row_range(label: str) -> str:
         row = labels[label]
-        return ws.get(
-            f"B{row}:{col_letter(n_cols + 1)}{row}",
-            value_render_option="UNFORMATTED_VALUE",
-        )[0]
+        return f"{WEEKLY}!B{row}:{end_col}{row}"
 
-    def row_formulas(label: str) -> list:
-        row = labels[label]
-        return ws.get(
-            f"B{row}:{col_letter(n_cols + 1)}{row}",
-            value_render_option="FORMULA",
-        )[0]
+    cm_labels = (
+        "Contribution Margin - Core",
+        "Contribution Margin - Adjustments",
+        "Contribution Margin Improvement - Core",
+    )
+    value_ranges = [row_range(label) for label in cm_labels]
+    formula_ranges = value_ranges[:]
+    value_rows = client.batch_get(value_ranges)
+    formula_rows = client.batch_get(formula_ranges, as_formulas=True)
 
-    core: dict[str, float] = {}
-    core_f = row_formulas("Contribution Margin - Core")
-    core_v = row_values("Contribution Margin - Core")
-    for idx, (formula, value) in enumerate(zip(core_f, core_v)):
-        if isinstance(formula, (int, float)) or (isinstance(formula, str) and formula and not formula.startswith("=")):
-            core[col_letter(idx + 2)] = float(value)
+    def hardcoded_cells(values: list[list], formulas: list[list]) -> dict[str, float]:
+        out: dict[str, float] = {}
+        vals = values[0] if values else []
+        forms = formulas[0] if formulas else []
+        for idx, (formula, value) in enumerate(zip(forms, vals, strict=False)):
+            if formula == "" and value == "":
+                continue
+            if isinstance(formula, (int, float)) or (
+                isinstance(formula, str) and formula and not formula.startswith("=")
+            ):
+                out[col_letter(idx + 2)] = float(value)
+        return out
 
-    adjustments: dict[str, float] = {}
-    adj_f = row_formulas("Contribution Margin - Adjustments")
-    adj_v = row_values("Contribution Margin - Adjustments")
-    for idx, (formula, value) in enumerate(zip(adj_f, adj_v)):
-        if formula == "" and value == "":
-            continue
-        if isinstance(formula, (int, float)) or (isinstance(formula, str) and formula and not formula.startswith("=")):
-            adjustments[col_letter(idx + 2)] = float(value)
-
-    anchors: dict[str, float] = {}
-    imp_f = row_formulas("Contribution Margin Improvement - Core")
-    imp_v = row_values("Contribution Margin Improvement - Core")
-    for idx, (formula, value) in enumerate(zip(imp_f, imp_v)):
-        if isinstance(formula, (int, float)) or (isinstance(formula, str) and formula and not formula.startswith("=")):
-            anchors[col_letter(idx + 2)] = float(value)
-
+    core = hardcoded_cells([value_rows[0]], [formula_rows[0]])
+    adjustments = hardcoded_cells([value_rows[1]], [formula_rows[1]])
+    anchors = hardcoded_cells([value_rows[2]], [formula_rows[2]])
     return core, adjustments, anchors
 
 
@@ -125,6 +129,10 @@ def write_weekly_constants(
     adjustments: dict[str, float],
     anchors: dict[str, float],
 ) -> None:
+    if not core and not adjustments and not anchors:
+        raise ValueError(
+            "No hardcoded CM stack cells found on Weekly Financials — refusing to overwrite repo constants"
+        )
     _replace_block(
         WEEKLY_FORMULAS,
         "CM_CORE_VALUES: dict[str, float] = {",

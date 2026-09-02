@@ -16,7 +16,7 @@ def sheet_id(client: SheetsClient, title: str) -> int:
 
 
 def label_rows(client: SheetsClient, sheet: str, *, max_row: int = 80) -> dict[str, int]:
-    rows = client.worksheet(sheet).get(f"A1:A{max_row}")
+    rows = client.batch_get([f"{sheet}!A1:A{max_row}"])[0]
     found: dict[str, int] = {}
     for idx, row in enumerate(rows, start=1):
         if row and row[0]:
