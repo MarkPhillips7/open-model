@@ -219,6 +219,78 @@ FIELD_NOTES: dict[str, str] = {
         "Roll-forward: prior inventory + purchases (actual or model) − sales (actual or model). "
         "Uses actual inventory when populated, else modeled path from anchor."
     ),
+    "Warehouse Facility Capacity": (
+        "Modeled operating ceiling for warehouse borrowing, in dollars. Seed $4.2B = senior "
+        "revolving + senior term capacity (Q2 2026 10-Q). Overwrite B (or a later week) with "
+        "$7.45B for headline capacity including uncommitted + mezz, or $1.5B to make ceiling = "
+        "committed. Carry-forward weekly. Inventory Utilization % = warehouse debt / this amount."
+    ),
+    "Warehouse Committed Capacity": (
+        "Amount lenders have contractually promised (Q2 2026 $1.5B: $400M senior revolvers + "
+        "$725M senior term + $350M mezz). Q3 2025 10-Q cited $1.8B; step early weeks if you want "
+        "that history. Carry-forward. Utilization of Committed > 100% means draws are at lender "
+        "discretion — Q2 2026 already was (~$1.76B outstanding / $1.5B committed)."
+    ),
+    "Inventory Ceiling - Model": (
+        "Homes at 100% of Warehouse Facility Capacity at this week's debt per home: "
+        "facility capacity × Homes in Inventory - Model / (senior + mezz warehouse debt - Model). "
+        "Supporting row for the utilization %; a 15–25k homes line on Opendoor Homes Funnel would squash the funnel."
+    ),
+    "Committed Inventory Ceiling - Model": (
+        "Homes at 100% of Warehouse Committed Capacity: committed × inventory / warehouse debt. "
+        "At Q2 ~4,650 homes vs 5,459 owned — already through the promised book."
+    ),
+    "Inventory Utilization %": (
+        "Reported warehouse debt (senior + mezz actuals) / Warehouse Facility Capacity. "
+        "Blank when actual debt is missing. Same ratio as homes / Inventory Ceiling. "
+        "Intended for Opendoor Homes Inventory on Homes Charts (right axis, %)."
+    ),
+    "Inventory Utilization % - Model": (
+        "Modeled warehouse debt / Warehouse Facility Capacity. Forward path of the ceiling %."
+    ),
+    "Inventory Utilization % of Committed": (
+        "Reported warehouse debt / Warehouse Committed Capacity. Above 100% = beyond what "
+        "lenders promised, still drawing at their discretion. Blank when actual debt is missing."
+    ),
+    "Inventory Utilization % of Committed - Model": (
+        "Modeled warehouse debt / Warehouse Committed Capacity. The series that shows a "
+        "committed-capacity breach as inventory scales."
+    ),
+    "Senior Interest Rate": (
+        "Annual coupon on senior warehouse debt (revolvers + senior term), first-in-line loans. "
+        "Q2 2026 seed 5.30% is the drawn-balance blend from the 10-Q facility table. "
+        "Column B is the seed; later weeks carry forward so you can type a new rate in any week to step it."
+    ),
+    "Mezzanine Interest Rate": (
+        "Annual coupon on mezzanine warehouse term debt (second-priority, behind senior). "
+        "Q2 2026 seed 12.50% from the 10-Q. Carry-forward weekly; overwrite a week to change it."
+    ),
+    "Mezzanine Share of Warehouse Debt - Model": (
+        "Share of modeled warehouse debt that is mezzanine (the rest is senior). "
+        "Q2 2026 seed ~19.8% ($350M mezz / $1.766B total). Lowering this refinances mezz into cheaper "
+        "senior on the same inventory book and cuts Warehouse Interest Expense. Carry-forward weekly."
+    ),
+    "Senior Warehouse Debt": (
+        "Quarter-end outstanding principal on senior revolvers + senior term (10-Q facility table, "
+        "not carrying value). Interpolated across weeks like Homes in Inventory (Δ/13 between quarter points)."
+    ),
+    "Senior Warehouse Debt - Model": (
+        "Uses actual senior outstanding when populated; else last week's modeled senior+mezz book "
+        "scaled by Homes in Inventory - Model, times (1 − mezzanine share). Cutting mezz share "
+        "reallocates the same total into senior (a refi), not a cash paydown."
+    ),
+    "Mezzanine Warehouse Debt": (
+        "Quarter-end outstanding principal on mezzanine term facilities (10-Q). "
+        "Has sat at $350M from Q3 2025 through Q2 2026. Weekly interpolation same as senior."
+    ),
+    "Mezzanine Warehouse Debt - Model": (
+        "Uses actual mezz when populated; else inventory-scaled total × mezzanine share. "
+        "The mix lever for using less (expensive) mezzanine."
+    ),
+    "Warehouse Interest Expense - Model": (
+        "Gross weekly interest: senior debt × senior rate / 52 + mezz debt × mezz rate / 52. "
+        "Not net of interest income. Feeds Net Interest Expense - Model."
+    ),
     "Adjusted EBITDA": (
         "Contribution profit minus adjusted opex (Opendoor Non-GAAP EBITDA). "
         "Quarterly actual spread ÷13."
@@ -230,7 +302,9 @@ FIELD_NOTES: dict[str, str] = {
         "Interest on inventory financing and debt, net (Non-GAAP). Quarterly actual spread ÷13."
     ),
     "Net Interest Expense - Model": (
-        "Forward run-rate: $20M/quarter ÷ 13 per week."
+        "Uses spread Net Interest Expense when present; else Warehouse Interest Expense - Model "
+        "minus a $9M/quarter interest-income offset (Q2 2026 warehouse gross ~$30M vs reported net $21M). "
+        "Forward net interest now moves with the senior/mezz mix and inventory-scaled warehouse book."
     ),
     "Depreciation and Amortization": (
         "D&A expense. Quarterly actual spread ÷13."

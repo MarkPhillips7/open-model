@@ -112,7 +112,7 @@ def collect_live_formula_drift(
     client: SheetsClient,
     label_to_row: dict[str, int],
     *,
-    max_row: int = 90,
+    max_row: int = 120,
 ) -> list[str]:
     """Compare live * - Model formulas to repo templates (catches un-synced manual edits)."""
     n_cols = 128  # B:DY
@@ -189,7 +189,7 @@ def validate(
         return issues
 
     client = client or SheetsClient()
-    label_to_row = label_rows(client, WEEKLY, max_row=100)
+    label_to_row = label_rows(client, WEEKLY, max_row=120)
     issues.extend(collect_template_issues(label_to_row))
     issues.extend(collect_generated_formula_issues(label_to_row))
     if check_live_drift:

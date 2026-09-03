@@ -16,6 +16,7 @@ Quarterly results and supplements are the main source for “actual” rows in *
 | --- | --- |
 | Homes Purchased | Earnings supplement — *Non-GAAP Measures & Key Metrics* |
 | Homes in Inventory | Earnings supplement — *Non-GAAP Measures & Key Metrics* |
+| Senior / mezzanine warehouse debt and coupons | 10-Q facility table (outstanding principal, not carrying value). Q2 2026: senior **$1,416M** @ **~5.30%** blend, mezz **$350M** @ **12.50%**; mezz $350M was unchanged Q3 2025–Q2 2026 |
 | Adjusted Operating Expenses | Earnings supplement — *Non-GAAP - Operating Expenses* |
 | Average Sale Price (ASP) | Q2 2026 ASP ≈ **$377.5K** (sheet input) |
 | Contribution Margin | Q2 2026 CM ≈ **5.8%**; Q3 2026 guidance **4–4.5%** |

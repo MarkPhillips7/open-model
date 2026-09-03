@@ -54,8 +54,8 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
         "Reference for every row label on Weekly Financials — what the field means and how it is sourced or modeled.",
     ),
     (
-        "Homes Chart",
-        "Opendoor Homes: line chart of weekly home metrics — contracts, purchases, listings, sales, and inventory (actual vs model).",
+        "Homes Charts",
+        "Two separate line charts. Opendoor Homes Funnel: Acquisition Contracts, Homes Purchased, New Listings, and Home Sales (each actual + model). Opendoor Homes Inventory: Homes in Inventory (actual + model) plus Inventory Utilization % and Inventory Utilization % of Committed (each actual + model) on the right axis.",
     ),
     (
         "Money Charts",

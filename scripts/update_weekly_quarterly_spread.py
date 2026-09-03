@@ -25,6 +25,13 @@ from sheets.formulas import (  # noqa: E402
     weekly_shares_formula,
 )
 from sheets.labels import QUARTERLY, WEEKLY, label_rows, row_by_label  # noqa: E402
+from sheets.warehouse_financing import (  # noqa: E402
+    DEBT_ACTUAL_LABELS,
+    MEZZ_DEBT_BY_QUARTER,
+    MEZZ_DEBT_LABEL,
+    SENIOR_DEBT_BY_QUARTER,
+    SENIOR_DEBT_LABEL,
+)
 
 # Dollar amounts: quarterly hard value spread with ÷13 (day-weighted at boundaries).
 SPREAD_LABELS = (
@@ -72,8 +79,8 @@ def col_letter(n: int) -> str:
 
 def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
     """Return label -> (weekly_row, quarterly_row)."""
-    weekly_labels = label_rows(client, WEEKLY, max_row=100)
-    quarterly_labels = label_rows(client, QUARTERLY, max_row=100)
+    weekly_labels = label_rows(client, WEEKLY, max_row=120)
+    quarterly_labels = label_rows(client, QUARTERLY, max_row=120)
     mapping: dict[str, tuple[int, int]] = {}
     for label in (
         *SPREAD_LABELS,
@@ -82,6 +89,7 @@ def build_row_map(client: SheetsClient) -> dict[str, tuple[int, int]]:
         SHARES_LABEL,
         INVENTORY_LABEL,
         ASP_LABEL,
+        *DEBT_ACTUAL_LABELS,
     ):
         mapping[label] = (
             row_by_label(weekly_labels, label, WEEKLY),
@@ -100,7 +108,7 @@ def update_weekly_formulas(client: SheetsClient) -> None:
     ws = client.worksheet(WEEKLY)
     row_map = build_row_map(client)
 
-    data = ws.get("A1:DY90", value_render_option="FORMULA")
+    data = ws.get("A1:DY110", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 
@@ -187,6 +195,31 @@ def update_weekly_formulas(client: SheetsClient) -> None:
     if changed:
         rows_to_update[inventory_weekly_row] = cells
 
+    debt_anchors = {
+        SENIOR_DEBT_LABEL: SENIOR_DEBT_BY_QUARTER["B"],
+        MEZZ_DEBT_LABEL: MEZZ_DEBT_BY_QUARTER["B"],
+    }
+    for label in DEBT_ACTUAL_LABELS:
+        weekly_row, quarterly_row = row_map[label]
+        existing = list(data[weekly_row - 1][1:]) if len(data[weekly_row - 1]) > 1 else []
+        cells = existing + [""] * (n_cols - len(existing))
+        changed = len(existing) < n_cols
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            prev_col = col_letter(col_idx + 1)
+            new_val = weekly_inventory_formula(
+                col,
+                prev_col,
+                weekly_row=weekly_row,
+                quarterly_row=quarterly_row,
+                first_col_anchor=debt_anchors[label],
+            )
+            if str(cells[col_idx]) != new_val:
+                cells[col_idx] = new_val
+                changed = True
+        if changed:
+            rows_to_update[weekly_row] = cells
+
     asp_weekly_row, quarterly_asp_row = row_map[ASP_LABEL]
     existing = list(data[asp_weekly_row - 1][1:]) if len(data[asp_weekly_row - 1]) > 1 else []
     cells = existing + [""] * (n_cols - len(existing))
@@ -223,7 +256,7 @@ def update_weekly_formulas(client: SheetsClient) -> None:
 def clear_misplaced_spread_formulas(client: SheetsClient) -> None:
     """Remove quarterly spread formulas that landed on model rows after layout shifts."""
     ws = client.worksheet(WEEKLY)
-    data = ws.get("A1:DY90", value_render_option="FORMULA")
+    data = ws.get("A1:DY110", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 

@@ -32,7 +32,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
 | **Seasonality** | Monthly acquisition seasonality weights; drives the weekly **Acquisition Seasonality Multiplier**. |
 | **Price History** | One `GOOGLEFINANCE` spill of OPEN daily OHLCV; **Price (Actual)** on Weekly Financials XLOOKUPs the close column by week-ending date. |
-| **Homes Chart** | **Opendoor Homes** — weekly home metrics (actual vs model for contracts, purchases, listings, sales, inventory). |
+| **Homes Charts** | Two line charts: **Opendoor Homes Funnel** (contracts, purchases, listings, sales) and **Opendoor Homes Inventory** (inventory plus utilization %). |
 | **Money Charts** | Two line charts: **Opendoor Weekly Revenue and Shares** (revenue + basic shares) and **Opendoor Weekly Profit and Price** (contribution profit, adjusted/GAAP net income). |
 
 ---
@@ -64,12 +64,13 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 - **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
 - **Adjusted EBITDA - Model** = Contribution Profit − Adjusted Operating Expenses (matches Opendoor Non-GAAP EBITDA).
 - **Adjusted Net Income - Model** = Adjusted EBITDA − Net Interest − D&A − Taxes (SBC is **not** subtracted again; it sits above EBITDA in the company reconciliation).
+- **Net Interest Expense - Model** uses reported net interest when spread; otherwise senior warehouse debt × senior rate / 52 + mezzanine debt × mezzanine rate / 52, minus a $9M/quarter interest-income offset. Lowering **Mezzanine Share of Warehouse Debt - Model** refinances expensive mezz into cheaper senior.
 - **Net Income (Loss) Attributable to Common Shareholders - Model** = Adjusted Net Income + debt extinguishment − SBC − inventory valuation (current + prior periods) − restructuring − CEO make-whole − other GAAP adjustments (matches Opendoor’s Adj ↔ GAAP reconciliation in the earnings supplement).
 - **Earnings per Share - Model** = GAAP net income ÷ **Basic Shares Outstanding - Model** (actual passthrough when reported; else prior week + **Share Count Adjustment - Model** from the **Shares** event table).
 
 ### Charts
 
-- **Homes Chart** (**Opendoor Homes**): Acquisition Contracts, Homes Purchased, New Listings, Home Sales, Homes in Inventory (each actual + model).
+- **Homes Charts** — **Opendoor Homes Funnel**: Acquisition Contracts, Homes Purchased, New Listings, Home Sales (each actual + model). **Opendoor Homes Inventory**: Homes in Inventory (actual + model) plus **Inventory Utilization %** and **Inventory Utilization % of Committed** (each actual + model) on the right axis.
 - **Money Charts** — **Opendoor Weekly Revenue and Shares**: Revenue, Basic Shares Outstanding (actual + model). **Opendoor Weekly Profit and Price**: Contribution Profit, Adjusted EBITDA, Adjusted Net Income, Net Income Attributable to Common Shareholders (each actual + model), plus **Price (Actual)** and implied prices at **P/S = 2** and **P/S = 3** on the right axis.
 
 **Manual only.** Chart styling (colors, log scale, axes, legend) is set in the Google Sheets UI. Agents and scripts must not edit these charts via the API — automated updates strip settings. After row inserts on Weekly / Quarterly Financials, fix chart series ranges by hand if a line points at the wrong row.
@@ -102,6 +103,11 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Title purchase attach | **0%** before Jan 2025 → **100%** by Jun 2027 | Linear ramp on **Open Title Purchase Percent**. |
 | Title $/purchase close | **$2,400** max net savings (`Transitions!B30`) | CM add = attach × $/close ÷ ASP. |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |
+| Senior warehouse rate | **5.30%** (Q2 2026 drawn-balance blend) | First-in-line inventory loans. Edit **Senior Interest Rate** `B`; later weeks carry forward. |
+| Mezzanine warehouse rate | **12.50%** (Q2 2026 10-Q) | Second-priority inventory term debt. Edit **Mezzanine Interest Rate** `B`. |
+| Mezzanine share of warehouse debt | **~19.8%** ($350M / $1.766B at Q2) | Mix lever: lower it to refinance mezz into cheaper senior. **Mezzanine Share of Warehouse Debt - Model**. |
+| Warehouse facility capacity | **$4.2B** (senior revolvers + term) | Modeled inventory ceiling in dollars. Edit **Warehouse Facility Capacity** `B` ($7.45B headline or $1.5B committed). |
+| Warehouse committed capacity | **$1.5B** (Q2 2026 10-Q) | Promised borrowing. **Inventory Utilization % of Committed** > 100% = discretionary draws (Q2 already ~118%). |
 
 Where disclosure is missing, the sheet comments say so explicitly (likelihood to close, cash mix, some conversion totals).
 

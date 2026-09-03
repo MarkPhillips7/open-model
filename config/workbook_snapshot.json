@@ -4,7 +4,7 @@
     "Financials Definitions",
     "Weekly Financials",
     "Quarterly Financials",
-    "Homes Chart",
+    "Homes Charts",
     "Money Charts",
     "Transitions",
     "Shares",
@@ -13,8 +13,8 @@
   ],
   "charts": [
     {
-      "tab": "Homes Chart",
-      "title": "Opendoor Homes",
+      "tab": "Homes Charts",
+      "title": "Opendoor Homes Funnel",
       "domain_row": 1,
       "domain_end_col": 121,
       "series": [
@@ -65,7 +65,15 @@
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 121
-        },
+        }
+      ]
+    },
+    {
+      "tab": "Homes Charts",
+      "title": "Opendoor Homes Inventory",
+      "domain_row": 1,
+      "domain_end_col": 121,
+      "series": [
         {
           "weekly_row": 50,
           "line_style": "SOLID",
@@ -76,6 +84,30 @@
           "weekly_row": 51,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 56,
+          "line_style": "SOLID",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 57,
+          "line_style": "DOTTED",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 58,
+          "line_style": "SOLID",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 59,
+          "line_style": "DOTTED",
+          "axis": "RIGHT_AXIS",
           "end_column": 129
         }
       ]
@@ -131,55 +163,55 @@
           "end_column": 129
         },
         {
-          "weekly_row": 76,
+          "weekly_row": 92,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 77,
+          "weekly_row": 93,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 58,
+          "weekly_row": 74,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 65,
+          "weekly_row": 81,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 52,
+          "weekly_row": 68,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 53,
+          "weekly_row": 69,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 80,
+          "weekly_row": 96,
           "line_style": "SOLID",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 82,
+          "weekly_row": 98,
           "line_style": "MEDIUM_DASHED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 83,
+          "weekly_row": 99,
           "line_style": "MEDIUM_DASHED",
           "axis": "RIGHT_AXIS",
           "end_column": 129

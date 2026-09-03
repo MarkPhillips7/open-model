@@ -1,11 +1,11 @@
 ---
-description: Do not modify Homes Chart or Money Charts via API or scripts
+description: Do not modify Homes Charts or Money Charts via API or scripts
 alwaysApply: true
 ---
 
 # Charts — manual only
 
-**Homes Chart** and **Money Charts** must not be created, edited, or repointed by agents or Python scripts (including `updateChartSpec`, series range changes, axis/scale settings, colors, or legend).
+**Homes Charts** and **Money Charts** must not be created, edited, or repointed by agents or Python scripts (including `updateChartSpec`, series range changes, axis/scale settings, colors, or legend).
 
 The Sheets API does not preserve full chart styling (colors, log scale, custom axes, etc.). Automated chart edits have repeatedly broken these tabs.
 
@@ -25,4 +25,4 @@ The Sheets API does not preserve full chart styling (colors, log scale, custom a
 After inserting or deleting rows on Weekly / Quarterly Financials:
 
 1. Run the formula restore flow (`validate_model_formulas.py`, `restore_weekly_model_formulas.py`, etc.)
-2. **Tell the user** to verify and adjust chart series manually on **Homes Chart** / **Money Charts** if lines look wrong — do not fix charts yourself
+2. **Tell the user** to verify and adjust chart series manually on **Homes Charts** / **Money Charts** if lines look wrong — do not fix charts yourself

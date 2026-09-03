@@ -15,7 +15,7 @@ def sheet_id(client: SheetsClient, title: str) -> int:
     raise KeyError(f"Sheet {title!r} not found")
 
 
-def label_rows(client: SheetsClient, sheet: str, *, max_row: int = 80) -> dict[str, int]:
+def label_rows(client: SheetsClient, sheet: str, *, max_row: int = 120) -> dict[str, int]:
     rows = client.batch_get([f"{sheet}!A1:A{max_row}"])[0]
     found: dict[str, int] = {}
     for idx, row in enumerate(rows, start=1):

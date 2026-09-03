@@ -18,7 +18,51 @@ Entry template:
 
 ---
 
-## 2026-09-03 — Quarterly Price (Actual) label
+## 2026-09-03 — Homes Charts tab rename and split
+
+Recorded the UI split of the homes tab (manual chart edits; no API chart writes).
+
+- **Tab / range:** **Homes Charts** (renamed from **Homes Chart**); **Welcome** tab-guide row; **Financials Definitions** utilization notes
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:**
+  - Tab: **Homes Chart** → **Homes Charts**
+  - Left chart: **Opendoor Homes Funnel** — Weekly Financials rows **2/3, 8/9, 11/13, 17/19** (contracts, purchases, listings, sales; actual + model)
+  - Right chart: **Opendoor Homes Inventory** — rows **50/51** inventory (left axis); **56/57** Inventory Utilization %; **58/59** Inventory Utilization % of Committed (right axis, %)
+- **Side effects:** `config/workbook_snapshot.json` pulled from live (4 charts). Welcome tab-guide link now points at **Homes Charts**. Money Charts unchanged.
+
+## 2026-09-03 — Inventory utilization % of ceiling vs committed
+
+Added a capacity stack next to inventory so Homes Chart can show how full the warehouse is versus the modeled ceiling and versus what lenders promised.
+
+- **Tab / range:** **Weekly Financials** rows **52–59** (inserted before **Senior Interest Rate**, was row 52); **Quarterly Financials** rows **53–60**; **Financials Definitions** rebuilt `A1:B99`
+- **Insert/delete:** ROWS, weekly start index **51** (0-based), count **8**; quarterly start index **52**, count **8**
+- **Formulas:**
+  - **Warehouse Facility Capacity** / **Warehouse Committed Capacity:** `B` seeds **$4.2B** / **$1.5B**; `C:DY` carry-forward
+  - **Inventory Ceiling - Model:** `=facility × inventory-model / (senior-model + mezz-model)` (blank if any term is 0)
+  - **Committed Inventory Ceiling - Model:** same with committed capacity
+  - **Inventory Utilization %:** actual senior+mezz / facility (blank without actual debt)
+  - **Inventory Utilization % - Model:** modeled debt / facility
+  - **Inventory Utilization % of Committed** / **- Model:** same two against committed ($1.5B)
+- **Data:** Quarterly `B:E` facility **$4.2B**, committed **$1.5B**. Q2 implied committed utilization ≈ **$1.76B / $1.5B ≈ 118%**; facility ≈ **42%**
+- **Side effects:** Warehouse rate/debt rows and everything below **+8**. **Homes Chart** inventory series should still be weekly **50/51**. **Money Charts** Profit series likely auto-shifted again — confirm in the UI. **Do not** API-edit Homes Chart; add the four utilization series on the **right axis (%)** by hand.
+
+
+
+Split inventory-loan interest into separate senior and mezzanine books so the mix is a lever (less mezzanine → lower interest) instead of a blended rate. Net Interest Expense - Model is no longer a flat $20M/quarter.
+
+- **Tab / range:** **Weekly Financials** rows **52–59** (inserted before **Adjusted EBITDA**, was row 52); **Quarterly Financials** rows **53–60** (inserted before **Adjusted EBITDA**, was row 53); **Financials Definitions** rebuilt `A1:B91`
+- **Insert/delete:** ROWS, weekly start index **51** (0-based), count **8**; quarterly start index **52**, count **8**
+- **Formulas:**
+  - **Senior / Mezzanine Interest Rate**, **Mezzanine Share of Warehouse Debt - Model:** `B` seed (5.30% / 12.50% / ~19.8%); `C:DY` `={prev}{row}` carry-forward
+  - **Senior / Mezzanine Warehouse Debt:** quarter-end interpolation (same Δ/13 pattern as Homes in Inventory); `B` anchors $999M / $350M
+  - **Senior / Mezzanine Warehouse Debt - Model:** actual if present; else last week's modeled book × inventory ratio × (1 − share) or share
+  - **Warehouse Interest Expense - Model:** `{senior debt}×{senior rate}/52+{mezz debt}×{mezz rate}/52`
+  - **Net Interest Expense - Model:** `=20000000/13` → `=IF(ISNUMBER({Net Interest Expense}),{actual},{Warehouse Interest}-{9000000}/13)`
+- **Data:** Quarterly EOP principal from 10-Q facility tables (not carrying value): senior **$999M / $777M / $793M / $1,416M** (Q3 2025–Q2 2026); mezzanine **$350M** all four quarters
+- **Side effects:** Rows from **Adjusted EBITDA** down shift **+8**. **Homes Chart** inventory series stayed on weekly **50/51**. Google Sheets auto-shifted **Money Charts** Profit series (Adj EBITDA **60/61**, adj NI **66/73**, GAAP NI **84/85**, prices **88/90/91**) — please confirm those lines still look right in the UI; agents do not edit charts. `config/workbook_snapshot.json` refreshed from live.
+
+
 
 - **Tab / range:** **Quarterly Financials** `A81`
 - **Insert/delete:** none

@@ -44,6 +44,34 @@ from sheets.cm_seasonality import (
     CM_SEASONALITY_SHEET,
     CM_SEASONALITY_VALUE_RANGE,
 )
+from sheets.inventory_ceiling import (
+    COMMITTED_CAPACITY_LABEL,
+    COMMITTED_CEILING_MODEL_LABEL,
+    FACILITY_CAPACITY_LABEL,
+    INVENTORY_CEILING_MODEL_LABEL,
+    UTILIZATION_COMMITTED_LABEL,
+    UTILIZATION_COMMITTED_MODEL_LABEL,
+    UTILIZATION_LABEL,
+    UTILIZATION_MODEL_LABEL,
+    capacity_seed,
+    inventory_ceiling_model_formula,
+    utilization_formula,
+)
+from sheets.warehouse_financing import (
+    MEZZ_DEBT_LABEL,
+    MEZZ_DEBT_MODEL_LABEL,
+    MEZZ_INTEREST_RATE_LABEL,
+    MEZZ_SHARE_LABEL,
+    SENIOR_DEBT_LABEL,
+    SENIOR_DEBT_MODEL_LABEL,
+    SENIOR_INTEREST_RATE_LABEL,
+    WAREHOUSE_INTEREST_MODEL_LABEL,
+    carry_forward_rate_formula,
+    net_interest_model_formula,
+    rate_seed,
+    warehouse_debt_model_formula,
+    warehouse_interest_model_formula,
+)
 from sheets.ancillary_products import (
     CM_MORTGAGE_LABEL,
     CM_TITLE_LABEL,
@@ -282,7 +310,6 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         sold_weeks=OPEN_1_0_SOLD_WEEKS,
     ),
     "Fixed Costs - Model": "=35000000/13",
-    "Net Interest Expense - Model": "=20000000/13",
 }
 
 COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
@@ -389,7 +416,72 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         }
     ),
     "Fixed Costs - Model": frozenset(),
-    "Net Interest Expense - Model": frozenset(),
+    FACILITY_CAPACITY_LABEL: frozenset(),
+    COMMITTED_CAPACITY_LABEL: frozenset(),
+    INVENTORY_CEILING_MODEL_LABEL: frozenset(
+        {
+            FACILITY_CAPACITY_LABEL,
+            SENIOR_DEBT_MODEL_LABEL,
+            MEZZ_DEBT_MODEL_LABEL,
+            "Homes in Inventory - Model",
+        }
+    ),
+    COMMITTED_CEILING_MODEL_LABEL: frozenset(
+        {
+            COMMITTED_CAPACITY_LABEL,
+            SENIOR_DEBT_MODEL_LABEL,
+            MEZZ_DEBT_MODEL_LABEL,
+            "Homes in Inventory - Model",
+        }
+    ),
+    UTILIZATION_LABEL: frozenset(
+        {FACILITY_CAPACITY_LABEL, SENIOR_DEBT_LABEL, MEZZ_DEBT_LABEL}
+    ),
+    UTILIZATION_MODEL_LABEL: frozenset(
+        {
+            FACILITY_CAPACITY_LABEL,
+            SENIOR_DEBT_MODEL_LABEL,
+            MEZZ_DEBT_MODEL_LABEL,
+        }
+    ),
+    UTILIZATION_COMMITTED_LABEL: frozenset(
+        {COMMITTED_CAPACITY_LABEL, SENIOR_DEBT_LABEL, MEZZ_DEBT_LABEL}
+    ),
+    UTILIZATION_COMMITTED_MODEL_LABEL: frozenset(
+        {
+            COMMITTED_CAPACITY_LABEL,
+            SENIOR_DEBT_MODEL_LABEL,
+            MEZZ_DEBT_MODEL_LABEL,
+        }
+    ),
+    SENIOR_INTEREST_RATE_LABEL: frozenset(),
+    MEZZ_INTEREST_RATE_LABEL: frozenset(),
+    MEZZ_SHARE_LABEL: frozenset(),
+    SENIOR_DEBT_MODEL_LABEL: frozenset(
+        {
+            SENIOR_DEBT_LABEL,
+            MEZZ_SHARE_LABEL,
+            "Homes in Inventory - Model",
+        }
+    ),
+    MEZZ_DEBT_MODEL_LABEL: frozenset(
+        {
+            MEZZ_DEBT_LABEL,
+            MEZZ_SHARE_LABEL,
+            "Homes in Inventory - Model",
+        }
+    ),
+    WAREHOUSE_INTEREST_MODEL_LABEL: frozenset(
+        {
+            SENIOR_DEBT_MODEL_LABEL,
+            MEZZ_DEBT_MODEL_LABEL,
+            SENIOR_INTEREST_RATE_LABEL,
+            MEZZ_INTEREST_RATE_LABEL,
+        }
+    ),
+    "Net Interest Expense - Model": frozenset(
+        {"Net Interest Expense", WAREHOUSE_INTEREST_MODEL_LABEL}
+    ),
     "Acquisition Contracts - Model": frozenset(
         {"Acquisition Contracts - no seasonality", "Acquisition Seasonality Multiplier"}
     ),
@@ -516,6 +608,21 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     SHARES_ADJUSTMENT_LABEL,
     SHARES_MODEL_LABEL,
     "Homes in Inventory - Model",
+    FACILITY_CAPACITY_LABEL,
+    COMMITTED_CAPACITY_LABEL,
+    INVENTORY_CEILING_MODEL_LABEL,
+    COMMITTED_CEILING_MODEL_LABEL,
+    UTILIZATION_LABEL,
+    UTILIZATION_MODEL_LABEL,
+    UTILIZATION_COMMITTED_LABEL,
+    UTILIZATION_COMMITTED_MODEL_LABEL,
+    SENIOR_INTEREST_RATE_LABEL,
+    MEZZ_INTEREST_RATE_LABEL,
+    MEZZ_SHARE_LABEL,
+    SENIOR_DEBT_MODEL_LABEL,
+    MEZZ_DEBT_MODEL_LABEL,
+    WAREHOUSE_INTEREST_MODEL_LABEL,
+    "Net Interest Expense - Model",
 )
 
 _LABEL_PLACEHOLDER_RE = re.compile(r"\{([^{}]+)\}")
@@ -808,6 +915,97 @@ def row_cells_for_label(
 
     if label == DOMA_REFI_PROFIT_LABEL:
         return list(DOMA_REFI_PROFIT_CELLS[:n_cols])
+
+    if label in (FACILITY_CAPACITY_LABEL, COMMITTED_CAPACITY_LABEL):
+        cap_row = label_to_row[label]
+        cells: list[str | float] = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            if col == "B":
+                cells.append(capacity_seed(label))
+            else:
+                prev_col = col_letter(col_idx + 1)
+                cells.append(
+                    carry_forward_rate_formula(col, prev_col, rate_row=cap_row)
+                )
+        return cells
+
+    if label in (INVENTORY_CEILING_MODEL_LABEL, COMMITTED_CEILING_MODEL_LABEL):
+        return [
+            inventory_ceiling_model_formula(
+                col_letter(col_idx + 2),
+                committed=label == COMMITTED_CEILING_MODEL_LABEL,
+                label_to_row=label_to_row,
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label in (
+        UTILIZATION_LABEL,
+        UTILIZATION_MODEL_LABEL,
+        UTILIZATION_COMMITTED_LABEL,
+        UTILIZATION_COMMITTED_MODEL_LABEL,
+    ):
+        return [
+            utilization_formula(
+                col_letter(col_idx + 2),
+                committed=label
+                in (UTILIZATION_COMMITTED_LABEL, UTILIZATION_COMMITTED_MODEL_LABEL),
+                modeled=label
+                in (UTILIZATION_MODEL_LABEL, UTILIZATION_COMMITTED_MODEL_LABEL),
+                label_to_row=label_to_row,
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label in (
+        SENIOR_INTEREST_RATE_LABEL,
+        MEZZ_INTEREST_RATE_LABEL,
+        MEZZ_SHARE_LABEL,
+    ):
+        rate_row = label_to_row[label]
+        cells: list[str | float] = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            if col == "B":
+                cells.append(rate_seed(label))
+            else:
+                prev_col = col_letter(col_idx + 1)
+                cells.append(
+                    carry_forward_rate_formula(col, prev_col, rate_row=rate_row)
+                )
+        return cells
+
+    if label in (SENIOR_DEBT_MODEL_LABEL, MEZZ_DEBT_MODEL_LABEL):
+        cells = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            prev_col = col_letter(col_idx + 1) if col_idx > 0 else "A"
+            cells.append(
+                warehouse_debt_model_formula(
+                    col,
+                    prev_col,
+                    is_senior=label == SENIOR_DEBT_MODEL_LABEL,
+                    label_to_row=label_to_row,
+                )
+            )
+        return cells
+
+    if label == WAREHOUSE_INTEREST_MODEL_LABEL:
+        return [
+            warehouse_interest_model_formula(
+                col_letter(col_idx + 2), label_to_row=label_to_row
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label == "Net Interest Expense - Model":
+        return [
+            net_interest_model_formula(
+                col_letter(col_idx + 2), label_to_row=label_to_row
+            )
+            for col_idx in range(n_cols)
+        ]
 
     return None
 
