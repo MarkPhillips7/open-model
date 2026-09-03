@@ -18,6 +18,27 @@ Entry template:
 
 ---
 
+## 2026-09-03 — Quarterly Price (Actual) label
+
+- **Tab / range:** **Quarterly Financials** `A81`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `A81` **Price (at Close)** → **Price (Actual)** (matches Weekly Financials)
+- **Side effects:** `sheets/valuation.py` no longer treats the quarterly price row as a distinct label
+
+## 2026-09-03 — Sync chart titles and Price (Actual) rename
+
+Pulled user UI edits: chart titles and the weekly price-row rename. Also refreshed Seasonality monthly weights from the live tab.
+
+- **Tab / range:** **Homes Chart** / **Money Charts** titles (read-only snapshot); **Weekly Financials** `A80`; **Financials Definitions** price-row note; **Welcome** `B19:B20`; **Seasonality** `B2:M2`
+- **Insert/delete:** none
+- **Formulas:** none (price-row formulas unchanged; weekly label only)
+- **Data:**
+  - Chart titles: **Opendoor Homes**; **Opendoor Weekly Revenue and Shares**; **Opendoor Weekly Profit and Price** (`config/workbook_snapshot.json`)
+  - **Weekly Financials** `A80` **Price (at Close)** → **Price (Actual)** (Quarterly Financials still **Price (at Close)**)
+  - **Seasonality** `B2:M2` Jan–Dec **10.1, 8.7, 7.3, 6.3, 5.6, 5.6, 5.6, 6.7, 8.4, 10.7, 13.0, 12.0%** (sum 100%)
+- **Side effects:** Welcome chart-tab blurbs and README match the new titles / **Price (Actual)**. `sheets/valuation.py` `PRICE_AT_CLOSE_LABEL` updated so restore/setup scripts find the weekly row.
+
 ## 2026-09-02 — Acquisition seasonality retune, helper removed, label renames
 
 Pulled user-adjusted **Seasonality** `B2:M2` into git. Removed leftover Helper Constant. Renamed the weekly/quarterly multiplier row and the Seasonality percent label.

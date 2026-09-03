@@ -5,7 +5,7 @@ from __future__ import annotations
 from sheets.formulas import QUARTERLY, WEEK_DATE_ROW
 from sheets.price_history import weekly_price_at_close_formula
 
-PRICE_AT_CLOSE_LABEL = "Price (at Close)"
+PRICE_AT_CLOSE_LABEL = "Price (Actual)"
 TTM_REVENUE_LABEL = "Trailing Twelve Months Revenue"
 PRICE_AT_PS_2_LABEL = "Price @ P/S = 2"
 PRICE_AT_PS_3_LABEL = "Price @ P/S = 3"

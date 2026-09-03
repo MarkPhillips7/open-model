@@ -310,7 +310,7 @@ FIELD_NOTES: dict[str, str] = {
     "Earnings per Share - Model": (
         "Formula: GAAP NI - Model ÷ Basic Shares Outstanding - Model (blank if shares = 0)."
     ),
-    "Price (at Close)": (
+    "Price (Actual)": (
         "OPEN close on the last trading day on or before the week-ending date. "
         "Blank when the week-ending date is after TODAY() (forward projection columns). "
         "XLOOKUP from **Price History** (single GOOGLEFINANCE daily spill). "

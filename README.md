@@ -31,9 +31,9 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
 | **Seasonality** | Monthly acquisition seasonality weights; drives the weekly **Acquisition Seasonality Multiplier**. |
-| **Price History** | One `GOOGLEFINANCE` spill of OPEN daily OHLCV; **Price (at Close)** on Weekly Financials XLOOKUPs the close column by week-ending date. |
-| **Homes Chart** | Line chart of weekly home metrics (actual vs model for contracts, purchases, listings, sales, inventory). |
-| **Money Charts** | Two line charts: **Revenue and Shares** (revenue + basic shares) and **Profit and Price** (contribution profit, adjusted/GAAP net income). |
+| **Price History** | One `GOOGLEFINANCE` spill of OPEN daily OHLCV; **Price (Actual)** on Weekly Financials XLOOKUPs the close column by week-ending date. |
+| **Homes Chart** | **Opendoor Homes** — weekly home metrics (actual vs model for contracts, purchases, listings, sales, inventory). |
+| **Money Charts** | Two line charts: **Opendoor Weekly Revenue and Shares** (revenue + basic shares) and **Opendoor Weekly Profit and Price** (contribution profit, adjusted/GAAP net income). |
 
 ---
 
@@ -69,8 +69,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 ### Charts
 
-- **Homes Chart**: Acquisition Contracts, Homes Purchased, New Listings, Home Sales, Homes in Inventory (each actual + model).
-- **Money Charts** — **Revenue and Shares**: Revenue, Basic Shares Outstanding (actual + model). **Profit and Price**: Contribution Profit, Adjusted EBITDA, Adjusted Net Income, Net Income Attributable to Common Shareholders (each actual + model), plus **Price (at Close)** and implied prices at **P/S = 2** and **P/S = 3** on the right axis.
+- **Homes Chart** (**Opendoor Homes**): Acquisition Contracts, Homes Purchased, New Listings, Home Sales, Homes in Inventory (each actual + model).
+- **Money Charts** — **Opendoor Weekly Revenue and Shares**: Revenue, Basic Shares Outstanding (actual + model). **Opendoor Weekly Profit and Price**: Contribution Profit, Adjusted EBITDA, Adjusted Net Income, Net Income Attributable to Common Shareholders (each actual + model), plus **Price (Actual)** and implied prices at **P/S = 2** and **P/S = 3** on the right axis.
 
 **Manual only.** Chart styling (colors, log scale, axes, legend) is set in the Google Sheets UI. Agents and scripts must not edit these charts via the API — automated updates strip settings. After row inserts on Weekly / Quarterly Financials, fix chart series ranges by hand if a line points at the wrong row.
 

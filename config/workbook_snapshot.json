@@ -14,7 +14,7 @@
   "charts": [
     {
       "tab": "Homes Chart",
-      "title": null,
+      "title": "Opendoor Homes",
       "domain_row": 1,
       "domain_end_col": 121,
       "series": [
@@ -82,7 +82,7 @@
     },
     {
       "tab": "Money Charts",
-      "title": "Revenue and Shares",
+      "title": "Opendoor Weekly Revenue and Shares",
       "domain_row": 1,
       "domain_end_col": 121,
       "series": [
@@ -114,7 +114,7 @@
     },
     {
       "tab": "Money Charts",
-      "title": "Profit and Price",
+      "title": "Opendoor Weekly Profit and Price",
       "domain_row": 1,
       "domain_end_col": 121,
       "series": [

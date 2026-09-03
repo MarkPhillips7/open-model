@@ -10,18 +10,18 @@ from __future__ import annotations
 # trough May–Aug with June the low; Sep–Oct accelerate back toward the peak.
 # Hardcoded (not a formula); must sum to 1.0.
 ACQUISITION_PERCENT_BY_MONTH: tuple[float, ...] = (
-    0.104,
-    0.088,
+    0.101,
+    0.087,
     0.073,
     0.063,
-    0.055,
-    0.053,
-    0.055,
-    0.063,
-    0.083,
-    0.106,
+    0.056,
+    0.056,
+    0.056,
+    0.067,
+    0.084,
+    0.107,
     0.13,
-    0.127,
+    0.12,
 )
 
 ACQUISITION_PERCENT_LABEL = "Acquisition Percent by Month"

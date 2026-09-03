@@ -55,11 +55,11 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     ),
     (
         "Homes Chart",
-        "Line chart of weekly home metrics: contracts, purchases, listings, sales, and inventory (actual vs model).",
+        "Opendoor Homes: line chart of weekly home metrics — contracts, purchases, listings, sales, and inventory (actual vs model).",
     ),
     (
         "Money Charts",
-        "Two separate line charts. Revenue and Shares: Revenue and Basic Shares Outstanding (each actual + model). Profit and Price: Contribution Profit, Adjusted EBITDA, Adjusted Net Income, and Net Income Attributable to Common Shareholders (each actual + model), plus Price (at Close) and implied prices at P/S = 2 and P/S = 3 on the right axis.",
+        "Two separate line charts. Opendoor Weekly Revenue and Shares: Revenue and Basic Shares Outstanding (each actual + model). Opendoor Weekly Profit and Price: Contribution Profit, Adjusted EBITDA, Adjusted Net Income, and Net Income Attributable to Common Shareholders (each actual + model), plus Price (Actual) and implied prices at P/S = 2 and P/S = 3 on the right axis.",
     ),
     (
         "Transitions",

@@ -21,7 +21,7 @@ from sheets.weekly_model_formulas import col_letter  # noqa: E402
 
 PRICE_HISTORY_NOTE = (
     "Single GOOGLEFINANCE spill for OPEN daily prices. "
-    "Weekly Financials → Price (at Close) XLOOKUPs the close column (E) by week-ending date."
+    "Weekly Financials → Price (Actual) XLOOKUPs the close column (E) by week-ending date."
 )
 
 
