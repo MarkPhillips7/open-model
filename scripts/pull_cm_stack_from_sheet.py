@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Pull CM seasonality + stack constants from the live spreadsheet into git.
+"""Pull Seasonality tab + CM stack constants from the live spreadsheet into git.
 
 The spreadsheet is the source of truth. Run this after manual sheet edits to
-refresh sheets/cm_seasonality.py and the CM_* constants in weekly_model_formulas.py.
+refresh sheets/seasonality.py, sheets/cm_seasonality.py, and the CM_* constants
+in weekly_model_formulas.py.
 """
 
 from __future__ import annotations
@@ -17,10 +18,12 @@ sys.path.insert(0, str(ROOT))
 from sheets import SheetsClient  # noqa: E402
 from sheets.cm_seasonality import CM_SEASONALITY_ROW_LABEL, CM_SEASONALITY_SHEET  # noqa: E402
 from sheets.labels import WEEKLY  # noqa: E402
+from sheets.seasonality import ACQUISITION_PERCENT_LABEL  # noqa: E402
 from sheets.weekly_model_formulas import col_letter  # noqa: E402
 
 WEEKLY_FORMULAS = ROOT / "sheets" / "weekly_model_formulas.py"
 CM_SEASONALITY = ROOT / "sheets" / "cm_seasonality.py"
+ACQUISITION_SEASONALITY = ROOT / "sheets" / "seasonality.py"
 N_COLS = 128  # B:DY
 
 
@@ -31,8 +34,8 @@ def _format_float(value: float) -> str:
     return text
 
 
-def _format_monthly_tuple(values: list[float]) -> str:
-    lines = ["CM_SEASONAL_ADJ_BY_MONTH: tuple[float, ...] = ("]
+def _format_monthly_tuple(name: str, values: list[float]) -> str:
+    lines = [f"{name}: tuple[float, ...] = ("]
     for value in values:
         lines.append(f"    {_format_float(value)},")
     lines.append(")")
@@ -73,6 +76,19 @@ def pull_seasonality_monthly(client: SheetsClient) -> list[float]:
     label_cell = seasonality[0][0] if seasonality and seasonality[0] else ""
     if label_cell != CM_SEASONALITY_ROW_LABEL:
         raise ValueError(f"Expected {CM_SEASONALITY_ROW_LABEL!r} in Seasonality!A6, got {label_cell!r}")
+    row = monthly[0] if monthly else []
+    return [float(v) for v in row]
+
+
+def pull_acquisition_percent_monthly(client: SheetsClient) -> list[float]:
+    seasonality, monthly = client.batch_get(
+        [f"{CM_SEASONALITY_SHEET}!A2", f"{CM_SEASONALITY_SHEET}!B2:M2"],
+    )
+    label_cell = seasonality[0][0] if seasonality and seasonality[0] else ""
+    if label_cell != ACQUISITION_PERCENT_LABEL:
+        raise ValueError(
+            f"Expected {ACQUISITION_PERCENT_LABEL!r} in Seasonality!A2, got {label_cell!r}"
+        )
     row = monthly[0] if monthly else []
     return [float(v) for v in row]
 
@@ -120,7 +136,16 @@ def write_cm_seasonality(monthly: list[float]) -> None:
         CM_SEASONALITY,
         "CM_SEASONAL_ADJ_BY_MONTH: tuple[float, ...] = (",
         ")",
-        _format_monthly_tuple(monthly),
+        _format_monthly_tuple("CM_SEASONAL_ADJ_BY_MONTH", monthly),
+    )
+
+
+def write_acquisition_seasonality(monthly: list[float]) -> None:
+    _replace_block(
+        ACQUISITION_SEASONALITY,
+        "ACQUISITION_PERCENT_BY_MONTH: tuple[float, ...] = (",
+        ")",
+        _format_monthly_tuple("ACQUISITION_PERCENT_BY_MONTH", monthly),
     )
 
 
@@ -129,10 +154,6 @@ def write_weekly_constants(
     adjustments: dict[str, float],
     anchors: dict[str, float],
 ) -> None:
-    if not core and not adjustments and not anchors:
-        raise ValueError(
-            "No hardcoded CM stack cells found on Weekly Financials — refusing to overwrite repo constants"
-        )
     _replace_block(
         WEEKLY_FORMULAS,
         "CM_CORE_VALUES: dict[str, float] = {",
@@ -155,11 +176,20 @@ def write_weekly_constants(
 
 def main() -> None:
     client = SheetsClient()
+    acquisition = pull_acquisition_percent_monthly(client)
     monthly = pull_seasonality_monthly(client)
     core, adjustments, anchors = pull_weekly_cm_stack(client)
+    write_acquisition_seasonality(acquisition)
     write_cm_seasonality(monthly)
-    write_weekly_constants(core, adjustments, anchors)
+    print(f"Updated {ACQUISITION_SEASONALITY.name} ({len(acquisition)} monthly values)")
     print(f"Updated {CM_SEASONALITY.name} ({len(monthly)} monthly values)")
+    if not core and not adjustments and not anchors:
+        print(
+            "No hardcoded CM stack cells found on Weekly Financials — "
+            "preserving repo CM_* constants"
+        )
+        return
+    write_weekly_constants(core, adjustments, anchors)
     print(
         f"Updated {WEEKLY_FORMULAS.name}: "
         f"{len(core)} core anchor(s), {len(adjustments)} adjustment cell(s), "

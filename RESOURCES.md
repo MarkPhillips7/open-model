@@ -71,7 +71,8 @@ Refresh these periodically; independent scrapers and posts can lag or disagree w
 
 | Resource | Role in model |
 | --- | --- |
-| National monthly home-sales seasonality (chart referenced via [Google image search for national average monthly home sales](https://www.google.com/search?q=National+average+monthly+home+sales+averaged+over+all+years+with+January+through+December+on+the+ex+axis&udm=2)) | **Seasonality** tab monthly weights; weekly **Seasonality Multiplier** = month weight ÷ (1/12). |
+| Acquisition seasonality (judgment, informed by Accountable weekly contract tracking) | **Seasonality** tab row 2 monthly weights (peak Nov–Dec, trough ~June); weekly **Acquisition Seasonality Multiplier** = month weight ÷ (1/12). |
+| National monthly home-sales seasonality (chart referenced via [Google image search for national average monthly home sales](https://www.google.com/search?q=National+average+monthly+home+sales+averaged+over+all+years+with+January+through+December+on+the+ex+axis&udm=2)) | Historical reference still linked on **Seasonality** (around row 9); no longer the driver of row 2. |
 | Broader U.S. cash-purchase share (~**31–32%**) | **Transitions → Percent Cash Purchase Sales** — Opendoor does not disclose financed vs cash mix on resales, so the model uses the national trend. |
 
 ---
@@ -82,7 +83,7 @@ In-sheet citations appear as:
 
 1. **Cell comments** on **Weekly Financials**, **Quarterly Financials**, and **Transitions** (earnings quotes, metric definitions, guessed rates).
 2. **Inline notes** on **Transitions** (closing timing + cash %).
-3. **Seasonality!A5** (link/note to the national seasonality chart being mimicked).
+3. **Seasonality!A3** (acquisition seasonality rationale) and **Seasonality!A9** (link to the national home-sales seasonality chart, historical reference).
 
 There are no Drive “note” fields separate from comments in the current workbook; use Comments in Google Sheets to browse the full list.
 

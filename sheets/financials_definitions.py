@@ -18,12 +18,13 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Acquisition Contracts - Model": (
         "Forward projection of weekly contracts. Formula: "
-        "Acquisition Contracts - no seasonality × Seasonality Multiplier. "
+        "Acquisition Contracts - no seasonality × Acquisition Seasonality Multiplier. "
         "Used when the actual row is blank."
     ),
-    "Seasonality Multiplier": (
-        "Weekly adjustment from the Seasonality tab (monthly U.S. home-sales weights ÷ 1/12). "
-        "Manual or formula-driven early columns; scales contract volume to mimic national seasonality."
+    "Acquisition Seasonality Multiplier": (
+        "Weekly adjustment from the Seasonality tab (monthly acquisition weights ÷ 1/12). "
+        "Peaks Nov–Dec (spring/early-summer listing lag); trough May–Aug. "
+        "Formula on every week column: INDEX(Seasonality!$B$2:$M$2, MONTH(date)) / (1/12)."
     ),
     "Acquisition Growth - Operational Improvements- weekly": (
         "Weekly % uplift on deseasonalized contracts (accountability / ops-improvement scenario). "

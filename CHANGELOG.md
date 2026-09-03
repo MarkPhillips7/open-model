@@ -18,6 +18,29 @@ Entry template:
 
 ---
 
+## 2026-09-02 — Acquisition seasonality retune, helper removed, label renames
+
+Pulled user-adjusted **Seasonality** `B2:M2` into git. Removed leftover Helper Constant. Renamed the weekly/quarterly multiplier row and the Seasonality percent label.
+
+- **Tab / range:** **Seasonality** `A2:B3`, `A4`; **Weekly Financials** `A4`; **Quarterly Financials** `A5`; **Welcome** `B23`; **Financials Definitions** multiplier note
+- **Insert/delete:** none (Helper Constant cells cleared; CM table stayed on row 6)
+- **Formulas:** **Acquisition Contracts - Model** template `{Seasonality Multiplier}` → `{Acquisition Seasonality Multiplier}` (live cells still `INDEX` row 2 ÷ 1/12; row numbers unchanged)
+- **Data:** `B2:M2` Jan–Dec **10.4, 8.8, 7.3, 6.3, 5.5, 5.3, 5.5, 6.3, 8.3, 10.6, 13.0, 12.7%** (sum 100%). `A2` **Acquisition Contract Percent by Month** → **Acquisition Percent by Month**. **Seasonality Multiplier** → **Acquisition Seasonality Multiplier**. Helper Constant `A3:B3` (`0.73`) deleted; rationale note moved `A4` → `A3`.
+- **Side effects:** `sheets/seasonality.py` constants renamed; Financials Definitions / Welcome copy updated. Chart series ranges unchanged.
+
+## 2026-09-02 — Acquisition-contract seasonality (replace home-sales weights)
+
+Synced the workbook first (Welcome copy; **Seasonality** `N1` Total + `N2`/`N6` SUM formulas the user added in the UI; CM monthly adj already matched). Over-grid screenshot images on **Seasonality** stay on the live sheet only (Sheets API does not expose them to git). **Weekly Financials** CM stack cells are all formulas — repo `CM_*` anchors preserved. Then replaced row 2 with a new acquisition-contract curve.
+
+- **Tab / range:** **Seasonality** `A2:N2`, `A4`, `A7`, `N6`; **Welcome** `B23`; **Financials Definitions** Seasonality Multiplier note
+- **Insert/delete:** none
+- **Formulas:**
+  - `B2:M2`: `=4%/$B$3` … `=5.5%/$B$3` (national home-sales shape scaled by helper 0.73) → hardcoded monthly shares (no formula)
+  - `N2`: kept/canonicalized `=SUM(B2:M2)` (user-added Total); `N6`: kept/canonicalized `=SUM(B6:M6)`
+  - Weekly **Seasonality Multiplier** template unchanged: `=INDEX(Seasonality!$B$2:$M$2, MONTH({col}$1)) / (1/12)`
+- **Data:** `A2` **Home Sales Percent** → **Acquisition Contract Percent by Month**. `B2:M2` Jan–Dec: **11.0, 9.5, 8.0, 6.5, 5.5, 5.0, 5.5, 6.0, 8.0, 10.0, 12.5, 12.5%** (sum 100%). Peak Nov–Dec so listings (~2 month lag) hit spring/early summer; steady drop Dec→Mar; May–Aug trough with June the 5% low; Sep–Oct accelerate. Nov/Dec sit at 12.5% rather than 11% so they stay the unique peaks while June is 5% and the year still sums to 100%. Helper **B3** `0.73` left in place but is no longer referenced. `A4` rationale note; `A7` no longer says row 2 is U.S. home-sales seasonality.
+- **Side effects:** **Acquisition Contracts - Model** (and downstream funnel) will re-seasonalize — **Homes Chart** / **Money Charts** series ranges are unchanged but the contract-model line shape will move. Canonical values in `sheets/seasonality.py`; push with `scripts/sync_acquisition_seasonality.py`. Number format `B2:N2` set to `0.0%`.
+
 ## 2026-09-02 — Sync repo from live spreadsheet (manual UI edits)
 
 Ran `sync_repo_from_live_sheet.py` / pull scripts after user manual edits throughout the workbook.

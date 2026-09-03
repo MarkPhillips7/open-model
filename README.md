@@ -30,7 +30,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 | **Financials Definitions** | Reference tab: column A mirrors Weekly Financials row labels; column B documents each field (Opendoor context, manual vs formula sourcing). Canonical text in `sheets/financials_definitions.py`; pull after UI edits with `scripts/pull_financials_definitions_from_sheet.py`. |
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
-| **Seasonality** | Monthly home-sales seasonality weights; drives weekly seasonality multipliers. |
+| **Seasonality** | Monthly acquisition seasonality weights; drives the weekly **Acquisition Seasonality Multiplier**. |
 | **Price History** | One `GOOGLEFINANCE` spill of OPEN daily OHLCV; **Price (at Close)** on Weekly Financials XLOOKUPs the close column by week-ending date. |
 | **Homes Chart** | Line chart of weekly home metrics (actual vs model for contracts, purchases, listings, sales, inventory). |
 | **Money Charts** | Two line charts: **Revenue and Shares** (revenue + basic shares) and **Profit and Price** (contribution profit, adjusted/GAAP net income). |
@@ -48,7 +48,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 ### Funnel (actuals vs model)
 
-1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × seasonality × weekly operational growth.
+1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × **Acquisition Seasonality Multiplier** × weekly operational growth.
 2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row.
 3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B25`, default 450) draining on row 27. Never-listed share is `(1 − Likelihood to List)` on the weekly row (not a fixed Transitions %).
 4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (~21 weeks) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
@@ -94,7 +94,7 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |
 | Cash purchase share | ~**31.5%** | National U.S. mix; OPEN does not disclose. |
 | ASP | **$377,500** | Q2 2026. |
-| Seasonality | Monthly weights summing via helper **73%** | Mimics national monthly sales seasonality. |
+| Seasonality | Monthly acquisition weights summing to **100%** | Peak Nov–Dec (listings lag ~2 months into spring/early summer selling); trough May–Aug. |
 | Acquisition growth (ops) | Weekly % ramp then fade | Growth / accountability scenarios. |
 | CM path | Core improving; temporary negative adjustments; guided mid-single digits | Matches earnings CM narrative (bottom Sept 2025, Q3 guide 4–4.5%, longer-term ~5–7%). |
 | Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **80%** by Jan 2029 | Four-phase smoothstep on **Open Mortgage Percent** (10% / 40% / 80% phase targets). |
@@ -156,7 +156,7 @@ Offline template checks (no Google credentials): `python scripts/validate_model_
 
 Workbook layout (tab names, chart series rows) is snapshotted in `config/workbook_snapshot.json`. After intentional chart or tab changes, refresh with `python scripts/validate_workbook_snapshot.py --update` and commit the diff.
 
-**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py` (add `--update-snapshot` if chart series rows changed). That pulls CM seasonality/stack constants, **Financials Definitions** notes, and fails if any `* - Model` formula on the live sheet differs from `sheets/weekly_model_formulas.py` / `sheets/open_transition.py` — so manual formula fixes are not silently lost on the next restore.
+**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py` (add `--update-snapshot` if chart series rows changed). That pulls acquisition-contract and CM seasonality, CM stack constants when they are hardcoded, **Financials Definitions** notes, and fails if any `* - Model` formula on the live sheet differs from `sheets/weekly_model_formulas.py` / `sheets/open_transition.py` — so manual formula fixes are not silently lost on the next restore.
 
 After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
 

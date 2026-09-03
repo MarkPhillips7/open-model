@@ -287,7 +287,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
 
 COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     "Acquisition Contracts - Model": (
-        "={c}{Acquisition Contracts - no seasonality}*{c}{Seasonality Multiplier}"
+        "={c}{Acquisition Contracts - no seasonality}*{c}{Acquisition Seasonality Multiplier}"
     ),
     "Contribution Profit - Model": (
         "={c}{Revenue - Model}*{c}{Contribution Margin - Model}"
@@ -391,7 +391,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     "Fixed Costs - Model": frozenset(),
     "Net Interest Expense - Model": frozenset(),
     "Acquisition Contracts - Model": frozenset(
-        {"Acquisition Contracts - no seasonality", "Seasonality Multiplier"}
+        {"Acquisition Contracts - no seasonality", "Acquisition Seasonality Multiplier"}
     ),
     "Contribution Profit - Model": frozenset(
         {

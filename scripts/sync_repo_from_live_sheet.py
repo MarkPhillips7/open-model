@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Pull tracked spreadsheet state into git after manual workbook edits.
 
-The live Google Sheet is the source of truth for CM stack constants, seasonality,
-Financials Definitions notes, and chart series layout. Model-row formulas are defined in sheets/*.py — if this
+The live Google Sheet is the source of truth for CM stack constants, seasonality
+(acquisition-contract weights and CM monthly adj), Financials Definitions notes,
+and chart series layout. Model-row formulas are defined in sheets/*.py — if this
 script reports formula drift, update those modules (or run restore after fixing
 the repo) before committing.
 """
