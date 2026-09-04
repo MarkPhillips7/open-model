@@ -77,11 +77,15 @@ from sheets.ancillary_products import (
     CM_TITLE_LABEL,
     DOMA_GROWTH_MULTIPLIER_LABEL,
     DOMA_REFI_PROFIT_LABEL,
+    ODL_OFF_INVENTORY_LOANS_LABEL,
+    ODL_OFF_INVENTORY_PROFIT_LABEL,
     OPEN_MORTGAGE_PERCENT_LABEL,
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
     ASP_LABEL,
     cm_mortgage_formula,
     cm_title_formula,
+    odl_off_inventory_loans_formula,
+    odl_off_inventory_profit_formula,
     open_mortgage_percent_formula,
     open_title_purchase_percent_formula,
 )
@@ -329,7 +333,8 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
         "={c}{Fixed Costs - Model}+(15000000/13)"
     ),
     ADJ_EBITDA_MODEL_LABEL: (
-        "={c}{Contribution Profit - Model}-{c}{Adjusted Operating Expenses - Model}"
+        "={c}{Contribution Profit - Model}+N({c}{ODL Off-inventory Profit - Model})"
+        "-{c}{Adjusted Operating Expenses - Model}"
     ),
     ADJ_NET_INCOME_MODEL_LABEL: (
         "={c}{Adjusted EBITDA - Model}-{c}{Net Interest Expense - Model}"
@@ -506,6 +511,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     ADJ_EBITDA_MODEL_LABEL: frozenset(
         {
             "Contribution Profit - Model",
+            ODL_OFF_INVENTORY_PROFIT_LABEL,
             "Adjusted Operating Expenses - Model",
         }
     ),
@@ -561,6 +567,10 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     OPEN_TITLE_PURCHASE_PERCENT_LABEL: frozenset(),
     CM_MORTGAGE_LABEL: frozenset({OPEN_MORTGAGE_PERCENT_LABEL, ASP_LABEL}),
     CM_TITLE_LABEL: frozenset({OPEN_TITLE_PURCHASE_PERCENT_LABEL, ASP_LABEL}),
+    ODL_OFF_INVENTORY_LOANS_LABEL: frozenset(
+        {"Home Sales", "Home Sales - Model", OPEN_MORTGAGE_PERCENT_LABEL}
+    ),
+    ODL_OFF_INVENTORY_PROFIT_LABEL: frozenset({ODL_OFF_INVENTORY_LOANS_LABEL}),
     TRANSITION_COMPLETENESS_LABEL: frozenset(),
 }
 
@@ -596,6 +606,8 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     CM_TITLE_LABEL,
     DOMA_GROWTH_MULTIPLIER_LABEL,
     DOMA_REFI_PROFIT_LABEL,
+    ODL_OFF_INVENTORY_LOANS_LABEL,
+    ODL_OFF_INVENTORY_PROFIT_LABEL,
     SBC_MODEL_LABEL,
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
     INTEREST_EXPENSE_MODEL_LABEL,
@@ -915,6 +927,22 @@ def row_cells_for_label(
 
     if label == DOMA_REFI_PROFIT_LABEL:
         return list(DOMA_REFI_PROFIT_CELLS[:n_cols])
+
+    if label == ODL_OFF_INVENTORY_LOANS_LABEL:
+        return [
+            odl_off_inventory_loans_formula(
+                col_letter(col_idx + 2), label_to_row=label_to_row
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label == ODL_OFF_INVENTORY_PROFIT_LABEL:
+        return [
+            odl_off_inventory_profit_formula(
+                col_letter(col_idx + 2), label_to_row=label_to_row
+            )
+            for col_idx in range(n_cols)
+        ]
 
     if label in (FACILITY_CAPACITY_LABEL, COMMITTED_CAPACITY_LABEL):
         cap_row = label_to_row[label]

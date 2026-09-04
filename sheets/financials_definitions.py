@@ -133,6 +133,17 @@ FIELD_NOTES: dict[str, str] = {
         "Modeled weekly profit from Doma mortgage refi / title savings, compounded from column AR. "
         "Manual cell templates in repo; not added to Contribution Profit - Model."
     ),
+    "ODL Off-inventory Loans - Model": (
+        "Modeled Opendoor Home Loans originated on homes Opendoor does not hold. "
+        "Formula: (Home Sales actual else model) × Open Mortgage Percent × off-inventory "
+        "ratio. Ratio smoothsteps 0% at Sep 6 2026 (GA) → terminal % on Transitions B32 "
+        "(default 25%) by Jan 2 2028. Not company-disclosed; conservative vs national TAM."
+    ),
+    "ODL Off-inventory Profit - Model": (
+        "Off-inventory ODL loans × $3,000/loan (Transitions B31). Haircut vs $4,000 "
+        "on-inventory because Opendoor-owned homes get best pricing. Added to "
+        "Adjusted EBITDA - Model, not to contribution margin or Contribution Profit - Model."
+    ),
     "Contribution Profit - Model": (
         "Formula: Revenue - Model × Contribution Margin - Model. "
         "Forward P&L starting point below gross profit."
@@ -151,8 +162,11 @@ FIELD_NOTES: dict[str, str] = {
         "prior-week + improvement formula."
     ),
     "Contribution Margin - Mortgage": (
-        "CM add from Opendoor Home Loans attach: Open Mortgage Percent × $4,000/loan ÷ ASP "
-        "(Transitions B29). Formula each week; ramps 0%→80% attach Jan 2026–Jan 2029."
+        "CM add from Opendoor Home Loans attach on Opendoor resales: "
+        "Open Mortgage Percent × $4,000/loan ÷ ASP (Transitions B29). "
+        "Formula each week; ramps 0%→80% attach Jan 2026–Oct 2028. "
+        "Does not include loans on homes Opendoor does not hold — those are "
+        "ODL Off-inventory Profit - Model, added in Adjusted EBITDA - Model."
     ),
     "Contribution Margin - Title and Escrow": (
         "CM add from Doma title on purchase closes: Open Title Purchase Percent × $2,400/close ÷ ASP "
@@ -204,8 +218,10 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Open Mortgage Percent": (
         "Assumed % of Opendoor resale buyers using Opendoor Home Loans (ODL). "
-        "Four-phase smoothstep 0%→80% (Jan 2026–Jan 2029). Not company-disclosed nationally; "
-        "Colorado/Texas attach cited in Q2 2026 earnings."
+        "Four-phase smoothstep 0%→10% (Sep 6 2026, GA / out of beta) → 40% (Dec 20 2026) "
+        "→ 80% (Oct 1 2028). Not company-disclosed nationally; Colorado/Texas attach "
+        "cited in Q2 2026 earnings. Off-inventory originations are a separate book "
+        "(see ODL Off-inventory Loans - Model), not folded into this attach rate."
     ),
     "Open Title Purchase Percent": (
         "Assumed % of purchase closes using Doma title/escrow. "
@@ -296,7 +312,10 @@ FIELD_NOTES: dict[str, str] = {
         "Quarterly actual spread ÷13."
     ),
     "Adjusted EBITDA - Model": (
-        "Formula: Contribution Profit - Model − Adjusted Operating Expenses - Model."
+        "Formula: Contribution Profit - Model + ODL Off-inventory Profit - Model "
+        "− Adjusted Operating Expenses - Model. Off-inventory mortgage dollars sit "
+        "here rather than in contribution margin so home-sale CM stays comparable "
+        "to reported CM."
     ),
     "Net Interest Expense": (
         "Interest on inventory financing and debt, net (Non-GAAP). Quarterly actual spread ÷13."

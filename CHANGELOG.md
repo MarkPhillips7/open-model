@@ -18,6 +18,20 @@ Entry template:
 
 ---
 
+## 2026-09-04 — ODL out of beta; off-inventory mortgage book
+
+Kaz confirmed Opendoor Home Loans is generally available in licensed states and can be used on a home Opendoor does not hold. On-inventory attach stays a CM add; off-inventory originations are a separate dollar book in Adj EBITDA.
+
+- **Tab / range:** **Transitions `A31:B32`**; **Weekly Financials** / **Quarterly Financials** 2 rows before **Contribution Profit - Model**; **Open Mortgage Percent**; **Adjusted EBITDA - Model**; **Financials Definitions** rebuilt
+- **Insert/delete:** ROWS, weekly start index **29** (0-based, before former CP row 30), count **2**; quarterly start index **30**, count **2**
+- **Formulas:**
+  - **Open Mortgage Percent:** phase-3 end **DATE(2026,12,20)** (was **2027-01-03**); phase-4 end **DATE(2028,10,1)** (was **2029-01-02**). 10% waypoint unchanged (Sep 6 2026).
+  - **ODL Off-inventory Loans - Model:** `(Home Sales actual else model) × Open Mortgage Percent × ratio`; ratio smoothstep **0% → Transitions!B32** (Sep 6 2026 – Jan 2 2028)
+  - **ODL Off-inventory Profit - Model:** `loans × Transitions!$B$31`
+  - **Adjusted EBITDA - Model:** `CP + N(off-inventory profit) − Adj OpEx` (was `CP − Adj OpEx`)
+- **Data:** **Transitions B31** **$3,000**/off-inventory loan; **B32** **25%** terminal off-/on-inventory ODL ratio. On-inventory B29 **$4,000** unchanged.
+- **Side effects:** Rows from **Contribution Profit - Model** down shift **+2**. Google Sheets auto-shifted **Homes Charts** inventory to weekly **52/53** and utilization **58–61**, and **Money Charts** Profit series (CP **27/32**, Adj EBITDA **70/71**, Adj NI **76/83**, GAAP NI **94/95**, prices **98/100/101**) — please confirm those lines still look right in the UI; agents do not edit charts. `config/workbook_snapshot.json` refreshed from live. Restore now batch-updates weekly model rows (one API call) after a per-row write hit the Sheets quota.
+
 ## 2026-09-03 — Homes Charts tab rename and split
 
 Recorded the UI split of the homes tab (manual chart edits; no API chart writes).

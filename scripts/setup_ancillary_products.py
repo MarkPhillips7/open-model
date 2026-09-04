@@ -28,8 +28,8 @@ def write_transitions_assumptions(client: SheetsClient) -> None:
     values = [[label, value] for label, value in TRANSITIONS_ANCILLARY_ROWS]
     end_row = start_row + len(values) - 1
     ws.update(values, range_name=f"A{start_row}:B{end_row}", value_input_option="RAW")
-    # Clear removed Doma inputs (legacy layout had blank + B32:B33 through row 33).
-    ws.batch_clear([f"A{end_row + 1}:B33"])
+    # Clear leftover Doma input rows if the ancillary block used to extend further.
+    ws.batch_clear([f"A{end_row + 1}:B35"])
     print(f"{TRANSITIONS}: wrote ancillary assumptions A{start_row}:B{end_row}")
 
 

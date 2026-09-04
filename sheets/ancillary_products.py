@@ -7,10 +7,14 @@ TRANSITIONS = "Transitions"
 # Unit economics on Transitions (spreadsheet is source of truth after setup).
 MORTGAGE_NET_PROFIT_PER_LOAN_CELL = f"{TRANSITIONS}!$B$29"
 TITLE_NET_SAVINGS_PER_CLOSE_CELL = f"{TRANSITIONS}!$B$30"
+OFF_INVENTORY_PROFIT_PER_LOAN_CELL = f"{TRANSITIONS}!$B$31"
+OFF_INVENTORY_RATIO_TERMINAL_CELL = f"{TRANSITIONS}!$B$32"
 # Manual Doma row cells live in sheets/doma_manual_cells.py (not Transitions-driven).
 
 MORTGAGE_NET_PROFIT_PER_LOAN = 4000
 TITLE_NET_SAVINGS_PER_CLOSE = 2400
+OFF_INVENTORY_PROFIT_PER_LOAN = 3000
+OFF_INVENTORY_RATIO_TERMINAL = 0.25
 
 DOMA_GROWTH_MULTIPLIER_LABEL = "Doma Growth Multiplier"
 DOMA_REFI_PROFIT_LABEL = "Doma Refi Profit - Model"
@@ -22,13 +26,28 @@ OLD_OPEN_TITLE_LABEL = "Open Title and Escrow (Doma) Percent"
 CM_MORTGAGE_LABEL = "Contribution Margin - Mortgage"
 CM_TITLE_LABEL = "Contribution Margin - Title and Escrow"
 
+ODL_OFF_INVENTORY_LOANS_LABEL = "ODL Off-inventory Loans - Model"
+ODL_OFF_INVENTORY_PROFIT_LABEL = "ODL Off-inventory Profit - Model"
+ODL_OFF_INVENTORY_LABELS: tuple[str, ...] = (
+    ODL_OFF_INVENTORY_LOANS_LABEL,
+    ODL_OFF_INVENTORY_PROFIT_LABEL,
+)
+
 ASP_LABEL = "Average Sale Price (homes sold by OPEN)"
+HOME_SALES_LABEL = "Home Sales"
+HOME_SALES_MODEL_LABEL = "Home Sales - Model"
 
 # ODL attach ramp — smoothstep phases on Weekly Financials (Open Mortgage Percent).
+# 10% waypoint is GA / out-of-beta (Sep 2026). 40% pulled ~2 weeks vs prior Jan 3 2027;
+# 80% pulled ~3 months vs prior Jan 2 2029.
 MORTGAGE_ATTACH_PHASE1_END = "DATE(2026,1,4)"
 MORTGAGE_ATTACH_PHASE2_END = "DATE(2026,9,6)"
-MORTGAGE_ATTACH_PHASE3_END = "DATE(2027,1,3)"
-MORTGAGE_ATTACH_PHASE4_END = "DATE(2029,1,2)"
+MORTGAGE_ATTACH_PHASE3_END = "DATE(2026,12,20)"
+MORTGAGE_ATTACH_PHASE4_END = "DATE(2028,10,1)"
+
+# Off-inventory originations as a % of on-inventory ODL loans (not a CM add).
+OFF_INVENTORY_RATIO_START = "DATE(2026,9,6)"
+OFF_INVENTORY_RATIO_END = "DATE(2028,1,2)"
 
 TITLE_PURCHASE_ATTACH_START_DATE = "DATE(2025,1,1)"
 TITLE_PURCHASE_ATTACH_END_DATE = "DATE(2027,6,1)"
@@ -36,6 +55,14 @@ TITLE_PURCHASE_ATTACH_END_DATE = "DATE(2027,6,1)"
 TRANSITIONS_ANCILLARY_ROWS: list[tuple[str, str | int | float]] = [
     ("Max Mortgage net contribution profit per attached loan ($)", MORTGAGE_NET_PROFIT_PER_LOAN),
     ("Max Title/ESCROW net contribution profit per purchase close ($)", TITLE_NET_SAVINGS_PER_CLOSE),
+    (
+        "Max Mortgage net contribution profit per off-inventory loan ($)",
+        OFF_INVENTORY_PROFIT_PER_LOAN,
+    ),
+    (
+        "Terminal off-inventory ODL loans as % of on-inventory ODL loans",
+        OFF_INVENTORY_RATIO_TERMINAL,
+    ),
 ]
 
 
@@ -82,3 +109,28 @@ def cm_title_formula(col: str, *, label_to_row: dict[str, int]) -> str:
         f'=IF(OR(N({col}{asp})=0,N({col}{attach})=0),"",'
         f"{col}{attach}*{TITLE_NET_SAVINGS_PER_CLOSE_CELL}/{col}{asp})"
     )
+
+
+def _off_inventory_ratio_expr(col: str) -> str:
+    start = OFF_INVENTORY_RATIO_START
+    end = OFF_INVENTORY_RATIO_END
+    terminal = OFF_INVENTORY_RATIO_TERMINAL_CELL
+    return (
+        f"IFS({col}$1<={start},0,"
+        f"{col}$1<={end},{terminal}*{_smoothstep(col, start, end)},"
+        f"TRUE,{terminal})"
+    )
+
+
+def odl_off_inventory_loans_formula(col: str, *, label_to_row: dict[str, int]) -> str:
+    """On-inventory ODL loans × off-inventory ratio. Sales prefer actual, else model."""
+    sales = label_to_row[HOME_SALES_LABEL]
+    sales_model = label_to_row[HOME_SALES_MODEL_LABEL]
+    attach = label_to_row[OPEN_MORTGAGE_PERCENT_LABEL]
+    sales_used = f'IF({col}{sales}<>"",{col}{sales},{col}{sales_model})'
+    return f"=({sales_used})*{col}{attach}*({_off_inventory_ratio_expr(col)})"
+
+
+def odl_off_inventory_profit_formula(col: str, *, label_to_row: dict[str, int]) -> str:
+    loans = label_to_row[ODL_OFF_INVENTORY_LOANS_LABEL]
+    return f"={col}{loans}*{OFF_INVENTORY_PROFIT_PER_LOAN_CELL}"

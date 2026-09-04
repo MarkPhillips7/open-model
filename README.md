@@ -57,12 +57,13 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 ### Profitability stack
 
-- **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Seasonality + Adjustments. Mortgage/title CM rows = attach % × $/unit ÷ ASP (see **Transitions** ancillary assumptions).
+- **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Seasonality + Adjustments. Mortgage/title CM rows = attach % × $/unit ÷ ASP (see **Transitions** ancillary assumptions). On-inventory ODL only.
+- **ODL Off-inventory Profit - Model** — loans on homes Opendoor does not hold: on-inventory ODL count × off-inventory ratio × $3,000 (Transitions B31–B32). Added to **Adjusted EBITDA - Model**, not to CM or Contribution Profit.
 - **Doma Refi Profit - Model** / **Doma Growth Multiplier** — manual weekly rows (stepwise multipliers + compounded profit from **AR**; cells in `sheets/doma_manual_cells.py`). Not added to **Contribution Profit - Model**.
 - Core CM starts near low single digits and can step up via **Contribution Margin Improvement - Core**.
 - Near-term negative adjustments reflect older-cohort / inventory-clearing pressure called out in earnings commentary.
 - **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
-- **Adjusted EBITDA - Model** = Contribution Profit − Adjusted Operating Expenses (matches Opendoor Non-GAAP EBITDA).
+- **Adjusted EBITDA - Model** = Contribution Profit + ODL Off-inventory Profit − Adjusted Operating Expenses (matches Opendoor Non-GAAP EBITDA, plus modeled off-inventory mortgage).
 - **Adjusted Net Income - Model** = Adjusted EBITDA − Net Interest − D&A − Taxes (SBC is **not** subtracted again; it sits above EBITDA in the company reconciliation).
 - **Net Interest Expense - Model** uses reported net interest when spread; otherwise senior warehouse debt × senior rate / 52 + mezzanine debt × mezzanine rate / 52, minus a $9M/quarter interest-income offset. Lowering **Mezzanine Share of Warehouse Debt - Model** refinances expensive mezz into cheaper senior.
 - **Net Income (Loss) Attributable to Common Shareholders - Model** = Adjusted Net Income + debt extinguishment − SBC − inventory valuation (current + prior periods) − restructuring − CEO make-whole − other GAAP adjustments (matches Opendoor’s Adj ↔ GAAP reconciliation in the earnings supplement).
@@ -98,8 +99,9 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Seasonality | Monthly acquisition weights summing to **100%** | Peak Nov–Dec (listings lag ~2 months into spring/early summer selling); trough May–Aug. |
 | Acquisition growth (ops) | Weekly % ramp then fade | Growth / accountability scenarios. |
 | CM path | Core improving; temporary negative adjustments; guided mid-single digits | Matches earnings CM narrative (bottom Sept 2025, Q3 guide 4–4.5%, longer-term ~5–7%). |
-| Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **80%** by Jan 2029 | Four-phase smoothstep on **Open Mortgage Percent** (10% / 40% / 80% phase targets). |
+| Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **80%** by Oct 2028 | Four-phase smoothstep on **Open Mortgage Percent** (10% Sep 2026 / 40% Dec 2026 / 80% Oct 2028). On-inventory resales only. |
 | Mortgage $/attached loan | **$4,000** max net (`Transitions!B29`) | CM add = attach × $/loan ÷ ASP. |
+| Off-inventory ODL | **0%** of on-inventory ODL at Sep 2026 GA → **25%** by Jan 2028 | `ODL Off-inventory Loans - Model`; $3,000/loan (`Transitions!B31`). Hits Adj EBITDA, not CM. |
 | Title purchase attach | **0%** before Jan 2025 → **100%** by Jun 2027 | Linear ramp on **Open Title Purchase Percent**. |
 | Title $/purchase close | **$2,400** max net savings (`Transitions!B30`) | CM add = attach × $/close ÷ ASP. |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |

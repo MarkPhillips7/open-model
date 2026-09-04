@@ -67,12 +67,15 @@ def restore_model_formulas(client: SheetsClient) -> None:
         cm_stack_updates(n_cols, label_to_row=labels, existing=existing_by_row)
     )
 
-    for row_num in sorted(updates):
-        ws.update(
-            [updates[row_num]],
-            range_name=f"B{row_num}:{end_col}{row_num}",
-            value_input_option="USER_ENTERED",
-        )
+    batch = [
+        {
+            "range": f"B{row_num}:{end_col}{row_num}",
+            "values": [updates[row_num]],
+        }
+        for row_num in sorted(updates)
+    ]
+    if batch:
+        ws.batch_update(batch, value_input_option="USER_ENTERED")
 
     print(f"Restored model formulas on rows: {sorted(updates)}")
 
