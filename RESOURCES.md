@@ -34,7 +34,7 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 - Fixed opex called out for accountability; recent quarterly path cited as roughly **$37M → $35M → $33M → $35M** (Q3 2025–Q2 2026).
 - Acquisition contracts “typically close about a month later.”
 - Q2 2026: **>50%** of scheduled Colorado resale closes financed with Opendoor Home Loans; Texas **~20%** at ~6 weeks ([Q2 2026 earnings release](https://www.sec.gov/Archives/edgar/data/1801169/000180116926000019/q22026formxex991earningsre.htm)).
-- Sep 4 2026: Kaz confirmed Opendoor Home Loans is **out of beta** (generally available in licensed states) and can be used on a home Opendoor does not hold. Product FAQ: [Opendoor Home Loans](https://www.opendoor.com/mortgage).
+- Sep 4 2026: Kaz confirmed Opendoor Home Loans is **out of beta** (generally available in licensed states) and can be used on a home Opendoor does not hold. Product FAQ: [Opendoor Home Loans](https://www.opendoor.com/mortgage). Off-inventory TAM uses **4 million** US existing home sales/year (see [ssj2abid on X](https://x.com/ssj2abid/status/2095935994746859566)).
 - [Doma closing/escrow acquisition](https://www.opendoor.com/articles/doma-acquisition-complete) — Fannie Mae Title Acceptance refis; borrower savings cited **~$300–$1,500** / **~$1,100** per refi; modeled separately from home-sale CM.
 
 ### Ancillary products (model assumptions)
@@ -42,8 +42,10 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 | Lever | Location | Default | Notes |
 | --- | --- | --- | --- |
 | Max mortgage net $/attached loan | `Transitions!B29` | **$4,000** | CM add = **Open Mortgage Percent** × B29 ÷ ASP (Opendoor resales only) |
-| Max mortgage net $/off-inventory loan | `Transitions!B31` | **$3,000** | Haircut vs B29; profit = off-inventory loans × B31, added to Adj EBITDA |
-| Terminal off-inventory / on-inventory ODL | `Transitions!B32` | **25%** | Smoothstep **0% → 25%** (Sep 6 2026 – Jan 2 2028) |
+| Max mortgage net $/off-inventory loan | `Transitions!B31` | **$3,000** | Haircut vs B29; profit = off-inventory loans × B31, added to Adj EBITDA (not CM) |
+| Terminal off-inventory ODL share of US home-sale TAM | `Transitions!B32` | **2%** | Smoothstep **0% → 2%** (Sep 6 2026 – Jan 1 2030) |
+| US existing home sales TAM | `Transitions!B33` | **4,000,000**/year | Weekly TAM = B33/52. Off-inventory loans = weekly TAM × B32 share |
+| Max mortgage revenue $/off-inventory loan | `Transitions!B34` | **$7,500** | Gain-on-sale + MSR on a ~$300k loan. Revenue = loans × B34, added to Revenue - Model |
 | Max title net $/purchase close | `Transitions!B30` | **$2,400** | CM add = **Open Title Purchase Percent** × B30 ÷ ASP |
 | ODL attach ramp | **Open Mortgage Percent** | smoothstep **0% → 80%** (Jan 2026 – Oct 2028) | Four-phase: 10% Sep 6 2026 / 40% Dec 20 2026 / 80% Oct 1 2028 |
 | Title purchase attach | **Open Title Purchase Percent** | linear **0% → 100%** (Jan 2025 – Jun 2027) | Purchase resales only |

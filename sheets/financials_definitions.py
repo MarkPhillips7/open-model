@@ -104,9 +104,9 @@ FIELD_NOTES: dict[str, str] = {
         "(day-weighted). Weekly manual possible. Model when blank."
     ),
     "Revenue - Model": (
-        "Blended revenue (1.0/2.0 via Transition Completeness). "
-        "Listed path: listings × ASP × sell-through × price retention, split cash vs financed close lags. "
-        "Private path: private sales × ASP."
+        "Blended home-sale revenue (1.0/2.0 via Transition Completeness) plus "
+        "ODL Off-inventory Revenue - Model. Listed path: listings × ASP × sell-through "
+        "× price retention, split cash vs financed close lags. Private path: private sales × ASP."
     ),
     "Revenue - 2.0 Model": (
         "OPEN 2.0 revenue: listings lagged through sell-through and price-retention curves "
@@ -122,7 +122,8 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Contribution Profit": (
         "Revenue × Contribution Margin (Opendoor's key unit-economics profit measure). "
-        "Quarterly actual spread ÷13 (day-weighted). Model row = Revenue - Model × CM - Model."
+        "Quarterly actual spread ÷13 (day-weighted). Model row uses home-sale revenue "
+        "× home-sale CM only (on-inventory attach included; off-inventory excluded)."
     ),
     "Doma Growth Multiplier": (
         "Stepwise multiplier for Doma refi profit growth (post-acquisition title/refi business). "
@@ -135,26 +136,36 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "ODL Off-inventory Loans - Model": (
         "Modeled Opendoor Home Loans originated on homes Opendoor does not hold. "
-        "Formula: (Home Sales actual else model) × Open Mortgage Percent × off-inventory "
-        "ratio. Ratio smoothsteps 0% at Sep 6 2026 (GA) → terminal % on Transitions B32 "
-        "(default 25%) by Jan 2 2028. Not company-disclosed; conservative vs national TAM."
+        "Formula: (US existing-home-sale TAM / 52) × TAM share. TAM is Transitions B33 "
+        "(default 4,000,000 homes/year). Share smoothsteps 0% at Sep 6 2026 (GA) → "
+        "Transitions B32 (default 2%) by Jan 1 2030. Independent of OPEN inventory "
+        "sales and on-inventory attach. Not company-disclosed; 2% of national sales "
+        "is a base-case digital-purchase share (~80k loans/year)."
+    ),
+    "ODL Off-inventory Revenue - Model": (
+        "Off-inventory ODL loans × $7,500/loan (Transitions B34). Gross origination "
+        "economics (gain-on-sale + MSR) on a ~$300k loan. Added to Revenue - Model. "
+        "Not company-disclosed."
     ),
     "ODL Off-inventory Profit - Model": (
         "Off-inventory ODL loans × $3,000/loan (Transitions B31). Haircut vs $4,000 "
-        "on-inventory because Opendoor-owned homes get best pricing. Added to "
-        "Adjusted EBITDA - Model, not to contribution margin or Contribution Profit - Model."
+        "on-inventory. Added to Adjusted EBITDA - Model, not to contribution margin "
+        "or Contribution Profit - Model, so reported-style home-sale CM stays clean."
     ),
     "Contribution Profit - Model": (
-        "Formula: Revenue - Model × Contribution Margin - Model. "
-        "Forward P&L starting point below gross profit."
+        "Formula: (Revenue - Model − ODL Off-inventory Revenue - Model) × "
+        "Contribution Margin - Model. Home-sale revenue only, including on-inventory "
+        "mortgage/title CM adds. Off-inventory origination profit is not in CP."
     ),
     "Contribution Margin": (
         "Contribution profit ÷ revenue (%). Quarterly actual, day-weighted blend across "
         "boundary weeks (no ÷13). Q2 2026 ~5.8%; management guides 4–4.5% Q3 and 5–7% longer term."
     ),
     "Contribution Margin - Model": (
-        "Sum of CM stack: Core + Mortgage + Title and Escrow + Seasonality Adjustments + Adjustments. "
-        "Forward CM path matching earnings narrative."
+        "Home-sale CM only: Core + on-inventory Mortgage + Title and Escrow + "
+        "Seasonality Adjustments + Adjustments. Applied to home-sale revenue "
+        "(Revenue - Model minus off-inventory origination). Off-inventory ODL "
+        "is not in this stack."
     ),
     "Contribution Margin - Core": (
         "Base home-resale CM excluding ancillary attach. Anchored low single digits, "
@@ -166,7 +177,8 @@ FIELD_NOTES: dict[str, str] = {
         "Open Mortgage Percent × $4,000/loan ÷ ASP (Transitions B29). "
         "Formula each week; ramps 0%→80% attach Jan 2026–Oct 2028. "
         "Does not include loans on homes Opendoor does not hold — those are "
-        "ODL Off-inventory Profit - Model, added in Adjusted EBITDA - Model."
+        "ODL Off-inventory Revenue / Profit - Model (revenue in Revenue - Model; "
+        "profit in Adjusted EBITDA - Model)."
     ),
     "Contribution Margin - Title and Escrow": (
         "CM add from Doma title on purchase closes: Open Title Purchase Percent × $2,400/close ÷ ASP "
@@ -313,7 +325,7 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Adjusted EBITDA - Model": (
         "Formula: Contribution Profit - Model + ODL Off-inventory Profit - Model "
-        "− Adjusted Operating Expenses - Model. Off-inventory mortgage dollars sit "
+        "− Adjusted Operating Expenses - Model. Off-inventory mortgage profit sits "
         "here rather than in contribution margin so home-sale CM stays comparable "
         "to reported CM."
     ),

@@ -79,6 +79,7 @@ from sheets.ancillary_products import (
     DOMA_REFI_PROFIT_LABEL,
     ODL_OFF_INVENTORY_LOANS_LABEL,
     ODL_OFF_INVENTORY_PROFIT_LABEL,
+    ODL_OFF_INVENTORY_REVENUE_LABEL,
     OPEN_MORTGAGE_PERCENT_LABEL,
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
     ASP_LABEL,
@@ -86,6 +87,7 @@ from sheets.ancillary_products import (
     cm_title_formula,
     odl_off_inventory_loans_formula,
     odl_off_inventory_profit_formula,
+    odl_off_inventory_revenue_formula,
     open_mortgage_percent_formula,
     open_title_purchase_percent_formula,
 )
@@ -321,7 +323,8 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
         "={c}{Acquisition Contracts - no seasonality}*{c}{Acquisition Seasonality Multiplier}"
     ),
     "Contribution Profit - Model": (
-        "={c}{Revenue - Model}*{c}{Contribution Margin - Model}"
+        "=(N({c}{Revenue - Model})-N({c}{ODL Off-inventory Revenue - Model}))"
+        "*{c}{Contribution Margin - Model}"
     ),
     "Contribution Margin - Model": (
         "={c}{Contribution Margin - Core}+{c}{Contribution Margin - Mortgage}"
@@ -402,6 +405,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             TRANSITION_COMPLETENESS_LABEL,
             REVENUE_2_0_MODEL_LABEL,
             REVENUE_1_0_MODEL_LABEL,
+            ODL_OFF_INVENTORY_REVENUE_LABEL,
         }
     ),
     REVENUE_2_0_MODEL_LABEL: frozenset(
@@ -494,6 +498,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
         {
             "Revenue - Model",
             "Contribution Margin - Model",
+            ODL_OFF_INVENTORY_REVENUE_LABEL,
         }
     ),
     DOMA_GROWTH_MULTIPLIER_LABEL: frozenset(),
@@ -567,9 +572,8 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     OPEN_TITLE_PURCHASE_PERCENT_LABEL: frozenset(),
     CM_MORTGAGE_LABEL: frozenset({OPEN_MORTGAGE_PERCENT_LABEL, ASP_LABEL}),
     CM_TITLE_LABEL: frozenset({OPEN_TITLE_PURCHASE_PERCENT_LABEL, ASP_LABEL}),
-    ODL_OFF_INVENTORY_LOANS_LABEL: frozenset(
-        {"Home Sales", "Home Sales - Model", OPEN_MORTGAGE_PERCENT_LABEL}
-    ),
+    ODL_OFF_INVENTORY_LOANS_LABEL: frozenset(),
+    ODL_OFF_INVENTORY_REVENUE_LABEL: frozenset({ODL_OFF_INVENTORY_LOANS_LABEL}),
     ODL_OFF_INVENTORY_PROFIT_LABEL: frozenset({ODL_OFF_INVENTORY_LOANS_LABEL}),
     TRANSITION_COMPLETENESS_LABEL: frozenset(),
 }
@@ -607,6 +611,7 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     DOMA_GROWTH_MULTIPLIER_LABEL,
     DOMA_REFI_PROFIT_LABEL,
     ODL_OFF_INVENTORY_LOANS_LABEL,
+    ODL_OFF_INVENTORY_REVENUE_LABEL,
     ODL_OFF_INVENTORY_PROFIT_LABEL,
     SBC_MODEL_LABEL,
     DEBT_EXTINGUISHMENT_MODEL_LABEL,
@@ -778,7 +783,6 @@ def row_cells_for_label(
     blend_specs: dict[str, tuple[str, str]] = {
         "New Listings - Model": (NEW_LISTINGS_2_0_MODEL_LABEL, NEW_LISTINGS_1_0_MODEL_LABEL),
         "Home Sales - Model": (HOME_SALES_2_0_MODEL_LABEL, HOME_SALES_1_0_MODEL_LABEL),
-        "Revenue - Model": (REVENUE_2_0_MODEL_LABEL, REVENUE_1_0_MODEL_LABEL),
     }
     if label in blend_specs:
         model_2_0, model_1_0 = blend_specs[label]
@@ -792,6 +796,21 @@ def row_cells_for_label(
             )
             for col_idx in range(n_cols)
         ]
+
+    if label == "Revenue - Model":
+        odl_rev = label_to_row[ODL_OFF_INVENTORY_REVENUE_LABEL]
+        cells: list[str | float] = []
+        for col_idx in range(n_cols):
+            col = col_letter(col_idx + 2)
+            blend = blend_model_formula(
+                col,
+                label_to_row=label_to_row,
+                blended_label=label,
+                model_2_0_label=REVENUE_2_0_MODEL_LABEL,
+                model_1_0_label=REVENUE_1_0_MODEL_LABEL,
+            )
+            cells.append(f"{blend}+N({col}{odl_rev})")
+        return cells
 
     if label == "Homes in Inventory - Model":
         inventory_row = label_to_row[label]
@@ -931,6 +950,14 @@ def row_cells_for_label(
     if label == ODL_OFF_INVENTORY_LOANS_LABEL:
         return [
             odl_off_inventory_loans_formula(
+                col_letter(col_idx + 2), label_to_row=label_to_row
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label == ODL_OFF_INVENTORY_REVENUE_LABEL:
+        return [
+            odl_off_inventory_revenue_formula(
                 col_letter(col_idx + 2), label_to_row=label_to_row
             )
             for col_idx in range(n_cols)

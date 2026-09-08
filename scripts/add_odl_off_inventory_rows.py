@@ -16,6 +16,7 @@ from sheets.ancillary_products import (  # noqa: E402
     ODL_OFF_INVENTORY_LABELS,
     ODL_OFF_INVENTORY_LOANS_LABEL,
     ODL_OFF_INVENTORY_PROFIT_LABEL,
+    ODL_OFF_INVENTORY_REVENUE_LABEL,
     TRANSITIONS,
     TRANSITIONS_ANCILLARY_ROWS,
 )
@@ -35,14 +36,28 @@ INSERT_BEFORE_LABEL = "Contribution Profit - Model"
 
 TRANSITIONS_NOTES: dict[str, str] = {
     "B31": (
-        "Net $ per Opendoor Home Loans origination on a home Opendoor does not hold. "
-        "Haircut vs B29 ($4,000 on-inventory) because Opendoor-owned homes get best pricing. "
-        "Kaz confirmed off-inventory lending Sep 4 2026 (product out of beta)."
+        "Net profit per Opendoor Home Loans origination on a home "
+        "Opendoor does not hold. Haircut vs B29 ($4,000 on-inventory). "
+        "Revenue per loan is B34; implied origination cost = B34 − B31. "
+        "Added to Adjusted EBITDA - Model, not to contribution margin."
     ),
     "B32": (
-        "Terminal ratio of off-inventory ODL loans to on-inventory ODL loans. "
-        "Weekly formula smoothsteps 0% at Sep 6 2026 (GA) to this value by Jan 2 2028. "
-        "Conservative vs national purchase-mortgage TAM until originations are disclosed."
+        "Terminal share of US existing-home-sale TAM originated as off-inventory "
+        "Opendoor Home Loans. Weekly formula smoothsteps 0% at Sep 6 2026 (GA) to "
+        "this value by Jan 1 2030. Default 2% of 4,000,000 homes/year ≈ 80k "
+        "loans/year ≈ 1,538/week. Base case vs historical digital-purchase share; "
+        "not company-disclosed. Weekly grid currently ends before this date."
+    ),
+    "B33": (
+        "US existing home sales used as off-inventory ODL TAM (homes/year). "
+        "Weekly TAM = B33/52. Default 4,000,000. Does not subtract Opendoor inventory "
+        "sales (immaterial vs TAM). Includes cash purchases; 2% of all sales is a "
+        "larger share of financed purchases."
+    ),
+    "B34": (
+        "Gross origination revenue per off-inventory ODL loan (gain-on-sale + MSR "
+        "economics). Default $7,500 on a ~$300k loan (101.5 price + ~1% servicing). "
+        "Not company-disclosed. Feeds ODL Off-inventory Revenue - Model."
     ),
 }
 
@@ -53,34 +68,34 @@ def write_transitions_assumptions(client: SheetsClient) -> None:
     values = [[label, value] for label, value in TRANSITIONS_ANCILLARY_ROWS]
     end_row = start_row + len(values) - 1
     ws.update(values, range_name=f"A{start_row}:B{end_row}", value_input_option="RAW")
-    ws.batch_clear([f"A{end_row + 1}:B35"])
+    ws.batch_clear([f"A{end_row + 1}:B36"])
     print(f"{TRANSITIONS}: wrote ancillary assumptions A{start_row}:B{end_row}")
 
 
 def ensure_odl_off_inventory_rows(client: SheetsClient) -> None:
-    weekly_labels = label_rows(client, WEEKLY, max_row=120)
-    if all(lbl in weekly_labels for lbl in ODL_OFF_INVENTORY_LABELS):
-        print("Off-inventory ODL rows already present")
-        return
-
-    missing = [lbl for lbl in ODL_OFF_INVENTORY_LABELS if lbl not in weekly_labels]
-    insert_rows_before_label(
-        client,
-        tab=WEEKLY,
-        before_label=INSERT_BEFORE_LABEL,
-        labels=missing,
-    )
-    insert_rows_before_label(
-        client,
-        tab=QUARTERLY,
-        before_label=INSERT_BEFORE_LABEL,
-        labels=missing,
-    )
+    for tab in (WEEKLY, QUARTERLY):
+        labels = label_rows(client, tab, max_row=120)
+        missing = [lbl for lbl in ODL_OFF_INVENTORY_LABELS if lbl not in labels]
+        if not missing:
+            print(f"{tab}: off-inventory ODL rows already present")
+            continue
+        before = (
+            ODL_OFF_INVENTORY_PROFIT_LABEL
+            if ODL_OFF_INVENTORY_PROFIT_LABEL in labels
+            else INSERT_BEFORE_LABEL
+        )
+        insert_rows_before_label(
+            client,
+            tab=tab,
+            before_label=before,
+            labels=missing,
+        )
 
 
 def apply_number_formats(client: SheetsClient) -> None:
     formats = (
         (ODL_OFF_INVENTORY_LOANS_LABEL, "#,##0.0"),
+        (ODL_OFF_INVENTORY_REVENUE_LABEL, "$#,##0"),
         (ODL_OFF_INVENTORY_PROFIT_LABEL, "$#,##0"),
     )
     for tab in (WEEKLY, QUARTERLY):
@@ -151,13 +166,47 @@ def format_transitions_levers(client: SheetsClient) -> None:
                         "fields": "userEnteredFormat.numberFormat",
                     }
                 },
+                {
+                    "repeatCell": {
+                        "range": {
+                            "sheetId": sid,
+                            "startRowIndex": 32,
+                            "endRowIndex": 33,
+                            "startColumnIndex": 1,
+                            "endColumnIndex": 2,
+                        },
+                        "cell": {
+                            "userEnteredFormat": {
+                                "numberFormat": {"type": "NUMBER", "pattern": "#,##0"}
+                            }
+                        },
+                        "fields": "userEnteredFormat.numberFormat",
+                    }
+                },
+                {
+                    "repeatCell": {
+                        "range": {
+                            "sheetId": sid,
+                            "startRowIndex": 33,
+                            "endRowIndex": 34,
+                            "startColumnIndex": 1,
+                            "endColumnIndex": 2,
+                        },
+                        "cell": {
+                            "userEnteredFormat": {
+                                "numberFormat": {"type": "NUMBER", "pattern": "$#,##0"}
+                            }
+                        },
+                        "fields": "userEnteredFormat.numberFormat",
+                    }
+                },
             ]
         }
     )
     ws = client.worksheet(TRANSITIONS)
     for cell, note in TRANSITIONS_NOTES.items():
         ws.update_note(cell, note)
-    print(f"{TRANSITIONS}: formatted B31 ($) / B32 (%) and wrote cell notes")
+    print(f"{TRANSITIONS}: formatted B31/B34 ($) / B32 (%) / B33 (#) and wrote cell notes")
 
 
 def refresh_definitions(client: SheetsClient) -> None:

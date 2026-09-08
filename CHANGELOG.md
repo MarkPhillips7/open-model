@@ -18,6 +18,52 @@ Entry template:
 
 ---
 
+## 2026-09-08 — Off-inventory ODL terminal 2% by Jan 1 2030
+
+Base-case digital-purchase share instead of the prior 10% hero terminal.
+
+- **Tab / range:** **Transitions B32**; **Weekly Financials** **ODL Off-inventory Loans - Model** `B:DY`; **Transitions B32/B33** notes; **Financials Definitions** rebuilt
+- **Insert/delete:** none
+- **Formulas:** off-inventory TAM-share smoothstep end **DATE(2028,10,1)** → **DATE(2030,1,1)** (start still Sep 6 2026)
+- **Data:** **Transitions B32** **10%** → **2%** (~80k loans/year at terminal vs ~400k)
+- **Side effects:** In-window off-inventory revenue/profit drop sharply (weekly grid still ends Feb 2028, well before 2030). No row insert; charts should not need a series-range fix. Money Charts Revenue / Adj EBITDA will print smaller ODL dollars.
+
+## 2026-09-08 — Keep off-inventory ODL out of contribution margin
+
+CM is a home-sale metric. On-inventory mortgage/title stay in the CM stack; off-inventory origination profit was moved back out of Contribution Profit.
+
+- **Tab / range:** **Weekly Financials** **Contribution Profit - Model**, **Adjusted EBITDA - Model**; **Transitions B31** note; **Financials Definitions** rebuilt
+- **Insert/delete:** none
+- **Formulas:**
+  - **Contribution Profit - Model:** `(Revenue - Model − off-inventory revenue) × CM - Model` (dropped `+ off-inventory profit`)
+  - **Adjusted EBITDA - Model:** `CP + off-inventory profit − Adj OpEx` (profit lands here once)
+- **Data:** none
+- **Side effects:** Modeled CP falls by the off-inventory book (~$18M in the last week); Adj EBITDA unchanged. No row insert. Money Charts Contribution Profit will drop on its own — no series-range fix needed.
+
+## 2026-09-08 — Off-inventory ODL origination revenue
+
+Off-inventory loans were adding profit to Adj EBITDA with no revenue. Origination now has a revenue line and profit flows through contribution profit once.
+
+- **Tab / range:** **Transitions `A34:B34`**; **Weekly / Quarterly Financials** 1 row before **ODL Off-inventory Profit - Model**; **Revenue - Model**; **Contribution Profit - Model**; **Adjusted EBITDA - Model**; **Financials Definitions** rebuilt
+- **Insert/delete:** ROWS, weekly/quarterly before **ODL Off-inventory Profit - Model**, count **1** (`ODL Off-inventory Revenue - Model`)
+- **Formulas:**
+  - **ODL Off-inventory Revenue - Model:** `loans × Transitions!$B$34`
+  - **Revenue - Model:** home-sale 1.0/2.0 blend **+** off-inventory revenue
+  - **Contribution Profit - Model:** `(Revenue - Model − off-inventory revenue) × CM - Model + off-inventory profit` (was `Revenue × CM`)
+  - **Adjusted EBITDA - Model:** `CP − Adj OpEx` (removed extra `+ off-inventory profit` so profit is not double-counted)
+- **Data:** **Transitions B34** **$7,500**/loan (gain-on-sale + MSR on a ~$300k loan). **B31 $3,000** profit unchanged.
+- **Side effects:** Rows from **ODL Off-inventory Profit - Model** down shift **+1** (inventory, warehouse, profit, valuation). **Money Charts** Revenue series should now move with the new dollars (same row numbers). Homes Charts inventory/utilization and Money Charts Profit series likely need a manual +1 row check — agents do not edit charts.
+
+## 2026-09-08 — Off-inventory ODL as 10% of US home-sale TAM
+
+Reframed off-inventory originations as a share of national existing-home-sale TAM instead of a fraction of Opendoor on-inventory loans, matching the Sep 4 any-home launch ([ssj2abid](https://x.com/ssj2abid/status/2095935994746859566)).
+
+- **Tab / range:** **Transitions `A32:B33`**; **Weekly Financials** **ODL Off-inventory Loans - Model** `B:DY`; **Financials Definitions** rebuilt
+- **Insert/delete:** none
+- **Formulas:** **ODL Off-inventory Loans - Model:** `(Home Sales × Open Mortgage Percent × ratio)` → `(Transitions!$B$33/52) × TAM share`. Share smoothstep **0% → B32** (**Sep 6 2026 – Oct 1 2028**, was **Jan 2 2028**)
+- **Data:** **B32** **25%** of on-inventory ODL → **10%** of US home-sale TAM. **B33** **4,000,000** homes/year (new). Terminal weekly loans ≈ **7,692** (was tied to OPEN sales × attach × 25%). Profit/loan **B31 $3,000** unchanged.
+- **Side effects:** Adj EBITDA - Model rises with the larger off-inventory book (still CP + off-inventory profit − Adj OpEx). No row insert; Homes/Money Charts series should not shift. Confirm Money Charts Adj EBITDA still looks right once the new dollars print.
+
 ## 2026-09-04 — ODL out of beta; off-inventory mortgage book
 
 Kaz confirmed Opendoor Home Loans is generally available in licensed states and can be used on a home Opendoor does not hold. On-inventory attach stays a CM add; off-inventory originations are a separate dollar book in Adj EBITDA.
