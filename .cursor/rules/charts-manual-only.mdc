@@ -1,18 +1,20 @@
 ---
-description: Do not modify Homes Charts or Money Charts via API or scripts
+description: Do not modify model chart tabs via API or scripts
 alwaysApply: true
 ---
 
 # Charts — manual only
 
-**Homes Charts** and **Money Charts** must not be created, edited, or repointed by agents or Python scripts (including `updateChartSpec`, series range changes, axis/scale settings, colors, or legend).
+Chart tabs on any ticker’s Google Sheet must not be created, edited, or repointed by agents or Python scripts (including `updateChartSpec`, series range changes, axis/scale settings, colors, or legend).
+
+For **OPEN**, that means **Homes Charts** and **Money Charts**. Other tickers may use different chart tab names — the same ban applies.
 
 The Sheets API does not preserve full chart styling (colors, log scale, custom axes, etc.). Automated chart edits have repeatedly broken these tabs.
 
 ## Allowed
 
 - Read chart metadata for debugging or answering questions
-- Edit **Weekly Financials** / **Quarterly Financials** data and formulas (charts may drift if rows are inserted — tell the user to fix chart series manually in the UI)
+- Edit financials data and formulas (charts may drift if rows are inserted — tell the user to fix chart series manually in the UI)
 
 ## Not allowed without explicit user request
 
@@ -22,7 +24,7 @@ The Sheets API does not preserve full chart styling (colors, log scale, custom a
 
 ## When row layout changes
 
-After inserting or deleting rows on Weekly / Quarterly Financials:
+After inserting or deleting rows on Weekly / Quarterly Financials (or the equivalent data tabs for that ticker):
 
-1. Run the formula restore flow (`validate_model_formulas.py`, `restore_weekly_model_formulas.py`, etc.)
-2. **Tell the user** to verify and adjust chart series manually on **Homes Charts** / **Money Charts** if lines look wrong — do not fix charts yourself
+1. Run the formula restore flow (`validate_model_formulas.py --ticker …`, `restore_weekly_model_formulas.py --ticker …`, etc.)
+2. **Tell the user** to verify and adjust chart series manually in the Google Sheets UI if lines look wrong — do not fix charts yourself

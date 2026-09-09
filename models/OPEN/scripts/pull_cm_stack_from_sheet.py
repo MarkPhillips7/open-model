@@ -2,7 +2,7 @@
 """Pull Seasonality tab + CM stack constants from the live spreadsheet into git.
 
 The spreadsheet is the source of truth. Run this after manual sheet edits to
-refresh sheets/seasonality.py, sheets/cm_seasonality.py, and the CM_* constants
+refresh models/OPEN/seasonality.py, models/OPEN/cm_seasonality.py, and the CM_* constants
 in weekly_model_formulas.py.
 """
 
@@ -12,18 +12,20 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
-from sheets.cm_seasonality import CM_SEASONALITY_ROW_LABEL, CM_SEASONALITY_SHEET  # noqa: E402
+from models.OPEN.cm_seasonality import CM_SEASONALITY_ROW_LABEL, CM_SEASONALITY_SHEET  # noqa: E402
 from sheets.labels import WEEKLY  # noqa: E402
-from sheets.seasonality import ACQUISITION_PERCENT_LABEL  # noqa: E402
-from sheets.weekly_model_formulas import col_letter  # noqa: E402
+from models.OPEN.seasonality import ACQUISITION_PERCENT_LABEL  # noqa: E402
+from models.OPEN.weekly_model_formulas import col_letter  # noqa: E402
 
-WEEKLY_FORMULAS = ROOT / "sheets" / "weekly_model_formulas.py"
-CM_SEASONALITY = ROOT / "sheets" / "cm_seasonality.py"
-ACQUISITION_SEASONALITY = ROOT / "sheets" / "seasonality.py"
+WEEKLY_FORMULAS = PACK / "weekly_model_formulas.py"
+CM_SEASONALITY = PACK / "cm_seasonality.py"
+ACQUISITION_SEASONALITY = PACK / "seasonality.py"
 N_COLS = 128  # B:DY
 
 
@@ -175,7 +177,7 @@ def write_weekly_constants(
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     acquisition = pull_acquisition_percent_monthly(client)
     monthly = pull_seasonality_monthly(client)
     core, adjustments, anchors = pull_weekly_cm_stack(client)

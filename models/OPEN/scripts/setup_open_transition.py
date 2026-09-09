@@ -6,13 +6,15 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import QUARTERLY, WEEKLY, insert_rows_before_label, label_rows, sheet_id  # noqa: E402
-from sheets.open_transition import (  # noqa: E402
+from models.OPEN.open_transition import (  # noqa: E402
     HOME_SALES_1_0_MODEL_LABEL,
     HOME_SALES_2_0_MODEL_LABEL,
     LISTING_TO_SOLD_WEEK_HEADER_ROW,
@@ -178,7 +180,7 @@ def ensure_financials_rows(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     rename_open_2_0_labels(client)
     write_open_1_0_listing_row(client)
     ensure_open_1_0_sell_through_rows(client)

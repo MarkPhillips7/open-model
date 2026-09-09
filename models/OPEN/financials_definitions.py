@@ -127,7 +127,7 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Doma Growth Multiplier": (
         "Stepwise multiplier for Doma refi profit growth (post-acquisition title/refi business). "
-        "Manual weekly values from sheets/doma_manual_cells.py — not formula-driven. "
+        "Manual weekly values from models/OPEN/doma_manual_cells.py — not formula-driven. "
         "Informational; not in Contribution Profit - Model."
     ),
     "Doma Refi Profit - Model": (

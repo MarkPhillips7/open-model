@@ -1,23 +1,11 @@
 from __future__ import annotations
 
-import json
-import re
-from pathlib import Path
 from typing import Optional
 
 import gspread
 
 from .auth import get_client
-
-CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
-SETTINGS_FILE = CONFIG_DIR / "settings.json"
-
-
-def _extract_spreadsheet_id(value: str) -> str:
-    """Accept a raw ID or a full Google Sheets URL."""
-    value = value.strip()
-    match = re.search(r"/spreadsheets/d/([a-zA-Z0-9-_]+)", value)
-    return match.group(1) if match else value
+from .registry import extract_spreadsheet_id, resolve_ticker, spreadsheet_id_for
 
 
 class SheetsClient:
@@ -27,29 +15,20 @@ class SheetsClient:
         self,
         spreadsheet_id: Optional[str] = None,
         client: Optional[gspread.Client] = None,
+        ticker: Optional[str] = None,
     ):
         self._client = client or get_client()
-        self._spreadsheet_id = spreadsheet_id or self._load_spreadsheet_id()
+        if spreadsheet_id:
+            self._ticker = ticker.strip() if ticker else None
+            self._spreadsheet_id = extract_spreadsheet_id(spreadsheet_id)
+        else:
+            self._ticker = resolve_ticker(ticker)
+            self._spreadsheet_id = spreadsheet_id_for(self._ticker)
         self._spreadsheet = self._client.open_by_key(self._spreadsheet_id)
 
-    @staticmethod
-    def _load_spreadsheet_id() -> str:
-        if not SETTINGS_FILE.exists():
-            raise FileNotFoundError(
-                f"Missing {SETTINGS_FILE}.\n"
-                "Copy config/settings.example.json to config/settings.json "
-                "and set your spreadsheet_id."
-            )
-
-        settings = json.loads(SETTINGS_FILE.read_text())
-        spreadsheet_id = settings.get("spreadsheet_id", "").strip()
-        if not spreadsheet_id or spreadsheet_id == "paste-your-spreadsheet-id-here":
-            raise ValueError(
-                "Set spreadsheet_id in config/settings.json "
-                "(paste the ID or full Google Sheets URL)."
-            )
-
-        return _extract_spreadsheet_id(spreadsheet_id)
+    @property
+    def ticker(self) -> Optional[str]:
+        return self._ticker
 
     @property
     def spreadsheet(self) -> gspread.Spreadsheet:
@@ -104,7 +83,7 @@ class SheetsClient:
 
     def summary(self) -> dict:
         worksheets = self._spreadsheet.worksheets()
-        return {
+        payload = {
             "title": self._spreadsheet.title,
             "spreadsheet_id": self._spreadsheet_id,
             "url": self._spreadsheet.url,
@@ -113,3 +92,6 @@ class SheetsClient:
                 for ws in worksheets
             ],
         }
+        if self._ticker:
+            payload["ticker"] = self._ticker
+        return payload

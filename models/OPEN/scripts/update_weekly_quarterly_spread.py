@@ -6,11 +6,13 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
-from sheets.gaap_below_the_line import (
+from models.OPEN.gaap_below_the_line import (
     ADJ_TO_GAAP_LABELS,
     DEBT_EXTINGUISHMENT_LABEL,
     INTEREST_EXPENSE_LABEL,
@@ -25,7 +27,7 @@ from sheets.formulas import (  # noqa: E402
     weekly_shares_formula,
 )
 from sheets.labels import QUARTERLY, WEEKLY, label_rows, row_by_label  # noqa: E402
-from sheets.warehouse_financing import (  # noqa: E402
+from models.OPEN.warehouse_financing import (  # noqa: E402
     DEBT_ACTUAL_LABELS,
     MEZZ_DEBT_BY_QUARTER,
     MEZZ_DEBT_LABEL,
@@ -278,7 +280,7 @@ def clear_misplaced_spread_formulas(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     clear_misplaced_spread_formulas(client)
     update_weekly_formulas(client)
     print("Done.")

@@ -2,7 +2,7 @@
 
 All weekly row references use {Label} placeholders resolved at restore time via
 label_to_row — never hardcoded row numbers in templates. Run
-scripts/validate_model_formulas.py after layout changes.
+scripts/validate_model_formulas.py --ticker OPEN after layout changes.
 """
 
 from __future__ import annotations
@@ -12,10 +12,11 @@ import re
 from sheets.formulas import (
     SBC_MODEL_LABEL,
     SHARES_MODEL_LABEL,
+    col_letter,
     weekly_gaap_below_line_model_formula,
     weekly_sbc_model_formula,
 )
-from sheets.gaap_below_the_line import (
+from .gaap_below_the_line import (
     ADJ_EBITDA_MODEL_LABEL,
     ADJ_NET_INCOME_MODEL_LABEL,
     CEO_MAKE_WHOLE_LABEL,
@@ -39,12 +40,12 @@ from sheets.gaap_below_the_line import (
     RESTRUCTURING_LABEL,
     RESTRUCTURING_MODEL_LABEL,
 )
-from sheets.cm_seasonality import (
+from .cm_seasonality import (
     CM_SEASONALITY_ADJUSTMENTS_LABEL,
     CM_SEASONALITY_SHEET,
     CM_SEASONALITY_VALUE_RANGE,
 )
-from sheets.inventory_ceiling import (
+from .inventory_ceiling import (
     COMMITTED_CAPACITY_LABEL,
     COMMITTED_CEILING_MODEL_LABEL,
     FACILITY_CAPACITY_LABEL,
@@ -57,7 +58,7 @@ from sheets.inventory_ceiling import (
     inventory_ceiling_model_formula,
     utilization_formula,
 )
-from sheets.warehouse_financing import (
+from .warehouse_financing import (
     MEZZ_DEBT_LABEL,
     MEZZ_DEBT_MODEL_LABEL,
     MEZZ_INTEREST_RATE_LABEL,
@@ -72,7 +73,7 @@ from sheets.warehouse_financing import (
     warehouse_debt_model_formula,
     warehouse_interest_model_formula,
 )
-from sheets.ancillary_products import (
+from .ancillary_products import (
     CM_MORTGAGE_LABEL,
     CM_TITLE_LABEL,
     DOMA_GROWTH_MULTIPLIER_LABEL,
@@ -91,13 +92,13 @@ from sheets.ancillary_products import (
     open_mortgage_percent_formula,
     open_title_purchase_percent_formula,
 )
-from sheets.shares_events import (
+from .shares_events import (
     SHARES_ADJUSTMENT_LABEL,
     weekly_share_adjustment_formula,
     weekly_shares_model_formula,
 )
-from sheets.doma_manual_cells import DOMA_GROWTH_MULTIPLIER_CELLS, DOMA_REFI_PROFIT_CELLS
-from sheets.open_transition import (
+from .doma_manual_cells import DOMA_GROWTH_MULTIPLIER_CELLS, DOMA_REFI_PROFIT_CELLS
+from .open_transition import (
     HOME_SALES_1_0_MODEL_LABEL,
     HOME_SALES_2_0_MODEL_LABEL,
     NEW_LISTINGS_1_0_MODEL_LABEL,
@@ -659,14 +660,6 @@ def uniform_formula_template(label: str) -> str:
 
 def formula_row_dependencies(label: str) -> frozenset[str]:
     return FORMULA_ROW_DEPENDENCIES[label]
-
-
-def col_letter(n: int) -> str:
-    s = ""
-    while n:
-        n, r = divmod(n - 1, 26)
-        s = chr(65 + r) + s
-    return s
 
 
 def column_relative_formula(

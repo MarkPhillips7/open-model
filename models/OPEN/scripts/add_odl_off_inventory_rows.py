@@ -6,13 +6,15 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
-from scripts.setup_financials_definitions import build_rows, ensure_definitions_sheet  # noqa: E402
+from setup_financials_definitions import build_rows, ensure_definitions_sheet  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.ancillary_products import (  # noqa: E402
+from models.OPEN.ancillary_products import (  # noqa: E402
     ODL_OFF_INVENTORY_LABELS,
     ODL_OFF_INVENTORY_LOANS_LABEL,
     ODL_OFF_INVENTORY_PROFIT_LABEL,
@@ -20,7 +22,7 @@ from sheets.ancillary_products import (  # noqa: E402
     TRANSITIONS,
     TRANSITIONS_ANCILLARY_ROWS,
 )
-from sheets.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
+from models.OPEN.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
 from sheets.labels import (  # noqa: E402
     QUARTERLY,
     WEEKLY,
@@ -222,7 +224,7 @@ def refresh_definitions(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     write_transitions_assumptions(client)
     format_transitions_levers(client)
     ensure_odl_off_inventory_rows(client)

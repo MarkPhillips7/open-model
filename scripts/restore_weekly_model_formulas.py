@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Restore Weekly Financials * - Model row formulas from sheets/weekly_model_formulas.py."""
+"""Restore Weekly Financials * - Model row formulas from the ticker pack."""
 
 from __future__ import annotations
 
@@ -11,45 +11,32 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import WEEKLY, label_rows  # noqa: E402
-from sheets.weekly_model_formulas import (  # noqa: E402
-    MODEL_FORMULA_LABELS,
-    cm_stack_updates,
-    col_letter,
-    row_cells_for_label,
-)
+from sheets.registry import load_pack_module, parse_ticker_argv, resolve_ticker  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_model_formulas import validate  # noqa: E402
 
 
-def restore_model_formulas(client: SheetsClient) -> None:
+def restore_model_formulas(client: SheetsClient, *, ticker: str | None = None) -> None:
+    resolved = resolve_ticker(ticker or client.ticker)
+    wfm = load_pack_module(resolved, "weekly_model_formulas")
     ws = client.worksheet(WEEKLY)
     labels = label_rows(client, WEEKLY, max_row=120)
 
-    issues = validate(client, check_live_drift=False)
+    issues = validate(client, ticker=resolved, check_live_drift=False)
     if issues:
         raise RuntimeError(
             "Model formula validation failed before restore:\n"
             + "\n".join(f"  - {i}" for i in issues)
         )
 
-    missing = [lbl for lbl in MODEL_FORMULA_LABELS if lbl not in labels]
+    missing = [lbl for lbl in wfm.MODEL_FORMULA_LABELS if lbl not in labels]
     if missing:
         raise KeyError(f"Labels not found on {WEEKLY}: {missing}")
 
-    cm_labels = (
-        "Contribution Margin - Core",
-        "Contribution Margin - Seasonality Adjustments",
-        "Contribution Margin - Adjustments",
-        "Contribution Margin Improvement - Core",
-    )
-    for lbl in cm_labels:
-        if lbl not in labels:
-            raise KeyError(f"CM stack label not found on {WEEKLY}: {lbl!r}")
-
     data = ws.get("A1:DY120", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
-    end_col = col_letter(n_cols + 1)
+    end_col = wfm.col_letter(n_cols + 1)
 
     existing_by_row: dict[int, list] = {
         idx: (list(row[1:]) if len(row) > 1 else [])
@@ -58,14 +45,15 @@ def restore_model_formulas(client: SheetsClient) -> None:
 
     updates: dict[int, list] = {}
 
-    for label in MODEL_FORMULA_LABELS:
-        cells = row_cells_for_label(label, n_cols, label_to_row=labels)
+    for label in wfm.MODEL_FORMULA_LABELS:
+        cells = wfm.row_cells_for_label(label, n_cols, label_to_row=labels)
         if cells is not None:
             updates[labels[label]] = cells
 
-    updates.update(
-        cm_stack_updates(n_cols, label_to_row=labels, existing=existing_by_row)
-    )
+    if hasattr(wfm, "cm_stack_updates"):
+        updates.update(
+            wfm.cm_stack_updates(n_cols, label_to_row=labels, existing=existing_by_row)
+        )
 
     batch = [
         {
@@ -81,8 +69,13 @@ def restore_model_formulas(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
-    restore_model_formulas(client)
+    ticker_arg, rest = parse_ticker_argv()
+    if rest:
+        print(f"Unknown arguments: {rest}")
+        sys.exit(2)
+    ticker = resolve_ticker(ticker_arg)
+    client = SheetsClient(ticker=ticker)
+    restore_model_formulas(client, ticker=ticker)
     print("Done.")
 
 

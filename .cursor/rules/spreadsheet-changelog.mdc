@@ -5,9 +5,9 @@ alwaysApply: true
 
 # Spreadsheet changelog
 
-The live Opendoor model is a Google Sheet. Git will not see those edits unless you record them.
+The live model for each ticker is a Google Sheet. Git will not see those edits unless you record them.
 
-After **any** write to the spreadsheet (formulas, values, notes, formats, charts, or row/column insert/delete), append a dated entry to `CHANGELOG.md` before finishing. Do not skip small cell edits.
+After **any** write to a spreadsheet (formulas, values, notes, formats, charts, or row/column insert/delete), append a dated entry to **`models/{TICKER}/CHANGELOG.md`** before finishing. Do not skip small cell edits. Identify the ticker from `--ticker`, `OPEN_MODEL_TICKER`, or `config/settings.json` (`default_ticker`). Repo/tooling-only changes go in the root `CHANGELOG.md`.
 
 Each entry must include:
 
@@ -17,4 +17,4 @@ Each entry must include:
 - Data values changed, and why
 - Side effects (charts, notes, number formats) if you noticed them
 
-Use the template at the top of `CHANGELOG.md`. One heading per change-set, not per cell.
+Use the template at the top of that ticker’s `CHANGELOG.md`. One heading per change-set, not per cell.

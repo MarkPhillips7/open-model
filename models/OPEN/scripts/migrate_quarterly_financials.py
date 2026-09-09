@@ -12,8 +12,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.formulas import weekly_from_quarterly_formula, weekly_inventory_formula  # noqa: E402
@@ -248,7 +250,7 @@ def update_weekly_formulas(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     rename_weekly_sheet(client)
     ensure_quarterly_sheet(client)
     build_quarterly_sheet(client)

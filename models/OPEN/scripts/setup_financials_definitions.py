@@ -6,17 +6,19 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
-from sheets.financials_definitions import (  # noqa: E402
+from models.OPEN.financials_definitions import (  # noqa: E402
     FIELD_NOTES,
     FINANCIALS_DEFINITIONS_SHEET,
 )
 from sheets.labels import WEEKLY, label_rows  # noqa: E402
 
-MISSING_NOTE = "(Definition not yet written — add to sheets/financials_definitions.py)"
+MISSING_NOTE = "(Definition not yet written — add to models/OPEN/financials_definitions.py)"
 
 
 def ensure_definitions_sheet(client: SheetsClient) -> None:
@@ -60,7 +62,7 @@ def build_rows(client: SheetsClient) -> tuple[list[list[str]], list[str]]:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     ensure_definitions_sheet(client)
 
     rows, missing = build_rows(client)

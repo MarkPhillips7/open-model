@@ -9,7 +9,7 @@ of committed means lenders are funding at their discretion.
 
 from __future__ import annotations
 
-from sheets.warehouse_financing import (
+from .warehouse_financing import (
     MEZZ_DEBT_LABEL,
     MEZZ_DEBT_MODEL_LABEL,
     SENIOR_DEBT_LABEL,

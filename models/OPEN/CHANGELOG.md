@@ -1,6 +1,6 @@
 # Spreadsheet changelog
 
-The live model is the Google Sheet **[Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4)**. Git does not see those edits unless they are recorded here.
+The live model is the Google Sheet **[Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4)** (ticker **OPEN**). Git does not see those edits unless they are recorded here. Repo/platform changes go in the [root CHANGELOG](../../CHANGELOG.md).
 
 **After every agent write to the sheet, append an entry below before finishing.** One dated heading per change-set. Include formula edits, row/column insert/delete, and data changes — not only “big” features.
 

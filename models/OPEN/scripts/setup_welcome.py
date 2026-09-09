@@ -6,12 +6,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import sheet_id  # noqa: E402
-from sheets.welcome import (  # noqa: E402
+from models.OPEN.welcome import (  # noqa: E402
     ACCOUNTABLE_URL,
     CLOSING,
     DISCLAIMER,
@@ -220,7 +222,7 @@ def apply_formatting(
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     welcome_sid, created = ensure_welcome_sheet(client)
     rows, tab_header_row = build_rows(client)
     end_row = len(rows)

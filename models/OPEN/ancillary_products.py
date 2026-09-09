@@ -11,7 +11,7 @@ OFF_INVENTORY_PROFIT_PER_LOAN_CELL = f"{TRANSITIONS}!$B$31"
 OFF_INVENTORY_TAM_SHARE_CELL = f"{TRANSITIONS}!$B$32"
 US_HOME_SALES_TAM_CELL = f"{TRANSITIONS}!$B$33"
 OFF_INVENTORY_REVENUE_PER_LOAN_CELL = f"{TRANSITIONS}!$B$34"
-# Manual Doma row cells live in sheets/doma_manual_cells.py (not Transitions-driven).
+# Manual Doma row cells live in models/OPEN/doma_manual_cells.py (not Transitions-driven).
 
 MORTGAGE_NET_PROFIT_PER_LOAN = 4000
 TITLE_NET_SAVINGS_PER_CLOSE = 2400

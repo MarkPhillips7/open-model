@@ -6,12 +6,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
-from scripts.update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
+from update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.gaap_below_the_line import ADJ_TO_GAAP_BY_COL, BELOW_THE_LINE_BY_COL
+from models.OPEN.gaap_below_the_line import ADJ_TO_GAAP_BY_COL, BELOW_THE_LINE_BY_COL
 from sheets.labels import QUARTERLY, label_rows, row_by_label, write_quarterly_by_label  # noqa: E402
 
 EOP_SHARES_LABEL = "Shares Outstanding (Quarter End)"
@@ -100,7 +102,7 @@ def write_quarters(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     write_quarters(client)
     update_weekly_formulas(client)
     print("Done.")

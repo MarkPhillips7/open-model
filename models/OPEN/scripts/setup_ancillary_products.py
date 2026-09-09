@@ -6,12 +6,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.ancillary_products import (  # noqa: E402
+from models.OPEN.ancillary_products import (  # noqa: E402
     DOMA_GROWTH_MULTIPLIER_LABEL,
     DOMA_REFI_PROFIT_LABEL,
     OLD_OPEN_TITLE_LABEL,
@@ -77,7 +79,7 @@ def ensure_doma_rows(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     write_transitions_assumptions(client)
     rename_title_attach_label(client)
     ensure_doma_rows(client)

@@ -7,12 +7,14 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
-from sheets.cm_seasonality import CM_SEASONAL_ADJ_BY_MONTH  # noqa: E402
+from models.OPEN.cm_seasonality import CM_SEASONAL_ADJ_BY_MONTH  # noqa: E402
 
-DATA_FILE = ROOT / "data" / "contribution_margin_quarterly.json"
+DATA_FILE = PACK / "data" / "contribution_margin_quarterly.json"
 
 
 def main() -> None:
@@ -25,12 +27,12 @@ def main() -> None:
         key=lambda x: (x[0], x[1]),
     )
 
-    print("Quarterly Contribution Margin (historical, data/contribution_margin_quarterly.json):")
+    print("Quarterly Contribution Margin (historical, models/OPEN/data/contribution_margin_quarterly.json):")
     for year, quarter, cm in quarters:
         print(f"  {year} Q{quarter}: {cm * 100:+.1f}%")
 
     months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
-    print("\nModel monthly adjustments (Seasonality row 6, from sheets/cm_seasonality.py):")
+    print("\nModel monthly adjustments (Seasonality row 6, from models/OPEN/cm_seasonality.py):")
     for month, adj in enumerate(CM_SEASONAL_ADJ_BY_MONTH, 1):
         print(f"  {months[month - 1]}: {adj * 10000:+.0f} bps")
 

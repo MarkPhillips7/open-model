@@ -6,18 +6,20 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
-from scripts.update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
+from update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.gaap_below_the_line import (  # noqa: E402
+from models.OPEN.gaap_below_the_line import (  # noqa: E402
     BELOW_THE_LINE_BY_COL,
     BELOW_THE_LINE_LABELS,
 )
 from sheets.labels import QUARTERLY, WEEKLY, insert_rows_before_label, label_rows, write_quarterly_by_label  # noqa: E402
-from sheets.weekly_model_formulas import GAAP_NET_INCOME_MODEL_LABEL  # noqa: E402
+from models.OPEN.weekly_model_formulas import GAAP_NET_INCOME_MODEL_LABEL  # noqa: E402
 
 GAAP_NET_INCOME_LABEL = "Net Income (Loss) Attributable to Common Shareholders"
 
@@ -49,7 +51,7 @@ def write_quarterly_actuals(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     weekly = label_rows(client, WEEKLY)
     if GAAP_NET_INCOME_MODEL_LABEL not in weekly:
         raise KeyError(f"{GAAP_NET_INCOME_MODEL_LABEL!r} missing on {WEEKLY}")

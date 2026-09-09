@@ -6,14 +6,16 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
-from scripts.setup_financials_definitions import ensure_definitions_sheet, build_rows  # noqa: E402
-from scripts.update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
+from setup_financials_definitions import ensure_definitions_sheet, build_rows  # noqa: E402
+from update_weekly_quarterly_spread import update_weekly_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
+from models.OPEN.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
 from sheets.labels import (  # noqa: E402
     QUARTERLY,
     WEEKLY,
@@ -22,7 +24,7 @@ from sheets.labels import (  # noqa: E402
     sheet_id,
     write_quarterly_by_label,
 )
-from sheets.warehouse_financing import (  # noqa: E402
+from models.OPEN.warehouse_financing import (  # noqa: E402
     ADJ_EBITDA_LABEL,
     MEZZ_DEBT_BY_QUARTER,
     MEZZ_DEBT_LABEL,
@@ -136,7 +138,7 @@ def refresh_definitions(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     ensure_warehouse_rows(client)
     write_quarterly_debt_actuals(client)
     restore_model_formulas(client)

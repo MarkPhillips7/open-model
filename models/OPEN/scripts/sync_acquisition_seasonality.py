@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Push acquisition monthly weights from sheets/seasonality.py to the sheet.
+"""Push acquisition monthly weights from models/OPEN/seasonality.py to the sheet.
 
 Prefer pull_cm_stack_from_sheet.py when the live workbook was edited manually.
 """
@@ -9,12 +9,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
-from sheets.cm_seasonality import CM_SEASONALITY_SHEET  # noqa: E402
-from sheets.seasonality import (  # noqa: E402
+from models.OPEN.cm_seasonality import CM_SEASONALITY_SHEET  # noqa: E402
+from models.OPEN.seasonality import (  # noqa: E402
     ACQUISITION_PERCENT_BY_MONTH,
     ACQUISITION_PERCENT_LABEL,
     ACQUISITION_PERCENT_RATIONALE,
@@ -54,7 +56,7 @@ def push_acquisition_seasonality(client: SheetsClient) -> None:
         [[
             "Ex-2023 quarterly CM mean deviation (bps): Q1 +126, Q2 +284, Q3 -61, Q4 -349. "
             "Monthly values are hardcoded on B6:M6 (spreadsheet is source of truth). "
-            "See sheets/cm_seasonality.py."
+            "See models/OPEN/cm_seasonality.py."
         ]],
         range_name="A7",
         value_input_option="RAW",
@@ -70,7 +72,7 @@ def push_acquisition_seasonality(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     push_acquisition_seasonality(client)
     print("Done.")
 

@@ -6,12 +6,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.cm_seasonality import (  # noqa: E402
+from models.OPEN.cm_seasonality import (  # noqa: E402
     CM_SEASONALITY_ADJUSTMENTS_LABEL,
     CM_SEASONALITY_ROW_LABEL,
     CM_SEASONALITY_SHEET,
@@ -66,7 +68,7 @@ def ensure_seasonality_model_row(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     ensure_seasonality_table(client)
     ensure_seasonality_model_row(client)
     restore_model_formulas(client)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pull Welcome tab copy from the live sheet into sheets/welcome.py."""
+"""Pull Welcome tab copy from the live sheet into models/OPEN/welcome.py."""
 
 from __future__ import annotations
 
@@ -7,13 +7,15 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
-from sheets.welcome import WELCOME_SHEET  # noqa: E402
+from models.OPEN.welcome import WELCOME_SHEET  # noqa: E402
 
-WELCOME_FILE = ROOT / "sheets" / "welcome.py"
+WELCOME_FILE = PACK / "welcome.py"
 
 # Fixed row layout from scripts/setup_welcome.py (0-based indices).
 ROW_DISCLAIMER = 2
@@ -97,7 +99,7 @@ def pull_and_write(client: SheetsClient) -> bool:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     if pull_and_write(client):
         print(f"Updated {WELCOME_FILE.name} from live {WELCOME_SHEET!r} tab")
     else:

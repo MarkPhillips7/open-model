@@ -6,14 +6,16 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
 from sheets.formulas import SHARES_MODEL_LABEL  # noqa: E402
 from sheets.labels import QUARTERLY, WEEKLY, insert_rows_before_label, label_rows  # noqa: E402
-from sheets.shares_events import (  # noqa: E402
+from models.OPEN.shares_events import (  # noqa: E402
     SHARES_ADJUSTMENT_LABEL,
     SHARES_MODE_LEGEND,
     SHARES_SHEET,
@@ -80,7 +82,7 @@ def ensure_adjustment_row(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     ensure_shares_sheet(client)
     clear_transitions_share_block(client)
     ensure_adjustment_row(client)

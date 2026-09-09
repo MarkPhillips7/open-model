@@ -1,8 +1,8 @@
-# Open Model
+# Opendoor (OPEN)
 
 Personal research workbook and Python tooling for modeling **Opendoor (OPEN)** financial results and projections—volume funnel, inventory, revenue, contribution margin, and cost structure—to better understand present results, forward estimates, and an investment thesis.
 
-The live model is the Google Sheet **[Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4)**. This repo connects to that sheet via OAuth and documents the approach.
+This is the **OPEN** model pack in [open-model](../../README.md). The live model is the Google Sheet **[Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4)**. Shared OAuth and CLI tooling live at the repo root; issuer-specific formulas and scripts live in this folder.
 
 Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made by agents are logged in **[CHANGELOG.md](CHANGELOG.md)**.
 
@@ -24,10 +24,10 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 | Tab | Role |
 | --- | --- |
-| **Welcome** | Starting point for visitors: disclaimer, goals, resources, tab guide with links, and feedback invitation. Canonical copy in `sheets/welcome.py`; refresh with `scripts/setup_welcome.py`. |
+| **Welcome** | Starting point for visitors: disclaimer, goals, resources, tab guide with links, and feedback invitation. Canonical copy in `welcome.py`; refresh with `scripts/setup_welcome.py`. |
 | **Weekly Financials** | Main time series (week-ending columns). Actuals + model rows for contracts, **likelihood to close**, purchases, listings, **private sales**, listed+private home sales, ASP, revenue, CM stack, opex, SBC, **GAAP net income / EPS**, inventory. Weekly-reported actuals are entered here; quarterly-reported actuals are spread from **Quarterly Financials**. |
 | **Quarterly Financials** | Same row layout as Weekly Financials, one column per quarter. Enter quarterly earnings actuals here; they spread across weeks (`÷13`, day-weighted at quarter boundaries). Rows like Acquisition Contracts **sum from weekly** when no quarterly report exists. |
-| **Financials Definitions** | Reference tab: column A mirrors Weekly Financials row labels; column B documents each field (Opendoor context, manual vs formula sourcing). Canonical text in `sheets/financials_definitions.py`; pull after UI edits with `scripts/pull_financials_definitions_from_sheet.py`. |
+| **Financials Definitions** | Reference tab: column A mirrors Weekly Financials row labels; column B documents each field (Opendoor context, manual vs formula sourcing). Canonical text in `financials_definitions.py`; pull after UI edits with `scripts/pull_financials_definitions_from_sheet.py`. |
 | **Transitions** | Lag / probability tables that turn **closing** contracts into purchases (timing only), purchases into listings **or private sales**, and listings into sales (plus private %, **unlisted 1.0 backlog**, cash %, price retention, close timing). |
 | **Shares** | Share-count **event table** (buybacks, warrant exercise, convert dilution scenarios) and SBC $/share assumption. Drives **Share Count Adjustment - Model** on Weekly Financials. |
 | **Seasonality** | Monthly acquisition seasonality weights; drives the weekly **Acquisition Seasonality Multiplier**. |
@@ -59,7 +59,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 - **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Seasonality + Adjustments. Mortgage/title CM rows = attach % × $/unit ÷ ASP (see **Transitions** ancillary assumptions). On-inventory ODL only — applied to home-sale revenue, not off-inventory origination.
 - **ODL Off-inventory Revenue / Profit - Model** — loans on homes Opendoor does not hold: (US home-sale TAM / 52) × TAM share, then × $7,500 revenue / $3,000 profit (Transitions B31–B34). Revenue is added to **Revenue - Model**; profit is added to **Adjusted EBITDA - Model**, not to CM or Contribution Profit.
-- **Doma Refi Profit - Model** / **Doma Growth Multiplier** — manual weekly rows (stepwise multipliers + compounded profit from **AR**; cells in `sheets/doma_manual_cells.py`). Not added to **Contribution Profit - Model**.
+- **Doma Refi Profit - Model** / **Doma Growth Multiplier** — manual weekly rows (stepwise multipliers + compounded profit from **AR**; cells in `doma_manual_cells.py`). Not added to **Contribution Profit - Model**.
 - Core CM starts near low single digits and can step up via **Contribution Margin Improvement - Core**.
 - Near-term negative adjustments reflect older-cohort / inventory-clearing pressure called out in earnings commentary.
 - **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
@@ -130,62 +130,36 @@ Update after each earnings release using the checklist in [RESOURCES.md](RESOURC
 
 ## Python tooling
 
-Read/write the sheet from this repo (formulas, values, multiple tabs).
-
-### Quick start
+OAuth, `--ticker`, and shared restore/validate CLIs are documented in the [repo README](../../README.md). OPEN-specific commands:
 
 ```bash
-cd ~/open-model
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python scripts/test_connection.py --ticker OPEN
+python scripts/validate_workbook_snapshot.py --ticker OPEN
+python scripts/validate_model_formulas.py --ticker OPEN --offline
+python scripts/restore_weekly_model_formulas.py --ticker OPEN
+python scripts/sync_repo_from_live_sheet.py --ticker OPEN
+python models/OPEN/scripts/update_weekly_quarterly_spread.py
 ```
 
-Then complete the [Google Cloud setup](#one-time-google-cloud-setup) below, save credentials, and run:
-
-```bash
-python scripts/auth_setup.py      # first-time sign-in
-python scripts/test_connection.py # verify access to your spreadsheet
-python scripts/validate_workbook_snapshot.py  # compare live tabs/charts to config/workbook_snapshot.json
-python scripts/validate_model_formulas.py        # check templates, labels, and live formula drift
-python scripts/restore_weekly_model_formulas.py  # restore * - Model row formulas
-python scripts/sync_repo_from_live_sheet.py      # after manual sheet edits: pull CM stack + validate drift
-```
-
-Canonical model-row formulas live in `sheets/weekly_model_formulas.py`. Templates use `{Label}` placeholders resolved at restore time via `sheets/labels.py` — never hardcoded weekly row numbers.
+Canonical model-row formulas live in `weekly_model_formulas.py`. Templates use `{Label}` placeholders resolved at restore time via `sheets/labels.py` — never hardcoded weekly row numbers.
 
 **After inserting or deleting rows** on Weekly / Quarterly Financials:
 
-1. Run `python scripts/validate_model_formulas.py` — fails if templates still use numeric row refs or expected labels are missing.
-2. Run `python scripts/restore_weekly_model_formulas.py` — validates first, then re-applies all `* - Model` formulas.
-3. If spread rows moved, run `python scripts/update_weekly_quarterly_spread.py` (already label-based).
+1. Run `python scripts/validate_model_formulas.py --ticker OPEN` — fails if templates still use numeric row refs or expected labels are missing.
+2. Run `python scripts/restore_weekly_model_formulas.py --ticker OPEN` — validates first, then re-applies all `* - Model` formulas.
+3. If spread rows moved, run `python models/OPEN/scripts/update_weekly_quarterly_spread.py` (already label-based).
 
-Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --offline`
+Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --ticker OPEN --offline`
 
-Workbook layout (tab names, chart series rows) is snapshotted in `config/workbook_snapshot.json`. After intentional chart or tab changes, refresh with `python scripts/validate_workbook_snapshot.py --update` and commit the diff.
+Workbook layout (tab names, chart series rows) is snapshotted in `snapshot.json`. After intentional chart or tab changes, refresh with `python scripts/validate_workbook_snapshot.py --ticker OPEN --update` and commit the diff.
 
-**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py` (add `--update-snapshot` if chart series rows changed). That pulls acquisition-contract and CM seasonality, CM stack constants when they are hardcoded, **Financials Definitions** notes, and fails if any `* - Model` formula on the live sheet differs from `sheets/weekly_model_formulas.py` / `sheets/open_transition.py` — so manual formula fixes are not silently lost on the next restore.
+**After manual edits in the Google Sheet UI**, run `python scripts/sync_repo_from_live_sheet.py --ticker OPEN` (add `--update-snapshot` if chart series rows changed). That pulls acquisition-contract and CM seasonality, CM stack constants when they are hardcoded, **Financials Definitions** notes, and fails if any `* - Model` formula on the live sheet differs from `weekly_model_formulas.py` / `open_transition.py` — so manual formula fixes are not silently lost on the next restore.
 
 After layout changes or accidental clears, run the restore script rather than reconstructing from older CHANGELOG entries.
-
-### One-time Google Cloud setup
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/) and create a project (e.g. `open-model`)
-2. Enable [Google Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com) and [Google Drive API](https://console.cloud.google.com/apis/library/drive.googleapis.com)
-3. **OAuth consent screen** → External → add scopes `spreadsheets` and `drive` → add yourself as a test user
-4. **Credentials** → Create OAuth client ID → Desktop app → download JSON
-5. Save the download as `config/credentials.json`
-
-Your spreadsheet ID is configured in `config/settings.json`.
-
-### Usage
 
 ```python
 from sheets import SheetsClient
 
-client = SheetsClient()
+client = SheetsClient(ticker="OPEN")
 print(client.list_worksheets())
-data = client.read_range("Weekly Financials", "A1:D20")
-client.write_range("Weekly Financials", "A1", [["Hello", "World"]])
-client.write_range("Weekly Financials", "D1", [["=SUM(A1:C1)"]], as_formulas=True)
 ```

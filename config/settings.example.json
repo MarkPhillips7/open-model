@@ -1,3 +1,10 @@
 {
-  "spreadsheet_id": "paste-your-spreadsheet-id-here"
+  "default_ticker": "OPEN",
+  "tickers": {
+    "OPEN": {
+      "name": "Opendoor Technologies",
+      "spreadsheet_id": "paste-or-url",
+      "price_symbol": "OPEN"
+    }
+  }
 }

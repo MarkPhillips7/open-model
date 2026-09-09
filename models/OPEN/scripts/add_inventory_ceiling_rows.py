@@ -6,14 +6,16 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from scripts.restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
-from scripts.setup_financials_definitions import ensure_definitions_sheet, build_rows  # noqa: E402
+from setup_financials_definitions import ensure_definitions_sheet, build_rows  # noqa: E402
 from sheets import SheetsClient  # noqa: E402
-from sheets.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
-from sheets.inventory_ceiling import (  # noqa: E402
+from models.OPEN.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
+from models.OPEN.inventory_ceiling import (  # noqa: E402
     CAPACITY_LABELS,
     HOMES_CEILING_LABELS,
     INSERT_BEFORE_LABEL,
@@ -108,7 +110,7 @@ def refresh_definitions(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     ensure_inventory_ceiling_rows(client)
     restore_model_formulas(client)
     apply_number_formats(client)

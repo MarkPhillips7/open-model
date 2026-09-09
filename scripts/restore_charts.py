@@ -4,7 +4,7 @@
 Do not run routinely. The Sheets API cannot restore colors, log scale, or other
 UI chart settings. Charts are manual-only — see .cursor/rules/charts-manual-only.mdc.
 
-Series layout is defined in config/workbook_snapshot.json.
+Series layout is defined in models/{TICKER}/snapshot.json.
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import sheet_id  # noqa: E402
+from sheets.registry import parse_ticker_argv, resolve_ticker, snapshot_path  # noqa: E402
 from sheets.workbook_snapshot import chart_series_tuples, charts_by_tab, load_snapshot  # noqa: E402
 
 WEEKLY_SHEET_ID = 0
@@ -90,8 +91,13 @@ def delete_chart_feed(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
-    snapshot = load_snapshot()
+    ticker_arg, rest = parse_ticker_argv()
+    if rest:
+        print(f"Unknown arguments: {rest}")
+        sys.exit(2)
+    ticker = resolve_ticker(ticker_arg)
+    client = SheetsClient(ticker=ticker)
+    snapshot = load_snapshot(snapshot_path(ticker))
     for tab, charts in charts_by_tab(snapshot).items():
         for chart_index, chart in enumerate(charts):
             restore_chart(

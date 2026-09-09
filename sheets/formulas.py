@@ -1,4 +1,4 @@
-"""Google Sheets formula builders for the Opendoor model."""
+"""Google Sheets formula builders for weekly / quarterly financials."""
 
 from __future__ import annotations
 
@@ -6,6 +6,15 @@ QUARTERLY = "Quarterly Financials"
 
 # Row on Weekly Financials that holds week-ending dates (column headers).
 WEEK_DATE_ROW = 1
+
+
+def col_letter(n: int) -> str:
+    """1-based column index to A1 letter (1 → A, 27 → AA)."""
+    s = ""
+    while n:
+        n, r = divmod(n - 1, 26)
+        s = chr(65 + r) + s
+    return s
 
 
 def _quarterly_index_cell(quarterly_row: int, qcol_expr: str) -> str:

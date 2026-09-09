@@ -6,8 +6,10 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+PACK = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(PACK / "scripts"))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import (  # noqa: E402
@@ -17,7 +19,7 @@ from sheets.labels import (  # noqa: E402
     label_rows,
     row_by_label,
 )
-from sheets.valuation import (  # noqa: E402
+from models.OPEN.valuation import (  # noqa: E402
     PRICE_AT_CLOSE_LABEL,
     PRICE_AT_PS_2_LABEL,
     PRICE_AT_PS_3_LABEL,
@@ -32,7 +34,7 @@ from sheets.valuation import (  # noqa: E402
     weekly_price_at_ps_formula,
     weekly_ttm_revenue_formula,
 )
-from sheets.weekly_model_formulas import col_letter  # noqa: E402
+from models.OPEN.weekly_model_formulas import col_letter  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from setup_price_history import (  # noqa: E402
@@ -140,7 +142,7 @@ def write_weekly_valuation_formulas(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    client = SheetsClient()
+    client = SheetsClient(ticker="OPEN")
     ensure_valuation_rows(client)
     ensure_price_history_sheet(client)
     write_price_history_query(client)

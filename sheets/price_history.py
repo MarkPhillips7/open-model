@@ -1,4 +1,4 @@
-"""Single GOOGLEFINANCE spill for OPEN daily prices; weekly row XLOOKUPs this table."""
+"""GOOGLEFINANCE daily price spill; weekly rows XLOOKUP this table."""
 
 from __future__ import annotations
 
@@ -13,11 +13,15 @@ PRICE_HISTORY_CLOSE_COL = "E"
 PRICE_HISTORY_DATA_START_ROW = 2
 
 
-def price_history_spill_formula(*, weekly_tab: str = WEEKLY) -> str:
-    """One spill query for all daily OPEN prices covering the Weekly Financials horizon."""
+def price_history_spill_formula(
+    *,
+    price_symbol: str,
+    weekly_tab: str = WEEKLY,
+) -> str:
+    """One spill query for daily prices covering the Weekly Financials horizon."""
     weeks = f"FILTER('{weekly_tab}'!$B$1:$DY$1,'{weekly_tab}'!$B$1:$DY$1<>\"\")"
     return (
-        f'=GOOGLEFINANCE("OPEN","all",'
+        f'=GOOGLEFINANCE("{price_symbol}","all",'
         f"MIN({weeks})-30,"
         f"MIN(MAX({weeks}),TODAY()),"
         f'"DAILY")'

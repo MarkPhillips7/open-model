@@ -9,18 +9,15 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .client import SheetsClient
 
-SNAPSHOT_FILE = Path(__file__).resolve().parent.parent / "config" / "workbook_snapshot.json"
-
 SeriesSpec = tuple[int, str, str, int]  # weekly_row, line_style, axis, end_column
 
 
-def load_snapshot(path: Path | None = None) -> dict[str, Any]:
-    return json.loads((path or SNAPSHOT_FILE).read_text())
+def load_snapshot(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text())
 
 
-def save_snapshot(data: dict[str, Any], path: Path | None = None) -> None:
-    target = path or SNAPSHOT_FILE
-    target.write_text(json.dumps(data, indent=2) + "\n")
+def save_snapshot(data: dict[str, Any], path: Path) -> None:
+    path.write_text(json.dumps(data, indent=2) + "\n")
 
 
 def chart_series_tuples(chart: dict[str, Any]) -> list[SeriesSpec]:
