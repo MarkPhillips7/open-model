@@ -57,12 +57,12 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         '=IF({c}{Quarter ending}="","",({c}{Quarter ending}-$C${As of date})/365)'
     ),
     "Pipeline - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'{_prefer(_prior("Pipeline"), _prior("Pipeline - Model"))})'
+        f'=IF({{c}}{{Quarter}}="","",'
+        f'IF({_first_q()},{{c}}{{Pipeline}},'
+        f'{_prior("Pipeline - Model")}*(1+$C${{Pipeline quarterly growth rate}}/100)))'
     ),
     "Pipeline (GWh) - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'{_prefer(_prior("Pipeline (GWh)"), _prior("Pipeline (GWh) - Model"))})'
+        '=IF({c}{Quarter}="","",IFERROR(1000*{c}{Pipeline - Model}/{c}{Z3 ASP - Model},""))'
     ),
     "Booked orders - Model": (
         f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
@@ -85,6 +85,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         + "+IFERROR("
         + _prefer("{c}{Booked orders}", "{c}{Booked orders - Model}")
         + "/{c}{Z3 ASP - Model},0)-{c}{GWh shipped - Model}))"
+    ),
+    "GWh shipped": (
+        '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",{c}{MWh shipped}/1000)'
     ),
     "GWh shipped - Model": (
         f'=IF({{c}}{{Quarter}}="","",MIN({{c}}{{Factory capacity - Model}},'
@@ -124,8 +127,13 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Government credits - Model": (
         "={c}{Effective 45x credit - Model}*{c}{GWh shipped - Model}"
     ),
-    "Unit COGS w/ 45x - Model": (
-        "={c}{Unit COGS - Model}-{c}{Effective 45x credit - Model}"
+    "Z3 ASP - Derived": (
+        '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",'
+        "{c}{Revenue}*1000/{c}{MWh shipped})"
+    ),
+    "Unit COGS - Derived": (
+        '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",'
+        "{c}{COGS}*1000/{c}{MWh shipped})"
     ),
     "Revenue - Model": "={c}{GWh shipped - Model}*{c}{Z3 ASP - Model}",
     "COGS - Model": (
@@ -238,6 +246,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Cash OpEx run-rate": "=$C${Cash OpEx run-rate}",
     "EV / EBITDA": "=$C${EV / EBITDA}",
     "Discount rate": "=$C${Discount rate}",
+    "Pipeline quarterly growth rate": "=$C${Pipeline quarterly growth rate}",
 }
 
 MODEL_FORMULA_LABELS: tuple[str, ...] = tuple(UNIFORM_FORMULA_TEMPLATES)
@@ -274,6 +283,7 @@ COPY_FROM_C_LABELS: frozenset[str] = frozenset(
         "Cash OpEx run-rate",
         "EV / EBITDA",
         "Discount rate",
+        "Pipeline quarterly growth rate",
     }
 )
 
@@ -314,6 +324,7 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     "Cash OpEx run-rate": Q2_2026_CASH_OPEX,
     "EV / EBITDA": 30,
     "Discount rate": 20,
+    "Pipeline quarterly growth rate": 10,
 }
 
 assert COPY_FROM_C_LABELS == frozenset(COLUMN_C_DEFAULTS)

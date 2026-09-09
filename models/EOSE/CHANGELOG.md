@@ -18,6 +18,23 @@ Entry template:
 
 ---
 
+## 2026-09-09 — Manual Quarterly Financials rows into repo + Definitions
+
+Synced live-sheet edits (new rows, derived $/kWh, column widths) into `layout.py` / formulas / Definitions. Duplicate **Revenue** label with units MWh was renamed **MWh shipped** so MATCH keys stay unique.
+
+- **Tab / range:** **Quarterly Financials** row 10 insert + Model restore `C:Z` on pipeline / derived ASP/COGS / GWh shipped. **Financials Definitions** `A1:B98`. Welcome rewrite. Column widths on QF / Welcome / Definitions / COGS.
+- **Insert/delete:** ROWS, 1 inserted before **Pipeline (GWh)** (now row 10): **Pipeline quarterly growth rate**.
+- **Formulas:**
+  - Duplicate A-label `Revenue` (B=`MWh`) → **MWh shipped**; leftover `Z3 ASP` → **Z3 ASP - Derived**
+  - **Pipeline - Model:** Q1 2025 = Pipeline actual, then `prior × (1+$C$growth/100)` (default 10% QoQ). Does **not** pick up later pipeline actuals.
+  - **Pipeline (GWh) - Model:** live C was `1000×Pipeline-Model/C50` (Unit COGS w/ 45x after a row shift) → `1000 × Pipeline - Model / Z3 ASP - Model` on C:Z
+  - **Z3 ASP - Derived** = Revenue×1000/MWh; **Unit COGS - Derived** = COGS×1000/MWh (blank if no MWh)
+  - **GWh shipped** = MWh/1000 when MWh present
+- **Data:** MWh shipped Q1 2026 **265**, Q2 2026 **307.6** (working estimates, not a 10-Q line). Pipeline growth **10**. Implied ASP ~$215 / $224 vs Model $256. Widths: QF A=280 B=90 C–Z=60; Welcome A=638 B=720; Definitions A=288 B=734; COGS A=287 B=58 C=484 D=493.
+- **Side effects:** One row insert near the top of Quarterly Financials. No chart API. If you added Operations/Money charts, check series in the UI.
+
+---
+
 ## 2026-09-09 — Cost-out plan on COGS tab (70% haircut)
 
 Incorporated the Q2 2026 Slide 11 cost-out waterfall and [bert_gilfoyle’s thread](https://x.com/bert_gilfoyle/status/2096422051376742414): adj. GM path, adj. EBITDA as ops-cash proxy, Lines 3–4 scale absorption. Default **Percent of Guided Cost Cutting Achieved = 70%**.

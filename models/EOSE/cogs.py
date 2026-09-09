@@ -15,9 +15,11 @@ from __future__ import annotations
 from typing import Any
 
 from models.EOSE.layout import (
+    COGS_COL_WIDTHS_PX,
     FIRST_VALUE_COL_INDEX,
     N_QUARTERS,
     QUARTERLY,
+    column_width_requests,
     quarters,
 )
 from sheets.formulas import col_letter
@@ -547,43 +549,8 @@ def write_cogs_sheet(client: Any, qf_label_to_row: dict[str, int]) -> None:
                 "fields": "userEnteredFormat(wrapStrategy,verticalAlignment)",
             }
         },
-        {
-            "updateDimensionProperties": {
-                "range": {
-                    "sheetId": sid,
-                    "dimension": "COLUMNS",
-                    "startIndex": 0,
-                    "endIndex": 1,
-                },
-                "properties": {"pixelSize": 320},
-                "fields": "pixelSize",
-            }
-        },
-        {
-            "updateDimensionProperties": {
-                "range": {
-                    "sheetId": sid,
-                    "dimension": "COLUMNS",
-                    "startIndex": 1,
-                    "endIndex": 2,
-                },
-                "properties": {"pixelSize": 80},
-                "fields": "pixelSize",
-            }
-        },
-        {
-            "updateDimensionProperties": {
-                "range": {
-                    "sheetId": sid,
-                    "dimension": "COLUMNS",
-                    "startIndex": 3,
-                    "endIndex": 4,
-                },
-                "properties": {"pixelSize": 420},
-                "fields": "pixelSize",
-            }
-        },
     ]
+    requests.extend(column_width_requests(sid, COGS_COL_WIDTHS_PX))
     for row_1based in yellow_rows:
         requests.append(
             {

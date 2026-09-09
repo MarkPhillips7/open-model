@@ -23,7 +23,14 @@ HAIRCUT_LABEL = "Percent of Guided Cost Cutting Achieved"
 TERMINAL_UNIT_COGS_LABEL = "Terminal unit COGS"
 NONCASH_COGS_LABEL = "Non-cash COGS (D&A + SBC)"
 CASH_OPEX_RUNRATE_LABEL = "Cash OpEx run-rate"
+PIPELINE_GROWTH_LABEL = "Pipeline quarterly growth rate"
 COGS_SHEET = "COGS"
+
+# Pixel widths captured from the live workbook (0-based column index).
+QUARTERLY_COL_WIDTHS_PX: dict[int, int] = {0: 280, 1: 90, **{i: 60 for i in range(2, 26)}}
+WELCOME_COL_WIDTHS_PX: dict[int, int] = {0: 638, 1: 720}
+DEFINITIONS_COL_WIDTHS_PX: dict[int, int] = {0: 288, 1: 734}
+COGS_COL_WIDTHS_PX: dict[int, int] = {0: 287, 1: 58, 2: 484, 3: 493}
 
 # (label, units) in sheet order. Row 1 is the Units header (A blank, B "Units").
 # Empty label = spacer / section break.
@@ -37,6 +44,7 @@ ROWS: list[tuple[str, str]] = [
     ("", ""),
     ("Pipeline", "$B"),
     ("Pipeline - Model", "$B"),
+    (PIPELINE_GROWTH_LABEL, "% / q"),
     ("Pipeline (GWh)", "GWh"),
     ("Pipeline (GWh) - Model", "GWh"),
     ("Booked orders", "$M"),
@@ -49,7 +57,7 @@ ROWS: list[tuple[str, str]] = [
     ("GWh shipped", "GWh"),
     ("GWh shipped - Model", "GWh"),
     ("", ""),
-    ("Z3 ASP", "$"),
+    ("Z3 ASP - Derived", "$ / kWh"),
     ("Z3 ASP - Model", "$"),
     ("Z3 Module Energy Capacity", "kWh / module"),
     ("Z3 module cycle time", "seconds"),
@@ -71,6 +79,7 @@ ROWS: list[tuple[str, str]] = [
     ("", ""),
     (HAIRCUT_LABEL, "%"),
     (TERMINAL_UNIT_COGS_LABEL, "$ / kWh"),
+    ("Unit COGS - Derived", "$ / kWh"),
     ("Unit COGS - Model", "$ / kWh"),
     ("45x & active electrode credits", "$ / kWh"),
     ("45x transfer rate", "%"),
@@ -81,6 +90,7 @@ ROWS: list[tuple[str, str]] = [
     (FY2026_GUIDE_LOW_LABEL, "$M"),
     (FY2026_GUIDE_HIGH_LABEL, "$M"),
     ("Revenue", "$M"),
+    ("MWh shipped", "MWh"),
     ("Revenue - Model", "$M"),
     ("COGS", "$M"),
     ("COGS - Model", "$M"),
@@ -131,6 +141,35 @@ ROWS: list[tuple[str, str]] = [
     ("Implied future stock price - Model", "$"),
     ("Present stock price discounted - Model", "$"),
 ]
+
+
+def column_width_requests(sheet_id: int, widths: dict[int, int]) -> list[dict]:
+    """Sheets API requests to set pixel widths. *widths* is 0-based column index → px."""
+    requests: list[dict] = []
+    keys = sorted(widths)
+    i = 0
+    while i < len(keys):
+        start = keys[i]
+        px = widths[start]
+        j = i + 1
+        while j < len(keys) and keys[j] == keys[j - 1] + 1 and widths[keys[j]] == px:
+            j += 1
+        requests.append(
+            {
+                "updateDimensionProperties": {
+                    "range": {
+                        "sheetId": sheet_id,
+                        "dimension": "COLUMNS",
+                        "startIndex": start,
+                        "endIndex": keys[j - 1] + 1,
+                    },
+                    "properties": {"pixelSize": px},
+                    "fields": "pixelSize",
+                }
+            }
+        )
+        i = j
+    return requests
 
 
 def label_row_numbers() -> dict[str, int]:

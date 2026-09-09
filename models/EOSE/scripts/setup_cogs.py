@@ -27,11 +27,17 @@ from models.EOSE.cogs import (  # noqa: E402
 from models.EOSE.financials_definitions import FIELD_NOTES  # noqa: E402
 from models.EOSE.layout import (  # noqa: E402
     CASH_OPEX_RUNRATE_LABEL,
+    COGS_COL_WIDTHS_PX,
+    DEFINITIONS_COL_WIDTHS_PX,
     HAIRCUT_LABEL,
     NONCASH_COGS_LABEL,
+    PIPELINE_GROWTH_LABEL,
     QUARTERLY,
+    QUARTERLY_COL_WIDTHS_PX,
     ROWS,
     TERMINAL_UNIT_COGS_LABEL,
+    WELCOME_COL_WIDTHS_PX,
+    column_width_requests,
 )
 from models.EOSE.quarterly_model_formulas import COLUMN_C_DEFAULTS  # noqa: E402
 from restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
@@ -102,8 +108,48 @@ NEW_SCALAR_LABELS = frozenset(
         TERMINAL_UNIT_COGS_LABEL,
         CASH_OPEX_RUNRATE_LABEL,
         NONCASH_COGS_LABEL,
+        PIPELINE_GROWTH_LABEL,
     }
 )
+
+
+def rename_ambiguous_labels(client: SheetsClient) -> None:
+    """Second Revenue row (units MWh) must have a unique label for MATCH / Definitions."""
+    ws = client.worksheet(QUARTERLY)
+    data = ws.get("A1:B160")
+    updates = []
+    for i, row in enumerate(data, start=1):
+        a = row[0] if row else ""
+        b = row[1] if len(row) > 1 else ""
+        if a == "Revenue" and str(b).strip().upper() == "MWH":
+            updates.append({"range": f"A{i}", "values": [["MWh shipped"]]})
+        if a == "Z3 ASP":
+            updates.append({"range": f"A{i}", "values": [["Z3 ASP - Derived"]]})
+            if not b:
+                updates.append({"range": f"B{i}", "values": [["$ / kWh"]]})
+    if updates:
+        ws.batch_update(updates, value_input_option="RAW")
+        print(f"Renamed {len(updates)} label/unit cell(s) for unique MATCH keys")
+
+
+def apply_column_widths(client: SheetsClient) -> None:
+    from models.EOSE.financials_definitions import FINANCIALS_DEFINITIONS_SHEET
+    from models.EOSE.cogs import COGS_SHEET
+    from models.EOSE.welcome import WELCOME_SHEET
+
+    requests = []
+    for title, widths in (
+        (QUARTERLY, QUARTERLY_COL_WIDTHS_PX),
+        (WELCOME_SHEET, WELCOME_COL_WIDTHS_PX),
+        (FINANCIALS_DEFINITIONS_SHEET, DEFINITIONS_COL_WIDTHS_PX),
+        (COGS_SHEET, COGS_COL_WIDTHS_PX),
+    ):
+        if title not in client.list_worksheets():
+            continue
+        requests.extend(column_width_requests(sheet_id(client, title), widths))
+    if requests:
+        client.spreadsheet.batch_update({"requests": requests})
+        print(f"Applied {len(requests)} column-width runs")
 
 
 def write_units_and_defaults(client: SheetsClient, labels: dict[str, int]) -> None:
@@ -114,14 +160,20 @@ def write_units_and_defaults(client: SheetsClient, labels: dict[str, int]) -> No
     ]
     ws.batch_update(unit_updates, value_input_option="RAW")
 
-    # New scalars always seeded (blank insert, or format inherited from the row above).
-    value_updates = [
-        {"range": f"C{labels[lab]}", "values": [[COLUMN_C_DEFAULTS[lab]]]}
-        for lab in NEW_SCALAR_LABELS
-    ]
+    live = client.batch_get(
+        [f"{QUARTERLY}!C{labels[lab]}" for lab in NEW_SCALAR_LABELS if lab in labels]
+    )
+    value_updates = []
+    keys = [lab for lab in NEW_SCALAR_LABELS if lab in labels]
+    for lab, grid in zip(keys, live, strict=True):
+        cell = grid[0][0] if grid and grid[0] else ""
+        if cell in ("", None) or (isinstance(cell, str) and str(cell).startswith("=")):
+            value_updates.append(
+                {"range": f"C{labels[lab]}", "values": [[COLUMN_C_DEFAULTS[lab]]]}
+            )
     if value_updates:
         ws.batch_update(value_updates, value_input_option="USER_ENTERED")
-        print(f"Seeded {len(value_updates)} column-C defaults: {sorted(NEW_SCALAR_LABELS)}")
+        print(f"Seeded {len(value_updates)} column-C defaults")
 
 
 def highlight_haircut(client: SheetsClient, labels: dict[str, int]) -> None:
@@ -133,6 +185,7 @@ def highlight_haircut(client: SheetsClient, labels: dict[str, int]) -> None:
         TERMINAL_UNIT_COGS_LABEL,
         CASH_OPEX_RUNRATE_LABEL,
         NONCASH_COGS_LABEL,
+        PIPELINE_GROWTH_LABEL,
     ):
         row = labels[lab]
         requests.append(
@@ -186,6 +239,7 @@ def load_new_actuals(client: SheetsClient, labels: dict[str, int]) -> None:
 def main() -> None:
     client = SheetsClient(ticker="EOSE")
     expand_quarterly_grid(client, len(ROWS))
+    rename_ambiguous_labels(client)
     labels = ensure_quarterly_rows(client)
     write_units_and_defaults(client, labels)
     highlight_haircut(client, labels)
@@ -194,6 +248,7 @@ def main() -> None:
     write_definitions(client, [lab for lab, _ in ROWS])
     write_welcome(client)
     load_new_actuals(client, label_rows(client, QUARTERLY, max_row=160))
+    apply_column_widths(client)
     missing = [lab for lab, _ in _desired_labels() if lab not in FIELD_NOTES]
     if missing:
         print(f"Warning: definitions still missing {missing}")

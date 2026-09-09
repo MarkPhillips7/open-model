@@ -12,9 +12,16 @@ FIELD_NOTES: dict[str, str] = {
     "As of date": "Single date in C. Years from present = (quarter ending − this) / 365. Update after each earnings print.",
     "Years from present": "Discount tenor for present-value stock price. Formula from quarter ending vs As of date.",
     "Pipeline": "Commercial opportunity pipeline ($B) as disclosed. Proposals + LOI; excludes lead-gen. Actual only.",
-    "Pipeline - Model": "Carries last actual forward. Edit a future cell to assume pipeline growth.",
+    "Pipeline - Model": (
+        "Q1 2025 copies Pipeline actual, then compounds at Pipeline quarterly growth rate "
+        "(default 10% / q). Does not reset to later actuals — Model vs Actual shows the gap."
+    ),
+    "Pipeline quarterly growth rate": "QoQ % applied to Pipeline - Model after 2025 Q1. Scalar in C. Guess.",
     "Pipeline (GWh)": "Pipeline energy (GWh) when Eos discloses it.",
-    "Pipeline (GWh) - Model": "Carries last actual GWh forward.",
+    "Pipeline (GWh) - Model": (
+        "1000 × Pipeline - Model ($B) / Z3 ASP - Model ($/kWh). Converts the dollar pipeline "
+        "at model ASP. (A prior C-only formula divided by unit COGS after a row shift — that was a bug.)"
+    ),
     "Booked orders": "New orders in the quarter ($M). Disclosed when available (e.g. Q4 2025 $240M); otherwise implied as Δbacklog + revenue.",
     "Booked orders - Model": "Default: last actual booked orders carried forward. Primary demand assumption.",
     "Backlog": "Ending backlog ($M). Company identity: prior + orders − shipments.",
@@ -22,16 +29,31 @@ FIELD_NOTES: dict[str, str] = {
     "Backlog (GWh)": "Ending backlog energy (GWh) as disclosed.",
     "Backlog (GWh) - Model": "Same roll as dollar backlog using GWh shipped - Model and implied GWh orders (dollar orders / ASP).",
     "Backlog conversion lag": "Quarters of beginning backlog assumed convertible this quarter. Default 4. Caps GWh shipped - Model together with factory capacity.",
-    "GWh shipped": "Energy shipped / recognized in the quarter when disclosed. Often blank — revenue is the better actual.",
+    "GWh shipped": (
+        "MWh shipped / 1000 when MWh shipped is present. Not a company GWh-shipped print — "
+        "Eos usually omits shipped GWh and reports cube deliveries instead."
+    ),
     "GWh shipped - Model": "MIN(factory capacity, beginning backlog GWh / conversion lag).",
-    "Z3 ASP": "Average selling price ($/kWh) when derived or disclosed. Usually blank.",
+    "MWh shipped": (
+        "Energy shipped / recognized (MWh). Manual actuals (Q1 2026 265, Q2 2026 307.6). "
+        "Source is not a labeled 10-Q line — treat as a working estimate. "
+        "Drives Z3 ASP - Derived and Unit COGS - Derived ($/kWh = $M × 1000 / MWh)."
+    ),
+    "Z3 ASP - Derived": (
+        "Revenue ($M) × 1000 / MWh shipped. Blank when MWh is blank. "
+        "This is implied selling price per kWh, mixing Cube and Indensity if both shipped — "
+        "Eos does not publish an SKU split."
+    ),
     "Z3 ASP - Model": "Assumption: $250 early 2025, $256 thereafter. Revenue - Model = GWh shipped - Model × ASP.",
     "Z3 Module Energy Capacity": "kWh per Z3 module (product sheet ~1.2 kWh). Scalar in C, copied across.",
     "Z3 module cycle time": "Reported cycle time when disclosed (Line 2 ~10% faster vs Line 1 in Q2 2026).",
     "Z3 module cycle time - Model": "Starts at 18s; compounds at the quarterly reduction rate; floored at Cycle time floor (C).",
     "Quarterly module cycle time reduction rate": "Learning-curve % per quarter (default 2.9). Guess — not disclosed as a rate.",
     "Cycle time floor": "Seconds. Model cycle time will not go below this (default 10).",
-    "Z3 modules per cube": "Modules per Cube (672). Scalar.",
+    "Z3 modules per cube": (
+        "Modules packed in the original Cube container (672). Cube-specific — Indensity "
+        "is a denser architecture of the same Z3 modules. Do not use 672 to convert Indensity shipments."
+    ),
     "Z3 manufacturing lines": "Installed lines when known (1 through Q1 2026; 2 from Q2 2026 Line 2 launch).",
     "Z3 manufacturing lines - Model": "Editable ramp (1 → 12). Capacity ceiling, not a demand forecast.",
     "Capacity utilization": "Utilization % assumption (default 85). Apply to Model lines.",
@@ -53,10 +75,14 @@ FIELD_NOTES: dict[str, str] = {
         "Floor ($/kWh, pre-45X) after the 12-month plan, blended in as Lines 3–4 ramp "
         "(Indensity / single-piece flow). Default $160 — still an explicit thesis."
     ),
+    "Unit COGS - Derived": (
+        "COGS ($M) × 1000 / MWh shipped. GAAP unit cost in $/kWh when energy actuals exist. "
+        "Q1–Q2 2026 print around $382/kWh. Same energy basis as ASP - Derived — still mixed Cube/Indensity."
+    ),
     "Unit COGS - Model": (
         "From the COGS tab: Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts "
         "phased Q2 2026→Q2 2027, then blend toward Terminal unit COGS as lines go 2→4. "
-        "Pre-45X; COGS - Model still subtracts government credits."
+        "Pre-45X; COGS - Model still subtracts government credits. $/kWh of energy, not per Cube or Indensity SKU."
     ),
     "45x & active electrode credits": "$/kWh statutory credit assumption (default 47).",
     "45x transfer rate": "% of credit realized (default 90).",

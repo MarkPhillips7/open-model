@@ -123,6 +123,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Total debt": 619.519,
         "Basic shares": 339.602,
         "Fully diluted shares": 544.829,  # if-converted WAS (GAAP profit quarter)
+        "MWh shipped": 265,
     },
     (2026, 2): {
         "Pipeline": 24.6,
@@ -144,6 +145,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 453.835,
         "Total debt": 617.118,
         "Basic shares": 339.799,
+        "MWh shipped": 307.6,
         # Fully diluted shares omitted: GAAP diluted WAS = basic in a loss quarter.
         # Leaving blank keeps Fully diluted shares - Model on Q1's 544.8 if-converted.
     },
@@ -162,4 +164,5 @@ SCALARS: dict[str, float | str] = {
     "Backlog conversion lag": 4,
     "EV / EBITDA": 30,
     "Discount rate": 20,
+    "Pipeline quarterly growth rate": 10,
 }

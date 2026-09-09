@@ -55,7 +55,21 @@ Eos defines backlog as prior + booked orders − shipments. Pipeline is proposal
 
 ### Factory (supply ceiling)
 
-Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle time - Model starts at 18s, compounds at 2.9%/quarter, floored at 10s. Line ramp is an editable Model series (1 → 12). Actual lines: 1 through Q1 2026, 2 from Q2 2026 (Line 2 launch).
+Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle time - Model starts at 18s, compounds at 2.9%/quarter, floored at 10s. Line ramp is an editable Model series (1 → 12). Actual lines: 1 through Q1 2026, 2 from Q2 2026 (Line 2 launch). **Z3 modules per cube (672)** is the original **Cube** packing only — do not use it for Indensity.
+
+### What “unit” means
+
+Eos sells energy, but talks about three different physical packages:
+
+| Thing | What it is |
+| --- | --- |
+| **Z3 module** | The battery (~1.2 kWh). Factory cycle time is per module. |
+| **Cube** | Original containerized BESS. This workbook’s **672 modules/cube** is Cube-only. Ops KPIs on the call (labor/cube, material/cube, cube deliveries) are this language. |
+| **Indensity** | Denser architecture using the same Z3 modules (stackable Core units). Not a separate chemistry. |
+
+**Unit COGS / ASP in this model are $/kWh of energy**, not $/Cube or $/Indensity SKU. Bert’s [cost-out thread](https://x.com/bert_gilfoyle/status/2096422051376742414) follows Slide 11: **percentage points of adjusted gross margin** (of revenue) and Adj. EBITDA in **$M**. Older factory notes mix that with implied **$/kWh** and management’s **per-cube** cost KPIs. Eos has **not disclosed** a Cube vs Indensity sales split. Q2 2026 still reported cube deliveries (+207% YoY, +20% QoQ); Line 2 was ~1% of Q2 production. Q1 2026 commentary was that the *pipeline* has a higher mix of large-scale / Indensity quotes — that is not current-period shipments.
+
+**MWh shipped** (Q1 2026 265, Q2 307.6) is a working actual you typed — not a labeled 10-Q line. Implied ASP is ~$215–224/kWh vs **Z3 ASP - Model** $256. Treat the nine-month-old factory defaults (18s cycle, 672/cube, $256 ASP) as guesses until replaced.
 
 ### Profitability
 

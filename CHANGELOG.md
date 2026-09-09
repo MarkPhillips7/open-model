@@ -11,6 +11,11 @@ Entry template:
 - **Why:** motivation
 ```
 
+## 2026-09-09 — EOSE MWh shipped / derived $/kWh rows
+
+- **What:** Quarterly Financials layout now has **MWh shipped**, **Z3 ASP - Derived**, **Unit COGS - Derived**, and **Pipeline quarterly growth rate**. Pipeline (GWh) - Model uses ASP not unit COGS. Column widths captured from the live sheet. `pull_financials_definitions_from_sheet.py` added for EOSE.
+- **Why:** User added energy and derived-unit rows by hand; a duplicate Revenue label would have broken MATCH, and Pipeline GWh had a shifted denominator.
+
 ---
 
 ## 2026-09-09 — EOSE COGS cost-out engine

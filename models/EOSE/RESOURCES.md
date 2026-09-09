@@ -31,7 +31,9 @@ Canonical links and XBRL tag map: [`sources.py`](sources.py). Reported Actuals: 
 | Pipeline $ / GWh, backlog $ / GWh | Earnings highlights + slides; GWh often only on the call | IR release / transcript |
 | Booked orders | Disclosed in release or slides; else implied Δbacklog + revenue (adjustments can break the identity — Q4 2025 disclosed $240M vs ~$115M implied) | same |
 | Z3 manufacturing lines | Capacity commentary (Line 2 commercial production Q2 2026) | earnings ops section |
-| GWh shipped / Z3 ASP | Usually **not disclosed** — leave blank; use revenue | — |
+| MWh shipped | **Not a 10-Q line** — working estimate on Quarterly Financials (Q1 2026 **265**, Q2 2026 **307.6**) | manual; drives ASP/COGS - Derived |
+| GWh shipped | Formula: MWh / 1000 when MWh is present. Company usually reports **cube deliveries**, not GWh shipped | — |
+| Cube vs Indensity mix | **Not disclosed.** Q2 still “cube deliveries”; Q1 CCO: pipeline mix tilting to large-scale / Indensity | do not invent a split |
 
 Fully diluted WAS equals basic in a **loss** quarter (anti-dilutive). Q1 2025 and Q1 2026 were GAAP-profit quarters (FV marks), so diluted WAS is the if-converted count. Q2 2026 Fully diluted Actual is left blank so **Fully diluted shares - Model** keeps Q1 2026’s 544.8M if-converted print.
 
@@ -70,7 +72,7 @@ When updating after an earnings release (same steps every quarter):
 1. `python models/EOSE/scripts/fetch_sec_gaap.py --year YYYY --quarter N` — GAAP vs `actuals.py`.
 2. Open the 8-K Ex. 99.1 from [`sources.py`](sources.py) (or IR). Copy adj. EBITDA recon, pipeline, backlog, booked orders, lines.
 3. If pipeline GWh is missing from the release, use the earnings-call transcript / slides.
-4. Patch [`actuals.py`](actuals.py) (sheet units: $M, pipeline $B, shares million). Leave GWh shipped / ASP blank unless disclosed.
+4. Patch [`actuals.py`](actuals.py) (sheet units: $M, pipeline $B, shares million). Fill **MWh shipped** only if you have a working energy figure; **Z3 ASP - Derived** / **Unit COGS - Derived** compute from it. Do not invent a Cube vs Indensity split.
 5. `python models/EOSE/scripts/load_quarterly_actuals.py`
 6. Update **As of date** (column C) so years-from-present and PV stay current.
 7. Confirm 45X still treated as a COGS offset in the 10-Q.

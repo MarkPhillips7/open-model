@@ -20,16 +20,21 @@ from models.EOSE.financials_definitions import (  # noqa: E402
 )
 from models.EOSE.layout import (  # noqa: E402
     AS_OF_LABEL,
+    COGS_COL_WIDTHS_PX,
+    DEFINITIONS_COL_WIDTHS_PX,
     FIRST_VALUE_COL_INDEX,
     LINE_RAMP,
     N_QUARTERS,
     OLD_QUARTERLY,
     QUARTERLY,
+    QUARTERLY_COL_WIDTHS_PX,
     ROWS,
+    WELCOME_COL_WIDTHS_PX,
     asp_model_values,
+    column_width_requests,
     quarters,
 )
-from models.EOSE.cogs import write_cogs_sheet  # noqa: E402
+from models.EOSE.cogs import write_cogs_sheet, COGS_SHEET  # noqa: E402
 from models.EOSE.quarterly_model_formulas import (  # noqa: E402
     COLUMN_C_DEFAULTS,
     MODEL_FORMULA_LABELS,
@@ -274,31 +279,8 @@ def write_quarterly(client: SheetsClient) -> dict[str, int]:
                         "fields": "userEnteredFormat.textFormat.bold",
                     }
                 },
-                {
-                    "updateDimensionProperties": {
-                        "range": {
-                            "sheetId": sid,
-                            "dimension": "COLUMNS",
-                            "startIndex": 0,
-                            "endIndex": 1,
-                        },
-                        "properties": {"pixelSize": 280},
-                        "fields": "pixelSize",
-                    }
-                },
-                {
-                    "updateDimensionProperties": {
-                        "range": {
-                            "sheetId": sid,
-                            "dimension": "COLUMNS",
-                            "startIndex": 1,
-                            "endIndex": 2,
-                        },
-                        "properties": {"pixelSize": 90},
-                        "fields": "pixelSize",
-                    }
-                },
             ]
+            + column_width_requests(sid, QUARTERLY_COL_WIDTHS_PX)
         }
     )
     print(f"Wrote {len(grid)} rows × {2 + N_QUARTERS} cols to {QUARTERLY!r}")
@@ -432,31 +414,8 @@ def write_welcome(client: SheetsClient) -> None:
                         "fields": "userEnteredFormat.textFormat",
                     }
                 },
-                {
-                    "updateDimensionProperties": {
-                        "range": {
-                            "sheetId": sid,
-                            "dimension": "COLUMNS",
-                            "startIndex": 0,
-                            "endIndex": 1,
-                        },
-                        "properties": {"pixelSize": 280},
-                        "fields": "pixelSize",
-                    }
-                },
-                {
-                    "updateDimensionProperties": {
-                        "range": {
-                            "sheetId": sid,
-                            "dimension": "COLUMNS",
-                            "startIndex": 1,
-                            "endIndex": 2,
-                        },
-                        "properties": {"pixelSize": 720},
-                        "fields": "pixelSize",
-                    }
-                },
             ]
+            + column_width_requests(sid, WELCOME_COL_WIDTHS_PX)
         }
     )
     print(f"Wrote {len(rows)} rows to {WELCOME_SHEET!r}")
@@ -490,6 +449,22 @@ def order_tabs(client: SheetsClient) -> None:
         print("Reordered tabs")
 
 
+def apply_column_widths(client: SheetsClient) -> None:
+    requests = []
+    for title, widths in (
+        (QUARTERLY, QUARTERLY_COL_WIDTHS_PX),
+        (WELCOME_SHEET, WELCOME_COL_WIDTHS_PX),
+        (FINANCIALS_DEFINITIONS_SHEET, DEFINITIONS_COL_WIDTHS_PX),
+        (COGS_SHEET, COGS_COL_WIDTHS_PX),
+    ):
+        if title not in client.list_worksheets():
+            continue
+        requests.extend(column_width_requests(sheet_id(client, title), widths))
+    if requests:
+        client.spreadsheet.batch_update({"requests": requests})
+        print(f"Applied {len(requests)} column-width runs")
+
+
 def main() -> None:
     client = SheetsClient(ticker="EOSE")
     rename_quarterly_tab(client)
@@ -500,6 +475,7 @@ def main() -> None:
     write_definitions(client, [label for label, _ in ROWS])
     write_welcome(client)
     order_tabs(client)
+    apply_column_widths(client)
     print("Done.")
     print(f"Labels: {len(labels)}")
 
