@@ -7,6 +7,15 @@ from typing import Any
 
 from sheets.formulas import col_letter as _col_letter
 
+from models.EOSE.cogs import (
+    ADJ_GM_MODEL_LABEL,
+    DEFAULT_HAIRCUT_PCT,
+    DEFAULT_TERMINAL_UNIT_COGS,
+    Q2_2026_CASH_OPEX,
+    Q2_2026_NONCASH_COGS,
+    UNIT_COGS_MODEL_LABEL,
+    qf_index_formula,
+)
 from models.EOSE.layout import FIRST_VALUE_COL, FIRST_VALUE_COL_INDEX, N_QUARTERS, QUARTERLY
 
 FINANCIALS_TAB = QUARTERLY
@@ -121,12 +130,21 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Revenue - Model": "={c}{GWh shipped - Model}*{c}{Z3 ASP - Model}",
     "COGS - Model": (
         "={c}{Unit COGS - Model}*{c}{GWh shipped - Model}-{c}{Government credits - Model}"
+        "+$C${Non-cash COGS (D&A + SBC)}"
     ),
     "Gross profit - Model": "={c}{Revenue - Model}-{c}{COGS - Model}",
     "Gross margin": '=IF(N({c}{Revenue})=0,"",{c}{Gross profit}/{c}{Revenue}*100)',
     "Gross margin - Model": (
         '=IF(N({c}{Revenue - Model})=0,"",{c}{Gross profit - Model}/{c}{Revenue - Model}*100)'
     ),
+    "Adjusted gross profit - Model": (
+        "={c}{Revenue - Model}*{c}{Adjusted gross margin - Model}/100"
+    ),
+    "Adjusted gross margin": (
+        '=IF(OR({c}{Adjusted gross profit}="",N({c}{Revenue})=0),"",'
+        "{c}{Adjusted gross profit}/{c}{Revenue}*100)"
+    ),
+    "Adjusted gross margin - Model": qf_index_formula(ADJ_GM_MODEL_LABEL),
     "SG&A - Model": (
         f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
         f'{_prefer(_prior("SG&A"), _prior("SG&A - Model"))})'
@@ -136,7 +154,10 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         f'{_prefer(_prior("R&D"), _prior("R&D - Model"))})'
     ),
     "OpEx - Model": "={c}{SG&A - Model}+{c}{R&D - Model}",
-    "Adjusted EBITDA - Model": "={c}{Gross profit - Model}-{c}{OpEx - Model}",
+    "Adjusted EBITDA - Model": (
+        "={c}{Adjusted gross profit - Model}-$C${Cash OpEx run-rate}"
+    ),
+    "Operating cash flow - Model": "={c}{Adjusted EBITDA - Model}",
     "Adjusted EBITDA margin": (
         '=IF(N({c}{Revenue})=0,"",{c}{Adjusted EBITDA}/{c}{Revenue}*100)'
     ),
@@ -208,7 +229,13 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     ),
     "45x & active electrode credits": "=$C${45x & active electrode credits}",
     "45x transfer rate": "=$C${45x transfer rate}",
-    "Unit COGS - Model": "=$C${Unit COGS - Model}",
+    "Percent of Guided Cost Cutting Achieved": (
+        "=$C${Percent of Guided Cost Cutting Achieved}"
+    ),
+    "Terminal unit COGS": "=$C${Terminal unit COGS}",
+    "Unit COGS - Model": qf_index_formula(UNIT_COGS_MODEL_LABEL),
+    "Non-cash COGS (D&A + SBC)": "=$C${Non-cash COGS (D&A + SBC)}",
+    "Cash OpEx run-rate": "=$C${Cash OpEx run-rate}",
     "EV / EBITDA": "=$C${EV / EBITDA}",
     "Discount rate": "=$C${Discount rate}",
 }
@@ -241,7 +268,10 @@ COPY_FROM_C_LABELS: frozenset[str] = frozenset(
         "Quarterly module cycle time reduction rate",
         "45x & active electrode credits",
         "45x transfer rate",
-        "Unit COGS - Model",
+        "Percent of Guided Cost Cutting Achieved",
+        "Terminal unit COGS",
+        "Non-cash COGS (D&A + SBC)",
+        "Cash OpEx run-rate",
         "EV / EBITDA",
         "Discount rate",
     }
@@ -278,7 +308,10 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     "Quarterly module cycle time reduction rate": 2.9,
     "45x & active electrode credits": 47,
     "45x transfer rate": 90,
-    "Unit COGS - Model": 160,
+    "Percent of Guided Cost Cutting Achieved": DEFAULT_HAIRCUT_PCT,
+    "Terminal unit COGS": DEFAULT_TERMINAL_UNIT_COGS,
+    "Non-cash COGS (D&A + SBC)": Q2_2026_NONCASH_COGS,
+    "Cash OpEx run-rate": Q2_2026_CASH_OPEX,
     "EV / EBITDA": 30,
     "Discount rate": 20,
 }

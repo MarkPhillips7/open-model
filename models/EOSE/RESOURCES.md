@@ -57,6 +57,7 @@ Backlog identity (company): prior + new orders − shipments. Pipeline = proposa
 | Average sale price higher in 2025 Q3 than Q2 | [Yahoo Finance Q3 2025 earnings call](https://finance.yahoo.com/quote/EOSE/earnings/EOSE-Q3-2025-earnings_call-369182.html) | Search for "Average selling price" |
 | Derive average selling price from PTC credits | [x.com/x_times_1](https://x.com/x_times_1/status/1950885635100717222) | |
 | Tax credits are not recorded as revenue. They are recorded as negative cost of goods sold. | [x.com/x_times_1](https://x.com/x_times_1/status/2006569905122898296) | **COGS - Model** subtracts **Government credits - Model**. Revenue - Model does **not** add credits. |
+| Cost-out plan → adj. GM / cash burn | [x.com/bert_gilfoyle](https://x.com/bert_gilfoyle/status/2096422051376742414) | Slide 11 waterfall (25/20/20/8 pts); ops cash ≈ adj. EBITDA; $325M FY2026 midpoint / $200M qtr illustration. **COGS** tab + **Percent of Guided Cost Cutting Achieved** (default 70%). |
 | Feltonomics | [x.com/philroberts](https://x.com/philroberts/status/2006725760514453566) | Independent model; **Feltonomics** tab is kept empty for later |
 | Module and cell are interchangeable words with respect to Z3 | (model note) | |
 

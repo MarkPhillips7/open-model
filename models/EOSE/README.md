@@ -6,7 +6,7 @@ This is the **EOSE** model pack in [open-model](../../README.md). The live model
 
 Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made by agents are logged in **[CHANGELOG.md](CHANGELOG.md)**.
 
-> Not investment advice. The model mixes company-reported figures, management guidance, and explicit guesses (line ramp, cycle-time learning, $160/kWh terminal COGS, conversion lag).
+> Not investment advice. The model mixes company-reported figures, management guidance, and explicit guesses (line ramp, cycle-time learning, cost-out haircut, $160/kWh terminal COGS, conversion lag).
 
 ---
 
@@ -32,7 +32,7 @@ There is no weekly spine. Eos does not publish a high-frequency unit funnel.
 | **Price History** | One `GOOGLEFINANCE` spill of EOSE daily OHLCV. **Stock price** XLOOKUPs the close by quarter-ending date. |
 | **Reference** | Source links (ASP, 45X treatment, Feltonomics). |
 | **Feltonomics** | Placeholder (empty) — independent model cited on Reference. Kept for later. |
-| **COGS** | Placeholder (empty) — unit-cost build-up to revisit. Unit COGS currently lives on Quarterly Financials. |
+| **COGS** | Unit-cost engine: Q2 2026 Slide 11 cost-out (25/20/20/8 pts of adj. GM) × **Percent of Guided Cost Cutting Achieved** (default 70%), then blend to terminal $/kWh as Lines 3–4 ramp. Feeds **Unit COGS - Model**. |
 
 **Charts are manual-only.** Add Operations / Money charts in the Google Sheets UI if you want Actual (solid) vs Model (dotted). Agents must not create or edit chart objects via the API.
 
@@ -59,15 +59,15 @@ Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle
 
 ### Profitability
 
-- **Unit COGS - Model** is an explicit thesis (**$160/kWh**), not a fit to today’s ~−71% gross margin. Actual COGS/GM show the gap.
-- **45X** = credit × transfer rate, applied **only** as a COGS offset (`COGS - Model` = unit COGS × GWh − credits).
-- **SG&A / R&D - Model** carry last actual (opex hold).
-- **Adjusted EBITDA - Model** = gross profit - Model − opex - Model.
+- **Unit COGS - Model** comes from the **COGS** tab, not a flat $160. Starting point is Q2 2026 adj. GM (−62.3%). Management's 12-month waterfall is **73 pts** (materials 25 / conversion 20 / projects 20 / scrap 8). **Percent of Guided Cost Cutting Achieved** (default **70%**) scales those points because Eos has repeatedly missed cost-out timelines. After Q2 2027 the remaining gap to **Terminal unit COGS** ($160) is blended in as manufacturing lines go from 2 → 4.
+- **45X** = credit × transfer rate, applied **only** as a COGS offset (`COGS - Model` = unit COGS × GWh − credits + non-cash COGS D&A/SBC).
+- **SG&A / R&D - Model** carry last actual (opex hold). **Cash OpEx run-rate** is Q2 implied adj. GP − adj. EBITDA ($28.5M), held flat.
+- **Adjusted EBITDA - Model** = adj. GP − cash OpEx (company definition). **Operating cash flow - Model** equals that — the CFO said Q2 ops cash use tracked adj. EBITDA.
 - **GAAP net income - Model** = adj. EBITDA − interest run-rate. It **ignores** warrant/derivative fair-value marks that dominate reported NI.
 
 ### Cash, shares, valuation
 
-- **Cash - Model** = prior cash + adj. EBITDA − capex − interest. Capex = $40M × max(0, Δ lines) — a guess.
+- **Cash - Model** = prior cash + operating cash flow (adj. EBITDA proxy) − capex − interest. Capex = $40M × max(0, Δ lines) — a guess.
 - **Stock price** from Price History (quarter-end close).
 - **Enterprise value - Model** = annualized EBITDA × EV/EBITDA / 1000 **only if** annualized EBITDA > 0.
 - **Present price** = `-PV(discount rate, years from present, 0, implied future price)`. **As of date** is `C` on that row (default 9 Sep 2026).
@@ -84,6 +84,7 @@ python scripts/restore_weekly_model_formulas.py --ticker EOSE
 python models/EOSE/scripts/fetch_sec_gaap.py
 python models/EOSE/scripts/load_quarterly_actuals.py
 python models/EOSE/scripts/setup_eose_workbook.py
+python models/EOSE/scripts/setup_cogs.py
 ```
 
 Canonical Model formulas live in `quarterly_model_formulas.py` (label placeholders, restored onto **Quarterly Financials**). Reported prints live in `actuals.py`. After each earnings release, pull GAAP from SEC companyfacts (`fetch_sec_gaap.py`), copy adj. EBITDA / pipeline / backlog from the 8-K Ex. 99.1 (links in `sources.py`), patch `actuals.py`, then `load_quarterly_actuals.py`. See [RESOURCES.md](RESOURCES.md).

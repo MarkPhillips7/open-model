@@ -45,7 +45,8 @@ GOALS = (
     "Model path so misses are visible. The commercial funnel is quarterly — pipeline → booked orders "
     "→ backlog → shipments — with factory capacity as a ceiling. There is no weekly spine: Eos "
     "does not publish a high-frequency unit funnel. 45X / production credits are treated as a COGS "
-    "offset, not as revenue. Feltonomics and COGS tabs are placeholders for later work."
+    "offset, not as revenue. Unit COGS follows the Q2 2026 cost-out waterfall on the COGS tab, "
+    "scaled by Percent of Guided Cost Cutting Achieved (default 70%)."
 )
 
 TAB_GUIDE_INTRO = (
@@ -84,7 +85,9 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     ),
     (
         "COGS",
-        "Placeholder — unit-cost build-up to revisit. Unit COGS currently lives on Quarterly Financials.",
+        "Unit-cost build-up from the Q2 2026 Slide 11 cost-out (materials 25 / conversion 20 / "
+        "projects 20 / scrap 8 pts of adj. GM). Haircut defaults to 70%. After the 12-month plan, "
+        "remaining gap to terminal $/kWh is absorbed as Lines 3–4 ramp. Feeds Unit COGS - Model.",
     ),
 ]
 

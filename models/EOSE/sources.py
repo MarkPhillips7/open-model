@@ -109,6 +109,7 @@ FILINGS: dict[tuple[int, int], dict[str, str]] = {
             "eos-energy-enterprises-reports-second-quarter-2026-financial"
         ),
         "transcript": "https://www.roic.ai/quote/EOSEW/transcripts/2026-year/2-quarter",
+        "slides": "https://investors.eose.com/static-files/89d12692-901b-42a8-9872-df44057ac479",
     },
 }
 

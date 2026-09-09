@@ -19,6 +19,11 @@ CAPEX_PER_LINE_LABEL = "Capex per incremental line"
 NET_INTEREST_RUNRATE_LABEL = "Net interest run-rate"
 FY2026_GUIDE_LOW_LABEL = "FY 2026 revenue guidance — low"
 FY2026_GUIDE_HIGH_LABEL = "FY 2026 revenue guidance — high"
+HAIRCUT_LABEL = "Percent of Guided Cost Cutting Achieved"
+TERMINAL_UNIT_COGS_LABEL = "Terminal unit COGS"
+NONCASH_COGS_LABEL = "Non-cash COGS (D&A + SBC)"
+CASH_OPEX_RUNRATE_LABEL = "Cash OpEx run-rate"
+COGS_SHEET = "COGS"
 
 # (label, units) in sheet order. Row 1 is the Units header (A blank, B "Units").
 # Empty label = spacer / section break.
@@ -64,6 +69,8 @@ ROWS: list[tuple[str, str]] = [
     ("Annualized module energy capacity - Model", "GWh"),
     ("Factory capacity - Model", "GWh"),
     ("", ""),
+    (HAIRCUT_LABEL, "%"),
+    (TERMINAL_UNIT_COGS_LABEL, "$ / kWh"),
     ("Unit COGS - Model", "$ / kWh"),
     ("45x & active electrode credits", "$ / kWh"),
     ("45x transfer rate", "%"),
@@ -81,6 +88,10 @@ ROWS: list[tuple[str, str]] = [
     ("Gross profit - Model", "$M"),
     ("Gross margin", "%"),
     ("Gross margin - Model", "%"),
+    ("Adjusted gross profit", "$M"),
+    ("Adjusted gross profit - Model", "$M"),
+    ("Adjusted gross margin", "%"),
+    ("Adjusted gross margin - Model", "%"),
     ("SG&A", "$M"),
     ("SG&A - Model", "$M"),
     ("R&D", "$M"),
@@ -89,6 +100,7 @@ ROWS: list[tuple[str, str]] = [
     ("OpEx - Model", "$M"),
     ("Adjusted EBITDA", "$M"),
     ("Adjusted EBITDA - Model", "$M"),
+    ("Operating cash flow - Model", "$M"),
     ("Adjusted EBITDA margin", "%"),
     ("Adjusted EBITDA margin - Model", "%"),
     ("Annualized EBITDA - Model", "$M"),
@@ -100,6 +112,8 @@ ROWS: list[tuple[str, str]] = [
     ("Capex - Model", "$M"),
     (CAPEX_PER_LINE_LABEL, "$M"),
     (NET_INTEREST_RUNRATE_LABEL, "$M"),
+    (CASH_OPEX_RUNRATE_LABEL, "$M"),
+    (NONCASH_COGS_LABEL, "$M"),
     ("Long term debt", "$M"),
     ("Total debt", "$M"),
     ("Total debt - Model", "$M"),

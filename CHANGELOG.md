@@ -13,6 +13,11 @@ Entry template:
 
 ---
 
+## 2026-09-09 — EOSE COGS cost-out engine
+
+- **What:** `models/EOSE/cogs.py` plus Quarterly Financials haircut / adj. GM / adj. EBITDA-as-cash-proxy formulas. `setup_cogs.py` writes the live **COGS** tab (see `models/EOSE/CHANGELOG.md`).
+- **Why:** Model the Q2 2026 73-pt cost-out with an explicit execution haircut instead of a flat $160/kWh from day one.
+
 ## 2026-09-09 — EOSE Actual vs Model pack
 
 Wire the EOSE quarterly model to OPEN’s restore/validate loop and rebuild the live sheet.

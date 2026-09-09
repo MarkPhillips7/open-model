@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild the EOSE workbook: Quarterly Financials + Welcome, Definitions, Shares, Price History.
 
-Keeps Feltonomics, COGS, and Reference. Does not create or edit charts.
+Rewrites COGS (cost-out engine). Keeps Feltonomics and Reference. Does not create or edit charts.
 """
 
 from __future__ import annotations
@@ -29,6 +29,7 @@ from models.EOSE.layout import (  # noqa: E402
     asp_model_values,
     quarters,
 )
+from models.EOSE.cogs import write_cogs_sheet  # noqa: E402
 from models.EOSE.quarterly_model_formulas import (  # noqa: E402
     COLUMN_C_DEFAULTS,
     MODEL_FORMULA_LABELS,
@@ -222,7 +223,7 @@ def write_quarterly(client: SheetsClient) -> dict[str, int]:
                         "properties": {
                             "sheetId": sid,
                             "gridProperties": {
-                                "rowCount": max(120, len(grid) + 10),
+                                "rowCount": max(140, len(grid) + 10),
                                 "columnCount": 28,
                             },
                         },
@@ -330,7 +331,7 @@ def write_shares(client: SheetsClient) -> None:
 
 
 def write_definitions(client: SheetsClient, labels: list[str]) -> None:
-    _ensure_sheet(client, FINANCIALS_DEFINITIONS_SHEET, index=1, rows=120, cols=4)
+    _ensure_sheet(client, FINANCIALS_DEFINITIONS_SHEET, index=1, rows=140, cols=4)
     missing: list[str] = []
     rows: list[list[str]] = []
     for label in labels:
@@ -495,6 +496,7 @@ def main() -> None:
     write_price_history(client)
     write_shares(client)
     labels = write_quarterly(client)
+    write_cogs_sheet(client, labels)
     write_definitions(client, [label for label, _ in ROWS])
     write_welcome(client)
     order_tabs(client)

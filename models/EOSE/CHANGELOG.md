@@ -18,6 +18,24 @@ Entry template:
 
 ---
 
+## 2026-09-09 — Cost-out plan on COGS tab (70% haircut)
+
+Incorporated the Q2 2026 Slide 11 cost-out waterfall and [bert_gilfoyle’s thread](https://x.com/bert_gilfoyle/status/2096422051376742414): adj. GM path, adj. EBITDA as ops-cash proxy, Lines 3–4 scale absorption. Default **Percent of Guided Cost Cutting Achieved = 70%**.
+
+- **Tab / range:** **COGS** `A1:Z51` rewritten (was empty). **Quarterly Financials** new rows + Model formula restore `C:Z`. Welcome, Financials Definitions.
+- **Insert/delete:** ROWS, 9 inserted on Quarterly Financials:
+  - 2 before **Unit COGS - Model** (now rows 42–43): Percent of Guided Cost Cutting Achieved, Terminal unit COGS
+  - 4 before **SG&A** (now 61–64): Adjusted gross profit / - Model, Adjusted gross margin / - Model
+  - 1 before **Adjusted EBITDA margin** (now 73): Operating cash flow - Model
+  - 2 before **Long term debt** (now 85–86): Cash OpEx run-rate, Non-cash COGS (D&A + SBC)
+- **Formulas:**
+  - **Unit COGS - Model** `$160` copy-from-C → `INDEX(COGS, MATCH("Unit COGS - Model"))` (Q2 2026 −62.3% adj. GM + haircut × 73 pts over Q2’26–Q2’27, then blend to terminal $/kWh as lines 2→4)
+  - **Adjusted gross margin - Model** from COGS; **Adjusted gross profit - Model** = Revenue - Model × adj. GM / 100
+  - **COGS - Model** += `$C$Non-cash COGS` (Q2 SBC+D&A $5.932M)
+  - **Adjusted EBITDA - Model** GP−OpEx → Adj. GP − Cash OpEx run-rate ($28.486M, Q2 implied). **Operating cash flow - Model** = Adj. EBITDA (CFO proxy)
+- **Data:** Haircut **70** (C42), Terminal unit COGS **160** (C43), Cash OpEx **28.486**, Non-cash COGS **5.932**. Adj. GP actuals Q2 2025–Q2 2026 from the 8-K recon. COGS tab: guided 25/20/20/8 pts, $200M/qtr illustration, thread + Slide 11 links.
+- **Side effects:** No chart API. No chart objects in this workbook today; if you add Operations/Money charts later, row inserts will have shifted series — fix in the UI.
+
 ## 2026-09-09 — Populate reported actuals Q1 2025–Q2 2026
 
 Filled Actual rows from 10-Q/10-K XBRL and earnings 8-K Ex. 99.1 / transcripts. Repeatable via `models/EOSE/scripts/fetch_sec_gaap.py` and `load_quarterly_actuals.py`.
