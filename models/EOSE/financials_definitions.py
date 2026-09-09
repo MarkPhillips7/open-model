@@ -77,8 +77,14 @@ FIELD_NOTES: dict[str, str] = {
     "Capex - Model": "Capex per incremental line × MAX(0, Δ lines - Model).",
     "Capex per incremental line": "Guess ($40M). 2025 investing cash outflow was ~$55M for the year.",
     "Net interest run-rate": "Quarterly net interest assumption ($12M from Q2 2026 interest expense order of magnitude).",
-    "Long term debt": "Reported long-term debt when entered.",
-    "Total debt": "Reported total debt when entered.",
+    "Long term debt": (
+        "10-Q/10-K line 'Long-term debt' (noncurrent), excluding related-party notes. "
+        "Derived as XBRL LongTermDebtNoncurrent − LongTermNotesPayable."
+    ),
+    "Total debt": (
+        "Carrying value of all borrowings (XBRL LongTermDebt): named long-term debt "
+        "+ current portion + related-party notes. Not face/principal."
+    ),
     "Total debt - Model": "Carries last actual total debt, else $1,000M placeholder.",
     "Net debt - Model": "Total debt - Model − Cash (actual if present else model).",
     "Basic shares": "Shares outstanding / basic weighted average (million).",

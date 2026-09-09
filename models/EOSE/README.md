@@ -81,10 +81,12 @@ python scripts/test_connection.py --ticker EOSE
 python scripts/validate_workbook_snapshot.py --ticker EOSE
 python scripts/validate_model_formulas.py --ticker EOSE
 python scripts/restore_weekly_model_formulas.py --ticker EOSE
+python models/EOSE/scripts/fetch_sec_gaap.py
+python models/EOSE/scripts/load_quarterly_actuals.py
 python models/EOSE/scripts/setup_eose_workbook.py
 ```
 
-Canonical Model formulas live in `quarterly_model_formulas.py` (label placeholders, restored onto **Quarterly Financials**). Reported prints live in `actuals.py`.
+Canonical Model formulas live in `quarterly_model_formulas.py` (label placeholders, restored onto **Quarterly Financials**). Reported prints live in `actuals.py`. After each earnings release, pull GAAP from SEC companyfacts (`fetch_sec_gaap.py`), copy adj. EBITDA / pipeline / backlog from the 8-K Ex. 99.1 (links in `sources.py`), patch `actuals.py`, then `load_quarterly_actuals.py`. See [RESOURCES.md](RESOURCES.md).
 
 ```python
 from sheets import SheetsClient
