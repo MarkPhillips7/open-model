@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import WEEKLY, label_rows  # noqa: E402
-from sheets.registry import load_pack_module, parse_ticker_argv, resolve_ticker  # noqa: E402
+from sheets.registry import load_pack_module, parse_ticker_argv, pack_dir, resolve_ticker  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_model_formulas import validate  # noqa: E402
@@ -74,6 +74,9 @@ def main() -> None:
         print(f"Unknown arguments: {rest}")
         sys.exit(2)
     ticker = resolve_ticker(ticker_arg)
+    if not (pack_dir(ticker) / "weekly_model_formulas.py").is_file():
+        print(f"No weekly_model_formulas.py in {ticker} pack — skip.")
+        return
     client = SheetsClient(ticker=ticker)
     restore_model_formulas(client, ticker=ticker)
     print("Done.")

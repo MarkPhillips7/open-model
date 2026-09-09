@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import WEEKLY, label_rows  # noqa: E402
-from sheets.registry import load_pack_module, parse_ticker_argv, resolve_ticker  # noqa: E402
+from sheets.registry import load_pack_module, parse_ticker_argv, pack_dir, resolve_ticker  # noqa: E402
 
 # Placeholders that are not Weekly Financials row labels.
 NON_LABEL_PLACEHOLDERS = frozenset(
@@ -198,6 +198,9 @@ def validate(
 def main() -> None:
     ticker_arg, rest = parse_ticker_argv()
     ticker = resolve_ticker(ticker_arg)
+    if not (pack_dir(ticker) / "weekly_model_formulas.py").is_file():
+        print(f"No weekly_model_formulas.py in {ticker} pack — skip.")
+        return
     offline = "--offline" in rest
     check_live_drift = "--skip-drift" not in rest
     unknown = [a for a in rest if a not in {"--offline", "--skip-drift"}]

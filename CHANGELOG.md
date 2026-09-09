@@ -1,6 +1,6 @@
 # Changelog (repository)
 
-Platform and shared-tooling changes. **Sheet writes** belong in `models/{TICKER}/CHANGELOG.md` (see [models/OPEN/CHANGELOG.md](models/OPEN/CHANGELOG.md)).
+Platform and shared-tooling changes. **Sheet writes** belong in `models/{TICKER}/CHANGELOG.md` (see [OPEN](models/OPEN/CHANGELOG.md), [EOSE](models/EOSE/CHANGELOG.md)).
 
 Entry template:
 
@@ -12,6 +12,13 @@ Entry template:
 ```
 
 ---
+
+## 2026-09-09 — Add EOSE model pack
+
+Register Eos Energy as a second vehicle beside OPEN.
+
+- **What:** `models/EOSE/` pack (README, RESOURCES, CHANGELOG, workbook snapshot). `tickers.EOSE` in `config/settings.example.json`. Shared formula restore/validate CLIs skip packs that have no `weekly_model_formulas.py`. No writes to the live EOSE sheet.
+- **Why:** Link the existing [EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing) without forcing OPEN’s weekly iBuying schema onto a quarterly Z3 manufacturing model.
 
 ## 2026-09-08 — Multi-ticker layout
 

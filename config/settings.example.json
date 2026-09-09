@@ -5,6 +5,11 @@
       "name": "Opendoor Technologies",
       "spreadsheet_id": "paste-or-url",
       "price_symbol": "OPEN"
+    },
+    "EOSE": {
+      "name": "Eos Energy Enterprises",
+      "spreadsheet_id": "paste-or-url",
+      "price_symbol": "EOSE"
     }
   }
 }

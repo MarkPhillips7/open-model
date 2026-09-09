@@ -8,9 +8,10 @@ Each vehicle (stock, ETF, or other `GOOGLEFINANCE` symbol) is a **model pack** u
 
 ## Models
 
-| Ticker | Name | Pack |
-| --- | --- | --- |
-| **OPEN** | Opendoor Technologies | [models/OPEN](models/OPEN/README.md) |
+| Ticker | Name | Pack | Spreadsheet |
+| --- | --- | --- | --- |
+| **OPEN** | Opendoor Technologies | [models/OPEN](models/OPEN/README.md) | [Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4) |
+| **EOSE** | Eos Energy Enterprises | [models/EOSE](models/EOSE/README.md) | [EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing) (view or comment) |
 
 ## Layout
 
@@ -31,6 +32,11 @@ config/              OAuth credentials and settings.json (gitignored IDs)
       "name": "Opendoor Technologies",
       "spreadsheet_id": "paste-or-url",
       "price_symbol": "OPEN"
+    },
+    "EOSE": {
+      "name": "Eos Energy Enterprises",
+      "spreadsheet_id": "paste-or-url",
+      "price_symbol": "EOSE"
     }
   }
 }
@@ -67,7 +73,7 @@ Default ticker is `OPEN` when `--ticker` is omitted.
 python scripts/new_ticker.py CSIQ --name "Canadian Solar"
 ```
 
-That stubs `models/CSIQ/` and prints the `settings.json` fragment. Create (or link) a Google Sheet yourself, paste the ID, and build that pack’s tabs independently — do not copy OPEN’s funnel formulas.
+That stubs `models/CSIQ/` and prints the `settings.json` fragment. Create (or link) a Google Sheet yourself, paste the ID, and build that pack’s tabs independently — do not copy OPEN’s funnel formulas. EOSE is an example of linking a pre-existing workbook ([models/EOSE](models/EOSE/README.md)).
 
 ## One-time Google Cloud setup
 
