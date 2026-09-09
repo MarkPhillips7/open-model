@@ -77,6 +77,9 @@ def write_price_history_query(client: SheetsClient, *, price_symbol: str) -> Non
 
 
 def write_weekly_price_formulas(client: SheetsClient, *, ticker: str) -> None:
+    if WEEKLY not in client.list_worksheets():
+        print(f"No {WEEKLY!r} tab — skip weekly Price (Actual) formulas")
+        return
     labels = label_rows(client, WEEKLY, max_row=100)
     price_row = row_by_label(labels, _price_label(ticker), WEEKLY)
     ws = client.worksheet(WEEKLY)

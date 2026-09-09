@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 
 from sheets import SheetsClient  # noqa: E402
 from sheets.labels import WEEKLY, label_rows  # noqa: E402
-from sheets.registry import load_pack_module, parse_ticker_argv, pack_dir, resolve_ticker  # noqa: E402
+from sheets.registry import load_formula_module, parse_ticker_argv, resolve_ticker  # noqa: E402
 
 # Placeholders that are not Weekly Financials row labels.
 NON_LABEL_PLACEHOLDERS = frozenset(
@@ -74,6 +74,13 @@ def collect_template_issues(wfm: ModuleType, label_to_row: dict[str, int]) -> li
     return issues
 
 
+def _a1_col_index(col: str) -> int:
+    n = 0
+    for ch in col:
+        n = n * 26 + (ord(ch.upper()) - 64)
+    return n
+
+
 def collect_generated_formula_issues(
     wfm: ModuleType,
     label_to_row: dict[str, int],
@@ -81,12 +88,16 @@ def collect_generated_formula_issues(
     sample_col: str = "F",
 ) -> list[str]:
     issues: list[str] = []
-    n_cols = ord(sample_col) - ord("B") + 1
+    first_idx = getattr(wfm, "FIRST_VALUE_COL_INDEX", 2)
+    offset = _a1_col_index(sample_col) - first_idx
+    n_cols = offset + 1
+    if n_cols < 1:
+        return issues
     for label in wfm.MODEL_FORMULA_LABELS:
         cells = wfm.row_cells_for_label(label, n_cols, label_to_row=label_to_row)
         if not cells:
             continue
-        formula = cells[-1]
+        formula = cells[offset]
         if not isinstance(formula, str) or not formula.startswith("="):
             continue
         deps = wfm.formula_row_dependencies(label)
@@ -109,13 +120,17 @@ def collect_live_formula_drift(
     label_to_row: dict[str, int],
     *,
     max_row: int = 120,
+    tab: str | None = None,
+    first_col: str = "B",
+    n_cols: int = 128,
 ) -> list[str]:
     """Compare live * - Model formulas to repo templates (catches un-synced manual edits)."""
     del max_row  # kept for call-site compatibility
-    n_cols = 128  # B:DY
-    end_col = wfm.col_letter(n_cols + 1)
+    tab = tab or getattr(wfm, "FINANCIALS_TAB", WEEKLY)
+    first_col = getattr(wfm, "FIRST_VALUE_COL", first_col)
+    end_col = wfm.col_letter(getattr(wfm, "FIRST_VALUE_COL_INDEX", 2) + n_cols - 1)
     model_labels = [label for label in wfm.MODEL_FORMULA_LABELS if label in label_to_row]
-    ranges = [f"{WEEKLY}!B{label_to_row[label]}:{end_col}{label_to_row[label]}" for label in model_labels]
+    ranges = [f"{tab}!{first_col}{label_to_row[label]}:{end_col}{label_to_row[label]}" for label in model_labels]
     if not ranges:
         return []
     live_rows = client.batch_get(ranges, as_formulas=True)
@@ -129,16 +144,20 @@ def collect_live_formula_drift(
         live_row = live_grid[0] if live_grid else []
         for col_idx, expected in enumerate(cells):
             live = live_row[col_idx] if col_idx < len(live_row) else ""
+            if expected is None:
+                continue
             if isinstance(expected, str) and expected.startswith("="):
                 if normalize_formula(expected) != normalize_formula(live):
-                    col = wfm.col_letter(col_idx + 2)
+                    col = wfm.col_letter(
+                        getattr(wfm, "FIRST_VALUE_COL_INDEX", 2) + col_idx
+                    )
                     issues.append(
                         f"{label!r} row {row_num} col {col}: live sheet differs from "
                         f"repo template (update models/{{TICKER}}/*.py or run restore after fixing repo)"
                     )
                     break
             elif expected != "" and expected != live:
-                col = wfm.col_letter(col_idx + 2)
+                col = wfm.col_letter(getattr(wfm, "FIRST_VALUE_COL_INDEX", 2) + col_idx)
                 issues.append(
                     f"{label!r} row {row_num} col {col}: live value {live!r} != repo {expected!r}"
                 )
@@ -149,7 +168,7 @@ def collect_live_formula_drift(
 def _weekly_row_literal_issues(label: str, tmpl: str) -> list[str]:
     """Find $N weekly row literals outside Transitions! references."""
     issues: list[str] = []
-    for part in re.split(r"Transitions![^)\s]*", tmpl):
+    for part in re.split(r"(?:Transitions!|Price History)[^)\s]*", tmpl):
         for pat in (WEEKLY_DOLLAR_ROW, INDEX_DOLLAR_ROW):
             for match in pat.finditer(part):
                 issues.append(
@@ -180,26 +199,41 @@ def validate(
     check_live_drift: bool = True,
 ) -> list[str]:
     resolved = resolve_ticker(ticker or (client.ticker if client else None))
-    wfm = load_pack_module(resolved, "weekly_model_formulas")
+    wfm = load_formula_module(resolved)
     issues: list[str] = []
     issues.extend(collect_hardcoded_template_rows(wfm))
     if offline:
         return issues
 
     client = client or SheetsClient(ticker=resolved)
-    label_to_row = label_rows(client, WEEKLY, max_row=120)
+    tab = getattr(wfm, "FINANCIALS_TAB", WEEKLY)
+    first_idx = getattr(wfm, "FIRST_VALUE_COL_INDEX", 2)
+    label_to_row = label_rows(client, tab, max_row=150)
     issues.extend(collect_template_issues(wfm, label_to_row))
-    issues.extend(collect_generated_formula_issues(wfm, label_to_row))
+    sample_col = wfm.col_letter(first_idx + 4)  # OPEN: F; EOSE: G
+    issues.extend(
+        collect_generated_formula_issues(wfm, label_to_row, sample_col=sample_col)
+    )
     if check_live_drift:
-        issues.extend(collect_live_formula_drift(wfm, client, label_to_row))
+        ws = client.worksheet(tab)
+        data = ws.get("A1:DY150", value_render_option="FORMULA")
+        last_idx = max(len(row) for row in data) if data else first_idx
+        n_cols = max(1, last_idx - first_idx + 1)
+        issues.extend(
+            collect_live_formula_drift(
+                wfm, client, label_to_row, tab=tab, n_cols=n_cols
+            )
+        )
     return issues
 
 
 def main() -> None:
     ticker_arg, rest = parse_ticker_argv()
     ticker = resolve_ticker(ticker_arg)
-    if not (pack_dir(ticker) / "weekly_model_formulas.py").is_file():
-        print(f"No weekly_model_formulas.py in {ticker} pack — skip.")
+    try:
+        load_formula_module(ticker)
+    except FileNotFoundError:
+        print(f"No weekly_model_formulas.py or quarterly_model_formulas.py in {ticker} pack — skip.")
         return
     offline = "--offline" in rest
     check_live_drift = "--skip-drift" not in rest

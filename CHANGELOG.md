@@ -13,6 +13,13 @@ Entry template:
 
 ---
 
+## 2026-09-09 — EOSE Actual vs Model pack
+
+Wire the EOSE quarterly model to OPEN’s restore/validate loop and rebuild the live sheet.
+
+- **What:** `models/EOSE/` quarterly formulas, actuals, Welcome, Definitions, Shares. Shared CLIs load `quarterly_model_formulas.py` when there is no weekly module. `GOOGLEFINANCE` spill can take an explicit date range. Live EOSE sheet rewritten (see `models/EOSE/CHANGELOG.md`). Feltonomics and COGS tabs kept. No chart API writes.
+- **Why:** Distinguish reported prints from the factory/backlog forecast so Q2 2026 misses are visible, without copying OPEN’s weekly funnel.
+
 ## 2026-09-09 — Add EOSE model pack
 
 Register Eos Energy as a second vehicle beside OPEN.

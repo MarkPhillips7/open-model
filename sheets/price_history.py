@@ -17,13 +17,21 @@ def price_history_spill_formula(
     *,
     price_symbol: str,
     weekly_tab: str = WEEKLY,
+    start_expr: str | None = None,
+    end_expr: str | None = None,
 ) -> str:
-    """One spill query for daily prices covering the Weekly Financials horizon."""
-    weeks = f"FILTER('{weekly_tab}'!$B$1:$DY$1,'{weekly_tab}'!$B$1:$DY$1<>\"\")"
+    """One spill query for daily prices.
+
+    Default range follows Weekly Financials week-ending dates. Pass ``start_expr``
+    and ``end_expr`` (Sheets formula fragments) for packs without a weekly tab.
+    """
+    if start_expr is None or end_expr is None:
+        weeks = f"FILTER('{weekly_tab}'!$B$1:$DY$1,'{weekly_tab}'!$B$1:$DY$1<>\"\")"
+        start_expr = f"MIN({weeks})-30"
+        end_expr = f"MIN(MAX({weeks}),TODAY())"
     return (
         f'=GOOGLEFINANCE("{price_symbol}","all",'
-        f"MIN({weeks})-30,"
-        f"MIN(MAX({weeks}),TODAY()),"
+        f"{start_expr},{end_expr},"
         f'"DAILY")'
     )
 

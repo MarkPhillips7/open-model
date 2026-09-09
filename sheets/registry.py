@@ -227,6 +227,19 @@ def _ensure_pack_package(ticker: str) -> str:
     return pkg_name
 
 
+def load_formula_module(ticker: str) -> ModuleType:
+    """Load weekly or quarterly model-formula module for *ticker*."""
+    key = resolve_ticker(ticker)
+    directory = pack_dir(key)
+    if (directory / "weekly_model_formulas.py").is_file():
+        return load_pack_module(key, "weekly_model_formulas")
+    if (directory / "quarterly_model_formulas.py").is_file():
+        return load_pack_module(key, "quarterly_model_formulas")
+    raise FileNotFoundError(
+        f"No weekly_model_formulas.py or quarterly_model_formulas.py in {directory}"
+    )
+
+
 def load_pack_module(ticker: str, module_name: str) -> ModuleType:
     """Load ``models/{ticker}/{module_name}.py`` as a module."""
     key = resolve_ticker(ticker)

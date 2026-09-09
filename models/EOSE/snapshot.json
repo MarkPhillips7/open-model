@@ -1,9 +1,13 @@
 {
   "worksheets": [
-    "Quarterly Results/Projections",
+    "Welcome",
+    "Financials Definitions",
+    "Quarterly Financials",
+    "Shares",
+    "Price History",
+    "Reference",
     "Feltonomics",
-    "COGS",
-    "Reference"
+    "COGS"
   ],
   "charts": []
 }

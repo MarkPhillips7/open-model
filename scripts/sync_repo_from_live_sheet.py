@@ -66,8 +66,9 @@ def main() -> None:
         )
 
     weekly_formulas = ROOT / "models" / ticker / "weekly_model_formulas.py"
-    if not weekly_formulas.is_file():
-        print(f"\nNo weekly_model_formulas.py in {ticker} pack — skip formula drift check.")
+    quarterly_formulas = ROOT / "models" / ticker / "quarterly_model_formulas.py"
+    if not weekly_formulas.is_file() and not quarterly_formulas.is_file():
+        print(f"\nNo model formula module in {ticker} pack — skip formula drift check.")
         print("\nSync complete — review git diff and commit.")
         return
 
