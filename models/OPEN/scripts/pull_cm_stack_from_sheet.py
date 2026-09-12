@@ -96,7 +96,7 @@ def pull_acquisition_percent_monthly(client: SheetsClient) -> list[float]:
 
 
 def pull_weekly_cm_stack(client: SheetsClient) -> tuple[dict[str, float], dict[str, float], dict[str, float]]:
-    label_rows = client.batch_get([f"{WEEKLY}!A1:A65"])[0]
+    label_rows = client.batch_get([f"{WEEKLY}!A1:A120"])[0]
     labels = _label_rows_from_column(label_rows)
     end_col = col_letter(N_COLS + 1)
 
@@ -127,9 +127,9 @@ def pull_weekly_cm_stack(client: SheetsClient) -> tuple[dict[str, float], dict[s
                 out[col_letter(idx + 2)] = float(value)
         return out
 
-    core = hardcoded_cells([value_rows[0]], [formula_rows[0]])
-    adjustments = hardcoded_cells([value_rows[1]], [formula_rows[1]])
-    anchors = hardcoded_cells([value_rows[2]], [formula_rows[2]])
+    core = hardcoded_cells(value_rows[0], formula_rows[0])
+    adjustments = hardcoded_cells(value_rows[1], formula_rows[1])
+    anchors = hardcoded_cells(value_rows[2], formula_rows[2])
     return core, adjustments, anchors
 
 

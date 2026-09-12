@@ -4,7 +4,7 @@ from __future__ import annotations
 
 TRANSITIONS = "Transitions"
 
-OPEN_2_0_SOLD_WEEKS = 21
+OPEN_2_0_SOLD_WEEKS = 25
 OPEN_1_0_SOLD_WEEKS = 39
 
 # Transitions row layout after setup_open_transition.py (4 rows inserted below row 12).
@@ -57,6 +57,63 @@ PRIVATE_CLOSE_BY_WEEK: list[float] = [
     0.18,
     0.14,
     0.1,
+]
+
+# Week-1 listed sell-through; later weeks = prior × OPEN 2.0 Weekly Percent Sold Multiplier.
+OPEN_2_0_SOLD_SEED = 0.089
+OPEN_2_0_WEEKLY_SOLD_MULTIPLIERS: list[float | None] = [
+    None,
+    0.71,
+    0.79,
+    0.8,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    0.99,
+    1,
+]
+OPEN_2_0_PRICE_RETENTION: list[float] = [
+    1,
+    0.997,
+    0.994,
+    0.991,
+    0.988,
+    0.985,
+    0.982,
+    0.979,
+    0.976,
+    0.973,
+    0.97,
+    0.967,
+    0.964,
+    0.96,
+    0.955,
+    0.95,
+    0.947,
+    0.944,
+    0.941,
+    0.938,
+    0.935,
+    0.932,
+    0.929,
+    0.926,
+    0.923,
 ]
 
 # ~51% cumulative sell-through by week 17; tail extended to week 39 (sums to 100%).

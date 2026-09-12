@@ -19,16 +19,17 @@ Quarterly results and supplements are the main source for “actual” rows in *
 | Senior / mezzanine warehouse debt and coupons | 10-Q facility table (outstanding principal, not carrying value). Q2 2026: senior **$1,416M** @ **~5.30%** blend, mezz **$350M** @ **12.50%**; mezz $350M was unchanged Q3 2025–Q2 2026 |
 | Adjusted Operating Expenses | Earnings supplement — *Non-GAAP - Operating Expenses* |
 | Average Sale Price (ASP) | Q2 2026 ASP ≈ **$377.5K** (sheet input) |
-| Contribution Margin | Q2 2026 CM ≈ **5.8%**; Q3 2026 guidance **4–4.5%** |
+| Contribution Margin | Q2 2026 CM ≈ **5.8%**; Q3 2026 guide **3.2–3.5%** ([Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649); Q2 earnings had guided 4–4.5%) |
 | Stock-based compensation | Q3 2026 SBC guide ≈ **$110M** (modeled weekly as ~$8.5M) |
 | Basic shares / dilution | **Shares** tab — reusable event table (`Shares!A4:I20`). **Aug 2026 deal** ([8-K Aug 19, 2026](https://www.sec.gov/Archives/edgar/data/1801169/000114036126033739/ef20080596_8k.htm), [press release](https://investor.opendoor.com/news-releases/news-release-details/opendoor-reduces-shares-outstanding-5-first-ever-share-buyback)): **−45.3M** repurchase @ **$3.49**; **$650M** 0% converts (~**138M** shares @ **$4.71** conversion); capped calls through **$6.98**; **$10.38 net-zero price** = stock price where convert dilution restores repurchased shares (net Δ shares ≈ 0). **Weekly Financials**: **Share Count Adjustment - Model** (BYROW over table + SBC); **Basic Shares Outstanding - Model** = actual if present else prior + adjustment. |
-| Revenue | e.g. quarterly revenue ÷ 13 for weekly run-rate; Q3 2026 guide ≥ **+20% YoY** → ~$915M × 1.2 ≈ **$1.1B** |
+| Revenue | e.g. quarterly revenue ÷ 13 for weekly run-rate; Q3 2026 guide **+10–15% YoY** ([Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649)) → ~$915M × 1.125 ≈ **$1.03B** (Q2 earnings had guided ≥20% YoY / ~$1.1B) |
 
 Management commentary captured in sheet comments (paraphrased / quoted):
 
 - Contribution margin bottomed around September 2025 and improved monthly thereafter (Q1 2026 report).
 - Near-term CM pressure while clearing older inventory.
-- Historical Q2→Q3 CM drops averaged ~500 bps (ex-2023); management argued a narrower drop this cycle (Q2 2026).
+- Historical Q2→Q3 CM drops averaged ~500 bps (ex-2023); management argued a narrower drop this cycle (Q2 2026). Kaz 9 Sep 2026 cut the Q3 CM guide to **3.2–3.5%** after late-August housing, and said they would **price to clear** rather than age inventory.
+- Q3 2026: revenue **+10–15% YoY**; contribution profit dollars **+70–75% YoY** (~$20M × 1.725 ≈ **$34.5M**). Still expects to exit 2026 ANI-positive on a twelve-month go-forward basis; the Adj. EBITDA twelve-month window now starts Q3 2026 (six to eight weeks later than previously implied).
 - Q4 CM guided above Q3 (Q2 2026 / Kaz).
 - Positive adjusted net income expected more from **volume + cost leverage** at a **~5–7% CM** target than from structurally higher unit margins.
 - Fixed opex called out for accountability; recent quarterly path cited as roughly **$37M → $35M → $33M → $35M** (Q3 2025–Q2 2026).
@@ -53,11 +54,13 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-rates-at-opendoor-are-so-much-lower), [Doma announcement](https://www.opendoor.com/articles/doma-announcement), MBA 2024 ~$443 net/loan (industry benchmark).
 
 
-- [Buyer closing & financing (Opendoor Help)](https://help.opendoor.com/buying/financing-closing/buyer-closing) — used for offer→close timing assumptions (financed ~30–45 days / ~6 weeks; cash as fast as ~14 days / ~3 weeks).
+- [Buyer closing & financing (Opendoor Help)](https://help.opendoor.com/buying/financing-closing/buyer-closing) — offer→close timing (`Transitions!B18` / `B19`: financed **8** weeks / cash **4** weeks; help docs cite ~30–45 days financed and as fast as ~14 days cash).
 
 ### Accountability / public projections
 
-- Sheet comments reference Opendoor’s accountability / projection materials for acquisition acceleration (late August–early October 2026). Prefer the latest official accountability page or earnings slides when refreshing the model.
+- [Accountable](https://accountable.opendoor.com/) — weekly **acquisition contracts** and, from Sep 2026, weekly **homes sold** and clearance vs market (e.g. week ending 5 Sep 2026: **223** sold, **19%** faster than market adjusted for delistings). [IR disclosures](https://investor.opendoor.com/) for the same series.
+- [Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649) — Q3 tracking, ANI not yet at break-even, price-to-clear vs aging inventory.
+- Sheet comments also reference acquisition-test slowdowns (late August–September 2026). Prefer the latest official accountability page or earnings slides when refreshing the model.
 
 ---
 
@@ -65,8 +68,8 @@ Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-ra
 
 | Resource | Role in model |
 | --- | --- |
-| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Financials** (~78% in 2025 → ~67% by Q2 2026). **Private Home Sales - Model** = purchases × `(1 − Likelihood to List)` lagged on **purchase→private-close timing** (`Transitions!B23:J23`); not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B25`). |
-| [Wealthmatica — cohort sell-through by listing week](https://wealthmatica.substack.com/i/204433858) | Shape of **Percent Sold by Listing Week** / sell-through curve (listed homes only); combined with Q2 2026 “~91% by ~120 days” commentary. |
+| [Open Tracker (aubermark)](https://aubermark.github.io/open-tracker/) | Listing/acquisition funnel notes: ~**10–20%** of contracts canceled before market in 2025; some deals complete privately and never show as public listings. Combined cancel + Opendoor walk-away is modeled as weekly **Likelihood to Close** on **Weekly Financials** (~78% in 2025 → ~65% at Q2 2026, ~66% from mid-July). **OPEN 2.0 Percent Sold by Listing Week** is shaped to the tracker’s cohort sell-through (~73% by ~120 days), not the Q2 “~91% over 120 days” stock figure. **Private Home Sales - Model** = purchases × `(1 − Likelihood to List)` lagged on **purchase→private-close timing** (`Transitions!B23:J23`); not company-disclosed. Tracker starts **22 Feb 2026**, so Sep 2025–Feb 2026 new lists are modeled (including a finite **unlisted 1.0 backlog** flush, `Transitions!B25`). |
+| [Wealthmatica — cohort sell-through by listing week](https://wealthmatica.substack.com/i/204433858) | Historical shape of **Percent Sold by Listing Week**; Sep 2026 calibration prefers Open Tracker cohorts over the Q2 2026 “~91% by ~120 days” stock commentary. |
 | [X / mudirshin article media](https://x.com/mudirshin/article/2090092238499926511/media/2090092137169760256) | Seed / calibration values for early weeks (e.g. commented “220” listing baseline). |
 
 Refresh these periodically; independent scrapers and posts can lag or disagree with company-reported Non-GAAP metrics.
@@ -102,6 +105,6 @@ When updating the model after an earnings release:
 1. Pull Non-GAAP homes purchased, inventory, revenue, CM, ASP, adjusted opex, fixed opex, SBC from the supplement.
 2. Reconcile weekly “actual” stubs to **Quarterly Financials** (or enter weekly values and let quarterly rows sum).
 3. Update CM guidance and growth / seasonality assumptions if management changes the outlook.
-4. Cross-check listing/acquisition run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and any new accountability charts; update **Likelihood to Close** (`B8` / `AE8`) if cancel/walk-away has moved.
+4. Cross-check listing/acquisition/sold run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and [Accountable](https://accountable.opendoor.com/); update **Likelihood to Close** and weekly **Home Sales** stubs when new prints land.
 5. Confirm transition curves still roughly match disclosed sell-through / days-on-market stats.
 6. Append the sheet edits to [CHANGELOG.md](CHANGELOG.md).

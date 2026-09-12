@@ -11,6 +11,18 @@ Entry template:
 - **Why:** motivation
 ```
 
+## 2026-09-10 — Re-prompt Google OAuth when the saved token is revoked
+
+- **What:** `sheets.auth.get_client()` catches `RefreshError`, deletes `config/authorized_user.json`, and retries so `auth_setup.py` opens a browser instead of dying on `invalid_grant`.
+- **Why:** A revoked refresh token was reused silently; the user never got a login prompt.
+
+## 2026-09-10 — OPEN CM-stack pull actually reads hardcoded cells
+
+- **What:** `models/OPEN/scripts/pull_cm_stack_from_sheet.py` was passing `[grid]` into a helper that already expects a grid, so every CM Core / Adjustments / Improvement cell looked like a formula. Sync now reads `A1:A120` and unwraps one level. Captured the live late-Aug/Sep CM adjustment path (see `models/OPEN/CHANGELOG.md`).
+- **Why:** Manual Kaz 9 Sep 2026 CM edits would have been overwritten on the next restore.
+
+---
+
 ## 2026-09-09 — EOSE MWh shipped / derived $/kWh rows
 
 - **What:** Quarterly Financials layout now has **MWh shipped**, **Z3 ASP - Derived**, **Unit COGS - Derived**, and **Pipeline quarterly growth rate**. Pipeline (GWh) - Model uses ASP not unit COGS. Column widths captured from the live sheet. `pull_financials_definitions_from_sheet.py` added for EOSE.

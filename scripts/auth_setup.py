@@ -21,7 +21,11 @@ def main() -> None:
         sys.exit(1)
 
     print(f"\nCredentials: {CREDENTIALS_FILE}")
-    print("A browser window will open for Google sign-in.\n")
+    print("A browser window will open for Google sign-in.")
+    print(
+        "If no window appears, delete config/authorized_user.json and run this again "
+        "(gspread otherwise refreshes a saved token instead of prompting).\n"
+    )
 
     client = get_client()
 

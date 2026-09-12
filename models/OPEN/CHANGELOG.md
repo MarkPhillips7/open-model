@@ -18,6 +18,32 @@ Entry template:
 
 ---
 
+## 2026-09-10 — Sync Kaz 9 Sep 2026 Q3 update from live sheet
+
+Pulled manual workbook edits after [Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649) (Q3 tracking, price-to-clear, weekly sold on Accountable). `* - Model` formulas were unchanged.
+
+- **Tab / range:** **Weekly Financials** CM Adjustments `AR:BE`, Home Sales `BA`, L2C waypoints, Acquisition Growth late-Aug/Sep; **Transitions** OPEN 2.0 sell-through `B9:Z11`; **Financials Definitions** `A1:B102` (notes rewritten to match comments); cell **comments** on Weekly / Transitions
+- **Insert/delete:** none this change-set (chart series +1 vs prior snapshot is the 8 Sep ODL revenue row, already on the live tabs)
+- **Formulas:** none on model rows. OPEN 2.0 **Percent Sold by Listing Week** still `=prior×multiplier` from seed **0.089**; grid now runs through week **25** (`B10:Z10`). Home Sales / Revenue - 2.0 Model still SUMPRODUCT **21** weeks.
+- **Data:**
+  - **Contribution Margin - Adjustments** `AR:BE` more negative (price-to-clear into a weak late-August tape): **AR–AU −0.7% → −0.9%**; **AV–AW −0.7% → −1.0%**; **AX −1.5%**; **AY −1.7%**; **AZ −1.5%**; **BA–BB 0 → −1.3%**; **BC 0 → −1.0%**; **BD–BE 0 → −0.7%**
+  - **Home Sales** week ending **2026-09-05** (`BA`) **223** (Accountable / Kaz “last week”)
+  - **Acquisition Growth** `AY:BB` **−12% / −12% / −15% / −6%** (Sep tests + housing), then `BD:BE` **+10% / +12%**
+  - **Likelihood to Close** Q2+ hold **67% → 65%** (`AE`), dip **63%** (`AF`), then **64 / 65 / 66%** (`AP` / `AR` / `AT`) carried forward
+  - **OPEN 2.0** listed sell-through retuned to Open Tracker cohorts: ~**73%** by week 17 / ~120 days (was ~91% stock DOM figure); ~**86%** by week 21; week-2–4 multipliers **0.71 / 0.79 / 0.80**
+  - Offer→close lags on **Transitions B18/B19** **8 / 4** weeks (help-doc long end)
+- **Side effects:** Comments added/updated for Q3 CM **3.2–3.5%**, revenue **+10–15% YoY** (~$1.03B), CP **+70–75% YoY** (~$34.5M), 6–8 week Adj. EBITDA delay, Home Sales weekly Accountable URL, and sell-through calibration. **Financials Definitions** notes pushed to match. `snapshot.json` refreshed — Homes/Money chart series already pointed at current rows (inventory **53/54**, CP model **33**, Adj EBITDA **71/72**, etc.). Please eyeball the chart lines in the UI; agents did not edit chart objects. `pull_cm_stack_from_sheet.py` no longer double-wraps the CM read (it had been skipping hardcoded adjustments).
+
+## 2026-09-10 — OPEN 2.0 sell-through SUMPRODUCT through week 25
+
+Home Sales / Revenue - 2.0 Model now consume the full Open Tracker tail that was already on Transitions (`B10:Z10`).
+
+- **Tab / range:** **Weekly Financials** **Home Sales - 2.0 Model**, **Revenue - 2.0 Model** `B:DY`; **Transitions** **OPEN 2.0 Price Retention** `W12:Z12`; **Financials Definitions** Home Sales - 2.0 note
+- **Insert/delete:** none
+- **Formulas:** 2.0 `MAP(SEQUENCE(1,21), …)` over `Transitions!B10:V10` / `B12:V12` → `SEQUENCE(1,25)` over `B10:Z10` / `B12:Z12` (cash and financed revenue SUMPRODUCTs). 1.0 path still 39 weeks.
+- **Data:** **Transitions W12:Z12** **0.932, 0.929, 0.926, 0.923** (continue the 2.0 −30 bps/week haircut past week-21 **93.5%**, so late sales are not indexed into blank retention)
+- **Side effects:** Listed 2.0 sell-through in the model goes from ~**86%** by week 21 to ~**99.5%** by week 25. No row insert; chart series ranges unchanged — still worth a visual check on Homes/Money Charts. Agents did not edit chart objects.
+
 ## 2026-09-08 — Off-inventory ODL terminal 2% by Jan 1 2030
 
 Base-case digital-purchase share instead of the prior 10% hero terminal.

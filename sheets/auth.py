@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import gspread
+from google.auth.exceptions import RefreshError
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
 CREDENTIALS_FILE = CONFIG_DIR / "credentials.json"
@@ -16,7 +17,19 @@ def get_client() -> gspread.Client:
             "and save them as config/credentials.json. See README.md for steps."
         )
 
-    return gspread.oauth(
-        credentials_filename=str(CREDENTIALS_FILE),
-        authorized_user_filename=str(AUTHORIZED_USER_FILE),
-    )
+    try:
+        return gspread.oauth(
+            credentials_filename=str(CREDENTIALS_FILE),
+            authorized_user_filename=str(AUTHORIZED_USER_FILE),
+        )
+    except RefreshError:
+        if AUTHORIZED_USER_FILE.exists():
+            AUTHORIZED_USER_FILE.unlink()
+            print(
+                "Saved Google token expired or was revoked; "
+                "opening a new sign-in window."
+            )
+        return gspread.oauth(
+            credentials_filename=str(CREDENTIALS_FILE),
+            authorized_user_filename=str(AUTHORIZED_USER_FILE),
+        )

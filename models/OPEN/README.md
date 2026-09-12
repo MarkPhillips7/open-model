@@ -51,7 +51,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × **Acquisition Seasonality Multiplier** × weekly operational growth.
 2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row.
 3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B25`, default 450) draining on row 27. Never-listed share is `(1 − Likelihood to List)` on the weekly row (not a fixed Transitions %).
-4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (~21 weeks) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
+4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (**25** weeks on 2.0 / **39** on 1.0) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
 5. **Revenue** — Listed path = listings × ASP × sell-through × **price retention**, split by cash vs financed close lags. Private path = that week’s private sales × ASP (close already in the private curve; no DOM decay).
 6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present).
 
@@ -84,21 +84,21 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 
 | Assumption | Approx. value in sheet | Intent |
 | --- | --- | --- |
-| Likelihood to Close (per contract week) | **78%** in 2025 → **67%** from Q2 2026 (Q1 2026 interpolates) | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit `B8` / `AE8`. |
+| Likelihood to Close (per contract week) | **78%** in 2025 → **65%** at Q2 2026 (`AE`), dip to **63%**, then **66%** from mid-July | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit the L2C row (B / AE and later waypoints). |
 | Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
 | OPEN 1.0 → 2.0 transition | **0%** at Feb 2026 → **100%** by Jan 2027 | Blends listing / sales / revenue models between **OPEN 1.0** (pre-Kaz DOM ~51% @ 120d) and **OPEN 2.0** curves on **Transitions**. Edit completeness row or 1.0/2.0 sub-model rows. |
 | Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | **2.0** listing lag: `Transitions` row 4; **1.0**: row 5 (New Listings - 1.0 Model only). |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B25` / `B27:I27`. Does not add to purchases. |
 | Private / non-listed completions | **`1 − Likelihood to List`** on weekly row 10 | Share of purchases that never list. Feeds **Private Home Sales - Model** (not `Transitions!B6`, which is unused). |
 | Private sale timing (purchase → close) | 9 weeks (`Transitions!B23:J23`) | Never-listed share lagged on **Percent of Private Completions Sold by Week**; edit row 23. |
-| Listing → sale curve | ~21 weeks; ~**91%** by ~120 days (2.0) | Calibrated to Q2 2026 DOM commentary. **1.0** path ~**51%** by week 17, **100%** by week **39** (~9 months) on `Transitions` rows 13–16. |
-| Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
-| Offer → close (financed / cash) | **6** / **3** weeks | From Opendoor help docs. |
+| Listing → sale curve | 2.0 **25** weeks. ~**73%** by week 17 / ~120 days, ~**86%** by week 21, ~**99.5%** by week 25 | Shaped to [Open Tracker](https://aubermark.github.io/open-tracker/) cohort sell-through (Sep 2026). The Q2 “~91% over 120 days” stock figure was skewed by recent listings. **1.0** path ~**51%** by week 17, **100%** by week **39** on `Transitions` rows 13–16. |
+| Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 → ~**92.3%** by week 25 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
+| Offer → close (financed / cash) | **8** / **4** weeks | `Transitions!B18` / `B19`. Help docs cite ~30–45 days financed / ~14 days cash; sheet uses the long end of those windows. |
 | Cash purchase share | ~**31.5%** | National U.S. mix; OPEN does not disclose. |
 | ASP | **$377,500** | Q2 2026. |
 | Seasonality | Monthly acquisition weights summing to **100%** | Peak Nov–Dec (listings lag ~2 months into spring/early summer selling); trough May–Aug. |
 | Acquisition growth (ops) | Weekly % ramp then fade | Growth / accountability scenarios. |
-| CM path | Core improving; temporary negative adjustments; guided mid-single digits | Matches earnings CM narrative (bottom Sept 2025, Q3 guide 4–4.5%, longer-term ~5–7%). |
+| CM path | Core improving; late-Aug/Sep **Adjustments** more negative (price-to-clear) | Q2 2026 ~5.8%; Kaz 9 Sep 2026 Q3 guide **3.2–3.5%** (was 4–4.5%); longer-term ~5–7%. |
 | Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **80%** by Oct 2028 | Four-phase smoothstep on **Open Mortgage Percent** (10% Sep 2026 / 40% Dec 2026 / 80% Oct 2028). On-inventory resales only. |
 | Mortgage $/attached loan | **$4,000** max net (`Transitions!B29`) | CM add = attach × $/loan ÷ ASP. |
 | Off-inventory ODL | **0%** of US existing-home-sale TAM at Sep 2026 GA → **2%** by Jan 1 2030 | `ODL Off-inventory Loans / Revenue / Profit - Model`; TAM **4,000,000**/year (`Transitions!B33`); **$7,500** revenue / **$3,000** profit per loan (`B34` / `B31`). Revenue in **Revenue - Model**; profit in Adj EBITDA, not CM. |
@@ -119,8 +119,8 @@ Where disclosure is missing, the sheet comments say so explicitly (likelihood to
 
 Use the workbook to stress-test questions such as:
 
-- Does **volume recovery** (contracts → inventory → sales) support the revenue guide (e.g. ≥20% YoY)?
-- Is **CM** improving for the right reasons (new cohorts vs one-off), and does it reach the **5–7%** band management ties to adjusted profitability?
+- Does **volume recovery** (contracts → inventory → sales) support the revenue guide (Q3 2026 **+10–15% YoY** per [Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649); was ≥20% at Q2 earnings)?
+- Is **CM** improving for the right reasons (new cohorts vs one-off), and does it reach the **5–7%** band management ties to adjusted profitability after the Q3 **3.2–3.5%** print?
 - Do **fixed costs** stay flat while volume scales (operating leverage)?
 - How sensitive are revenue and inventory to **DOM / sell-through**, **likelihood to close**, and **private** rates?
 
