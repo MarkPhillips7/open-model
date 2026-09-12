@@ -18,6 +18,29 @@ Entry template:
 
 ---
 
+## 2026-09-12 — Fix TTM revenue drop at week ending 2026-09-05
+
+Inserting CNML rows left **Trailing Twelve Months Revenue** indexing weekly rows **22/23** (numeric `INDEX($B:$DY,22,ci)` does not shift on insert). Those rows are now **Home Sales - 2.0 / 1.0 Model**. The formula switches to a 52-week rolling sum when `weeksAvail ≥ 52`, which is column **BA** (9/5/2026) — TTM collapsed from ~$2.7B to ~$8.7k.
+
+- **Tab / range:** **Weekly Financials** **Trailing Twelve Months Revenue** `B100:DY100`; **Price @ P/S = 2 / 3** `B101:DY102` (restore; `2.0`/`3.0` normalized to `2`/`3`)
+- **Insert/delete:** none
+- **Formulas:** rolling/proration weekly INDEX `$B:$DY,22/23` → `$B$24:$DY$24` / `$B$25:$DY$25` (**Revenue** / **Revenue - Model**). Quarterly revenue via `MATCH("Revenue", …)` instead of `$B$25:$M$25`. Wired TTM and P/S into `restore_weekly_model_formulas.py` so the next row insert rewrites them.
+- **Data:** TTM week ending **2026-09-05** (~**$3.31B**) and following weeks recovered from ~$8.7k. Pre-52-week prorated TTM also moved (Q3 2026 weekly fallback had been summing home-sale counts).
+- **Side effects:** none on charts (TTM is not a chart series). `validate_model_formulas.py` passed including live drift.
+
+## 2026-09-12 — Cash Now More Later (2P) mix and warehouse intensity
+
+CNML is still iBuying (Kaz 2P): Opendoor buys, holds, and resells; less cash at close; residual to seller is COGS. Mix is a weekly lever. Units stay on the purchase → inventory path. Warehouse debt now scales with blended cash-at-close so a rising mix grows the book slower than home count. 3P marketplace is not modeled.
+
+- **Tab / range:** **Weekly Financials** rows **8–9**; **Quarterly Financials** rows **9–10**; **Transitions** `A35:B36`; **Financials Definitions** `A1:B102`; **Welcome** tab copy
+- **Insert/delete:** ROWS, weekly start index **8** (before **Homes Purchased**), count **2**; quarterly start index **9**, count **2**. Labels: **Cash Now More Later %**, **CNML Purchases - Model**
+- **Formulas:**
+  - **Cash Now More Later %:** date IFS + smoothstep **0%** through Q1 2025 → **19%** last week of Q3 2025 → **35%** last week of Q4 2025 → **~40%** from Sep 2026 → `Transitions!$B$36` terminal by **2027-12-25** (default **50%**). Same formula on quarterly `B:L`.
+  - **CNML Purchases - Model:** `Homes Purchased - Model × Cash Now More Later %` (diagnostic; not subtracted from inventory)
+  - **Senior / Mezzanine Warehouse Debt - Model:** prior total × homes ratio × **CNML intensity ratio** × mezz share. Intensity = `(1 − CNML%) + CNML% × Transitions!$B$35`. Unchanged when mix is stable; actual 10-Q debt still overrides.
+- **Data:** **Transitions B35** **CNML cash at close vs 1P** = **80%** (guess); **B36** **CNML mix terminal %** = **50%** (guess). Not company-disclosed.
+- **Side effects:** Number formats `0.0%` / `#,##0.0` on CNML rows; `%` on Transitions B35:B36. Cell notes on Weekly B8/B9 and Transitions B35/B36. Rows from **Homes Purchased** down shift **+2**. Google Sheets auto-shifted **Homes Charts** (purchases **10/11**, listings **13/15**, sales **19/21**, inventory **53/54**, util **59–62**) and **Money Charts** (revenue **24/25**, shares **48/50**, CP **27/33**, Adj EBITDA **71/72**, Adj NI **77/84**, GAAP NI **95/96**, prices **99/101/102**). Please eyeball the chart lines in the UI — agents did not edit chart objects. `snapshot.json` refreshed. `validate_model_formulas.py` passed including live drift.
+
 ## 2026-09-12 — Revenue = ASP × Home Sales; drop 1.0/2.0 revenue rows
 
 Synced manual workbook edits. **Revenue - Model** is now sold-price × blended closed units (plus off-inventory ODL). The **Revenue - 1.0 / 2.0 Model** SUMPRODUCTs were unused after that change (they re-lagged cash/financed close and applied price retention on top of Home Sales, which are already closed units). Deleted those rows.

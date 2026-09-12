@@ -63,7 +63,7 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     ),
     (
         "Transitions",
-        "Lag and probability tables: contract→purchase timing, listing vs private-sale paths, sell-through curves, cash mix, ancillary attach, and OPEN 1.0→2.0 transition weights.",
+        "Lag and probability tables: contract→purchase timing, listing vs private-sale paths, sell-through curves, cash mix, ancillary attach, Cash Now More Later capital intensity / mix terminal, and OPEN 1.0→2.0 transition weights.",
     ),
     (
         "Shares",

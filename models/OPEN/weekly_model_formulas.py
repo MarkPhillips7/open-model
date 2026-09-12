@@ -73,6 +73,11 @@ from .warehouse_financing import (
     warehouse_debt_model_formula,
     warehouse_interest_model_formula,
 )
+from .cnml import (
+    CNML_PERCENT_LABEL,
+    CNML_PURCHASES_MODEL_LABEL,
+    cnml_percent_formula,
+)
 from .ancillary_products import (
     CM_MORTGAGE_LABEL,
     CM_TITLE_LABEL,
@@ -96,6 +101,16 @@ from .shares_events import (
     SHARES_ADJUSTMENT_LABEL,
     weekly_share_adjustment_formula,
     weekly_shares_model_formula,
+)
+from .valuation import (
+    PRICE_AT_PS_2_LABEL,
+    PRICE_AT_PS_3_LABEL,
+    REVENUE_LABEL,
+    REVENUE_MODEL_LABEL,
+    SHARES_LABEL,
+    TTM_REVENUE_LABEL,
+    weekly_price_at_ps_formula,
+    weekly_ttm_revenue_formula,
 )
 from .doma_manual_cells import DOMA_GROWTH_MULTIPLIER_CELLS, DOMA_REFI_PROFIT_CELLS
 from .open_transition import (
@@ -307,6 +322,9 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     "Acquisition Contracts - Model": (
         "={c}{Acquisition Contracts - no seasonality}*{c}{Acquisition Seasonality Multiplier}"
     ),
+    CNML_PURCHASES_MODEL_LABEL: (
+        "={c}{Homes Purchased - Model}*{c}{Cash Now More Later %}"
+    ),
     "Revenue - Model": (
         "={c}{Average Sale Price (homes sold by OPEN)}*{c}{Home Sales - Model}"
         "+N({c}{ODL Off-inventory Revenue - Model})"
@@ -448,6 +466,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             SENIOR_DEBT_LABEL,
             MEZZ_SHARE_LABEL,
             "Homes in Inventory - Model",
+            CNML_PERCENT_LABEL,
         }
     ),
     MEZZ_DEBT_MODEL_LABEL: frozenset(
@@ -455,6 +474,7 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             MEZZ_DEBT_LABEL,
             MEZZ_SHARE_LABEL,
             "Homes in Inventory - Model",
+            CNML_PERCENT_LABEL,
         }
     ),
     WAREHOUSE_INTEREST_MODEL_LABEL: frozenset(
@@ -470,6 +490,10 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     ),
     "Acquisition Contracts - Model": frozenset(
         {"Acquisition Contracts - no seasonality", "Acquisition Seasonality Multiplier"}
+    ),
+    CNML_PERCENT_LABEL: frozenset(),
+    CNML_PURCHASES_MODEL_LABEL: frozenset(
+        {"Homes Purchased - Model", CNML_PERCENT_LABEL}
     ),
     "Contribution Profit - Model": frozenset(
         {
@@ -559,10 +583,18 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     ODL_OFF_INVENTORY_REVENUE_LABEL: frozenset({ODL_OFF_INVENTORY_LOANS_LABEL}),
     ODL_OFF_INVENTORY_PROFIT_LABEL: frozenset({ODL_OFF_INVENTORY_LOANS_LABEL}),
     TRANSITION_COMPLETENESS_LABEL: frozenset(),
+    TTM_REVENUE_LABEL: frozenset({REVENUE_LABEL, REVENUE_MODEL_LABEL}),
+    PRICE_AT_PS_2_LABEL: frozenset(
+        {TTM_REVENUE_LABEL, SHARES_LABEL, SHARES_MODEL_LABEL}
+    ),
+    PRICE_AT_PS_3_LABEL: frozenset(
+        {TTM_REVENUE_LABEL, SHARES_LABEL, SHARES_MODEL_LABEL}
+    ),
 }
 
 MODEL_FORMULA_LABELS: tuple[str, ...] = (
     "Acquisition Contracts - Model",
+    CNML_PERCENT_LABEL,
     TRANSITION_COMPLETENESS_LABEL,
     "New Listings - Model",
     NEW_LISTINGS_2_0_MODEL_LABEL,
@@ -618,6 +650,9 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
     MEZZ_DEBT_MODEL_LABEL,
     WAREHOUSE_INTEREST_MODEL_LABEL,
     "Net Interest Expense - Model",
+    TTM_REVENUE_LABEL,
+    PRICE_AT_PS_2_LABEL,
+    PRICE_AT_PS_3_LABEL,
 )
 
 _LABEL_PLACEHOLDER_RE = re.compile(r"\{([^{}]+)\}")
@@ -875,6 +910,9 @@ def row_cells_for_label(
             )
         return cells
 
+    if label == CNML_PERCENT_LABEL:
+        return [cnml_percent_formula(col_letter(col_idx + 2)) for col_idx in range(n_cols)]
+
     if label == OPEN_MORTGAGE_PERCENT_LABEL:
         return [open_mortgage_percent_formula(col_letter(col_idx + 2)) for col_idx in range(n_cols)]
 
@@ -1013,6 +1051,29 @@ def row_cells_for_label(
         return [
             net_interest_model_formula(
                 col_letter(col_idx + 2), label_to_row=label_to_row
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label == TTM_REVENUE_LABEL:
+        return [
+            weekly_ttm_revenue_formula(
+                col_letter(col_idx + 2),
+                revenue_row=label_to_row[REVENUE_LABEL],
+                revenue_model_row=label_to_row[REVENUE_MODEL_LABEL],
+            )
+            for col_idx in range(n_cols)
+        ]
+
+    if label in (PRICE_AT_PS_2_LABEL, PRICE_AT_PS_3_LABEL):
+        multiple = 2 if label == PRICE_AT_PS_2_LABEL else 3
+        return [
+            weekly_price_at_ps_formula(
+                col_letter(col_idx + 2),
+                ps_multiple=multiple,
+                ttm_row=label_to_row[TTM_REVENUE_LABEL],
+                shares_row=label_to_row[SHARES_LABEL],
+                shares_model_row=label_to_row[SHARES_MODEL_LABEL],
             )
             for col_idx in range(n_cols)
         ]

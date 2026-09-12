@@ -46,7 +46,7 @@ EPS_MODEL_LABEL = "Earnings per Share - Model"
 
 
 def ensure_valuation_rows(client: SheetsClient) -> None:
-    weekly_labels = label_rows(client, WEEKLY, max_row=100)
+    weekly_labels = label_rows(client, WEEKLY, max_row=150)
     if PRICE_AT_CLOSE_LABEL in weekly_labels:
         print(f"Valuation rows already on {WEEKLY}")
         return
@@ -67,7 +67,7 @@ def ensure_valuation_rows(client: SheetsClient) -> None:
 
 def write_quarterly_ttm_actuals(client: SheetsClient) -> None:
     """Write reported TTM revenue on Quarterly Financials for quarters on the sheet."""
-    labels = label_rows(client, QUARTERLY, max_row=100)
+    labels = label_rows(client, QUARTERLY, max_row=150)
     ws = client.worksheet(QUARTERLY)
     ttm_row = row_by_label(labels, TTM_REVENUE_LABEL, QUARTERLY)
     headers = ws.get("B1:M1")[0]
@@ -83,8 +83,7 @@ def write_quarterly_ttm_actuals(client: SheetsClient) -> None:
 
 
 def write_weekly_valuation_formulas(client: SheetsClient) -> None:
-    labels = label_rows(client, WEEKLY, max_row=100)
-    quarterly_labels = label_rows(client, QUARTERLY, max_row=100)
+    labels = label_rows(client, WEEKLY, max_row=150)
     ws = client.worksheet(WEEKLY)
 
     price_row = row_by_label(labels, PRICE_AT_CLOSE_LABEL, WEEKLY)
@@ -95,9 +94,8 @@ def write_weekly_valuation_formulas(client: SheetsClient) -> None:
     revenue_model_row = row_by_label(labels, REVENUE_MODEL_LABEL, WEEKLY)
     shares_row = row_by_label(labels, SHARES_LABEL, WEEKLY)
     shares_model_row = row_by_label(labels, SHARES_MODEL_LABEL, WEEKLY)
-    quarterly_revenue_row = row_by_label(quarterly_labels, REVENUE_LABEL, QUARTERLY)
 
-    data = ws.get("A1:DY90", value_render_option="FORMULA")
+    data = ws.get("A1:DY1", value_render_option="FORMULA")
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 
@@ -110,7 +108,6 @@ def write_weekly_valuation_formulas(client: SheetsClient) -> None:
                 col,
                 revenue_row=revenue_row,
                 revenue_model_row=revenue_model_row,
-                quarterly_revenue_row=quarterly_revenue_row,
             )
         )
         rows_to_update.setdefault(ps2_row, []).append(

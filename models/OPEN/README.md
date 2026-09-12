@@ -15,6 +15,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 - Reconstruct a **weekly operating model** of Opendoor’s home funnel: acquisition contracts → purchases → listings → sales → revenue.
 - Separate **reported / stubbed actuals** from **forward model** rows so gaps and surprises are visible.
 - Encode **timing and attrition** (likelihood to close by contract week, private closings, days on market, financed vs cash close) as adjustable assumptions.
+- Split **Cash Now More Later (2P)** mix from core **1P** cash offers so capital per home can fall without taking units off inventory.
 - Project **contribution margin**, fixed costs, and inventory path under seasonal and growth scenarios.
 - Use charts to compare actual vs modeled homes and money over time.
 
@@ -49,11 +50,17 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Funnel (actuals vs model)
 
 1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × **Acquisition Seasonality Multiplier** × weekly operational growth.
-2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row.
+2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row. **Cash Now More Later %** is a mix of those purchases (2P vs 1P), not a second funnel: CNML homes still close, still sit in inventory, and still print full-home resale revenue. Accountable contract counts already include CNML.
 3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B25`, default 450) draining on row 27. Never-listed share is `(1 − Likelihood to List)` on the weekly row (not a fixed Transitions %).
 4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (**25** weeks on 2.0 / **39** on 1.0) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
 5. **Revenue** — Home-sale revenue = **ASP × Home Sales - Model** + off-inventory ODL. Home Sales already blends 1.0/2.0 sell-through into closed units that week, so revenue does not re-apply listing→cash/financed close lags or a second price-retention haircut.
-6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present).
+6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present). Home **count** does not fall when CNML mix rises. Warehouse **debt** does: modeled senior/mezz scales with homes and with blended cash-at-close `((1 − CNML%) + CNML% × Transitions B35)`.
+
+### 1P / 2P / 3P (Kaz, Q2 2026)
+
+- **1P** — core cash offer: buy the home, keep all resale upside/downside.
+- **2P — Cash Now, More Later** (formerly Cash Plus) — still buy, renovate, list, and resell. Seller takes less cash at close and a residual at resale (GAAP: extra seller payment is **COGS**). Capital-light, not asset-light.
+- **3P** — marketplace: buyers and sellers transact on the platform with **no Opendoor balance sheet**. Not modeled. Kaz: stay on step 2 until 2P is working.
 
 ### Profitability stack
 
@@ -86,11 +93,13 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Assumption | Approx. value in sheet | Intent |
 | --- | --- | --- |
 | Likelihood to Close (per contract week) | **78%** in 2025 → **65%** at Q2 2026 (`AE`), dip to **63%**, then **66%** from mid-July | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit the L2C row (B / AE and later waypoints). |
+| Cash Now More Later % | **0%** through Q1 2025 → **19%** last week of Q3 2025 → **35%** last week of Q4 2025 → ~**40%** from Sep 2026 → **50%** terminal end-2027 (`Transitions!B36`) | 2P mix of purchases. Disclosed through Q1 2026; Q2+ and terminal are guesses. Overwrite any week. Does **not** divert units off inventory. |
+| CNML cash at close vs 1P | **80%** (`Transitions!B35`) | Guess (not disclosed). Blended warehouse intensity = `(1 − CNML%) + CNML% × B35`. |
 | Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
 | OPEN 1.0 → 2.0 transition | **0%** at Feb 7 2026 → **100%** by Sep 4 2027 | Blends listing / sales models between **OPEN 1.0** (pre-Kaz DOM ~51% @ 120d) and **OPEN 2.0** curves on **Transitions**. Edit completeness row or 1.0/2.0 sub-model rows. |
 | Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | **2.0** listing lag: `Transitions` row 4; **1.0**: row 5 (New Listings - 1.0 Model only). |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B25` / `B27:I27`. Does not add to purchases. |
-| Private / non-listed completions | **`1 − Likelihood to List`** on weekly row 10 | Share of purchases that never list. Feeds **Private Home Sales - Model** (not `Transitions!B6`, which is unused). |
+| Private / non-listed completions | **`1 − Likelihood to List`** on the weekly Likelihood to List row | Share of purchases that never list. Feeds **Private Home Sales - Model** (not `Transitions!B6`, which is unused). |
 | Private sale timing (purchase → close) | 9 weeks (`Transitions!B23:J23`) | Never-listed share lagged on **Percent of Private Completions Sold by Week**; edit row 23. |
 | Listing → sale curve | 2.0 **25** weeks. ~**73%** by week 17 / ~120 days, ~**86%** by week 21, ~**99.5%** by week 25 | Shaped to [Open Tracker](https://aubermark.github.io/open-tracker/) cohort sell-through (Sep 2026). The Q2 “~91% over 120 days” stock figure was skewed by recent listings. **1.0** path ~**51%** by week 17, **100%** by week **39** on `Transitions` rows 13–16. |
 | Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 → ~**92.3%** by week 25 | On **Transitions** (rows 12 vs 16) as documentation of list-to-sold haircut. **Revenue - Model** uses ASP × Home Sales, not this curve. **1.0**: 100% → ~**88.6%** by week 21. |
@@ -125,6 +134,7 @@ Use the workbook to stress-test questions such as:
 - Is **CM** improving for the right reasons (new cohorts vs one-off), and does it reach the **5–7%** band management ties to adjusted profitability after the Q3 **3.2–3.5%** print?
 - Do **fixed costs** stay flat while volume scales (operating leverage)?
 - How sensitive are revenue and inventory to **DOM / sell-through**, **likelihood to close**, and **private** rates?
+- If **Cash Now More Later** mix keeps rising, how much slower does warehouse debt grow than home count (B35 capital intensity), without changing unit volume or home-sale revenue?
 
 Update after each earnings release using the checklist in [RESOURCES.md](RESOURCES.md).
 
@@ -141,6 +151,7 @@ python scripts/validate_model_formulas.py --ticker OPEN --offline
 python scripts/restore_weekly_model_formulas.py --ticker OPEN
 python scripts/sync_repo_from_live_sheet.py --ticker OPEN
 python models/OPEN/scripts/update_weekly_quarterly_spread.py
+python models/OPEN/scripts/add_cnml_rows.py
 ```
 
 Canonical model-row formulas live in `weekly_model_formulas.py`. Templates use `{Label}` placeholders resolved at restore time via `sheets/labels.py` — never hardcoded weekly row numbers.

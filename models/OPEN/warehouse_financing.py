@@ -2,11 +2,14 @@
 
 Rates and mix are weekly levers (carry forward; overwrite a week to step).
 Outstanding balances are quarter-end actuals from 10-Q facility tables, interpolated
-like Homes in Inventory. Model debt scales with inventory and splits by mezzanine share
-so a cheaper mix (less mezz, more senior) cuts Warehouse Interest Expense.
+like Homes in Inventory. Model debt scales with inventory, CNML capital intensity
+(less cash at close on 2P homes), and splits by mezzanine share so a cheaper mix
+(less mezz, more senior) cuts Warehouse Interest Expense.
 """
 
 from __future__ import annotations
+
+from .cnml import cnml_intensity_ratio_expr
 
 SENIOR_INTEREST_RATE_LABEL = "Senior Interest Rate"
 MEZZ_INTEREST_RATE_LABEL = "Mezzanine Interest Rate"
@@ -95,7 +98,7 @@ def warehouse_debt_model_formula(
     is_senior: bool,
     label_to_row: dict[str, int],
 ) -> str:
-    """Actual if present; else scale last week's modeled book with inventory and apply mezz share."""
+    """Actual if present; else scale last week's modeled book with inventory, CNML intensity, and mezz share."""
     actual_row = label_to_row[SENIOR_DEBT_LABEL if is_senior else MEZZ_DEBT_LABEL]
     seed = SENIOR_DEBT_BY_QUARTER["B"] if is_senior else MEZZ_DEBT_BY_QUARTER["B"]
     if col == "B":
@@ -108,9 +111,12 @@ def warehouse_debt_model_formula(
     mix = f"(1-{col}{share_row})" if is_senior else f"{col}{share_row}"
     total_prev = f"({prev_col}{senior_model_row}+{prev_col}{mezz_model_row})"
     inv_ratio = f"IF({prev_col}{inventory_row}=0,1,{col}{inventory_row}/{prev_col}{inventory_row})"
+    intensity_ratio = cnml_intensity_ratio_expr(
+        col, prev_col, label_to_row=label_to_row
+    )
     return (
         f"=IF(ISNUMBER({col}{actual_row}),{col}{actual_row},"
-        f"{total_prev}*{inv_ratio}*{mix})"
+        f"{total_prev}*{inv_ratio}*({intensity_ratio})*{mix})"
     )
 
 

@@ -37,6 +37,7 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 - Q2 2026: **>50%** of scheduled Colorado resale closes financed with Opendoor Home Loans; Texas **~20%** at ~6 weeks ([Q2 2026 earnings release](https://www.sec.gov/Archives/edgar/data/1801169/000180116926000019/q22026formxex991earningsre.htm)).
 - Sep 4 2026: Kaz confirmed Opendoor Home Loans is **out of beta** (generally available in licensed states) and can be used on a home Opendoor does not hold. Product FAQ: [Opendoor Home Loans](https://www.opendoor.com/mortgage). Off-inventory TAM uses **4 million** US existing home sales/year (see [ssj2abid on X](https://x.com/ssj2abid/status/2095935994746859566)).
 - [Doma closing/escrow acquisition](https://www.opendoor.com/articles/doma-acquisition-complete) — Fannie Mae Title Acceptance refis; borrower savings cited **~$300–$1,500** / **~$1,100** per refi; modeled separately from home-sale CM.
+- **Cash Now, More Later (2P)** — still buys/holds/resells; less cash at close; residual to seller is COGS ([Q2 2026 10-Q](https://www.sec.gov/Archives/edgar/data/1801169/000180116926000021/)). Mix: **0%** a year before Q1 2026; **19%** of contracts last week of Q3 2025; **35%** of weekly volume last week of Q4 2025 ([Q4 2025 Open House](https://investor.opendoor.com/news-releases/news-release-details/q4-2025-open-house-opendoor-20-does-what-it-said-it-would-do)); **>1/3** of Q1 2026 contracts ([Q1 2026 call](https://www.fool.com/earnings/call-transcripts/2026/05/08/opendoor-open-q1-2026-earnings-transcript/)). Q2 2026 mix not disclosed; “less capital per home” ([Q2 2026 Open House](https://investor.opendoor.com/news-releases/news-release-details/q2-2026-open-house-everything-more-contracts-more-revenue-more)). [Kaz 10 Sep 2026](https://x.com/nejatian/status/2097841977660215546): mix still tilting to CNML vs certainty in the down-market. Product: [help](https://help.opendoor.com/selling/cash-now-more-later/what-is-cash-now-more-later), [Cash Plus rename](https://www.opendoor.com/articles/cash-plus-is-now-cash-now-more-later). 1P/2P/3P: [Q2 2026 call](https://www.fool.com/earnings/call-transcripts/2026/08/11/opendoor-open-q2-2026-earnings-call-transcript/). 3P marketplace is **not modeled**.
 
 ### Ancillary products (model assumptions)
 
@@ -50,6 +51,8 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 | Max title net $/purchase close | `Transitions!B30` | **$2,400** | CM add = **Open Title Purchase Percent** × B30 ÷ ASP |
 | ODL attach ramp | **Open Mortgage Percent** | smoothstep **0% → 80%** (Jan 2026 – Oct 2028) | Four-phase: 10% Sep 6 2026 / 40% Dec 20 2026 / 80% Oct 1 2028 |
 | Title purchase attach | **Open Title Purchase Percent** | linear **0% → 100%** (Jan 2025 – Jun 2027) | Purchase resales only |
+| CNML cash at close vs 1P | `Transitions!B35` | **80%** | Guess. Warehouse intensity = `(1 − CNML%) + CNML% × B35` |
+| CNML mix terminal | `Transitions!B36` | **50%** | Guess. Weekly **Cash Now More Later %** smoothsteps 40% (Sep 2026) → this by end-2027 |
 
 Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-rates-at-opendoor-are-so-much-lower), [Doma announcement](https://www.opendoor.com/articles/doma-announcement), MBA 2024 ~$443 net/loan (industry benchmark).
 
@@ -107,4 +110,5 @@ When updating the model after an earnings release:
 3. Update CM guidance and growth / seasonality assumptions if management changes the outlook.
 4. Cross-check listing/acquisition/sold run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and [Accountable](https://accountable.opendoor.com/); update **Likelihood to Close** and weekly **Home Sales** stubs when new prints land.
 5. Confirm transition curves still roughly match disclosed sell-through / days-on-market stats.
-6. Append the sheet edits to [CHANGELOG.md](CHANGELOG.md).
+6. If management prints a new Cash Now More Later mix %, overwrite **Cash Now More Later %** waypoints (and optionally B35/B36).
+7. Append the sheet edits to [CHANGELOG.md](CHANGELOG.md).

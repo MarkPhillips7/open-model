@@ -50,21 +50,21 @@ def _historical_quarterly_revenue_ifs() -> str:
 
 def _quarter_revenue_expr(
     *,
-    quarterly_revenue_row: int,
     revenue_row: int,
     revenue_model_row: int,
 ) -> str:
     """Resolve one quarter's revenue: quarterly tab → historical → weekly model sum."""
     q_sheet = (
         f"IF(qCol=0,\"\","
-        f"INDEX('{QUARTERLY}'!$B${quarterly_revenue_row}:$M${quarterly_revenue_row},1,qCol))"
+        f"INDEX('{QUARTERLY}'!$B:$M,"
+        f"MATCH(\"{REVENUE_LABEL}\",'{QUARTERLY}'!$A:$A,0),qCol))"
     )
     weekly_sum = (
         f"SUM(MAP(FILTER($B$1:$DY$1,$B$1:$DY$1<>\"\"),LAMBDA(d,"
         f'IF(YEAR(d)&" Q"&ROUNDUP(MONTH(d)/3,0)=qKey,'
         f"LET(ci,MATCH(d,$B$1:$DY$1,0),"
-        f"v,INDEX($B:$DY,{revenue_row},ci),"
-        f"IF(ISNUMBER(v),v,INDEX($B:$DY,{revenue_model_row},ci))),0)"
+        f"v,INDEX($B${revenue_row}:$DY${revenue_row},1,ci),"
+        f"IF(ISNUMBER(v),v,INDEX($B${revenue_model_row}:$DY${revenue_model_row},1,ci))),0)"
         f")))"
     )
     return (
@@ -75,12 +75,10 @@ def _quarter_revenue_expr(
 
 def _proration_lambda(
     *,
-    quarterly_revenue_row: int,
     revenue_row: int,
     revenue_model_row: int,
 ) -> str:
     q_rev = _quarter_revenue_expr(
-        quarterly_revenue_row=quarterly_revenue_row,
         revenue_row=revenue_row,
         revenue_model_row=revenue_model_row,
     )
@@ -108,22 +106,25 @@ def weekly_ttm_revenue_formula(
     *,
     revenue_row: int,
     revenue_model_row: int,
-    quarterly_revenue_row: int,
 ) -> str:
-    """TTM from reported quarter-end values, else day-weighted quarterly revenue."""
+    """TTM from reported quarter-end values, else day-weighted quarterly revenue.
+
+    Weekly revenue is read via ``$B$row:$DY$row`` so Sheets updates the range
+    when rows are inserted. Quarterly Revenue is looked up by label.
+    """
     wk = f"{col}${WEEK_DATE_ROW}"
     historical_ttm_ifs = ",".join(
         f'qKey="{q}",{v}' for q, v in REPORTED_TTM_BY_QUARTER.items()
     )
     proration = (
         f"SUM(MAP(SEQUENCE(6),"
-        f"{_proration_lambda(quarterly_revenue_row=quarterly_revenue_row, revenue_row=revenue_row, revenue_model_row=revenue_model_row)}"
+        f"{_proration_lambda(revenue_row=revenue_row, revenue_model_row=revenue_model_row)}"
         f"))"
     )
     rolling = (
         f"IF(weeksAvail=0,\"\",SUM(MAP(SEQUENCE(1,n-s+1,s,1),LAMBDA(c,"
-        f"LET(ci,c-COLUMN($B$1)+1,v,INDEX($B:$DY,{revenue_row},ci),"
-        f"IF(ISNUMBER(v),v,INDEX($B:$DY,{revenue_model_row},ci))"
+        f"LET(ci,c-COLUMN($B$1)+1,v,INDEX($B${revenue_row}:$DY${revenue_row},1,ci),"
+        f"IF(ISNUMBER(v),v,INDEX($B${revenue_model_row}:$DY${revenue_model_row},1,ci))"
         f")))))"
     )
     return (
@@ -146,7 +147,7 @@ def weekly_ttm_revenue_formula(
 def weekly_price_at_ps_formula(
     col: str,
     *,
-    ps_multiple: float,
+    ps_multiple: float | int,
     ttm_row: int,
     shares_row: int,
     shares_model_row: int,

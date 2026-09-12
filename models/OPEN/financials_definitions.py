@@ -40,6 +40,20 @@ FIELD_NOTES: dict[str, str] = {
         "mid-Q2 dip to ~63%, then ~66% from mid-July (not company-disclosed). Manual weekly "
         "inputs (B / AE and later waypoints); multiplied in Homes Purchased - Model."
     ),
+    'Cash Now More Later %': (
+        "Share of purchases that are Cash Now, More Later (2P / formerly Cash Plus). Opendoor "
+        "still buys, holds, renovates, and resells — capital-light vs 1P, not off-inventory. "
+        "Accountable contracts already include CNML. Formula: 0% through Q1 2025 → 19% last "
+        "week of Q3 2025 → 35% last week of Q4 2025 → ~40% from Sep 2026 (Kaz 10 Sep 2026) → "
+        "Transitions B36 terminal (default 50% by end-2027). Q2 2026 mix was not disclosed; "
+        "1P vs 2P CM is not split. Overwrite any week. Feeds warehouse intensity, not the "
+        "purchase → inventory unit path."
+    ),
+    'CNML Purchases - Model': (
+        "Homes Purchased - Model × Cash Now More Later %. Informational split of modeled "
+        "purchases onto the 2P product. These homes still add to inventory — do not subtract "
+        "them from Homes in Inventory - Model."
+    ),
     'Homes Purchased': (
         "Non-GAAP homes purchased (inventory adds). Quarterly actual from earnings supplement, "
         "spread to weeks (÷13, day-weighted at quarter boundaries) when Quarterly Financials "
@@ -305,16 +319,18 @@ FIELD_NOTES: dict[str, str] = {
     ),
     'Senior Warehouse Debt - Model': (
         "Uses actual senior outstanding when populated; else last week's modeled senior+mezz "
-        "book scaled by Homes in Inventory - Model, times (1 − mezzanine share). Cutting mezz "
-        "share reallocates the same total into senior (a refi), not a cash paydown."
+        "book scaled by Homes in Inventory - Model and by CNML capital intensity "
+        "((1 − CNML%) + CNML% × Transitions B35 cash-at-close vs 1P), times (1 − mezzanine "
+        "share). Rising CNML mix grows debt slower than home count. Cutting mezz share "
+        "reallocates the same total into senior (a refi), not a cash paydown."
     ),
     'Mezzanine Warehouse Debt': (
         "Quarter-end outstanding principal on mezzanine term facilities (10-Q). Has sat at "
         "$350M from Q3 2025 through Q2 2026. Weekly interpolation same as senior."
     ),
     'Mezzanine Warehouse Debt - Model': (
-        "Uses actual mezz when populated; else inventory-scaled total × mezzanine share. The "
-        "mix lever for using less (expensive) mezzanine."
+        "Uses actual mezz when populated; else inventory- and CNML-intensity-scaled total × "
+        "mezzanine share. The mix lever for using less (expensive) mezzanine."
     ),
     'Warehouse Interest Expense - Model': (
         "Gross weekly interest: senior debt × senior rate / 52 + mezz debt × mezz rate / 52. "

@@ -31,37 +31,37 @@
           "end_column": 121
         },
         {
-          "weekly_row": 8,
+          "weekly_row": 10,
           "line_style": "SOLID",
-          "axis": "LEFT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 9,
-          "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
           "weekly_row": 11,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 13,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 121
         },
         {
-          "weekly_row": 13,
+          "weekly_row": 15,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 121
         },
         {
-          "weekly_row": 17,
+          "weekly_row": 19,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 121
         },
         {
-          "weekly_row": 19,
+          "weekly_row": 21,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 121
@@ -75,27 +75,15 @@
       "domain_end_col": 121,
       "series": [
         {
-          "weekly_row": 51,
+          "weekly_row": 53,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 52,
+          "weekly_row": 54,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 57,
-          "line_style": "SOLID",
-          "axis": "RIGHT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 58,
-          "line_style": "DOTTED",
-          "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
@@ -109,6 +97,18 @@
           "line_style": "DOTTED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
+        },
+        {
+          "weekly_row": 61,
+          "line_style": "SOLID",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 62,
+          "line_style": "DOTTED",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
         }
       ]
     },
@@ -119,25 +119,25 @@
       "domain_end_col": 121,
       "series": [
         {
-          "weekly_row": 22,
+          "weekly_row": 24,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 23,
+          "weekly_row": 25,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 46,
+          "weekly_row": 48,
           "line_style": "SOLID",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 48,
+          "weekly_row": 50,
           "line_style": "DOTTED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
@@ -151,67 +151,67 @@
       "domain_end_col": 121,
       "series": [
         {
-          "weekly_row": 25,
+          "weekly_row": 27,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 31,
+          "weekly_row": 33,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 93,
+          "weekly_row": 95,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 94,
+          "weekly_row": 96,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 75,
+          "weekly_row": 77,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 82,
+          "weekly_row": 84,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 69,
+          "weekly_row": 71,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 70,
+          "weekly_row": 72,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 97,
+          "weekly_row": 99,
           "line_style": "SOLID",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 99,
+          "weekly_row": 101,
           "line_style": "MEDIUM_DASHED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 100,
+          "weekly_row": 102,
           "line_style": "MEDIUM_DASHED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
