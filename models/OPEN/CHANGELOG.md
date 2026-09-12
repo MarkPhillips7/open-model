@@ -18,6 +18,20 @@ Entry template:
 
 ---
 
+## 2026-09-12 — Revenue = ASP × Home Sales; drop 1.0/2.0 revenue rows
+
+Synced manual workbook edits. **Revenue - Model** is now sold-price × blended closed units (plus off-inventory ODL). The **Revenue - 1.0 / 2.0 Model** SUMPRODUCTs were unused after that change (they re-lagged cash/financed close and applied price retention on top of Home Sales, which are already closed units). Deleted those rows.
+
+- **Tab / range:** **Weekly Financials** **Revenue - Model**, **OPEN 1.0-2.0 Transition Completeness**, **Fixed Costs - Model**, **Adjusted Operating Expenses - Model**, CM Adjustments `BF:BK`; **Quarterly Financials** / **Financials Definitions** matching revenue 1.0/2.0 labels; definitions notes rebuilt
+- **Insert/delete:** ROWS, weekly **24–25**, quarterly **25–26**, definitions **24–25**, count **2** each (`Revenue - 2.0 Model`, `Revenue - 1.0 Model`)
+- **Formulas:**
+  - **Revenue - Model:** `completeness × 2.0 + (1 − completeness) × 1.0 + off-inventory` → `ASP × Home Sales - Model + off-inventory`
+  - **Transition Completeness:** `DATE(2026,2,21)`→`DATE(2027,1,2)` → `DATE(2026,2,7)`→`DATE(2027,9,4)`
+  - **Fixed Costs - Model:** `$35M/13` → prefer actual Fixed Costs when present, else `$35M/13`
+  - **Adjusted Operating Expenses - Model:** `Fixed Costs - Model + $15M/13` → prefer actual Adj OpEx when present, else `Fixed Costs - Model + $1,269,300 + $49.30 × Homes in Inventory - Model`
+- **Data:** **Contribution Margin - Adjustments** `BF:BK` (weeks ending **2026-10-10** through **2026-11-14**) **0 → −0.7% / −0.7% / −0.5% / −0.5% / −0.3% / −0.3%** (fade the Sep price-to-clear instead of a cliff to 0)
+- **Side effects:** Homes Funnel chart series unchanged (rows before the delete). Inventory / Money chart series auto-shifted −2; `snapshot.json` refreshed to the live ranges. Please eyeball Homes Inventory and Money Charts in the UI — agents did not edit chart objects. Transitions price-retention and cash/financed close lags remain on the tab but no longer feed **Revenue - Model**.
+
 ## 2026-09-10 — Sync Kaz 9 Sep 2026 Q3 update from live sheet
 
 Pulled manual workbook edits after [Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649) (Q3 tracking, price-to-clear, weekly sold on Accountable). `* - Model` formulas were unchanged.

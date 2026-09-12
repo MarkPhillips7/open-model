@@ -1,4 +1,4 @@
-"""OPEN 1.0 vs 2.0 transition blending (listings, sales, revenue)."""
+"""OPEN 1.0 vs 2.0 transition blending (listings and sales)."""
 
 from __future__ import annotations
 
@@ -16,9 +16,6 @@ OPEN_2_0_RETENTION_ROW = 12
 OPEN_1_0_SOLD_ROW = 14
 OPEN_1_0_RETENTION_ROW = 16
 LISTING_TO_SOLD_WEEK_HEADER_ROW = 8
-FINANCED_CLOSE_LAG_CELL = f"{TRANSITIONS}!$B$18"
-CASH_CLOSE_LAG_CELL = f"{TRANSITIONS}!$B$19"
-CASH_PURCHASE_PCT_CELL = f"{TRANSITIONS}!$B$20"
 UNLISTED_BACKLOG_CELL = f"{TRANSITIONS}!$B$25"
 UNLISTED_BACKLOG_PCT_RANGE = f"{TRANSITIONS}!$B$27:$I$27"
 
@@ -27,11 +24,9 @@ NEW_LISTINGS_2_0_MODEL_LABEL = "New Listings - 2.0 Model"
 NEW_LISTINGS_1_0_MODEL_LABEL = "New Listings - 1.0 Model"
 HOME_SALES_2_0_MODEL_LABEL = "Home Sales - 2.0 Model"
 HOME_SALES_1_0_MODEL_LABEL = "Home Sales - 1.0 Model"
-REVENUE_2_0_MODEL_LABEL = "Revenue - 2.0 Model"
-REVENUE_1_0_MODEL_LABEL = "Revenue - 1.0 Model"
 
-TRANSITION_COMPLETENESS_START_DATE = "DATE(2026,2,21)"
-TRANSITION_COMPLETENESS_END_DATE = "DATE(2027,1,2)"
+TRANSITION_COMPLETENESS_START_DATE = "DATE(2026,2,7)"
+TRANSITION_COMPLETENESS_END_DATE = "DATE(2027,9,4)"
 
 # Pre-Kaz listing timing (~45-day reno wait; peaks later than 2.0).
 OPEN_1_0_LISTING_BY_WEEK: list[float] = [
@@ -252,11 +247,6 @@ def _sold_range(row: int, *, weeks: int) -> str:
     return f"{TRANSITIONS}!$B${row}:${end}${row}"
 
 
-def _retention_range(row: int, *, weeks: int) -> str:
-    end = sold_week_end_col(weeks)
-    return f"{TRANSITIONS}!$B${row}:${end}${row}"
-
-
 def transition_completeness_formula(col: str) -> str:
     return (
         f'=IF({col}$1="","",MIN(1,MAX(0,'
@@ -334,38 +324,3 @@ def home_sales_model_formula(*, sold_row: int, sold_weeks: int) -> str:
   )),
   {_sold_range(sold_row, weeks=sold_weeks)}
 )+INDEX(${{Private Home Sales - Model}}:${{Private Home Sales - Model}}, 1, COLUMN()))"""
-
-
-def revenue_model_formula(*, sold_row: int, retention_row: int, sold_weeks: int) -> str:
-    sold_rng = _sold_range(sold_row, weeks=sold_weeks)
-    ret_rng = _retention_range(retention_row, weeks=sold_weeks)
-    return f"""=(SUMPRODUCT(
-  MAP(SEQUENCE(1,{sold_weeks}), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag - {CASH_CLOSE_LAG_CELL},
-      IF(col < 2, 160*356000,
-        IF(INDEX(${{New Listings}}:${{New Listings}}, 1, col) = "",
-          INDEX(${{New Listings - Model}}:${{New Listings - Model}}, 1, col),
-          INDEX(${{New Listings}}:${{New Listings}}, 1, col)
-        )*INDEX(${{Average Sale Price (homes sold by OPEN)}}:${{Average Sale Price (homes sold by OPEN)}}, 1, col)
-      )
-    )
-  )),
-  {sold_rng},
-  {ret_rng}
-)*{CASH_PURCHASE_PCT_CELL}+
- SUMPRODUCT(
-  MAP(SEQUENCE(1,{sold_weeks}), LAMBDA(lag,
-    LET(
-      col, COLUMN() - lag - {FINANCED_CLOSE_LAG_CELL},
-      IF(col < 2, 160*356000,
-        IF(INDEX(${{New Listings}}:${{New Listings}}, 1, col) = "",
-          INDEX(${{New Listings - Model}}:${{New Listings - Model}}, 1, col),
-          INDEX(${{New Listings}}:${{New Listings}}, 1, col)
-        )*INDEX(${{Average Sale Price (homes sold by OPEN)}}:${{Average Sale Price (homes sold by OPEN)}}, 1, col)
-      )
-    )
-  )),
-  {sold_rng},
-  {ret_rng}
-)*(1-{CASH_PURCHASE_PCT_CELL})+INDEX(${{Private Home Sales - Model}}:${{Private Home Sales - Model}}, 1, COLUMN())*INDEX(${{Average Sale Price (homes sold by OPEN)}}:${{Average Sale Price (homes sold by OPEN)}}, 1, COLUMN()))"""

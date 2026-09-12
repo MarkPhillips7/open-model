@@ -52,7 +52,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row.
 3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B25`, default 450) draining on row 27. Never-listed share is `(1 − Likelihood to List)` on the weekly row (not a fixed Transitions %).
 4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (**25** weeks on 2.0 / **39** on 1.0) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
-5. **Revenue** — Listed path = listings × ASP × sell-through × **price retention**, split by cash vs financed close lags. Private path = that week’s private sales × ASP (close already in the private curve; no DOM decay).
+5. **Revenue** — Home-sale revenue = **ASP × Home Sales - Model** + off-inventory ODL. Home Sales already blends 1.0/2.0 sell-through into closed units that week, so revenue does not re-apply listing→cash/financed close lags or a second price-retention haircut.
 6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present).
 
 ### Profitability stack
@@ -62,7 +62,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 - **Doma Refi Profit - Model** / **Doma Growth Multiplier** — manual weekly rows (stepwise multipliers + compounded profit from **AR**; cells in `doma_manual_cells.py`). Not added to **Contribution Profit - Model**.
 - Core CM starts near low single digits and can step up via **Contribution Margin Improvement - Core**.
 - Near-term negative adjustments reflect older-cohort / inventory-clearing pressure called out in earnings commentary.
-- **Fixed Costs - Model** uses a steady quarterly run-rate (management accountability theme).
+- **Fixed Costs - Model** uses reported fixed costs when present; otherwise a steady $35M/quarter weeklyized run-rate.
+- **Adjusted Operating Expenses - Model** uses reported Adj OpEx when present; otherwise Fixed Costs - Model + $1,269,300/week + $49.30 per modeled inventory home.
 - **Adjusted EBITDA - Model** = Contribution Profit + ODL Off-inventory Profit − Adjusted Operating Expenses.
 - **Adjusted Net Income - Model** = Adjusted EBITDA − Net Interest − D&A − Taxes (SBC is **not** subtracted again; it sits above EBITDA in the company reconciliation).
 - **Net Interest Expense - Model** uses reported net interest when spread; otherwise senior warehouse debt × senior rate / 52 + mezzanine debt × mezzanine rate / 52, minus a $9M/quarter interest-income offset. Lowering **Mezzanine Share of Warehouse Debt - Model** refinances expensive mezz into cheaper senior.
@@ -86,14 +87,14 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | --- | --- | --- |
 | Likelihood to Close (per contract week) | **78%** in 2025 → **65%** at Q2 2026 (`AE`), dip to **63%**, then **66%** from mid-July | Cohort P(purchase). Includes seller cancel and Opendoor walking deals. Edit the L2C row (B / AE and later waypoints). |
 | Close timing (of closers, 9 weeks) | sums to **100%** (mode ~weeks 4–5) | When closers purchase; no longer embeds attrition. |
-| OPEN 1.0 → 2.0 transition | **0%** at Feb 2026 → **100%** by Jan 2027 | Blends listing / sales / revenue models between **OPEN 1.0** (pre-Kaz DOM ~51% @ 120d) and **OPEN 2.0** curves on **Transitions**. Edit completeness row or 1.0/2.0 sub-model rows. |
+| OPEN 1.0 → 2.0 transition | **0%** at Feb 7 2026 → **100%** by Sep 4 2027 | Blends listing / sales models between **OPEN 1.0** (pre-Kaz DOM ~51% @ 120d) and **OPEN 2.0** curves on **Transitions**. Edit completeness row or 1.0/2.0 sub-model rows. |
 | Purchase → public listing translation | **Likelihood to List** (~**75%** early, higher later) × row 4 timing (**100%** of listers) | **2.0** listing lag: `Transitions` row 4; **1.0**: row 5 (New Listings - 1.0 Model only). |
 | Unlisted 1.0 backlog at 2025-09-13 | **450** homes over **8 weeks** | Already-owned, not-yet-listed pipe from the old ~45-day reno wait. Edit `Transitions!B25` / `B27:I27`. Does not add to purchases. |
 | Private / non-listed completions | **`1 − Likelihood to List`** on weekly row 10 | Share of purchases that never list. Feeds **Private Home Sales - Model** (not `Transitions!B6`, which is unused). |
 | Private sale timing (purchase → close) | 9 weeks (`Transitions!B23:J23`) | Never-listed share lagged on **Percent of Private Completions Sold by Week**; edit row 23. |
 | Listing → sale curve | 2.0 **25** weeks. ~**73%** by week 17 / ~120 days, ~**86%** by week 21, ~**99.5%** by week 25 | Shaped to [Open Tracker](https://aubermark.github.io/open-tracker/) cohort sell-through (Sep 2026). The Q2 “~91% over 120 days” stock figure was skewed by recent listings. **1.0** path ~**51%** by week 17, **100%** by week **39** on `Transitions` rows 13–16. |
-| Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 → ~**92.3%** by week 25 | **1.0**: 100% → ~**88.6%** by week 21 (rows 12 vs 16). |
-| Offer → close (financed / cash) | **8** / **4** weeks | `Transitions!B18` / `B19`. Help docs cite ~30–45 days financed / ~14 days cash; sheet uses the long end of those windows. |
+| Price retention by week on market | 2.0: 100% → ~**93.5%** by week 21 → ~**92.3%** by week 25 | On **Transitions** (rows 12 vs 16) as documentation of list-to-sold haircut. **Revenue - Model** uses ASP × Home Sales, not this curve. **1.0**: 100% → ~**88.6%** by week 21. |
+| Offer → close (financed / cash) | **8** / **4** weeks | `Transitions!B18` / `B19`. Help docs cite ~30–45 days financed / ~14 days cash; sheet uses the long end. Not used by **Revenue - Model** (Home Sales are already closed units). |
 | Cash purchase share | ~**31.5%** | National U.S. mix; OPEN does not disclose. |
 | ASP | **$377,500** | Q2 2026. |
 | Seasonality | Monthly acquisition weights summing to **100%** | Peak Nov–Dec (listings lag ~2 months into spring/early summer selling); trough May–Aug. |
@@ -104,7 +105,8 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Off-inventory ODL | **0%** of US existing-home-sale TAM at Sep 2026 GA → **2%** by Jan 1 2030 | `ODL Off-inventory Loans / Revenue / Profit - Model`; TAM **4,000,000**/year (`Transitions!B33`); **$7,500** revenue / **$3,000** profit per loan (`B34` / `B31`). Revenue in **Revenue - Model**; profit in Adj EBITDA, not CM. |
 | Title purchase attach | **0%** before Jan 2025 → **100%** by Jun 2027 | Linear ramp on **Open Title Purchase Percent**. |
 | Title $/purchase close | **$2,400** max net savings (`Transitions!B30`) | CM add = attach × $/close ÷ ASP. |
-| Fixed opex | ~**$35M**/quarter-ish weeklyized | “Hold steady” accountability. |
+| Fixed opex | ~**$35M**/quarter-ish weeklyized, else reported | “Hold steady” accountability. Model uses actual Fixed Costs when present. |
+| Variable opex | **$1,269,300**/week + **$49.30** per modeled inventory home | **Adjusted Operating Expenses - Model** when no reported Adj OpEx. |
 | Senior warehouse rate | **5.30%** (Q2 2026 drawn-balance blend) | First-in-line inventory loans. Edit **Senior Interest Rate** `B`; later weeks carry forward. |
 | Mezzanine warehouse rate | **12.50%** (Q2 2026 10-Q) | Second-priority inventory term debt. Edit **Mezzanine Interest Rate** `B`. |
 | Mezzanine share of warehouse debt | **~19.8%** ($350M / $1.766B at Q2) | Mix lever: lower it to refinance mezz into cheaper senior. **Mezzanine Share of Warehouse Debt - Model**. |

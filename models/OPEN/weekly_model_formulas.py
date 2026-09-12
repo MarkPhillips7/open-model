@@ -104,20 +104,15 @@ from .open_transition import (
     NEW_LISTINGS_1_0_MODEL_LABEL,
     NEW_LISTINGS_2_0_MODEL_LABEL,
     OPEN_1_0_LISTING_ROW,
-    OPEN_1_0_RETENTION_ROW,
     OPEN_1_0_SOLD_ROW,
     OPEN_1_0_SOLD_WEEKS,
     OPEN_2_0_LISTING_ROW,
-    OPEN_2_0_RETENTION_ROW,
     OPEN_2_0_SOLD_ROW,
     OPEN_2_0_SOLD_WEEKS,
-    REVENUE_1_0_MODEL_LABEL,
-    REVENUE_2_0_MODEL_LABEL,
     TRANSITION_COMPLETENESS_LABEL,
     home_sales_model_formula,
     new_listings_model_formula,
     private_home_sales_model_formula,
-    revenue_model_formula,
     transition_completeness_formula,
     blend_model_formula,
 )
@@ -189,12 +184,12 @@ CM_ADJUSTMENTS_VALUES: dict[str, float] = {
     "BC": -0.01,
     "BD": -0.007,
     "BE": -0.007,
-    "BF": 0,
-    "BG": 0,
-    "BH": 0,
-    "BI": 0,
-    "BJ": 0,
-    "BK": 0,
+    "BF": -0.007,
+    "BG": -0.007,
+    "BH": -0.005,
+    "BI": -0.005,
+    "BJ": -0.003,
+    "BK": -0.003,
     "BL": 0,
     "BM": 0,
     "BN": 0,
@@ -306,22 +301,18 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Home Sales - 1.0 Model": home_sales_model_formula(
         sold_row=OPEN_1_0_SOLD_ROW, sold_weeks=OPEN_1_0_SOLD_WEEKS
     ),
-    "Revenue - 2.0 Model": revenue_model_formula(
-        sold_row=OPEN_2_0_SOLD_ROW,
-        retention_row=OPEN_2_0_RETENTION_ROW,
-        sold_weeks=OPEN_2_0_SOLD_WEEKS,
-    ),
-    "Revenue - 1.0 Model": revenue_model_formula(
-        sold_row=OPEN_1_0_SOLD_ROW,
-        retention_row=OPEN_1_0_RETENTION_ROW,
-        sold_weeks=OPEN_1_0_SOLD_WEEKS,
-    ),
-    "Fixed Costs - Model": "=35000000/13",
 }
 
 COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
     "Acquisition Contracts - Model": (
         "={c}{Acquisition Contracts - no seasonality}*{c}{Acquisition Seasonality Multiplier}"
+    ),
+    "Revenue - Model": (
+        "={c}{Average Sale Price (homes sold by OPEN)}*{c}{Home Sales - Model}"
+        "+N({c}{ODL Off-inventory Revenue - Model})"
+    ),
+    "Fixed Costs - Model": (
+        "=IF(N({c}{Fixed Costs})=0,35000000/13,{c}{Fixed Costs})"
     ),
     "Contribution Profit - Model": (
         "=(N({c}{Revenue - Model})-N({c}{ODL Off-inventory Revenue - Model}))"
@@ -334,7 +325,9 @@ COLUMN_RELATIVE_TEMPLATES: dict[str, str] = {
         "+{c}{Contribution Margin - Adjustments}"
     ),
     "Adjusted Operating Expenses - Model": (
-        "={c}{Fixed Costs - Model}+(15000000/13)"
+        "=IF(N({c}{Adjusted Operating Expenses})=0,"
+        "{c}{Fixed Costs - Model}+(1269300+49.3*{c}{Homes in Inventory - Model}),"
+        "{c}{Adjusted Operating Expenses})"
     ),
     ADJ_EBITDA_MODEL_LABEL: (
         "={c}{Contribution Profit - Model}+N({c}{ODL Off-inventory Profit - Model})"
@@ -403,29 +396,12 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
     ),
     "Revenue - Model": frozenset(
         {
-            TRANSITION_COMPLETENESS_LABEL,
-            REVENUE_2_0_MODEL_LABEL,
-            REVENUE_1_0_MODEL_LABEL,
+            "Average Sale Price (homes sold by OPEN)",
+            "Home Sales - Model",
             ODL_OFF_INVENTORY_REVENUE_LABEL,
         }
     ),
-    REVENUE_2_0_MODEL_LABEL: frozenset(
-        {
-            "New Listings",
-            "New Listings - Model",
-            "Average Sale Price (homes sold by OPEN)",
-            "Private Home Sales - Model",
-        }
-    ),
-    REVENUE_1_0_MODEL_LABEL: frozenset(
-        {
-            "New Listings",
-            "New Listings - Model",
-            "Average Sale Price (homes sold by OPEN)",
-            "Private Home Sales - Model",
-        }
-    ),
-    "Fixed Costs - Model": frozenset(),
+    "Fixed Costs - Model": frozenset({"Fixed Costs"}),
     FACILITY_CAPACITY_LABEL: frozenset(),
     COMMITTED_CAPACITY_LABEL: frozenset(),
     INVENTORY_CEILING_MODEL_LABEL: frozenset(
@@ -513,7 +489,13 @@ FORMULA_ROW_DEPENDENCIES: dict[str, frozenset[str]] = {
             "Contribution Margin - Adjustments",
         }
     ),
-    "Adjusted Operating Expenses - Model": frozenset({"Fixed Costs - Model"}),
+    "Adjusted Operating Expenses - Model": frozenset(
+        {
+            "Adjusted Operating Expenses",
+            "Fixed Costs - Model",
+            "Homes in Inventory - Model",
+        }
+    ),
     ADJ_EBITDA_MODEL_LABEL: frozenset(
         {
             "Contribution Profit - Model",
@@ -594,16 +576,11 @@ MODEL_FORMULA_LABELS: tuple[str, ...] = (
             NEW_LISTINGS_1_0_MODEL_LABEL,
             HOME_SALES_2_0_MODEL_LABEL,
             HOME_SALES_1_0_MODEL_LABEL,
-            REVENUE_2_0_MODEL_LABEL,
-            REVENUE_1_0_MODEL_LABEL,
         }
     ),
     "Home Sales - Model",
     HOME_SALES_2_0_MODEL_LABEL,
     HOME_SALES_1_0_MODEL_LABEL,
-    "Revenue - Model",
-    REVENUE_2_0_MODEL_LABEL,
-    REVENUE_1_0_MODEL_LABEL,
     *COLUMN_RELATIVE_TEMPLATES.keys(),
     OPEN_MORTGAGE_PERCENT_LABEL,
     OPEN_TITLE_PURCHASE_PERCENT_LABEL,
@@ -789,21 +766,6 @@ def row_cells_for_label(
             )
             for col_idx in range(n_cols)
         ]
-
-    if label == "Revenue - Model":
-        odl_rev = label_to_row[ODL_OFF_INVENTORY_REVENUE_LABEL]
-        cells: list[str | float] = []
-        for col_idx in range(n_cols):
-            col = col_letter(col_idx + 2)
-            blend = blend_model_formula(
-                col,
-                label_to_row=label_to_row,
-                blended_label=label,
-                model_2_0_label=REVENUE_2_0_MODEL_LABEL,
-                model_1_0_label=REVENUE_1_0_MODEL_LABEL,
-            )
-            cells.append(f"{blend}+N({col}{odl_rev})")
-        return cells
 
     if label == "Homes in Inventory - Model":
         inventory_row = label_to_row[label]

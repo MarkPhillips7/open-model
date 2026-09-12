@@ -27,8 +27,6 @@ from models.OPEN.open_transition import (  # noqa: E402
     OPEN_1_0_WEEKLY_SOLD,
     OPEN_1_0_WEEKLY_SOLD_MULTIPLIERS,
     OPEN_2_0_ROWS_TO_RENAME,
-    REVENUE_1_0_MODEL_LABEL,
-    REVENUE_2_0_MODEL_LABEL,
     TRANSITION_COMPLETENESS_LABEL,
     TRANSITIONS,
     open_1_0_running_totals,
@@ -134,14 +132,6 @@ def ensure_financials_rows(client: SheetsClient) -> None:
         )
         weekly_labels = label_rows(client, WEEKLY)
 
-    if REVENUE_2_0_MODEL_LABEL not in weekly_labels:
-        insert_rows_before_label(
-            client,
-            tab=WEEKLY,
-            before_label="Gross Profit",
-            labels=[REVENUE_2_0_MODEL_LABEL, REVENUE_1_0_MODEL_LABEL],
-        )
-
     quarterly_labels = label_rows(client, QUARTERLY)
     if TRANSITION_COMPLETENESS_LABEL not in quarterly_labels:
         insert_rows_before_label(
@@ -169,14 +159,6 @@ def ensure_financials_rows(client: SheetsClient) -> None:
             labels=[HOME_SALES_2_0_MODEL_LABEL, HOME_SALES_1_0_MODEL_LABEL],
         )
         quarterly_labels = label_rows(client, QUARTERLY)
-
-    if REVENUE_2_0_MODEL_LABEL not in quarterly_labels:
-        insert_rows_before_label(
-            client,
-            tab=QUARTERLY,
-            before_label="Gross Profit",
-            labels=[REVENUE_2_0_MODEL_LABEL, REVENUE_1_0_MODEL_LABEL],
-        )
 
 
 def main() -> None:

@@ -60,9 +60,9 @@ FIELD_NOTES: dict[str, str] = {
         "Quarterly Financials may sum weeks. Sparse — model fills forward."
     ),
     'OPEN 1.0-2.0 Transition Completeness': (
-        "Blend weight from pre-Kaz OPEN 1.0 ops to OPEN 2.0 (0% Feb 2026 → 100% Jan 2027). "
-        "Formula from week-ending date; weights New Listings / Home Sales / Revenue model rows "
-        "between 1.0 and 2.0 sub-models."
+        "Blend weight from pre-Kaz OPEN 1.0 ops to OPEN 2.0 (0% Feb 7 2026 → 100% Sep 4 2027). "
+        "Formula from week-ending date; weights New Listings / Home Sales model rows between "
+        "1.0 and 2.0 sub-models."
     ),
     'New Listings - Model': (
         "Blended listing forecast: Transition Completeness × 2.0 model + (1 − completeness) × "
@@ -111,17 +111,10 @@ FIELD_NOTES: dict[str, str] = {
         "from the Q2 earnings ≥20% YoY guide. Weekly manual possible. Model when blank."
     ),
     'Revenue - Model': (
-        "Blended home-sale revenue (1.0/2.0 via Transition Completeness) plus ODL "
-        "Off-inventory Revenue - Model. Listed path: listings × ASP × sell-through × price "
-        "retention, split cash vs financed close lags. Private path: private sales × ASP."
-    ),
-    'Revenue - 2.0 Model': (
-        "OPEN 2.0 revenue: listings lagged through sell-through and price-retention curves "
-        "(Transitions rows 10–12) with cash/financed close timing; plus private sales × ASP."
-    ),
-    'Revenue - 1.0 Model': (
-        "OPEN 1.0 revenue: longer sell-through and lower price retention (row 16); plus "
-        "private sales × ASP."
+        "Home-sale revenue: Average Sale Price × Home Sales - Model, plus ODL Off-inventory "
+        "Revenue - Model. Home Sales already blends 1.0/2.0 sell-through (closed units that "
+        "week), so this does not re-lag cash/financed close or apply a second price-retention "
+        "haircut."
     ),
     'Gross Profit': (
         "Revenue minus cost of revenue (Non-GAAP). Quarterly actual spread ÷13; not separately "
@@ -208,11 +201,13 @@ FIELD_NOTES: dict[str, str] = {
         "accountability theme: ~$35–37M/quarter path."
     ),
     'Fixed Costs - Model': (
-        "Steady forward run-rate: $35M/quarter ÷ 13 per week. Holds opex flat while volume "
-        "scales."
+        "Uses reported Fixed Costs when present; otherwise $35M/quarter ÷ 13 per week."
     ),
     'Adjusted Operating Expenses': "Fixed costs plus variable opex (Non-GAAP). Quarterly actual spread ÷13.",
-    'Adjusted Operating Expenses - Model': "Formula: Fixed Costs - Model + ($15M/quarter ÷ 13) variable layer.",
+    'Adjusted Operating Expenses - Model': (
+        "Uses reported Adjusted Operating Expenses when present; otherwise Fixed Costs - "
+        "Model + $1,269,300/week + $49.30 × Homes in Inventory - Model."
+    ),
     'Stock Based Compensation': "SBC expense ($). Quarterly actual spread ÷13; Q3 2026 guide ~$110M/quarter.",
     'Stock Based Compensation - Model': (
         "Forward SBC: uses actual when present, else weekly run-rate derived from quarterly "

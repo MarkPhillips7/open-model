@@ -75,15 +75,27 @@
       "domain_end_col": 121,
       "series": [
         {
-          "weekly_row": 53,
+          "weekly_row": 51,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 54,
+          "weekly_row": 52,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 57,
+          "line_style": "SOLID",
+          "axis": "RIGHT_AXIS",
+          "end_column": 129
+        },
+        {
+          "weekly_row": 58,
+          "line_style": "DOTTED",
+          "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
@@ -94,18 +106,6 @@
         },
         {
           "weekly_row": 60,
-          "line_style": "DOTTED",
-          "axis": "RIGHT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 61,
-          "line_style": "SOLID",
-          "axis": "RIGHT_AXIS",
-          "end_column": 129
-        },
-        {
-          "weekly_row": 62,
           "line_style": "DOTTED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
@@ -131,13 +131,13 @@
           "end_column": 129
         },
         {
-          "weekly_row": 48,
+          "weekly_row": 46,
           "line_style": "SOLID",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 50,
+          "weekly_row": 48,
           "line_style": "DOTTED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
@@ -151,67 +151,67 @@
       "domain_end_col": 121,
       "series": [
         {
-          "weekly_row": 27,
+          "weekly_row": 25,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 33,
+          "weekly_row": 31,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 95,
+          "weekly_row": 93,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 96,
+          "weekly_row": 94,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 77,
+          "weekly_row": 75,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 84,
+          "weekly_row": 82,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 71,
+          "weekly_row": 69,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 72,
+          "weekly_row": 70,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 99,
+          "weekly_row": 97,
           "line_style": "SOLID",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 101,
+          "weekly_row": 99,
           "line_style": "MEDIUM_DASHED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
         },
         {
-          "weekly_row": 102,
+          "weekly_row": 100,
           "line_style": "MEDIUM_DASHED",
           "axis": "RIGHT_AXIS",
           "end_column": 129
