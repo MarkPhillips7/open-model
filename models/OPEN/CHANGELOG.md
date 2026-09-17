@@ -22,16 +22,16 @@ Entry template:
 
 Pulled after user edits on **Transitions**, **Shares**, and **Weekly Financials**. Standard `sync_repo_from_live_sheet.py` already matched CM stack, Welcome, definitions copy, snapshot, and `* - Model` formulas. These levers are not in that pull.
 
-- **Tab / range:** **Transitions** `B29`/`B31`; **Shares** `F6`/`F7`; **Transitions** row 13 week-18 multiplier; **Weekly Financials** Acquisition Growth `AY:BH` and recent contract/listing actuals (sheet-only)
+- **Tab / range:** **Transitions** `B29`/`B31` (values already live) and `B31` cell note; **Shares** `F6`/`F7`/`I6`/`I7`; **Financials Definitions** `A1:B102`; **Transitions** row 13 week-18 multiplier; **Weekly Financials** Acquisition Growth `AY:BH` and recent contract/listing actuals (sheet-only)
 - **Insert/delete:** none
 - **Formulas:** none on model rows. **Home Sales** weekly Accountable overwrite (`BA` **223**) is gone — the row is back to the quarterly ÷13 spread (blank until Q3 prints).
 - **Data:**
   - **Transitions B29** on-inventory ODL max net **$4,000 → $3,000**; **B31** off-inventory **$3,000 → $2,000**. Title **$2,400**, TAM **2%** / **4,000,000**, revenue/loan **$7,500** unchanged.
-  - **Shares:** Nov 2025 warrant Fraction **25% → 10%**; 2030 converts Fraction **0% → 100%** (~138M shares at **8/15/2030**). Buyback unchanged. Live **Shares I7** note still says “Base case 0%”.
+  - **Shares:** Nov 2025 warrant Fraction **25% → 10%**; 2030 converts Fraction **0% → 100%** (~138M shares at **8/15/2030**). Buyback unchanged.
   - **OPEN 1.0 Weekly Percent Sold Multiplier** week **18** **0.99 → 0.995** (row 13). Hardcoded 1.0 sold percents (row 14) unchanged.
   - **Acquisition Growth** `AY:BH` (weeks ending **8/22–10/24**): **−12 / −15 / −15 / −12 / −12 / −4 / 0 / +20 / +15 / +0.4%** (then carry-forward).
   - **Acquisition Contracts** `AY:BB` (**8/22–9/12**): **558 / 499 / 444 / 380**. **New Listings** `AY:BB`: **418 / 348 / 5 / 501**.
-- **Side effects:** none on the live sheet (read-only pull). **Financials Definitions** column B on the workbook still has the old **$4,000 / $3,000** wording until `setup_financials_definitions.py` is run. No chart edits. `* - Model` formulas still match `weekly_model_formulas.py`.
+- **Side effects:** **Financials Definitions** column B rewritten from repo notes (**$3,000** on-inventory / **$2,000** off-inventory; warrant **10%** / convert **100%**). **Transitions B31** cell note now says haircut vs **$3,000**. **Shares I6/I7** notes match the live fractions. No chart edits. `* - Model` formulas still match `weekly_model_formulas.py`.
 
 ### Repo
 
