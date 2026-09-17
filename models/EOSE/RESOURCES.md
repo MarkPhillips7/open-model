@@ -31,8 +31,10 @@ Canonical links and XBRL tag map: [`sources.py`](sources.py). Reported Actuals: 
 | Pipeline $ / GWh, backlog $ / GWh | Earnings highlights + slides; GWh often only on the call | IR release / transcript |
 | Booked orders | Disclosed in release or slides; else implied Δbacklog + revenue (adjustments can break the identity — Q4 2025 disclosed $240M vs ~$115M implied) | same |
 | Z3 manufacturing lines | Capacity commentary (Line 2 commercial production Q2 2026). Q3 2026 **1.5** is a working in-quarter figure, not a print | earnings ops section; Q3 2026 typed |
-| MWh shipped | **Not a 10-Q line** — working estimate on Quarterly Financials (Q1 2026 **265**, Q2 2026 **307.6**) | manual; drives ASP/COGS - Derived |
-| GWh shipped | Formula: MWh / 1000 when MWh is present. Company usually reports **cube deliveries**, not GWh shipped | — |
+| Production Tax Credits | 10-Q/10-K government-grant footnote: 45X recognized as a reduction of COGS (thousands → $M). Not in standard us-gaap XBRL | copy the three-month (Q4: FY − 9M) print after each filing |
+| MWh shipped - PTC | Formula: statutory PTC $M × 1000 / $45 per kWh (cell+module). Q2 2025 **112.6**; Q2 2026 **307.6** | — |
+| MWh shipped - Derived | Revenue × 1000 / Z3 ASP - Model when ASP - Derived is present | formula; not a print |
+| GWh shipped | No longer a Quarterly Financials row (was MWh / 1000). Company usually reports **cube deliveries**, not GWh shipped | — |
 | Cube vs Indensity mix | **Not disclosed.** Q2 still “cube deliveries”; Q1 CCO: pipeline mix tilting to large-scale / Indensity | do not invent a split |
 
 Fully diluted WAS equals basic in a **loss** quarter (anti-dilutive). Q1 2025 and Q1 2026 were GAAP-profit quarters (FV marks), so diluted WAS is the if-converted count. Q2 2026 Fully diluted Actual is left blank so **Fully diluted shares - Model** keeps Q1 2026’s 544.8M if-converted print.
@@ -59,6 +61,7 @@ Backlog identity (company): prior + new orders − shipments. Pipeline = proposa
 | Average sale price higher in 2025 Q3 than Q2 | [Yahoo Finance Q3 2025 earnings call](https://finance.yahoo.com/quote/EOSE/earnings/EOSE-Q3-2025-earnings_call-369182.html) | Search for "Average selling price" |
 | Derive average selling price from PTC credits | [x.com/x_times_1](https://x.com/x_times_1/status/1950885635100717222) | |
 | Tax credits are not recorded as revenue. They are recorded as negative cost of goods sold. | [x.com/x_times_1](https://x.com/x_times_1/status/2006569905122898296) | **COGS - Model** subtracts **Government credits - Model**. Revenue - Model does **not** add credits. |
+| Unit COGS from 45X PTC dollars | [x.com/bert_gilfoyle](https://x.com/bert_gilfoyle/status/2096422067503878558) | GAAP PTC / 90% transfer = statutory $; ÷ $45/kWh = MWh; Unit COGS = GAAP COGS / (MWh × 1000). Q2 2025: $4.562M → $5.069M → 112.6 MWh → **$410/kWh**. |
 | Cost-out plan → adj. GM / cash burn | [x.com/bert_gilfoyle](https://x.com/bert_gilfoyle/status/2096422051376742414) | Slide 11 waterfall (25/20/20/8 pts); ops cash ≈ adj. EBITDA; $325M FY2026 midpoint / $200M qtr illustration. **COGS** tab + **Percent of Guided Cost Cutting Achieved** (default 70%). |
 | Feltonomics | [x.com/philroberts](https://x.com/philroberts/status/2006725760514453566) | Independent model; **Feltonomics** tab is kept empty for later |
 | Module and cell are interchangeable words with respect to Z3 | (model note) | |
@@ -72,7 +75,7 @@ When updating after an earnings release (same steps every quarter):
 1. `python models/EOSE/scripts/fetch_sec_gaap.py --year YYYY --quarter N` — GAAP vs `actuals.py`.
 2. Open the 8-K Ex. 99.1 from [`sources.py`](sources.py) (or IR). Copy adj. EBITDA recon, pipeline, backlog, booked orders, lines.
 3. If pipeline GWh is missing from the release, use the earnings-call transcript / slides.
-4. Patch [`actuals.py`](actuals.py) (sheet units: $M, pipeline $B, shares million). Fill **MWh shipped** only if you have a working energy figure; **Z3 ASP - Derived** / **Unit COGS - Derived** compute from it. Do not invent a Cube vs Indensity split.
+4. Patch [`actuals.py`](actuals.py) (sheet units: $M, pipeline $B, shares million). Copy **Production Tax Credits** from the 10-Q 45X footnote (three-month COGS reduction). **MWh shipped - PTC** / **Unit COGS - Derived** compute from it. Do not invent a Cube vs Indensity split.
 5. `python models/EOSE/scripts/load_quarterly_actuals.py`
 6. Update **As of date** (column C) so years-from-present and PV stay current.
 7. Confirm 45X still treated as a COGS offset in the 10-Q.

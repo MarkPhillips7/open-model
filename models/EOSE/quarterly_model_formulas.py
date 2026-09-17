@@ -18,6 +18,8 @@ from models.EOSE.layout import (
     ASP_MODEL_START,
     BOOKED_ORDERS_GWH_KEY,
     BOOKED_ORDERS_M_KEY,
+    CELL_MODULE_CREDIT_LABEL,
+    CELL_MODULE_CREDIT_PER_KWH,
     COST_OUT_PROGRESS_LABEL,
     EBITDA_200M_GUIDED_LABEL,
     EBITDA_200M_MODEL_LABEL,
@@ -25,9 +27,12 @@ from models.EOSE.layout import (
     FIRST_VALUE_COL_INDEX,
     GUIDED_ADJ_GM_MODEL_LABEL,
     MWH_SHIPPED_DERIVED_LABEL,
+    MWH_SHIPPED_PTC_LABEL,
     N_QUARTERS,
+    PTC_LABEL,
     QUARTERLY,
     SCALE_BLEND_LABEL,
+    STATUTORY_PTC_LABEL,
     label_map_from_ab,
     live_quarterly_ab,
     require_live_layout_match,
@@ -191,12 +196,24 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         "={c}{45x & active electrode credits}*{c}{45x transfer rate}/100"
     ),
     "Government credits - Model": (
-        f"={{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000"
+        f'=IF({{c}}{{{PTC_LABEL}}}<>"",{{c}}{{{PTC_LABEL}}},'
+        f"{{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000)"
+    ),
+    STATUTORY_PTC_LABEL: (
+        f'=IF(OR({{c}}{{{PTC_LABEL}}}="",N({{c}}{{{PTC_LABEL}}})=0),"",'
+        f"{{c}}{{{PTC_LABEL}}}/({{c}}{{45x transfer rate}}/100))"
+    ),
+    MWH_SHIPPED_PTC_LABEL: (
+        f'=IF(OR({{c}}{{{STATUTORY_PTC_LABEL}}}="",'
+        f'N({{c}}{{{STATUTORY_PTC_LABEL}}})=0),"",'
+        f"{{c}}{{{STATUTORY_PTC_LABEL}}}*1000/{{c}}{{{CELL_MODULE_CREDIT_LABEL}}})"
     ),
     "Unit COGS - Derived": (
-        f'=IF(OR({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}="",'
+        f'=IF(N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})<>0,'
+        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_PTC_LABEL}}},"
+        f'IF(OR({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}="",'
         f'N({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}})=0),"",'
-        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}})"
+        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}))"
     ),
     "Unit COGS w/ 45x - Model": (
         "={c}{Unit COGS - Model}-{c}{Effective 45x credit - Model}"
@@ -312,6 +329,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Quarterly module cycle time reduction rate": (
         "=$C${Quarterly module cycle time reduction rate}"
     ),
+    CELL_MODULE_CREDIT_LABEL: "=$C${" + CELL_MODULE_CREDIT_LABEL + "}",
     "45x & active electrode credits": "=$C${45x & active electrode credits}",
     "45x transfer rate": "=$C${45x transfer rate}",
     "Percent of Guided Cost Cutting Achieved": (
@@ -351,6 +369,7 @@ COPY_FROM_C_LABELS: frozenset[str] = frozenset(
         "Full utilization days per week",
         "Full utilization hours per day",
         "Quarterly module cycle time reduction rate",
+        CELL_MODULE_CREDIT_LABEL,
         "45x & active electrode credits",
         "45x transfer rate",
         "Percent of Guided Cost Cutting Achieved",
@@ -392,6 +411,7 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     "Full utilization days per week": 7,
     "Full utilization hours per day": 24,
     "Quarterly module cycle time reduction rate": 2.9,
+    CELL_MODULE_CREDIT_LABEL: CELL_MODULE_CREDIT_PER_KWH,
     "45x & active electrode credits": 47,
     "45x transfer rate": 90,
     "Percent of Guided Cost Cutting Achieved": DEFAULT_HAIRCUT_PCT,

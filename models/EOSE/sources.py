@@ -9,9 +9,10 @@ After each print:
 
 1. ``python models/EOSE/scripts/fetch_sec_gaap.py`` — pull XBRL vs ``actuals.py``
 2. Open the earnings 8-K Ex. 99.1 (IR or EDGAR) for adj. EBITDA, pipeline, backlog
-3. Patch ``actuals.py`` (native sheet units: $M unless noted)
-4. ``python models/EOSE/scripts/load_quarterly_actuals.py``
-5. Append ``models/EOSE/CHANGELOG.md``
+3. Copy 45X PTC (COGS reduction) from the 10-Q government-grant footnote
+4. Patch ``actuals.py`` (native sheet units: $M unless noted)
+5. ``python models/EOSE/scripts/load_quarterly_actuals.py``
+6. Append ``models/EOSE/CHANGELOG.md``
 """
 
 from __future__ import annotations
@@ -133,6 +134,17 @@ GAAP_INSTANT_TAGS: dict[str, str] = {
     "LongTermDebt": "Total debt",
     "LongTermDebtNoncurrent": "_ltd_noncurrent",
     "LongTermNotesPayable": "_related_party_notes",
+}
+
+# 10-Q/10-K footnote: 45X recognized as a reduction of COGS. Native filing
+# thousands → sheet $M. Q4 2025 is FY $21.259M minus 9M $12.020M.
+PTC_COGS_REDUCTION_M: dict[tuple[int, int], float] = {
+    (2025, 1): 1.799,
+    (2025, 2): 4.562,
+    (2025, 3): 5.660,
+    (2025, 4): 9.239,
+    (2026, 1): 10.341,
+    (2026, 2): 12.457,
 }
 
 # Scale companyfacts native units → sheet units.

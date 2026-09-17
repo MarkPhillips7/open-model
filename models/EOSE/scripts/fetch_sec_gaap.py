@@ -7,7 +7,8 @@ Repeatable after each 10-Q / 10-K. Does not write the Google Sheet.
     python models/EOSE/scripts/fetch_sec_gaap.py --year 2026 --quarter 2
 
 Adj. EBITDA, pipeline, and backlog are not in XBRL — copy those from the
-earnings 8-K Ex. 99.1 listed in models/EOSE/sources.py.
+earnings 8-K Ex. 99.1 listed in models/EOSE/sources.py. Production Tax Credits
+(45X COGS reduction) are a 10-Q footnote, not a us-gaap companyfacts tag.
 """
 
 from __future__ import annotations

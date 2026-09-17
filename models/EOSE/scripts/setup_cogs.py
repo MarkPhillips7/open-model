@@ -30,6 +30,7 @@ from models.EOSE.cogs import (  # noqa: E402
 from models.EOSE.financials_definitions import FIELD_NOTES  # noqa: E402
 from models.EOSE.layout import (  # noqa: E402
     CASH_OPEX_RUNRATE_LABEL,
+    CELL_MODULE_CREDIT_LABEL,
     COGS_COL_WIDTHS_PX,
     COST_OUT_PROGRESS_LABEL,
     DEFINITIONS_COL_WIDTHS_PX,
@@ -115,6 +116,7 @@ NEW_SCALAR_LABELS = frozenset(
         CASH_OPEX_RUNRATE_LABEL,
         NONCASH_COGS_LABEL,
         PIPELINE_GROWTH_LABEL,
+        CELL_MODULE_CREDIT_LABEL,
     }
 )
 

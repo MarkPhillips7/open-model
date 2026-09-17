@@ -18,6 +18,33 @@ Entry template:
 
 ---
 
+## 2026-09-17 — Production Tax Credits → MWh → Unit COGS
+
+Added 45X PTC actuals so historical **Unit COGS - Derived** follows the bert_gilfoyle identity (GAAP PTC ÷ 90% transfer ÷ $45/kWh = MWh; GAAP COGS / that MWh). Q2 2025 prints **$5.069M** statutory / **112.6 MWh** / **$410/kWh**.
+
+- **Tab / range:** **Quarterly Financials** four new rows in the 45X / revenue block. **Financials Definitions** rewritten. **Welcome** goals line.
+- **Insert/delete:** ROWS, **4 inserted**:
+  - 1 before **45x & active electrode credits** (now row 50): **45X cell & module credit**
+  - 2 before **Government credits - Model** (now rows 54–55): **Production Tax Credits**, **Production Tax Credits (statutory) - Derived**
+  - 1 before **Revenue - Model** (now row 63): **MWh shipped - PTC**
+  - Grid is 112 rows (was 108). Rows below each insert shift down.
+- **Formulas:**
+  - **Production Tax Credits (statutory) - Derived:** `PTC / (45x transfer rate / 100)` (Q2 2025: 4.562 / 0.90 = 5.069)
+  - **MWh shipped - PTC:** `statutory × 1000 / 45X cell & module credit` (Q2 2025: 112.6 MWh; Q2 2026: 307.6)
+  - **Unit COGS - Derived:** `COGS × 1000 / MWh shipped - PTC` when PTC energy is present, else the old `COGS × 1000 / MWh shipped - Derived`
+  - **Government credits - Model:** copy **Production Tax Credits** actual when present; else effective 45X × MWh shipped - Derived / 1000
+  - **45X cell & module credit:** C = 45; D:Z `=$C$row`
+- **Data:** 10-Q/10-K 45X COGS-reduction actuals ($M) C–H (2025 Q1 – 2026 Q2): **1.799, 4.562, 5.660, 9.239, 10.341, 12.457**. Q4 2025 is FY $21.259M − 9M $12.020M.
+- **Side effects:** Financials Definitions + Welcome rewritten from git. No chart API. If you added Operations/Money charts, check series in the UI after the four-row insert.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `actuals.py`, `financials_definitions.py`, `sources.py`
+- `welcome.py`, `README.md`, `RESOURCES.md`
+- `scripts/setup_cogs.py`, `scripts/fetch_sec_gaap.py`
+
+---
+
 ## 2026-09-17 — Pull live Quarterly Financials into git (no sheet writes)
 
 Captured the user's manual Quarterly Financials edits into the repo. The live sheet is still the WIP / known-wrong model; git now matches it so restore/setup cannot roll the tab back to the old GWh-shipped identity.

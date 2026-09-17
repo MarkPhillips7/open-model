@@ -51,7 +51,14 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "MWh shipped - Derived": (
         "If Z3 ASP - Derived is blank, blank; else Revenue × 1000 / Z3 ASP - Model. "
-        "Energy implied from revenue and the Model ASP path, not a shipment actual."
+        "Energy implied from revenue and the Model ASP path — not a shipment actual "
+        "and not the 45X identity (that is MWh shipped - PTC)."
+    ),
+    "MWh shipped - PTC": (
+        "Energy sold (MWh) reverse-engineered from 45X: statutory PTC $M × 1000 / "
+        "45X cell & module credit ($/kWh). Q2 2025: 5.069 × 1000 / 45 = 112.6 MWh. "
+        "Blank when Production Tax Credits is blank. 10-Q: PTC hits COGS when "
+        "inventory is sold, so this is shipped kWh, not factory output."
     ),
     "Z3 ASP - Derived": (
         "If Booked orders (GWh) is 0: Pipeline ($B) × 1000 / Pipeline (GWh); "
@@ -115,8 +122,10 @@ FIELD_NOTES: dict[str, str] = {
         "At the 70% default this stays negative vs ~$28.5M cash OpEx."
     ),
     "Unit COGS - Derived": (
-        "COGS ($M) × 1000 / MWh shipped - Derived. GAAP-like unit cost in $/kWh when "
-        "the derived energy cell is present."
+        "GAAP COGS ($M) × 1000 / MWh shipped - PTC when the 45X energy cell is "
+        "present; else COGS × 1000 / MWh shipped - Derived. Q2 2025 checks to "
+        "~$410/kWh (46.189 × 1000 / 112.6). Product-cost identity from the "
+        "bert_gilfoyle cost-out thread: PTC-implied MWh, not the revenue/ASP path."
     ),
     "Unit COGS - Model": (
         "Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts phased "
@@ -124,12 +133,30 @@ FIELD_NOTES: dict[str, str] = {
         "(COGS tab, default $160/kWh) as lines go 2→4. Pre-45X; COGS - Model still "
         "subtracts government credits. $/kWh of energy, not per Cube or Indensity SKU."
     ),
-    "45x & active electrode credits": "$/kWh statutory credit assumption (default 47).",
-    "45x transfer rate": "% of credit realized (default 90).",
-    "Effective 45x credit - Model": "Credit × transfer rate.",
+    "45X cell & module credit": (
+        "IRC 45X statutory $35/kWh cell + $10/kWh module = $45/kWh. Scalar in C, "
+        "copied across. Divisor for MWh shipped - PTC. Does not include the 10% "
+        "electrode active-material add-on (that lives in 45x & active electrode credits)."
+    ),
+    "45x & active electrode credits": (
+        "$/kWh statutory credit assumption including ~$2/kWh electrode (default 47). "
+        "Used for Effective 45x / Government credits - Model. PTC→MWh uses the $45 "
+        "cell+module lever, not this 47."
+    ),
+    "45x transfer rate": "% of credit realized (default 90). GAAP PTC is recorded at this transfer value.",
+    "Effective 45x credit - Model": "Credit × transfer rate (47 × 90% = $42.30/kWh at defaults).",
+    "Production Tax Credits": (
+        "45X credits recognized as a reduction of GAAP COGS ($M), from the 10-Q/10-K "
+        "government-grant footnote (not XBRL). Transfer-value dollars — Q2 2025 $4.562M "
+        "is $5.069M statutory at a 90% transfer rate."
+    ),
+    "Production Tax Credits (statutory) - Derived": (
+        "Production Tax Credits / (45x transfer rate / 100). Gross statutory 45X $M "
+        "before the transfer discount. Q2 2025: 4.562 / 0.90 = 5.069."
+    ),
     "Government credits - Model": (
-        "Effective credit × MWh shipped - Derived / 1000. Applied as a COGS offset only — "
-        "not added to revenue."
+        "Copy Production Tax Credits actual when present; else effective credit × "
+        "MWh shipped - Derived / 1000. Applied as a COGS offset only — not added to revenue."
     ),
     "Unit COGS w/ 45x - Model": "Unit COGS − effective 45X.",
     "FY 2026 revenue guidance — low": "Management FY2026 revenue guide low ($300M as of Q2 2026). Scalar in C.",

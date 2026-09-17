@@ -15,6 +15,10 @@ YEARS = (2025, 2026, 2027, 2028, 2029, 2030)
 BOOKED_ORDERS_M_KEY = "Booked orders [$M]"
 BOOKED_ORDERS_GWH_KEY = "Booked orders [GWh]"
 MWH_SHIPPED_DERIVED_LABEL = "MWh shipped - Derived"
+MWH_SHIPPED_PTC_LABEL = "MWh shipped - PTC"
+PTC_LABEL = "Production Tax Credits"
+STATUTORY_PTC_LABEL = "Production Tax Credits (statutory) - Derived"
+CELL_MODULE_CREDIT_LABEL = "45X cell & module credit"
 
 # Scalar levers live in column C of these labels (column B is units only).
 AS_OF_LABEL = "As of date"
@@ -96,9 +100,12 @@ ROWS: list[tuple[str, str]] = [
     (EBITDA_200M_MODEL_LABEL, "$M"),
     ("Unit COGS - Derived", "$ / kWh"),
     ("Unit COGS - Model", "$ / kWh"),
+    (CELL_MODULE_CREDIT_LABEL, "$ / kWh"),
     ("45x & active electrode credits", "$ / kWh"),
     ("45x transfer rate", "%"),
     ("Effective 45x credit - Model", "$ / kWh"),
+    (PTC_LABEL, "$M"),
+    (STATUTORY_PTC_LABEL, "$M"),
     ("Government credits - Model", "$M"),
     ("Unit COGS w/ 45x - Model", "$ / kWh"),
     ("", ""),
@@ -106,6 +113,7 @@ ROWS: list[tuple[str, str]] = [
     (FY2026_GUIDE_HIGH_LABEL, "$M"),
     ("Revenue", "$M"),
     (MWH_SHIPPED_DERIVED_LABEL, "MWh"),
+    (MWH_SHIPPED_PTC_LABEL, "MWh"),
     ("Revenue - Model", "$M"),
     ("COGS", "$M"),
     ("COGS - Model", "$M"),
@@ -287,3 +295,7 @@ LINE_RAMP: list[float] = [
 # Z3 ASP - Model is a formula on the live sheet (260 in C, prior × 0.97).
 ASP_MODEL_START = 260
 ASP_MODEL_QOQ = 0.97
+
+# IRC 45X $35/kWh cell + $10/kWh module. Used to reverse-engineer MWh from PTC $.
+# Electrode active-material 10% is in "45x & active electrode credits" (default 47), not here.
+CELL_MODULE_CREDIT_PER_KWH = 45

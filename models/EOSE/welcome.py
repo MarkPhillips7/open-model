@@ -45,8 +45,10 @@ GOALS = (
     "Model path so misses are visible. The commercial funnel is quarterly — pipeline → booked orders "
     "→ backlog → shipments — with factory capacity as a ceiling. There is no weekly spine: Eos "
     "does not publish a high-frequency unit funnel. 45X / production credits are treated as a COGS "
-    "offset, not as revenue. Unit COGS follows the Q2 2026 cost-out waterfall on the COGS tab, "
-    "scaled by Percent of Guided Cost Cutting Achieved (default 70%)."
+    "offset, not as revenue. Historical unit COGS is derived from 10-Q PTC dollars "
+    "($45/kWh cell+module ÷ transfer rate → MWh; GAAP COGS / that MWh). Unit COGS - Model "
+    "follows the Q2 2026 cost-out waterfall on the COGS tab, scaled by Percent of Guided "
+    "Cost Cutting Achieved (default 70%)."
 )
 
 TAB_GUIDE_INTRO = (

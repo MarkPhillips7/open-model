@@ -26,6 +26,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Revenue": 10.457,
         "COGS": 34.996,
         "Gross profit": -24.539,
+        "Production Tax Credits": 1.799,  # 10-Q 45X COGS reduction
         "SG&A": 20.995,
         "R&D": 6.837,
         "OpEx": 28.393,  # incl. $0.561M PP&E write-down
@@ -47,6 +48,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Revenue": 15.236,
         "COGS": 46.189,
         "Gross profit": -30.953,
+        "Production Tax Credits": 4.562,  # 10-Q; statutory 4.562/0.9 = 5.069
         "Adjusted gross profit": -27.818,
         "SG&A": 25.488,
         "R&D": 7.201,
@@ -68,6 +70,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Revenue": 30.512,
         "COGS": 64.437,
         "Gross profit": -33.925,
+        "Production Tax Credits": 5.660,  # 10-Q 45X COGS reduction
         "Adjusted gross profit": -30.408,
         "SG&A": 19.786,
         "R&D": 6.925,
@@ -90,6 +93,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Revenue": 57.998,
         "COGS": 112.418,
         "Gross profit": -54.420,
+        "Production Tax Credits": 9.239,  # FY 21.259 − 9M 12.020
         "Adjusted gross profit": -49.132,
         "SG&A": 18.841,
         "R&D": 7.579,
@@ -112,6 +116,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Revenue": 56.963,
         "COGS": 101.390,
         "Gross profit": -44.427,
+        "Production Tax Credits": 10.341,  # 10-Q 45X COGS reduction
         "Adjusted gross profit": -39.040,
         "SG&A": 24.095,
         "R&D": 10.719,
@@ -134,6 +139,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Revenue": 68.775,
         "COGS": 117.576,
         "Gross profit": -48.801,
+        "Production Tax Credits": 12.457,  # 10-Q; PTC MWh ≈ 307.6
         "Adjusted gross profit": -42.869,
         "SG&A": 24.500,
         "R&D": 10.505,

@@ -53,7 +53,7 @@ The live Quarterly Financials tab currently uses a **different** (WIP) path than
 1. **Pipeline / Backlog ($ and GWh)** — Actuals from earnings through **Q2 2026**. Pipeline - Model compounds at the column's growth rate. Backlog - Model copies Q1 actual then × **1.03** per quarter. Backlog (GWh) - Model = dollar model / Z3 ASP - Model.
 2. **Booked orders - Model** — copy $M actual if present, else prior Model × **1.2**. A second **Booked orders** row (units GWh) holds Q4 2025 **1.1**.
 3. **Z3 ASP - Model** — **$260** in 2025 Q1, then prior × **0.97**.
-4. **MWh shipped - Derived** — Revenue × 1000 / Z3 ASP - Model when Z3 ASP - Derived is non-blank. **Revenue - Model** = that MWh / 1000 × ASP. There is no GWh shipped row.
+4. **MWh shipped - Derived** — Revenue × 1000 / Z3 ASP - Model when Z3 ASP - Derived is non-blank. **Revenue - Model** = that MWh / 1000 × ASP. There is no GWh shipped row. **MWh shipped - PTC** is independent: 45X statutory dollars / $45 per kWh.
 
 ### Factory (supply ceiling)
 
@@ -76,7 +76,7 @@ Eos sells energy, but talks about three different physical packages:
 ### Profitability
 
 - **Unit COGS - Model** is computed on **Quarterly Financials** from COGS-tab levers, not a flat $160. Starting point is Q2 2026 adj. GM (−62.3%). Management's 12-month waterfall is **73 pts** (materials 25 / conversion 20 / projects 20 / scrap 8). **Percent of Guided Cost Cutting Achieved** (default **70%**) lives on Quarterly Financials and scales those points because Eos has repeatedly missed cost-out timelines. After Q2 2027 the remaining gap to **Terminal unit COGS** ($160, edited on the COGS tab) is blended in as manufacturing lines go from 2 → 4.
-- **45X** = credit × transfer rate, applied **only** as a COGS offset (`COGS - Model` = unit COGS × GWh − credits + non-cash COGS D&A/SBC).
+- **45X / Production Tax Credits** — Actuals are the 10-Q footnote amount recognized as a **reduction of GAAP COGS** (transfer value, not XBRL). **Production Tax Credits (statutory) - Derived** grosses that up by **45x transfer rate** (default 90%). **MWh shipped - PTC** = statutory $M × 1000 / **45X cell & module credit** ($45). **Unit COGS - Derived** = GAAP COGS × 1000 / that MWh (Q2 2025 ≈ **$410/kWh**). Forward **Government credits - Model** still uses credit × transfer × revenue-implied MWh when the actual is blank; when the print is present it copies it. Credits remain a COGS offset only (`COGS - Model` = unit COGS × GWh − credits + non-cash COGS D&A/SBC).
 - **SG&A / R&D - Model** carry last actual (opex hold). **Cash OpEx run-rate** is Q2 implied adj. GP − adj. EBITDA ($28.5M), held flat.
 - **Adjusted EBITDA - Model** = adj. GP − cash OpEx (company definition). **Operating cash flow - Model** equals that — the CFO said Q2 ops cash use tracked adj. EBITDA.
 - **GAAP net income - Model** = adj. EBITDA − interest run-rate. It **ignores** warrant/derivative fair-value marks that dominate reported NI.
