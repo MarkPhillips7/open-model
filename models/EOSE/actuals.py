@@ -149,6 +149,9 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         # Fully diluted shares omitted: GAAP diluted WAS = basic in a loss quarter.
         # Leaving blank keeps Fully diluted shares - Model on Q1's 544.8 if-converted.
     },
+    (2026, 3): {
+        "Z3 manufacturing lines": 1.5,  # working in-quarter; not a print
+    },
 }
 
 # Column-C scalars (not a time series). Column B is units only.

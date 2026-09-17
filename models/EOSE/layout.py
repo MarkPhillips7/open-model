@@ -20,7 +20,6 @@ NET_INTEREST_RUNRATE_LABEL = "Net interest run-rate"
 FY2026_GUIDE_LOW_LABEL = "FY 2026 revenue guidance — low"
 FY2026_GUIDE_HIGH_LABEL = "FY 2026 revenue guidance — high"
 HAIRCUT_LABEL = "Percent of Guided Cost Cutting Achieved"
-TERMINAL_UNIT_COGS_LABEL = "Terminal unit COGS"
 NONCASH_COGS_LABEL = "Non-cash COGS (D&A + SBC)"
 CASH_OPEX_RUNRATE_LABEL = "Cash OpEx run-rate"
 PIPELINE_GROWTH_LABEL = "Pipeline quarterly growth rate"
@@ -78,7 +77,6 @@ ROWS: list[tuple[str, str]] = [
     ("Factory capacity - Model", "GWh"),
     ("", ""),
     (HAIRCUT_LABEL, "%"),
-    (TERMINAL_UNIT_COGS_LABEL, "$ / kWh"),
     ("Unit COGS - Derived", "$ / kWh"),
     ("Unit COGS - Model", "$ / kWh"),
     ("45x & active electrode credits", "$ / kWh"),

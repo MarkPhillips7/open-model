@@ -5,7 +5,6 @@ from __future__ import annotations
 FINANCIALS_DEFINITIONS_SHEET = "Financials Definitions"
 
 FIELD_NOTES: dict[str, str] = {
-    "Units": "Column B header. Each metric row has a unit here; time series start at column C.",
     "Year": "Calendar year of the quarter column (2025–2030).",
     "Quarter": "Fiscal quarter 1–4. Eos reports on a calendar quarter.",
     "Quarter ending": "EOMONTH of the quarter. Used for years-from-present and Stock price lookup.",
@@ -54,7 +53,10 @@ FIELD_NOTES: dict[str, str] = {
         "Modules packed in the original Cube container (672). Cube-specific — Indensity "
         "is a denser architecture of the same Z3 modules. Do not use 672 to convert Indensity shipments."
     ),
-    "Z3 manufacturing lines": "Installed lines when known (1 through Q1 2026; 2 from Q2 2026 Line 2 launch).",
+    "Z3 manufacturing lines": (
+        "Installed / effective lines when known (1 through Q1 2026; 2 in Q2 2026 after "
+        "Line 2 launch; Q3 2026 working 1.5 — in-quarter, not a print)."
+    ),
     "Z3 manufacturing lines - Model": "Editable ramp (1 → 12). Capacity ceiling, not a demand forecast.",
     "Capacity utilization": "Utilization % assumption (default 85). Apply to Model lines.",
     "Z3 manufacturing lines utilized - Model": "Lines - Model × utilization.",
@@ -71,18 +73,15 @@ FIELD_NOTES: dict[str, str] = {
         "100% = take the CFO plan at face value; 0% = freeze Q2 2026 costs. "
         "Edit C; D:Z copy C. Waterfall lives on the COGS tab."
     ),
-    "Terminal unit COGS": (
-        "Floor ($/kWh, pre-45X) after the 12-month plan, blended in as Lines 3–4 ramp "
-        "(Indensity / single-piece flow). Default $160 — still an explicit thesis."
-    ),
     "Unit COGS - Derived": (
         "COGS ($M) × 1000 / MWh shipped. GAAP unit cost in $/kWh when energy actuals exist. "
         "Q1–Q2 2026 print around $382/kWh. Same energy basis as ASP - Derived — still mixed Cube/Indensity."
     ),
     "Unit COGS - Model": (
         "From the COGS tab: Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts "
-        "phased Q2 2026→Q2 2027, then blend toward Terminal unit COGS as lines go 2→4. "
-        "Pre-45X; COGS - Model still subtracts government credits. $/kWh of energy, not per Cube or Indensity SKU."
+        "phased Q2 2026→Q2 2027, then blend toward Terminal unit COGS (COGS tab, default "
+        "$160/kWh) as lines go 2→4. Pre-45X; COGS - Model still subtracts government credits. "
+        "$/kWh of energy, not per Cube or Indensity SKU."
     ),
     "45x & active electrode credits": "$/kWh statutory credit assumption (default 47).",
     "45x transfer rate": "% of credit realized (default 90).",

@@ -30,7 +30,7 @@ Canonical links and XBRL tag map: [`sources.py`](sources.py). Reported Actuals: 
 | Adjusted EBITDA | Earnings 8-K Ex. 99.1 reconciliation | **not in XBRL** |
 | Pipeline $ / GWh, backlog $ / GWh | Earnings highlights + slides; GWh often only on the call | IR release / transcript |
 | Booked orders | Disclosed in release or slides; else implied Δbacklog + revenue (adjustments can break the identity — Q4 2025 disclosed $240M vs ~$115M implied) | same |
-| Z3 manufacturing lines | Capacity commentary (Line 2 commercial production Q2 2026) | earnings ops section |
+| Z3 manufacturing lines | Capacity commentary (Line 2 commercial production Q2 2026). Q3 2026 **1.5** is a working in-quarter figure, not a print | earnings ops section; Q3 2026 typed |
 | MWh shipped | **Not a 10-Q line** — working estimate on Quarterly Financials (Q1 2026 **265**, Q2 2026 **307.6**) | manual; drives ASP/COGS - Derived |
 | GWh shipped | Formula: MWh / 1000 when MWh is present. Company usually reports **cube deliveries**, not GWh shipped | — |
 | Cube vs Indensity mix | **Not disclosed.** Q2 still “cube deliveries”; Q1 CCO: pipeline mix tilting to large-scale / Indensity | do not invent a split |

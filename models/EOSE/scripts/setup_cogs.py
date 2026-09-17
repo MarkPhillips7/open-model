@@ -35,7 +35,6 @@ from models.EOSE.layout import (  # noqa: E402
     QUARTERLY,
     QUARTERLY_COL_WIDTHS_PX,
     ROWS,
-    TERMINAL_UNIT_COGS_LABEL,
     WELCOME_COL_WIDTHS_PX,
     column_width_requests,
 )
@@ -105,7 +104,6 @@ def ensure_quarterly_rows(client: SheetsClient) -> dict[str, int]:
 NEW_SCALAR_LABELS = frozenset(
     {
         HAIRCUT_LABEL,
-        TERMINAL_UNIT_COGS_LABEL,
         CASH_OPEX_RUNRATE_LABEL,
         NONCASH_COGS_LABEL,
         PIPELINE_GROWTH_LABEL,
@@ -182,7 +180,6 @@ def highlight_haircut(client: SheetsClient, labels: dict[str, int]) -> None:
     requests = []
     for lab in (
         HAIRCUT_LABEL,
-        TERMINAL_UNIT_COGS_LABEL,
         CASH_OPEX_RUNRATE_LABEL,
         NONCASH_COGS_LABEL,
         PIPELINE_GROWTH_LABEL,

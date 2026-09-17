@@ -18,6 +18,41 @@ Entry template:
 
 ---
 
+## 2026-09-17 — Q3 2026 manufacturing lines Actual = 1.5
+
+User replaced the I31 text `="2 to 1"` with **1.5**.
+
+- **Tab / range:** **Quarterly Financials** `I31` (**Z3 manufacturing lines**, 2026 Q3)
+- **Insert/delete:** none
+- **Formulas:** none (hardcoded actual)
+- **Data:** `I31` **1.5**. Working in-quarter figure — Q3 2026 has not printed. Does not change **Z3 manufacturing lines - Model** (I32 still **1.75** on the line ramp).
+- **Side effects:** none on charts
+
+### Repo
+
+- `actuals.py`, `financials_definitions.py`, `README.md`, `RESOURCES.md`
+
+---
+
+## 2026-09-17 — Sync repo from live spreadsheet (manual edits)
+
+Pulled after user edits on **Quarterly Financials** and **Financials Definitions**. **Terminal unit COGS** is no longer a Quarterly Financials row — it lives only on the **COGS** tab.
+
+- **Tab / range:** **Quarterly Financials** row 44 (was **Terminal unit COGS**); **Financials Definitions** matching label; **COGS** `C9` (unbroke the MATCH after the QF delete)
+- **Insert/delete:** ROWS, 1 deleted on Quarterly Financials at **Terminal unit COGS** (was row 44; Haircut stays row 43). Rows below shift **−1**. Definitions dropped **Units** (header-only) and **Terminal unit COGS**.
+- **Formulas:**
+  - **Unit COGS - Model** still `INDEX/MATCH`s the COGS engine (unchanged).
+  - **Unit COGS w/ 45x - Model** live `=C45-C48` (auto-shifted) captured as `{Unit COGS - Model}-{Effective 45x credit - Model}` so restore keeps it.
+  - **COGS C9 Terminal unit COGS:** `INDEX/MATCH` into Quarterly Financials (now `#N/A`) → hardcoded **160** (yellow editable lever). Haircut still pulls from QF `C43`.
+- **Data:** Column-C scalars, line ramp, ASP, and reported actuals otherwise match the repo. **Z3 manufacturing lines** `I31` (2026 Q3) is the text `="2 to 1"` on the live sheet — not a numeric actual, left as typed.
+- **Side effects:** No chart API. No chart objects in this workbook. Welcome tab copy unchanged.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `cogs.py`, `scripts/setup_cogs.py`, `financials_definitions.py`, `README.md`
+
+---
+
 ## 2026-09-09 — Manual Quarterly Financials rows into repo + Definitions
 
 Synced live-sheet edits (new rows, derived $/kWh, column widths) into `layout.py` / formulas / Definitions. Duplicate **Revenue** label with units MWh was renamed **MWh shipped** so MATCH keys stay unique.

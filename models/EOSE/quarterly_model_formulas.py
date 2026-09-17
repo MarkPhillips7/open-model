@@ -10,7 +10,6 @@ from sheets.formulas import col_letter as _col_letter
 from models.EOSE.cogs import (
     ADJ_GM_MODEL_LABEL,
     DEFAULT_HAIRCUT_PCT,
-    DEFAULT_TERMINAL_UNIT_COGS,
     Q2_2026_CASH_OPEX,
     Q2_2026_NONCASH_COGS,
     UNIT_COGS_MODEL_LABEL,
@@ -135,6 +134,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",'
         "{c}{COGS}*1000/{c}{MWh shipped})"
     ),
+    "Unit COGS w/ 45x - Model": (
+        "={c}{Unit COGS - Model}-{c}{Effective 45x credit - Model}"
+    ),
     "Revenue - Model": "={c}{GWh shipped - Model}*{c}{Z3 ASP - Model}",
     "COGS - Model": (
         "={c}{Unit COGS - Model}*{c}{GWh shipped - Model}-{c}{Government credits - Model}"
@@ -240,7 +242,6 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Percent of Guided Cost Cutting Achieved": (
         "=$C${Percent of Guided Cost Cutting Achieved}"
     ),
-    "Terminal unit COGS": "=$C${Terminal unit COGS}",
     "Unit COGS - Model": qf_index_formula(UNIT_COGS_MODEL_LABEL),
     "Non-cash COGS (D&A + SBC)": "=$C${Non-cash COGS (D&A + SBC)}",
     "Cash OpEx run-rate": "=$C${Cash OpEx run-rate}",
@@ -278,7 +279,6 @@ COPY_FROM_C_LABELS: frozenset[str] = frozenset(
         "45x & active electrode credits",
         "45x transfer rate",
         "Percent of Guided Cost Cutting Achieved",
-        "Terminal unit COGS",
         "Non-cash COGS (D&A + SBC)",
         "Cash OpEx run-rate",
         "EV / EBITDA",
@@ -319,7 +319,6 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     "45x & active electrode credits": 47,
     "45x transfer rate": 90,
     "Percent of Guided Cost Cutting Achieved": DEFAULT_HAIRCUT_PCT,
-    "Terminal unit COGS": DEFAULT_TERMINAL_UNIT_COGS,
     "Non-cash COGS (D&A + SBC)": Q2_2026_NONCASH_COGS,
     "Cash OpEx run-rate": Q2_2026_CASH_OPEX,
     "EV / EBITDA": 30,

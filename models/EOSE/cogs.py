@@ -174,7 +174,7 @@ LEVER_ROWS: list[tuple[str, str, Any]] = [
         "cash use ≈ Adjusted EBITDA (CFO; Q2 2026). CapEx continues on top of that.",
     ),
     ("", "", ""),
-    ("Levers", "", "Edit the yellow cells. Haircut and terminal also live on Quarterly Financials."),
+    ("Levers", "", "Edit the yellow cells. Haircut also lives on Quarterly Financials; terminal $/kWh is edited here."),
     (
         "Percent of Guided Cost Cutting Achieved",
         "%",
@@ -183,7 +183,7 @@ LEVER_ROWS: list[tuple[str, str, Any]] = [
     (
         "Terminal unit COGS",
         "$ / kWh",
-        f"={_qf_c('Terminal unit COGS')}",
+        DEFAULT_TERMINAL_UNIT_COGS,
     ),
     ("Cost-out start year", "year", COST_OUT_START_YEAR),
     ("Cost-out start quarter", "q", COST_OUT_START_QUARTER),
@@ -437,6 +437,7 @@ EDITABLE_LEVER_LABELS: frozenset[str] = frozenset(
         "Cost-out complete quarter",
         "Scale absorption start lines",
         "Scale absorption complete lines",
+        "Terminal unit COGS",
         "Starting adjusted gross margin",
         "Materials cost-out",
         "Conversion cost-out",

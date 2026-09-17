@@ -32,7 +32,7 @@ There is no weekly spine. Eos does not publish a high-frequency unit funnel.
 | **Price History** | One `GOOGLEFINANCE` spill of EOSE daily OHLCV. **Stock price** XLOOKUPs the close by quarter-ending date. |
 | **Reference** | Source links (ASP, 45X treatment, Feltonomics). |
 | **Feltonomics** | Placeholder (empty) — independent model cited on Reference. Kept for later. |
-| **COGS** | Unit-cost engine: Q2 2026 Slide 11 cost-out (25/20/20/8 pts of adj. GM) × **Percent of Guided Cost Cutting Achieved** (default 70%), then blend to terminal $/kWh as Lines 3–4 ramp. Feeds **Unit COGS - Model**. |
+| **COGS** | Unit-cost engine: Q2 2026 Slide 11 cost-out (25/20/20/8 pts of adj. GM) × **Percent of Guided Cost Cutting Achieved** (default 70%), then blend to **Terminal unit COGS** (default $160/kWh, edited on this tab) as Lines 3–4 ramp. Feeds **Unit COGS - Model**. |
 
 **Charts are manual-only.** Add Operations / Money charts in the Google Sheets UI if you want Actual (solid) vs Model (dotted). Agents must not create or edit chart objects via the API.
 
@@ -55,7 +55,7 @@ Eos defines backlog as prior + booked orders − shipments. Pipeline is proposal
 
 ### Factory (supply ceiling)
 
-Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle time - Model starts at 18s, compounds at 2.9%/quarter, floored at 10s. Line ramp is an editable Model series (1 → 12). Actual lines: 1 through Q1 2026, 2 from Q2 2026 (Line 2 launch). **Z3 modules per cube (672)** is the original **Cube** packing only — do not use it for Indensity.
+Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle time - Model starts at 18s, compounds at 2.9%/quarter, floored at 10s. Line ramp is an editable Model series (1 → 12). Actual lines: 1 through Q1 2026, 2 in Q2 2026 (Line 2 launch), working **1.5** in Q3 2026 (in-quarter, not a print). **Z3 modules per cube (672)** is the original **Cube** packing only — do not use it for Indensity.
 
 ### What “unit” means
 
@@ -73,7 +73,7 @@ Eos sells energy, but talks about three different physical packages:
 
 ### Profitability
 
-- **Unit COGS - Model** comes from the **COGS** tab, not a flat $160. Starting point is Q2 2026 adj. GM (−62.3%). Management's 12-month waterfall is **73 pts** (materials 25 / conversion 20 / projects 20 / scrap 8). **Percent of Guided Cost Cutting Achieved** (default **70%**) scales those points because Eos has repeatedly missed cost-out timelines. After Q2 2027 the remaining gap to **Terminal unit COGS** ($160) is blended in as manufacturing lines go from 2 → 4.
+- **Unit COGS - Model** comes from the **COGS** tab, not a flat $160. Starting point is Q2 2026 adj. GM (−62.3%). Management's 12-month waterfall is **73 pts** (materials 25 / conversion 20 / projects 20 / scrap 8). **Percent of Guided Cost Cutting Achieved** (default **70%**) lives on Quarterly Financials and scales those points because Eos has repeatedly missed cost-out timelines. After Q2 2027 the remaining gap to **Terminal unit COGS** ($160, edited on the COGS tab) is blended in as manufacturing lines go from 2 → 4.
 - **45X** = credit × transfer rate, applied **only** as a COGS offset (`COGS - Model` = unit COGS × GWh − credits + non-cash COGS D&A/SBC).
 - **SG&A / R&D - Model** carry last actual (opex hold). **Cash OpEx run-rate** is Q2 implied adj. GP − adj. EBITDA ($28.5M), held flat.
 - **Adjusted EBITDA - Model** = adj. GP − cash OpEx (company definition). **Operating cash flow - Model** equals that — the CFO said Q2 ops cash use tracked adj. EBITDA.
