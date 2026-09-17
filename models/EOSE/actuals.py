@@ -123,7 +123,6 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Total debt": 619.519,
         "Basic shares": 339.602,
         "Fully diluted shares": 544.829,  # if-converted WAS (GAAP profit quarter)
-        "MWh shipped": 265,
     },
     (2026, 2): {
         "Pipeline": 24.6,
@@ -145,13 +144,18 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 453.835,
         "Total debt": 617.118,
         "Basic shares": 339.799,
-        "MWh shipped": 307.6,
         # Fully diluted shares omitted: GAAP diluted WAS = basic in a loss quarter.
         # Leaving blank keeps Fully diluted shares - Model on Q1's 544.8 if-converted.
     },
     (2026, 3): {
         "Z3 manufacturing lines": 1.5,  # working in-quarter; not a print
     },
+}
+
+# Duplicate live label "Booked orders" with units GWh (row after Booked orders - Model).
+# Loaded by (label, units), never via last-MATCH on column A.
+ACTUALS_BY_UNITS: dict[tuple[int, int], dict[tuple[str, str], float]] = {
+    (2025, 4): {("Booked orders", "GWh"): 1.1},
 }
 
 # Column-C scalars (not a time series). Column B is units only.

@@ -11,6 +11,11 @@ FIRST_VALUE_COL_INDEX = 3  # 1-based
 N_QUARTERS = 24
 YEARS = (2025, 2026, 2027, 2028, 2029, 2030)
 
+# Duplicate live column-A label: $M on the first Booked orders row, GWh on the second.
+BOOKED_ORDERS_M_KEY = "Booked orders [$M]"
+BOOKED_ORDERS_GWH_KEY = "Booked orders [GWh]"
+MWH_SHIPPED_DERIVED_LABEL = "MWh shipped - Derived"
+
 # Scalar levers live in column C of these labels (column B is units only).
 AS_OF_LABEL = "As of date"
 AS_OF_DATE = "2026-09-09"  # sheet DATEVALUE; years-from-present uses this
@@ -56,16 +61,15 @@ ROWS: list[tuple[str, str]] = [
     ("Pipeline (GWh) - Model", "GWh"),
     ("Booked orders", "$M"),
     ("Booked orders - Model", "$M"),
+    ("Booked orders", "GWh"),
     ("Backlog", "$M"),
     ("Backlog - Model", "$M"),
     ("Backlog (GWh)", "GWh"),
     ("Backlog (GWh) - Model", "GWh"),
     ("Backlog conversion lag", "quarters"),
-    ("GWh shipped", "GWh"),
-    ("GWh shipped - Model", "GWh"),
     ("", ""),
     ("Z3 ASP - Derived", "$ / kWh"),
-    ("Z3 ASP - Model", "$"),
+    ("Z3 ASP - Model", "$ / kWh"),
     ("Z3 Module Energy Capacity", "kWh / module"),
     ("Z3 module cycle time", "seconds"),
     ("Z3 module cycle time - Model", "seconds"),
@@ -101,7 +105,7 @@ ROWS: list[tuple[str, str]] = [
     (FY2026_GUIDE_LOW_LABEL, "$M"),
     (FY2026_GUIDE_HIGH_LABEL, "$M"),
     ("Revenue", "$M"),
-    ("MWh shipped", "MWh"),
+    (MWH_SHIPPED_DERIVED_LABEL, "MWh"),
     ("Revenue - Model", "$M"),
     ("COGS", "$M"),
     ("COGS - Model", "$M"),
@@ -183,13 +187,82 @@ def column_width_requests(sheet_id: int, widths: dict[int, int]) -> list[dict]:
     return requests
 
 
-def label_row_numbers() -> dict[str, int]:
-    """1-based row index for each non-empty label."""
+def label_map_from_ab(rows: list[list]) -> dict[str, int]:
+    """Map labels to 1-based rows from A:B grids.
+
+    Bare ``label`` is the first match (so ``Booked orders`` is the $M row).
+    ``label [units]`` is always unique (covers the duplicate GWh Booked orders row).
+    """
     found: dict[str, int] = {}
-    for i, (label, _units) in enumerate(ROWS, start=1):
-        if label:
-            found[label] = i
+    for i, row in enumerate(rows, start=1):
+        label = row[0] if row else ""
+        if not label:
+            continue
+        units = row[1] if len(row) > 1 else ""
+        found.setdefault(label, i)
+        found[f"{label} [{units}]"] = i
     return found
+
+
+def label_row_numbers() -> dict[str, int]:
+    """1-based row index for each non-empty label (first match + units key)."""
+    return label_map_from_ab([[label, units] for label, units in ROWS])
+
+
+def live_quarterly_ab(client) -> list[list]:
+    rows = client.batch_get([f"{QUARTERLY}!A1:B160"])[0]
+    # Pad so a trailing empty row on the sheet still compares to ROWS.
+    while rows and (not rows[-1] or not any(rows[-1])):
+        rows.pop()
+    return rows
+
+
+def live_layout_mismatches(client) -> list[str]:
+    """Diff live Quarterly Financials A:B against ROWS. Empty if they match."""
+    live = live_quarterly_ab(client)
+    issues: list[str] = []
+    n = max(len(live), len(ROWS))
+    for i in range(n):
+        live_row = live[i] if i < len(live) else []
+        live_label = live_row[0] if live_row else ""
+        live_units = live_row[1] if len(live_row) > 1 else ""
+        repo_label, repo_units = ROWS[i] if i < len(ROWS) else ("", "")
+        if (live_label, live_units) != (repo_label, repo_units):
+            issues.append(
+                f"R{i + 1}: live {live_label!r}/{live_units!r} != "
+                f"repo {repo_label!r}/{repo_units!r}"
+            )
+    return issues
+
+
+def require_live_layout_match(client, *, action: str) -> None:
+    """Abort sheet writes if the live label stack drifted from git."""
+    issues = live_layout_mismatches(client)
+    if not issues:
+        return
+    preview = "\n".join(f"  {line}" for line in issues[:25])
+    extra = f"\n  … {len(issues) - 25} more" if len(issues) > 25 else ""
+    raise SystemExit(
+        f"Refusing to {action}: live Quarterly Financials labels differ from "
+        f"models/EOSE/layout.py.\n{preview}{extra}\n"
+        "Update the repo from the sheet first, or pass --force-rebuild if you "
+        "intentionally want to replace the live workbook."
+    )
+
+
+def row_number_for(label: str, units: str | None = None) -> int:
+    """1-based row in ROWS. Bare label is first match; pass units to disambiguate."""
+    first: int | None = None
+    for i, (lab, un) in enumerate(ROWS, start=1):
+        if lab != label:
+            continue
+        if first is None:
+            first = i
+        if units is not None and un == units:
+            return i
+    if first is None or units is not None:
+        raise KeyError(f"Label {label!r} units {units!r} not in layout.ROWS")
+    return first
 
 
 def quarters() -> list[tuple[int, int]]:
@@ -211,9 +284,6 @@ LINE_RAMP: list[float] = [
     10.75, 12, 12, 12,
 ]
 
-# ASP Model: 250 in 2025 Q1–Q3 (early production), 256 thereafter.
-def asp_model_values() -> list[float]:
-    vals: list[float] = []
-    for year, q in quarters():
-        vals.append(250.0 if year == 2025 and q <= 3 else 256.0)
-    return vals
+# Z3 ASP - Model is a formula on the live sheet (260 in C, prior × 0.97).
+ASP_MODEL_START = 260
+ASP_MODEL_QOQ = 0.97

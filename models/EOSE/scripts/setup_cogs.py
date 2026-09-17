@@ -5,11 +5,14 @@ Idempotent: inserts any missing Quarterly Financials rows from layout.ROWS,
 rewrites COGS (Units / Value / Notes), restores Model formulas, refreshes
 Welcome / Definitions, and fills Adjusted gross profit actuals.
 
-    python models/EOSE/scripts/setup_cogs.py
+    python models/EOSE/scripts/setup_cogs.py --force-rebuild
+
+Refuses to run unless you pass ``--force-rebuild`` — it restores formulas and rewrites COGS.
 """
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -125,7 +128,7 @@ def rename_ambiguous_labels(client: SheetsClient) -> None:
         a = row[0] if row else ""
         b = row[1] if len(row) > 1 else ""
         if a == "Revenue" and str(b).strip().upper() == "MWH":
-            updates.append({"range": f"A{i}", "values": [["MWh shipped"]]})
+            updates.append({"range": f"A{i}", "values": [["MWh shipped - Derived"]]})
         if a == "Z3 ASP":
             updates.append({"range": f"A{i}", "values": [["Z3 ASP - Derived"]]})
             if not b:
@@ -260,12 +263,27 @@ def expand_quarterly_grid(client: SheetsClient, n_rows: int) -> None:
 
 
 def load_new_actuals(client: SheetsClient, labels: dict[str, int]) -> None:
-    updates = build_updates(labels)
+    del labels  # row numbers come from layout.ROWS (first-match + units)
+    updates = build_updates()
     client.worksheet(QUARTERLY).batch_update(updates, value_input_option="RAW")
     print(f"Wrote {len(updates)} actual cells (including adj. gross profit)")
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--force-rebuild",
+        action="store_true",
+        help="Rewrite COGS, restore Quarterly Financials formulas, and reload actuals",
+    )
+    args = parser.parse_args()
+    if not args.force_rebuild:
+        print(
+            "Refusing to rewrite the live EOSE COGS tab / restore formulas "
+            "(would wipe manual Quarterly Financials edits). "
+            "Pass --force-rebuild only if you intend to replace the sheet from git."
+        )
+        sys.exit(2)
     client = SheetsClient(ticker="EOSE")
     expand_quarterly_grid(client, len(ROWS))
     rename_ambiguous_labels(client)

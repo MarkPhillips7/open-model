@@ -93,6 +93,7 @@ def collect_generated_formula_issues(
     n_cols = offset + 1
     if n_cols < 1:
         return issues
+    prior_col = wfm.col_letter(_a1_col_index(sample_col) - 1)
     for label in wfm.MODEL_FORMULA_LABELS:
         cells = wfm.row_cells_for_label(label, n_cols, label_to_row=label_to_row)
         if not cells:
@@ -106,7 +107,12 @@ def collect_generated_formula_issues(
         for dep_label in deps:
             expected = label_to_row[dep_label]
             cell_ref = f"{sample_col}{expected}"
-            if cell_ref not in formula and f"${expected}" not in formula:
+            prior_ref = f"{prior_col}{expected}"
+            if (
+                cell_ref not in formula
+                and prior_ref not in formula
+                and f"${expected}" not in formula
+            ):
                 issues.append(
                     f"{label!r}: generated formula for col {sample_col} "
                     f"does not reference {cell_ref} ({dep_label!r})"
@@ -208,7 +214,10 @@ def validate(
     client = client or SheetsClient(ticker=resolved)
     tab = getattr(wfm, "FINANCIALS_TAB", WEEKLY)
     first_idx = getattr(wfm, "FIRST_VALUE_COL_INDEX", 2)
-    label_to_row = label_rows(client, tab, max_row=150)
+    if hasattr(wfm, "sheet_label_map"):
+        label_to_row = wfm.sheet_label_map(client)
+    else:
+        label_to_row = label_rows(client, tab, max_row=150)
     issues.extend(collect_template_issues(wfm, label_to_row))
     sample_col = wfm.col_letter(first_idx + 4)  # OPEN: F; EOSE: G
     issues.extend(

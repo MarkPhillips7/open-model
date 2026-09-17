@@ -48,10 +48,12 @@ OPEN pattern: bare label = hardcoded print (or derived from prints); `Label - Mo
 
 Eos defines backlog as prior + booked orders − shipments. Pipeline is proposals + LOI. Booked orders require a PO or MSA.
 
-1. **Pipeline / Backlog ($ and GWh)** — Actuals from earnings through **Q2 2026**. Model carries last actual pipeline; rolls backlog with preferred orders and revenue.
-2. **Booked orders - Model** — last actual bookings carried forward (Q4 2025 $240M disclosed; Q2 2026 implied ~$231M).
-3. **GWh shipped - Model** — `MIN(Factory capacity - Model, beginning backlog GWh / Backlog conversion lag)`. Default lag **4** quarters (column C).
-4. **Revenue - Model** — GWh shipped - Model × Z3 ASP - Model. **Does not add 45X credits.**
+The live Quarterly Financials tab currently uses a **different** (WIP) path than the old capacity/backlog identity. Repo templates match the sheet as typed, including known-wrong formulas:
+
+1. **Pipeline / Backlog ($ and GWh)** — Actuals from earnings through **Q2 2026**. Pipeline - Model compounds at the column's growth rate. Backlog - Model copies Q1 actual then × **1.03** per quarter. Backlog (GWh) - Model = dollar model / Z3 ASP - Model.
+2. **Booked orders - Model** — copy $M actual if present, else prior Model × **1.2**. A second **Booked orders** row (units GWh) holds Q4 2025 **1.1**.
+3. **Z3 ASP - Model** — **$260** in 2025 Q1, then prior × **0.97**.
+4. **MWh shipped - Derived** — Revenue × 1000 / Z3 ASP - Model when Z3 ASP - Derived is non-blank. **Revenue - Model** = that MWh / 1000 × ASP. There is no GWh shipped row.
 
 ### Factory (supply ceiling)
 
@@ -69,7 +71,7 @@ Eos sells energy, but talks about three different physical packages:
 
 **Unit COGS / ASP in this model are $/kWh of energy**, not $/Cube or $/Indensity SKU. Bert’s [cost-out thread](https://x.com/bert_gilfoyle/status/2096422051376742414) follows Slide 11: **percentage points of adjusted gross margin** (of revenue) and Adj. EBITDA in **$M**. Older factory notes mix that with implied **$/kWh** and management’s **per-cube** cost KPIs. Eos has **not disclosed** a Cube vs Indensity sales split. Q2 2026 still reported cube deliveries (+207% YoY, +20% QoQ); Line 2 was ~1% of Q2 production. Q1 2026 commentary was that the *pipeline* has a higher mix of large-scale / Indensity quotes — that is not current-period shipments.
 
-**MWh shipped** (Q1 2026 265, Q2 307.6) is a working actual you typed — not a labeled 10-Q line. Implied ASP is ~$215–224/kWh vs **Z3 ASP - Model** $256. Treat the nine-month-old factory defaults (18s cycle, 672/cube, $256 ASP) as guesses until replaced.
+**MWh shipped - Derived** is a formula (revenue / Model ASP), not the old Q1/Q2 2026 typed MWh prints. Treat factory defaults (18s cycle, 672/cube) as guesses until replaced.
 
 ### Profitability
 
@@ -97,11 +99,13 @@ python scripts/validate_model_formulas.py --ticker EOSE
 python scripts/restore_weekly_model_formulas.py --ticker EOSE
 python models/EOSE/scripts/fetch_sec_gaap.py
 python models/EOSE/scripts/load_quarterly_actuals.py
-python models/EOSE/scripts/setup_eose_workbook.py
-python models/EOSE/scripts/setup_cogs.py
+python models/EOSE/scripts/setup_eose_workbook.py --force-rebuild
+python models/EOSE/scripts/setup_cogs.py --force-rebuild
 ```
 
 Canonical Model formulas live in `quarterly_model_formulas.py` (label placeholders, restored onto **Quarterly Financials**). Reported prints live in `actuals.py`. After each earnings release, pull GAAP from SEC companyfacts (`fetch_sec_gaap.py`), copy adj. EBITDA / pipeline / backlog from the 8-K Ex. 99.1 (links in `sources.py`), patch `actuals.py`, then `load_quarterly_actuals.py`. See [RESOURCES.md](RESOURCES.md).
+
+Do **not** run `setup_eose_workbook.py`, `setup_cogs.py`, or `restore_weekly_model_formulas.py --ticker EOSE` unless you intend to replace the live sheet from git. The setup scripts require `--force-rebuild`. Restore aborts if Quarterly Financials labels drifted from `layout.py`.
 
 ```python
 from sheets import SheetsClient

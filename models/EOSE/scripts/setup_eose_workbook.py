@@ -2,10 +2,13 @@
 """Rebuild the EOSE workbook: Quarterly Financials + Welcome, Definitions, Shares, Price History.
 
 Rewrites COGS (cost-out levers / notes). Keeps Feltonomics and Reference. Does not create or edit charts.
+
+Refuses to run unless you pass ``--force-rebuild`` — a rebuild clears Quarterly Financials.
 """
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -13,7 +16,7 @@ PACK = Path(__file__).resolve().parents[1]
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
-from models.EOSE.actuals import ACTUALS, SCALARS  # noqa: E402
+from models.EOSE.actuals import ACTUALS, ACTUALS_BY_UNITS, SCALARS  # noqa: E402
 from models.EOSE.financials_definitions import (  # noqa: E402
     FIELD_NOTES,
     FINANCIALS_DEFINITIONS_SHEET,
@@ -30,7 +33,6 @@ from models.EOSE.layout import (  # noqa: E402
     QUARTERLY_COL_WIDTHS_PX,
     ROWS,
     WELCOME_COL_WIDTHS_PX,
-    asp_model_values,
     column_width_requests,
     quarters,
 )
@@ -153,7 +155,6 @@ def _empty_row() -> list:
 
 def build_quarterly_grid(label_to_row: dict[str, int]) -> list[list]:
     qs = quarters()
-    asp_model = asp_model_values()
     grid = [_empty_row() for _ in ROWS]
 
     for r, (label, units) in enumerate(ROWS):
@@ -179,16 +180,19 @@ def build_quarterly_grid(label_to_row: dict[str, int]) -> list[list]:
         grid[label_to_row[label] - 1][2] = value
 
     lines_i = label_to_row["Z3 manufacturing lines - Model"] - 1
-    asp_i = label_to_row["Z3 ASP - Model"] - 1
-    for i, (lines, asp) in enumerate(zip(LINE_RAMP, asp_model, strict=True)):
+    for i, lines in enumerate(LINE_RAMP):
         grid[lines_i][2 + i] = lines
-        grid[asp_i][2 + i] = asp
 
     for (year, q), fields in ACTUALS.items():
         idx = qs.index((year, q))
         c = 2 + idx
         for label, value in fields.items():
             grid[label_to_row[label] - 1][c] = value
+    for (year, q), fields in ACTUALS_BY_UNITS.items():
+        idx = qs.index((year, q))
+        c = 2 + idx
+        for (label, units), value in fields.items():
+            grid[label_to_row[f"{label} [{units}]"] - 1][c] = value
 
     for label in MODEL_FORMULA_LABELS:
         cells = row_cells_for_label(label, N_QUARTERS, label_to_row=label_to_row)
@@ -466,6 +470,20 @@ def apply_column_widths(client: SheetsClient) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--force-rebuild",
+        action="store_true",
+        help="Replace live Welcome / Definitions / Quarterly Financials / COGS / Shares from git",
+    )
+    args = parser.parse_args()
+    if not args.force_rebuild:
+        print(
+            "Refusing to rebuild the live EOSE workbook (would wipe Quarterly Financials "
+            "and other tabs). Pass --force-rebuild only if you intend to replace the sheet "
+            "from models/EOSE."
+        )
+        sys.exit(2)
     client = SheetsClient(ticker="EOSE")
     rename_quarterly_tab(client)
     write_price_history(client)

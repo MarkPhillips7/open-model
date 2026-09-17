@@ -18,6 +18,24 @@ Entry template:
 
 ---
 
+## 2026-09-17 — Pull live Quarterly Financials into git (no sheet writes)
+
+Captured the user's manual Quarterly Financials edits into the repo. The live sheet is still the WIP / known-wrong model; git now matches it so restore/setup cannot roll the tab back to the old GWh-shipped identity.
+
+- **Tab / range:** repo only. Live **Quarterly Financials** `A1:Z108` was read, not written.
+- **Insert/delete:** none on the sheet. Repo `layout.py` now has 108 rows: added **Booked orders** (GWh) after **Booked orders - Model**; removed **GWh shipped** / **GWh shipped - Model**; renamed **MWh shipped** → **MWh shipped - Derived**; **Z3 ASP - Model** units `$ / kWh`.
+- **Formulas:** captured as typed — Booked orders - Model last-actual-or-×1.2; Backlog - Model Q1 actual then ×1.03; ASP - Model $260 then ×0.97; MWh shipped - Derived = Revenue×1000/ASP Model; Revenue - Model from derived MWh; Government credits from derived MWh/1000. Duplicate **Booked orders** labels are keyed as `Booked orders [$M]` / `Booked orders [GWh]` so MATCH/load cannot write dollar actuals onto the GWh row.
+- **Data:** dropped typed MWh 265 / 307.6; Q4 2025 Booked orders GWh **1.1**. Line ramp unchanged.
+- **Side effects:** `setup_eose_workbook.py` and `setup_cogs.py` now refuse unless `--force-rebuild`. `load_quarterly_actuals.py` skips formula cells and requires a layout match. Restore uses the units-aware label map and aborts if live A:B drifted from `layout.py`. No chart API.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `actuals.py`, `financials_definitions.py`, `README.md`
+- `scripts/setup_eose_workbook.py`, `scripts/setup_cogs.py`, `scripts/load_quarterly_actuals.py`
+- `scripts/restore_weekly_model_formulas.py`, `scripts/validate_model_formulas.py`
+
+---
+
 ## 2026-09-17 — COGS Units / Value / Notes; quarterly path on Financials
 
 Reorganized the **COGS** tab so column C is a narrow value column and notes live in D. Moved the quarterly engine onto **Quarterly Financials**.

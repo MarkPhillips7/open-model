@@ -14,15 +14,23 @@ from models.EOSE.cogs import (
     cogs_c_ref,
 )
 from models.EOSE.layout import (
+    ASP_MODEL_QOQ,
+    ASP_MODEL_START,
+    BOOKED_ORDERS_GWH_KEY,
+    BOOKED_ORDERS_M_KEY,
     COST_OUT_PROGRESS_LABEL,
     EBITDA_200M_GUIDED_LABEL,
     EBITDA_200M_MODEL_LABEL,
     FIRST_VALUE_COL,
     FIRST_VALUE_COL_INDEX,
     GUIDED_ADJ_GM_MODEL_LABEL,
+    MWH_SHIPPED_DERIVED_LABEL,
     N_QUARTERS,
     QUARTERLY,
     SCALE_BLEND_LABEL,
+    label_map_from_ab,
+    live_quarterly_ab,
+    require_live_layout_match,
 )
 
 FINANCIALS_TAB = QUARTERLY
@@ -42,6 +50,15 @@ def apply_row_labels(template: str, label_to_row: dict[str, int]) -> str:
     for label in sorted(label_to_row, key=len, reverse=True):
         out = out.replace("{" + label + "}", str(label_to_row[label]))
     return out
+
+
+def sheet_label_map(client: Any) -> dict[str, int]:
+    """Live A:B map with first-match bare labels plus ``label [units]`` keys."""
+    return label_map_from_ab(live_quarterly_ab(client))
+
+
+def assert_live_layout(client: Any, *, action: str = "restore model formulas") -> None:
+    require_live_layout_match(client, action=action)
 
 
 def _prior(label: str) -> str:
@@ -119,46 +136,34 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     ),
     "Pipeline - Model": (
         f'=IF({{c}}{{Quarter}}="","",'
-        f'IF({_first_q()},{{c}}{{Pipeline}},'
-        f'{_prior("Pipeline - Model")}*(1+$C${{Pipeline quarterly growth rate}}/100)))'
+        f"IF(COLUMN()=3,{{c}}{{Pipeline}},"
+        f'{_prior("Pipeline - Model")}*(1+{{c}}{{Pipeline quarterly growth rate}}/100)))'
     ),
     "Pipeline (GWh) - Model": (
         '=IF({c}{Quarter}="","",IFERROR(1000*{c}{Pipeline - Model}/{c}{Z3 ASP - Model},""))'
     ),
     "Booked orders - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'{_prefer(_prior("Booked orders"), _prior("Booked orders - Model"))})'
+        "=IF({c}{" + BOOKED_ORDERS_M_KEY + '}="",'
+        "{cp}{Booked orders - Model}*1.2,"
+        "{c}{" + BOOKED_ORDERS_M_KEY + "})"
     ),
     "Backlog - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'IF(AND({_prior("Backlog")}="",{_prior("Backlog - Model")}=""),"",'
-        + _prefer(_prior("Backlog"), _prior("Backlog - Model"))
-        + "+"
-        + _prefer("{c}{Booked orders}", "{c}{Booked orders - Model}")
-        + "-"
-        + _prefer("{c}{Revenue}", "{c}{Revenue - Model}")
-        + "))"
+        "=IF(column()=3,$C${Backlog},{cp}{Backlog - Model}*1.03)"
     ),
-    "Backlog (GWh) - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'IF(AND({_prior("Backlog (GWh)")}="",{_prior("Backlog (GWh) - Model")}=""),"",'
-        + _prefer(_prior("Backlog (GWh)"), _prior("Backlog (GWh) - Model"))
-        + "+IFERROR("
-        + _prefer("{c}{Booked orders}", "{c}{Booked orders - Model}")
-        + "/{c}{Z3 ASP - Model},0)-{c}{GWh shipped - Model}))"
+    "Backlog (GWh) - Model": "={c}{Backlog - Model}/{c}{Z3 ASP - Model}",
+    "Z3 ASP - Derived": (
+        "=if(n({c}{" + BOOKED_ORDERS_GWH_KEY + "})=0,"
+        'if(n({c}{Pipeline (GWh)})=0,"",'
+        "{c}{Pipeline}*1000/{c}{Pipeline (GWh)}),"
+        "{c}{" + BOOKED_ORDERS_M_KEY + "}/{c}{" + BOOKED_ORDERS_GWH_KEY + "})"
     ),
-    "GWh shipped": (
-        '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",{c}{MWh shipped}/1000)'
-    ),
-    "GWh shipped - Model": (
-        f'=IF({{c}}{{Quarter}}="","",MIN({{c}}{{Factory capacity - Model}},'
-        f'IF({_first_q()},0,IFERROR('
-        + _prefer(_prior("Backlog (GWh)"), _prior("Backlog (GWh) - Model"))
-        + "/{c}{Backlog conversion lag},0))))"
+    "Z3 ASP - Model": (
+        f"=if(column()=3,{ASP_MODEL_START},"
+        f"{{cp}}{{Z3 ASP - Model}}*{ASP_MODEL_QOQ})"
     ),
     "Z3 module cycle time - Model": (
         f'=IF({{c}}{{Quarter}}="","",MAX($C${{Cycle time floor}},'
-        f'IF(COLUMN()<=4,18,'
+        f"IF(COLUMN()<=4,18,"
         f'{_prior("Z3 module cycle time - Model")}*(1-{{c}}{{Quarterly module cycle time reduction rate}}/100))))'
     ),
     "Z3 manufacturing lines utilized - Model": (
@@ -168,8 +173,8 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Module production count per line - Model": (
         "={c}{Full utilization weeks per year}*{c}{Full utilization days per week}"
         "*{c}{Full utilization hours per day}*3600/"
-        f'{_prefer("{c}{Z3 module cycle time}","{c}{Z3 module cycle time - Model}")}'
-        "/1000000"
+        'IF({c}{Z3 module cycle time}<>"",{c}{Z3 module cycle time},'
+        "{c}{Z3 module cycle time - Model})/1000000"
     ),
     "Capacity per line - Model": (
         "={c}{Z3 Module Energy Capacity}*{c}{Module production count per line - Model}"
@@ -186,23 +191,26 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         "={c}{45x & active electrode credits}*{c}{45x transfer rate}/100"
     ),
     "Government credits - Model": (
-        "={c}{Effective 45x credit - Model}*{c}{GWh shipped - Model}"
-    ),
-    "Z3 ASP - Derived": (
-        '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",'
-        "{c}{Revenue}*1000/{c}{MWh shipped})"
+        f"={{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000"
     ),
     "Unit COGS - Derived": (
-        '=IF(OR({c}{MWh shipped}="",N({c}{MWh shipped})=0),"",'
-        "{c}{COGS}*1000/{c}{MWh shipped})"
+        f'=IF(OR({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}})=0),"",'
+        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}})"
     ),
     "Unit COGS w/ 45x - Model": (
         "={c}{Unit COGS - Model}-{c}{Effective 45x credit - Model}"
     ),
-    "Revenue - Model": "={c}{GWh shipped - Model}*{c}{Z3 ASP - Model}",
+    MWH_SHIPPED_DERIVED_LABEL: (
+        '=if(n({c}{Z3 ASP - Derived})=0,"",'
+        "{c}{Revenue}*1000/{c}{Z3 ASP - Model})"
+    ),
+    "Revenue - Model": (
+        f"={{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000*{{c}}{{Z3 ASP - Model}}"
+    ),
     "COGS - Model": (
-        "={c}{Unit COGS - Model}*{c}{GWh shipped - Model}-{c}{Government credits - Model}"
-        "+$C${Non-cash COGS (D&A + SBC)}"
+        f"={{c}}{{Unit COGS - Model}}*{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000"
+        "-{c}{Government credits - Model}+$C${Non-cash COGS (D&A + SBC)}"
     ),
     "Gross profit - Model": "={c}{Revenue - Model}-{c}{COGS - Model}",
     "Gross margin": '=IF(N({c}{Revenue})=0,"",{c}{Gross profit}/{c}{Revenue}*100)',
@@ -325,7 +333,7 @@ def formula_row_dependencies(label: str) -> frozenset[str]:
     return frozenset(
         m.group(1)
         for m in _LABEL_PLACEHOLDER_RE.finditer(tmpl)
-        if m.group(1) != "c"
+        if m.group(1) not in {"c", "cp"}
     )
 
 
@@ -370,7 +378,8 @@ def row_cells_for_label(
     cells: list[Any] = []
     for i in range(n_cols):
         col = col_letter(FIRST_VALUE_COL_INDEX + i)
-        cells.append(resolved.replace("{c}", col))
+        prior = col_letter(FIRST_VALUE_COL_INDEX + i - 1)
+        cells.append(resolved.replace("{c}", col).replace("{cp}", prior))
     return cells
 
 

@@ -24,7 +24,12 @@ def restore_model_formulas(client: SheetsClient, *, ticker: str | None = None) -
     first_col = getattr(wfm, "FIRST_VALUE_COL", "B")
     first_idx = getattr(wfm, "FIRST_VALUE_COL_INDEX", 2)
     ws = client.worksheet(tab)
-    labels = label_rows(client, tab, max_row=150)
+    if hasattr(wfm, "assert_live_layout"):
+        wfm.assert_live_layout(client, action="restore model formulas")
+    if hasattr(wfm, "sheet_label_map"):
+        labels = wfm.sheet_label_map(client)
+    else:
+        labels = label_rows(client, tab, max_row=150)
 
     issues = validate(client, ticker=resolved, check_live_drift=False)
     if issues:

@@ -12,8 +12,8 @@ FIELD_NOTES: dict[str, str] = {
     "Years from present": "Discount tenor for present-value stock price. Formula from quarter ending vs As of date.",
     "Pipeline": "Commercial opportunity pipeline ($B) as disclosed. Proposals + LOI; excludes lead-gen. Actual only.",
     "Pipeline - Model": (
-        "Q1 2025 copies Pipeline actual, then compounds at Pipeline quarterly growth rate "
-        "(default 10% / q). Does not reset to later actuals — Model vs Actual shows the gap."
+        "Q1 2025 copies Pipeline actual, then compounds at that column's Pipeline "
+        "quarterly growth rate (D:Z copy C, default 10% / q)."
     ),
     "Pipeline quarterly growth rate": "QoQ % applied to Pipeline - Model after 2025 Q1. Scalar in C. Guess.",
     "Pipeline (GWh)": "Pipeline energy (GWh) when Eos discloses it.",
@@ -21,29 +21,46 @@ FIELD_NOTES: dict[str, str] = {
         "1000 × Pipeline - Model ($B) / Z3 ASP - Model ($/kWh). Converts the dollar pipeline "
         "at model ASP. (A prior C-only formula divided by unit COGS after a row shift — that was a bug.)"
     ),
-    "Booked orders": "New orders in the quarter ($M). Disclosed when available (e.g. Q4 2025 $240M); otherwise implied as Δbacklog + revenue.",
-    "Booked orders - Model": "Default: last actual booked orders carried forward. Primary demand assumption.",
-    "Backlog": "Ending backlog ($M). Company identity: prior + orders − shipments.",
-    "Backlog - Model": "Prior (actual if present else model) + orders (actual if present else model) − revenue (actual if present else model).",
-    "Backlog (GWh)": "Ending backlog energy (GWh) as disclosed.",
-    "Backlog (GWh) - Model": "Same roll as dollar backlog using GWh shipped - Model and implied GWh orders (dollar orders / ASP).",
-    "Backlog conversion lag": "Quarters of beginning backlog assumed convertible this quarter. Default 4. Caps GWh shipped - Model together with factory capacity.",
-    "GWh shipped": (
-        "MWh shipped / 1000 when MWh shipped is present. Not a company GWh-shipped print — "
-        "Eos usually omits shipped GWh and reports cube deliveries instead."
+    "Booked orders": "New orders in the quarter ($M). Disclosed when available (e.g. Q4 2025 $240M); otherwise implied as Δbacklog + revenue. A second Booked orders row with units GWh sits below Booked orders - Model (Q4 2025 1.1).",
+    "Booked orders - Model": (
+        "If the $M actual is present, copy it; otherwise prior Model × 1.2. "
+        "Column C uses the units cell as the prior (B14) — that is how the live sheet is typed."
     ),
-    "GWh shipped - Model": "MIN(factory capacity, beginning backlog GWh / conversion lag).",
+    "Backlog": "Ending backlog ($M). Company identity: prior + orders − shipments.",
+    "Backlog - Model": (
+        "Column C copies Q1 Backlog actual ($C$ Backlog). Later columns are prior "
+        "Backlog - Model × 1.03. Not the company prior + orders − shipments identity."
+    ),
+    "Backlog (GWh)": "Ending backlog energy (GWh) as disclosed.",
+    "Backlog (GWh) - Model": "Backlog - Model ($M) / Z3 ASP - Model ($/kWh).",
+    "Backlog conversion lag": (
+        "Quarters of beginning backlog assumed convertible this quarter. Default 4. "
+        "Scalar still lives in C; GWh shipped - Model is no longer on Quarterly Financials."
+    ),
+    "GWh shipped": (
+        "No longer a Quarterly Financials row. Previously MWh shipped / 1000. "
+        "Kept here because the Definitions tab still has the label."
+    ),
+    "GWh shipped - Model": (
+        "No longer a Quarterly Financials row. Previously MIN(factory capacity, "
+        "beginning backlog GWh / conversion lag)."
+    ),
     "MWh shipped": (
-        "Energy shipped / recognized (MWh). Manual actuals (Q1 2026 265, Q2 2026 307.6). "
-        "Source is not a labeled 10-Q line — treat as a working estimate. "
-        "Drives Z3 ASP - Derived and Unit COGS - Derived ($/kWh = $M × 1000 / MWh)."
+        "Renamed on Quarterly Financials to MWh shipped - Derived. This Definitions "
+        "label is the old name. Q1–Q2 2026 hardcoded MWh prints were removed."
+    ),
+    "MWh shipped - Derived": (
+        "If Z3 ASP - Derived is blank, blank; else Revenue × 1000 / Z3 ASP - Model. "
+        "Energy implied from revenue and the Model ASP path, not a shipment actual."
     ),
     "Z3 ASP - Derived": (
-        "Revenue ($M) × 1000 / MWh shipped. Blank when MWh is blank. "
-        "This is implied selling price per kWh, mixing Cube and Indensity if both shipped — "
-        "Eos does not publish an SKU split."
+        "If Booked orders (GWh) is 0: Pipeline ($B) × 1000 / Pipeline (GWh); "
+        "else Booked orders ($M) / Booked orders (GWh). Mixes Cube and Indensity."
     ),
-    "Z3 ASP - Model": "Assumption: $250 early 2025, $256 thereafter. Revenue - Model = GWh shipped - Model × ASP.",
+    "Z3 ASP - Model": (
+        "$260 in 2025 Q1, then prior × 0.97 each quarter. Revenue - Model uses this "
+        "ASP with MWh shipped - Derived."
+    ),
     "Z3 Module Energy Capacity": "kWh per Z3 module (product sheet ~1.2 kWh). Scalar in C, copied across.",
     "Z3 module cycle time": "Reported cycle time when disclosed (Line 2 ~10% faster vs Line 1 in Q2 2026).",
     "Z3 module cycle time - Model": "Starts at 18s; compounds at the quarterly reduction rate; floored at Cycle time floor (C).",
@@ -98,8 +115,8 @@ FIELD_NOTES: dict[str, str] = {
         "At the 70% default this stays negative vs ~$28.5M cash OpEx."
     ),
     "Unit COGS - Derived": (
-        "COGS ($M) × 1000 / MWh shipped. GAAP unit cost in $/kWh when energy actuals exist. "
-        "Q1–Q2 2026 print around $382/kWh. Same energy basis as ASP - Derived — still mixed Cube/Indensity."
+        "COGS ($M) × 1000 / MWh shipped - Derived. GAAP-like unit cost in $/kWh when "
+        "the derived energy cell is present."
     ),
     "Unit COGS - Model": (
         "Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts phased "
@@ -110,15 +127,20 @@ FIELD_NOTES: dict[str, str] = {
     "45x & active electrode credits": "$/kWh statutory credit assumption (default 47).",
     "45x transfer rate": "% of credit realized (default 90).",
     "Effective 45x credit - Model": "Credit × transfer rate.",
-    "Government credits - Model": "Effective credit × GWh shipped - Model. Applied as a COGS offset only — not added to revenue.",
+    "Government credits - Model": (
+        "Effective credit × MWh shipped - Derived / 1000. Applied as a COGS offset only — "
+        "not added to revenue."
+    ),
     "Unit COGS w/ 45x - Model": "Unit COGS − effective 45X.",
     "FY 2026 revenue guidance — low": "Management FY2026 revenue guide low ($300M as of Q2 2026). Scalar in C.",
     "FY 2026 revenue guidance — high": "Management FY2026 revenue guide high ($350M as of Q2 2026). Scalar in C.",
     "Revenue": "GAAP / earnings-release total revenue ($M). Hardcoded actuals through last print.",
-    "Revenue - Model": "GWh shipped - Model × Z3 ASP - Model. Does not add 45X credits.",
+    "Revenue - Model": (
+        "MWh shipped - Derived / 1000 × Z3 ASP - Model. Does not add 45X credits."
+    ),
     "COGS": "GAAP cost of goods sold ($M).",
     "COGS - Model": (
-        "Unit COGS × GWh − government credits + Non-cash COGS (D&A + SBC). "
+        "Unit COGS × MWh shipped - Derived / 1000 − government credits + Non-cash COGS (D&A + SBC). "
         "The first two terms are cash/adj. COGS; the add-back is Q2 2026 SBC+D&A in COGS held flat."
     ),
     "Gross profit": "Reported gross profit (loss).",
