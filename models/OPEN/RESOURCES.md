@@ -43,8 +43,8 @@ Management commentary captured in sheet comments (paraphrased / quoted):
 
 | Lever | Location | Default | Notes |
 | --- | --- | --- | --- |
-| Max mortgage net $/attached loan | `Transitions!B29` | **$4,000** | CM add = **Open Mortgage Percent** × B29 ÷ ASP (Opendoor resales only) |
-| Max mortgage net $/off-inventory loan | `Transitions!B31` | **$3,000** | Haircut vs B29; profit = off-inventory loans × B31, added to Adj EBITDA (not CM) |
+| Max mortgage net $/attached loan | `Transitions!B29` | **$3,000** | CM add = **Open Mortgage Percent** × B29 ÷ ASP (Opendoor resales only) |
+| Max mortgage net $/off-inventory loan | `Transitions!B31` | **$2,000** | Haircut vs B29; profit = off-inventory loans × B31, added to Adj EBITDA (not CM) |
 | Terminal off-inventory ODL share of US home-sale TAM | `Transitions!B32` | **2%** | Smoothstep **0% → 2%** (Sep 6 2026 – Jan 1 2030) |
 | US existing home sales TAM | `Transitions!B33` | **4,000,000**/year | Weekly TAM = B33/52. Off-inventory loans = weekly TAM × B32 share |
 | Max mortgage revenue $/off-inventory loan | `Transitions!B34` | **$7,500** | Gain-on-sale + MSR on a ~$300k loan. Revenue = loans × B34, added to Revenue - Model |

@@ -65,7 +65,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Profitability stack
 
 - **Contribution Margin - Model** = Core + Mortgage + Title/Escrow + Seasonality + Adjustments. Mortgage/title CM rows = attach % × $/unit ÷ ASP (see **Transitions** ancillary assumptions). On-inventory ODL only — applied to home-sale revenue, not off-inventory origination.
-- **ODL Off-inventory Revenue / Profit - Model** — loans on homes Opendoor does not hold: (US home-sale TAM / 52) × TAM share, then × $7,500 revenue / $3,000 profit (Transitions B31–B34). Revenue is added to **Revenue - Model**; profit is added to **Adjusted EBITDA - Model**, not to CM or Contribution Profit.
+- **ODL Off-inventory Revenue / Profit - Model** — loans on homes Opendoor does not hold: (US home-sale TAM / 52) × TAM share, then × $7,500 revenue / $2,000 profit (Transitions B31–B34). Revenue is added to **Revenue - Model**; profit is added to **Adjusted EBITDA - Model**, not to CM or Contribution Profit.
 - **Doma Refi Profit - Model** / **Doma Growth Multiplier** — manual weekly rows (stepwise multipliers + compounded profit from **AR**; cells in `doma_manual_cells.py`). Not added to **Contribution Profit - Model**.
 - Core CM starts near low single digits and can step up via **Contribution Margin Improvement - Core**.
 - Near-term negative adjustments reflect older-cohort / inventory-clearing pressure called out in earnings commentary.
@@ -110,8 +110,8 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Acquisition growth (ops) | Weekly % ramp then fade | Growth / accountability scenarios. |
 | CM path | Core improving; late-Aug/Sep **Adjustments** more negative (price-to-clear) | Q2 2026 ~5.8%; Kaz 9 Sep 2026 Q3 guide **3.2–3.5%** (was 4–4.5%); longer-term ~5–7%. |
 | Mortgage attach (ODL) | **0%** before Jan 2026 → smoothstep ramp to **80%** by Oct 2028 | Four-phase smoothstep on **Open Mortgage Percent** (10% Sep 2026 / 40% Dec 2026 / 80% Oct 2028). On-inventory resales only. |
-| Mortgage $/attached loan | **$4,000** max net (`Transitions!B29`) | CM add = attach × $/loan ÷ ASP. |
-| Off-inventory ODL | **0%** of US existing-home-sale TAM at Sep 2026 GA → **2%** by Jan 1 2030 | `ODL Off-inventory Loans / Revenue / Profit - Model`; TAM **4,000,000**/year (`Transitions!B33`); **$7,500** revenue / **$3,000** profit per loan (`B34` / `B31`). Revenue in **Revenue - Model**; profit in Adj EBITDA, not CM. |
+| Mortgage $/attached loan | **$3,000** max net (`Transitions!B29`) | CM add = attach × $/loan ÷ ASP. |
+| Off-inventory ODL | **0%** of US existing-home-sale TAM at Sep 2026 GA → **2%** by Jan 1 2030 | `ODL Off-inventory Loans / Revenue / Profit - Model`; TAM **4,000,000**/year (`Transitions!B33`); **$7,500** revenue / **$2,000** profit per loan (`B34` / `B31`). Revenue in **Revenue - Model**; profit in Adj EBITDA, not CM. |
 | Title purchase attach | **0%** before Jan 2025 → **100%** by Jun 2027 | Linear ramp on **Open Title Purchase Percent**. |
 | Title $/purchase close | **$2,400** max net savings (`Transitions!B30`) | CM add = attach × $/close ÷ ASP. |
 | Fixed opex | ~**$35M**/quarter-ish weeklyized, else reported | “Hold steady” accountability. Model uses actual Fixed Costs when present. |
@@ -121,6 +121,8 @@ These are editable levers—mostly on **Transitions** and early columns of **Wee
 | Mezzanine share of warehouse debt | **~19.8%** ($350M / $1.766B at Q2) | Mix lever: lower it to refinance mezz into cheaper senior. **Mezzanine Share of Warehouse Debt - Model**. |
 | Warehouse facility capacity | **$4.2B** (senior revolvers + term) | Modeled inventory ceiling in dollars. Edit **Warehouse Facility Capacity** `B` ($7.45B headline or $1.5B committed). |
 | Warehouse committed capacity | **$1.5B** (Q2 2026 10-Q) | Promised borrowing. **Inventory Utilization % of Committed** > 100% = discretionary draws (Q2 already ~118%). |
+| Nov 2025 warrants | **10%** of 99.3M (`Shares` Fraction) | Spread over the last 4 weeks before **11/20/2026** expiration. |
+| 2030 converts | **100%** of ~138M at **8/15/2030** | Full conversion at maturity. Net-zero **$10.38** is documentation only; weekly Δ uses Fraction. |
 
 Where disclosure is missing, the sheet comments say so explicitly (likelihood to close, cash mix, some conversion totals).
 

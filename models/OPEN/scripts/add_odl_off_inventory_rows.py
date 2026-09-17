@@ -39,7 +39,7 @@ INSERT_BEFORE_LABEL = "Contribution Profit - Model"
 TRANSITIONS_NOTES: dict[str, str] = {
     "B31": (
         "Net profit per Opendoor Home Loans origination on a home "
-        "Opendoor does not hold. Haircut vs B29 ($4,000 on-inventory). "
+        "Opendoor does not hold. Haircut vs B29 ($3,000 on-inventory). "
         "Revenue per loan is B34; implied origination cost = B34 − B31. "
         "Added to Adjusted EBITDA - Model, not to contribution margin."
     ),

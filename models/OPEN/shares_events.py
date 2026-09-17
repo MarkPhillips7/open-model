@@ -4,8 +4,8 @@ Aug 2026 structure (Form 8-K filed Aug 19, 2026; press release Aug 13, 2026):
   - $158M repurchase of ~45.3M shares at $3.49 (~5% reduction)
   - $650M 0% converts due 2030; initial conversion ~$4.71 (~138M shares if fully converted)
   - Capped calls cap at $6.98 offset convert dilution up to that price
-  - Repurchased shares offset remaining convert dilution until stock exceeds **$10.38**
-    (net share change from the combined deal ≈ 0 below that price)
+  - Repurchased shares would offset remaining convert dilution until stock exceeds **$10.38**
+    (net Δ ≈ 0 below that price if convert Fraction is 0). Live Fraction is **100%** at maturity.
 """
 
 from __future__ import annotations
@@ -55,10 +55,10 @@ SHARES_SHEET_GRID: list[list] = [
         "",
         "11/20/2026",
         99_295_146,
-        0.25,
+        0.1,
         4,
         "",
-        "Exercise assumed in last N weeks before expiration",
+        "10% exercise assumed in last N weeks before expiration",
     ],
     [
         "2030 convertible notes (above net-zero)",
@@ -66,10 +66,11 @@ SHARES_SHEET_GRID: list[list] = [
         "8/15/2030",
         "8/15/2030",
         137_960_290,
-        0,
+        1,
         1,
         10.38,
-        "Base case 0% — no net dilution below $10.38; raise Fraction to model conversion",
+        "Full conversion at maturity (Fraction 100%) — +137.96M shares on 8/15/2030. "
+        "Net-zero $10.38 is documentation; the weekly formula uses Fraction only.",
     ],
 ]
 

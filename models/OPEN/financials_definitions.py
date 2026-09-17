@@ -162,7 +162,7 @@ FIELD_NOTES: dict[str, str] = {
         "company-disclosed."
     ),
     'ODL Off-inventory Profit - Model': (
-        "Off-inventory ODL loans × $3,000/loan (Transitions B31). Haircut vs $4,000 "
+        "Off-inventory ODL loans × $2,000/loan (Transitions B31). Haircut vs $3,000 "
         "on-inventory. Added to Adjusted EBITDA - Model, not to contribution margin or "
         "Contribution Profit - Model, so reported-style home-sale CM stays clean."
     ),
@@ -188,7 +188,7 @@ FIELD_NOTES: dict[str, str] = {
     ),
     'Contribution Margin - Mortgage': (
         "CM add from Opendoor Home Loans attach on Opendoor resales: Open Mortgage Percent × "
-        "$4,000/loan ÷ ASP (Transitions B29). Formula each week; ramps 0%→80% attach Jan "
+        "$3,000/loan ÷ ASP (Transitions B29). Formula each week; ramps 0%→80% attach Jan "
         "2026–Oct 2028. Does not include loans on homes Opendoor does not hold — those are ODL "
         "Off-inventory Revenue / Profit - Model (revenue in Revenue - Model; profit in "
         "Adjusted EBITDA - Model)."
@@ -233,7 +233,9 @@ FIELD_NOTES: dict[str, str] = {
     ),
     'Share Count Adjustment - Model': (
         "Weekly Δ shares from Shares tab event table (buybacks, convert dilution, warrant "
-        "exercise) plus SBC share issuance. BYROW formula over Shares!A4:I20."
+        "exercise) plus SBC share issuance. Live assumptions: warrants 10% of 99.3M over the "
+        "last 4 weeks before 11/20/2026; 2030 converts 100% (~138M) at 8/15/2030. BYROW "
+        "formula over Shares!B5:G20."
     ),
     'Basic Shares Outstanding - Model': (
         "Forward share count: actual if present, else prior week + Share Count Adjustment - "

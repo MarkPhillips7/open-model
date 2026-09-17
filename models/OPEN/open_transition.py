@@ -172,7 +172,7 @@ OPEN_1_0_WEEKLY_SOLD_MULTIPLIERS: list[float | None] = [
     0.99,
     0.99,
     0.99,
-    0.99,
+    0.995,
     0.995,
     0.995,
     0.995,
