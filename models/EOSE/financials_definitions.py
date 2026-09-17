@@ -71,17 +71,41 @@ FIELD_NOTES: dict[str, str] = {
         "Haircut on the Q2 2026 Slide 11 cost-out (73 pts of adj. GM over 12 months). "
         "Default 70% because management has repeatedly missed cost-out timelines. "
         "100% = take the CFO plan at face value; 0% = freeze Q2 2026 costs. "
-        "Edit C; D:Z copy C. Waterfall lives on the COGS tab."
+        "Edit C; D:Z copy C. Cost-out waterfall and yellow levers live on the COGS tab."
+    ),
+    "Cost-out plan progress - Model": (
+        "0 at the COGS cost-out start quarter (Q2 2026), 1 at the complete quarter "
+        "(Q2 2027), held at 1 after. Linear in between. Drives how much of the "
+        "guided pts (× haircut) has been applied to adj. GM."
+    ),
+    "Guided adjusted gross margin - Model": (
+        "Slide 11 path with no haircut: starting adj. GM + progress × 73 pts. "
+        "At completion this is about +10.7%. Comparison case only — the Model "
+        "P&L uses Adjusted gross margin - Model (haircut applied)."
+    ),
+    "Scale absorption blend - Model": (
+        "0 until cost-out progress = 1, then ramps 0→1 as Z3 manufacturing lines - Model "
+        "go from 2 → 4 (COGS start/complete line levers). Blends unit COGS from the "
+        "haircut adj-GM level toward Terminal unit COGS."
+    ),
+    "Adj. EBITDA at $200M revenue - Guided": (
+        "Illustration only: $200M quarterly revenue × Guided adjusted gross margin − "
+        "Cash OpEx run-rate. Does not feed Cash - Model or valuation. Revenue amount "
+        "is a yellow lever on the COGS tab."
+    ),
+    "Adj. EBITDA at $200M revenue - Model": (
+        "Same $200M illustration using Adjusted gross margin - Model (haircut path). "
+        "At the 70% default this stays negative vs ~$28.5M cash OpEx."
     ),
     "Unit COGS - Derived": (
         "COGS ($M) × 1000 / MWh shipped. GAAP unit cost in $/kWh when energy actuals exist. "
         "Q1–Q2 2026 print around $382/kWh. Same energy basis as ASP - Derived — still mixed Cube/Indensity."
     ),
     "Unit COGS - Model": (
-        "From the COGS tab: Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts "
-        "phased Q2 2026→Q2 2027, then blend toward Terminal unit COGS (COGS tab, default "
-        "$160/kWh) as lines go 2→4. Pre-45X; COGS - Model still subtracts government credits. "
-        "$/kWh of energy, not per Cube or Indensity SKU."
+        "Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts phased "
+        "Q2 2026→Q2 2027 (COGS tab levers), then blend toward Terminal unit COGS "
+        "(COGS tab, default $160/kWh) as lines go 2→4. Pre-45X; COGS - Model still "
+        "subtracts government credits. $/kWh of energy, not per Cube or Indensity SKU."
     ),
     "45x & active electrode credits": "$/kWh statutory credit assumption (default 47).",
     "45x transfer rate": "% of credit realized (default 90).",
@@ -108,8 +132,9 @@ FIELD_NOTES: dict[str, str] = {
     "Adjusted gross profit - Model": "Revenue - Model × Adjusted gross margin - Model / 100.",
     "Adjusted gross margin": "Adj. GP / Revenue × 100 when both actuals are present. Q2 2026 print −62.3%.",
     "Adjusted gross margin - Model": (
-        "From the COGS tab. Start −62.3% + progress × 73 pts × haircut. "
-        "At 70% haircut the 12-month exit is about −11%, not the guided +10%."
+        "Starting adj. GM (−62.3%) + cost-out plan progress × 73 pts × haircut. "
+        "Levers (start GM, pts, dates) are on the COGS tab. At 70% haircut the "
+        "12-month exit is about −11%, not the guided +10%."
     ),
     "SG&A": "Selling, general & administrative ($M).",
     "SG&A - Model": "Carries last actual SG&A forward (opex hold, OPEN-style).",

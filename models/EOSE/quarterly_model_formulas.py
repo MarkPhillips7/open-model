@@ -8,14 +8,22 @@ from typing import Any
 from sheets.formulas import col_letter as _col_letter
 
 from models.EOSE.cogs import (
-    ADJ_GM_MODEL_LABEL,
     DEFAULT_HAIRCUT_PCT,
     Q2_2026_CASH_OPEX,
     Q2_2026_NONCASH_COGS,
-    UNIT_COGS_MODEL_LABEL,
-    qf_index_formula,
+    cogs_c_ref,
 )
-from models.EOSE.layout import FIRST_VALUE_COL, FIRST_VALUE_COL_INDEX, N_QUARTERS, QUARTERLY
+from models.EOSE.layout import (
+    COST_OUT_PROGRESS_LABEL,
+    EBITDA_200M_GUIDED_LABEL,
+    EBITDA_200M_MODEL_LABEL,
+    FIRST_VALUE_COL,
+    FIRST_VALUE_COL_INDEX,
+    GUIDED_ADJ_GM_MODEL_LABEL,
+    N_QUARTERS,
+    QUARTERLY,
+    SCALE_BLEND_LABEL,
+)
 
 FINANCIALS_TAB = QUARTERLY
 FIRST_VALUE_COL = FIRST_VALUE_COL
@@ -46,6 +54,60 @@ def _prefer(actual: str, model: str) -> str:
 
 def _first_q() -> str:
     return "COLUMN()=3"
+
+
+def _cost_out_progress_formula() -> str:
+    y = cogs_c_ref("Cost-out start year")
+    q = cogs_c_ref("Cost-out start quarter")
+    ey = cogs_c_ref("Cost-out complete year")
+    eq = cogs_c_ref("Cost-out complete quarter")
+    return (
+        f'=IF(OR({{c}}{{Year}}="",{y}=""),"",'
+        f"MIN(1,MAX(0,(({{c}}{{Year}}-{y})*4+{{c}}{{Quarter}}-{q})"
+        f"/MAX(1,({ey}-{y})*4+({eq}-{q})))))"
+    )
+
+
+def _adj_gm_formula(*, guided: bool) -> str:
+    start = cogs_c_ref("Starting adjusted gross margin")
+    total = cogs_c_ref("Total guided cost-out")
+    progress = f"{{c}}{{{COST_OUT_PROGRESS_LABEL}}}"
+    pts = total if guided else (
+        f"({total}*$C${{Percent of Guided Cost Cutting Achieved}}/100)"
+    )
+    return f'=IF({progress}="","",{start}+{progress}*{pts})'
+
+
+def _scale_blend_formula() -> str:
+    start = cogs_c_ref("Scale absorption start lines")
+    end = cogs_c_ref("Scale absorption complete lines")
+    lines = "{c}{Z3 manufacturing lines - Model}"
+    progress = f"{{c}}{{{COST_OUT_PROGRESS_LABEL}}}"
+    return (
+        f'=IF({progress}="","",'
+        f"IF({progress}<1,0,MIN(1,MAX(0,({lines}-{start})"
+        f"/MAX(0.001,{end}-{start})))))"
+    )
+
+
+def _unit_cogs_formula() -> str:
+    asp = "{c}{Z3 ASP - Model}"
+    credit = "{c}{Effective 45x credit - Model}"
+    terminal = cogs_c_ref("Terminal unit COGS")
+    gm = "{c}{Adjusted gross margin - Model}"
+    blend = f"{{c}}{{{SCALE_BLEND_LABEL}}}"
+    progress = f"{{c}}{{{COST_OUT_PROGRESS_LABEL}}}"
+    raw = f"({asp}*(1-{gm}/100)+{credit})"
+    return (
+        f'=IF(OR({gm}="",{asp}=""),"",'
+        f"IF({progress}<1,{raw},{raw}*(1-{blend})+{terminal}*{blend}))"
+    )
+
+
+def _ebitda_at_200m(gm_label: str) -> str:
+    rev = cogs_c_ref("$200M quarterly revenue (illustration)")
+    opex = "$C${Cash OpEx run-rate}"
+    return f'=IF({{c}}{{{gm_label}}}="","",{rev}*{{c}}{{{gm_label}}}/100-{opex})'
 
 
 UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
@@ -154,7 +216,12 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         '=IF(OR({c}{Adjusted gross profit}="",N({c}{Revenue})=0),"",'
         "{c}{Adjusted gross profit}/{c}{Revenue}*100)"
     ),
-    "Adjusted gross margin - Model": qf_index_formula(ADJ_GM_MODEL_LABEL),
+    "Adjusted gross margin - Model": _adj_gm_formula(guided=False),
+    COST_OUT_PROGRESS_LABEL: _cost_out_progress_formula(),
+    GUIDED_ADJ_GM_MODEL_LABEL: _adj_gm_formula(guided=True),
+    SCALE_BLEND_LABEL: _scale_blend_formula(),
+    EBITDA_200M_GUIDED_LABEL: _ebitda_at_200m(GUIDED_ADJ_GM_MODEL_LABEL),
+    EBITDA_200M_MODEL_LABEL: _ebitda_at_200m("Adjusted gross margin - Model"),
     "SG&A - Model": (
         f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
         f'{_prefer(_prior("SG&A"), _prior("SG&A - Model"))})'
@@ -242,7 +309,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Percent of Guided Cost Cutting Achieved": (
         "=$C${Percent of Guided Cost Cutting Achieved}"
     ),
-    "Unit COGS - Model": qf_index_formula(UNIT_COGS_MODEL_LABEL),
+    "Unit COGS - Model": _unit_cogs_formula(),
     "Non-cash COGS (D&A + SBC)": "=$C${Non-cash COGS (D&A + SBC)}",
     "Cash OpEx run-rate": "=$C${Cash OpEx run-rate}",
     "EV / EBITDA": "=$C${EV / EBITDA}",

@@ -2,8 +2,8 @@
 """Build the EOSE COGS tab and wire cost-out levers onto Quarterly Financials.
 
 Idempotent: inserts any missing Quarterly Financials rows from layout.ROWS,
-rewrites COGS, restores Model formulas, refreshes Welcome / Definitions,
-and fills Adjusted gross profit actuals.
+rewrites COGS (Units / Value / Notes), restores Model formulas, refreshes
+Welcome / Definitions, and fills Adjusted gross profit actuals.
 
     python models/EOSE/scripts/setup_cogs.py
 """
@@ -28,13 +28,18 @@ from models.EOSE.financials_definitions import FIELD_NOTES  # noqa: E402
 from models.EOSE.layout import (  # noqa: E402
     CASH_OPEX_RUNRATE_LABEL,
     COGS_COL_WIDTHS_PX,
+    COST_OUT_PROGRESS_LABEL,
     DEFINITIONS_COL_WIDTHS_PX,
+    EBITDA_200M_GUIDED_LABEL,
+    EBITDA_200M_MODEL_LABEL,
+    GUIDED_ADJ_GM_MODEL_LABEL,
     HAIRCUT_LABEL,
     NONCASH_COGS_LABEL,
     PIPELINE_GROWTH_LABEL,
     QUARTERLY,
     QUARTERLY_COL_WIDTHS_PX,
     ROWS,
+    SCALE_BLEND_LABEL,
     WELCOME_COL_WIDTHS_PX,
     column_width_requests,
 )
@@ -177,6 +182,7 @@ def write_units_and_defaults(client: SheetsClient, labels: dict[str, int]) -> No
 def highlight_haircut(client: SheetsClient, labels: dict[str, int]) -> None:
     sid = sheet_id(client, QUARTERLY)
     yellow = {"red": 1, "green": 0.95, "blue": 0.8}
+    white = {"red": 1, "green": 1, "blue": 1}
     requests = []
     for lab in (
         HAIRCUT_LABEL,
@@ -196,6 +202,32 @@ def highlight_haircut(client: SheetsClient, labels: dict[str, int]) -> None:
                         "endColumnIndex": 3,
                     },
                     "cell": {"userEnteredFormat": {"backgroundColor": yellow}},
+                    "fields": "userEnteredFormat.backgroundColor",
+                }
+            }
+        )
+    # New engine rows inherit yellow from Haircut if inserted just below it.
+    for lab in (
+        COST_OUT_PROGRESS_LABEL,
+        GUIDED_ADJ_GM_MODEL_LABEL,
+        SCALE_BLEND_LABEL,
+        EBITDA_200M_GUIDED_LABEL,
+        EBITDA_200M_MODEL_LABEL,
+    ):
+        if lab not in labels:
+            continue
+        row = labels[lab]
+        requests.append(
+            {
+                "repeatCell": {
+                    "range": {
+                        "sheetId": sid,
+                        "startRowIndex": row - 1,
+                        "endRowIndex": row,
+                        "startColumnIndex": 2,
+                        "endColumnIndex": 26,
+                    },
+                    "cell": {"userEnteredFormat": {"backgroundColor": white}},
                     "fields": "userEnteredFormat.backgroundColor",
                 }
             }
@@ -240,7 +272,7 @@ def main() -> None:
     labels = ensure_quarterly_rows(client)
     write_units_and_defaults(client, labels)
     highlight_haircut(client, labels)
-    write_cogs_sheet(client, labels)
+    write_cogs_sheet(client)
     restore_model_formulas(client, ticker="EOSE")
     write_definitions(client, [lab for lab, _ in ROWS])
     write_welcome(client)
@@ -250,7 +282,7 @@ def main() -> None:
     if missing:
         print(f"Warning: definitions still missing {missing}")
     print("Done.")
-    print(f"{COGS_SHEET} engine rows: Unit COGS / Adj GM feed Quarterly Financials.")
+    print(f"{COGS_SHEET} levers written; unit-cost path is on {QUARTERLY}.")
     print(f"Haircut default {DEFAULT_HAIRCUT_PCT:.0f}% on {QUARTERLY} C{labels[HAIRCUT_LABEL]}.")
 
 

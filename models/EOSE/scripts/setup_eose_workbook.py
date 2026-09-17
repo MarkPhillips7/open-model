@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild the EOSE workbook: Quarterly Financials + Welcome, Definitions, Shares, Price History.
 
-Rewrites COGS (cost-out engine). Keeps Feltonomics and Reference. Does not create or edit charts.
+Rewrites COGS (cost-out levers / notes). Keeps Feltonomics and Reference. Does not create or edit charts.
 """
 
 from __future__ import annotations
@@ -471,7 +471,7 @@ def main() -> None:
     write_price_history(client)
     write_shares(client)
     labels = write_quarterly(client)
-    write_cogs_sheet(client, labels)
+    write_cogs_sheet(client)
     write_definitions(client, [label for label, _ in ROWS])
     write_welcome(client)
     order_tabs(client)

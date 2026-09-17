@@ -18,6 +18,26 @@ Entry template:
 
 ---
 
+## 2026-09-17 — COGS Units / Value / Notes; quarterly path on Financials
+
+Reorganized the **COGS** tab so column C is a narrow value column and notes live in D. Moved the quarterly engine onto **Quarterly Financials**.
+
+- **Tab / range:** **COGS** rewritten `A1:D40` (was `A1:Z51`). **Quarterly Financials** five new rows before **Unit COGS - Derived**. Financials Definitions + Welcome.
+- **Insert/delete:**
+  - COGS: no row insert; grid shrunk to 6 columns (dropped the C–Z quarterly block). `frozenRowCount` **1**.
+  - Quarterly Financials: ROWS, **5 inserted** before **Unit COGS - Derived** (now rows 44–48): Cost-out plan progress - Model, Guided adjusted gross margin - Model, Scale absorption blend - Model, Adj. EBITDA at $200M revenue - Guided, Adj. EBITDA at $200M revenue - Model. Rows below shift **+5**.
+- **Formulas:**
+  - **COGS** no longer has Year / Quarter / progress / adj. GM / unit COGS / $200M path in C–Z.
+  - **Unit COGS - Model** and **Adjusted gross margin - Model**: `INDEX/MATCH` into COGS C:Z → computed on Quarterly Financials, `INDEX/MATCH`ing COGS column-C levers (start GM, guided pts, terminal $/kWh, dates, line counts, $200M illustration revenue).
+- **Data:** Narrative/hyperlinks moved **C→D** at `D3:D7`, `D20`, `D30`, `D39:D40`. Row 1 header: B **Units**, C **Value**, D **Notes**. Yellow levers stay in C.
+- **Side effects:** COGS column widths C **484→100**, D **493→720**; row 1 frozen + gray header fill. No chart API. If you added Operations/Money charts, check series in the UI after the five-row insert.
+
+### Repo
+
+- `cogs.py`, `layout.py`, `quarterly_model_formulas.py`, `scripts/setup_cogs.py`, `scripts/setup_eose_workbook.py`, `financials_definitions.py`, `welcome.py`, `README.md`
+
+---
+
 ## 2026-09-17 — Q3 2026 manufacturing lines Actual = 1.5
 
 User replaced the I31 text `="2 to 1"` with **1.5**.

@@ -25,11 +25,19 @@ CASH_OPEX_RUNRATE_LABEL = "Cash OpEx run-rate"
 PIPELINE_GROWTH_LABEL = "Pipeline quarterly growth rate"
 COGS_SHEET = "COGS"
 
+# Cost-out engine rows on Quarterly Financials (levers stay on the COGS tab).
+COST_OUT_PROGRESS_LABEL = "Cost-out plan progress - Model"
+GUIDED_ADJ_GM_MODEL_LABEL = "Guided adjusted gross margin - Model"
+SCALE_BLEND_LABEL = "Scale absorption blend - Model"
+EBITDA_200M_GUIDED_LABEL = "Adj. EBITDA at $200M revenue - Guided"
+EBITDA_200M_MODEL_LABEL = "Adj. EBITDA at $200M revenue - Model"
+
 # Pixel widths captured from the live workbook (0-based column index).
 QUARTERLY_COL_WIDTHS_PX: dict[int, int] = {0: 280, 1: 90, **{i: 60 for i in range(2, 26)}}
 WELCOME_COL_WIDTHS_PX: dict[int, int] = {0: 638, 1: 720}
 DEFINITIONS_COL_WIDTHS_PX: dict[int, int] = {0: 288, 1: 734}
-COGS_COL_WIDTHS_PX: dict[int, int] = {0: 287, 1: 58, 2: 484, 3: 493}
+# COGS: A label, B units, C value (narrow), D notes (wide).
+COGS_COL_WIDTHS_PX: dict[int, int] = {0: 287, 1: 58, 2: 100, 3: 720}
 
 # (label, units) in sheet order. Row 1 is the Units header (A blank, B "Units").
 # Empty label = spacer / section break.
@@ -77,6 +85,11 @@ ROWS: list[tuple[str, str]] = [
     ("Factory capacity - Model", "GWh"),
     ("", ""),
     (HAIRCUT_LABEL, "%"),
+    (COST_OUT_PROGRESS_LABEL, "0–1"),
+    (GUIDED_ADJ_GM_MODEL_LABEL, "%"),
+    (SCALE_BLEND_LABEL, "0–1"),
+    (EBITDA_200M_GUIDED_LABEL, "$M"),
+    (EBITDA_200M_MODEL_LABEL, "$M"),
     ("Unit COGS - Derived", "$ / kWh"),
     ("Unit COGS - Model", "$ / kWh"),
     ("45x & active electrode credits", "$ / kWh"),

@@ -85,9 +85,11 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     ),
     (
         "COGS",
-        "Unit-cost build-up from the Q2 2026 Slide 11 cost-out (materials 25 / conversion 20 / "
-        "projects 20 / scrap 8 pts of adj. GM). Haircut defaults to 70%. After the 12-month plan, "
-        "remaining gap to terminal $/kWh is absorbed as Lines 3–4 ramp. Feeds Unit COGS - Model.",
+        "Cost-out levers and notes (Units / Value / Notes). Slide 11 waterfall "
+        "(materials 25 / conversion 20 / projects 20 / scrap 8 pts of adj. GM). "
+        "Haircut defaults to 70% on Quarterly Financials. After the 12-month plan, "
+        "remaining gap to terminal $/kWh is absorbed as Lines 3–4 ramp. Quarterly "
+        "progress / adj. GM / unit COGS live on Quarterly Financials.",
     ),
 ]
 
