@@ -18,6 +18,24 @@ Entry template:
 
 ---
 
+## 2026-09-18 — Home Sales from Accountable Resale COEs (from 7/4/2026)
+
+Restored weekly **Home Sales** that had been overwritten by the quarterly ÷13 spread, and stopped that restore from wiping them again. From week ending **2026-07-04**, actuals are the week-over-week change in cumulative [Accountable Resale COEs](https://accountable.opendoor.com/) (data as of Sep 12, 2026). Earlier weeks stay on the earnings ÷13 spread.
+
+- **Tab / range:** **Weekly Financials** **Home Sales** `AR19:DY19`; **Quarterly Financials** **Home Sales** `F20:L20`; **Financials Definitions** `A1:B102`; cell note `B19`
+- **Insert/delete:** none
+- **Formulas:**
+  - **Weekly Home Sales** `AR:DY`: quarterly day-weighted ÷13 → hardcoded weekly COE deltas (blank after last Accountable actual, so the model row fills). `update_weekly_quarterly_spread.py` now skips this row from **2026-07-04** onward (clears leftover spread formulas; keeps hardcoded prints).
+  - **Quarterly Home Sales** `F:L` (**2026 Q3** onward): empty → weekly `SUM(FILTER(…))` matching Acquisition Contracts, so Q3 QTD prints until an earnings hardcoded value replaces it.
+- **Data:** Accountable QTD cumulative → weekly units `AR:BB` (7/4–9/12): **90 / 174 / 205 / 184 / 201 / 163 / 198 / 231 / 235 / 223 / 185** (week ending **2026-09-05** = **223** again). Q3 quarterly **Home Sales** = **2,089**. Snapshot: `models/OPEN/data/accountable_resale_coes.json`.
+- **Side effects:** Note on **Weekly Financials B19**. Definitions **Home Sales** note rewritten. **Homes Charts** sales actuals will step with these weekly prints from 7/4 — please eyeball the funnel chart in the UI; agents did not edit chart objects. Refresh later with `python models/OPEN/scripts/sync_accountable_home_sales.py`.
+
+### Repo
+
+- `accountable.py`, `scripts/sync_accountable_home_sales.py`, `scripts/update_weekly_quarterly_spread.py`, `financials_definitions.py`, `README.md`, `RESOURCES.md`, `welcome.py`
+
+---
+
 ## 2026-09-17 — Sync repo from live spreadsheet (manual edits)
 
 Pulled after user edits on **Transitions**, **Shares**, and **Weekly Financials**. Standard `sync_repo_from_live_sheet.py` already matched CM stack, Welcome, definitions copy, snapshot, and `* - Model` formulas. These levers are not in that pull.

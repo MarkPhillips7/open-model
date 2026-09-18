@@ -26,7 +26,7 @@ THANKS = (
 RESOURCES = (
     "This model is built and maintained with help from Cursor (AI-assisted editing in this repository) "
     "and the public tooling at {repo}. Sources include Opendoor quarterly and annual earnings "
-    "reports and supplements, the weekly acquisition tracking on {accountable}, listing and funnel "
+    "reports and supplements, the weekly acquisition and resale-COE tracking on {accountable}, listing and funnel "
     "signals from independent trackers, housing-market seasonality references, and comments and "
     "guidance from earnings calls — especially under CEO Kaz Nejatian's leadership. See "
     "RESOURCES.md in the repository for a fuller citation list."

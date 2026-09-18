@@ -61,7 +61,7 @@ Sources: [Opendoor Home Loans](https://www.opendoor.com/articles/why-mortgage-ra
 
 ### Accountability / public projections
 
-- [Accountable](https://accountable.opendoor.com/) — weekly **acquisition contracts** and, from Sep 2026, weekly **homes sold** and clearance vs market (e.g. week ending 5 Sep 2026: **223** sold, **19%** faster than market adjusted for delistings). [IR disclosures](https://investor.opendoor.com/) for the same series.
+- [Accountable](https://accountable.opendoor.com/) — weekly **acquisition contracts**, **relative clearance**, and **Resale COEs** (cumulative QTD closings; weekly **Home Sales** = week-over-week change from week ending **4 Jul 2026**). Refresh the sheet with `python models/OPEN/scripts/sync_accountable_home_sales.py`. [IR disclosures](https://investor.opendoor.com/) for the same series.
 - [Kaz 9 Sep 2026](https://x.com/nejatian/status/2097801756537151649) — Q3 tracking, ANI not yet at break-even, price-to-clear vs aging inventory.
 - Sheet comments also reference acquisition-test slowdowns (late August–September 2026). Prefer the latest official accountability page or earnings slides when refreshing the model.
 
@@ -108,7 +108,7 @@ When updating the model after an earnings release:
 1. Pull Non-GAAP homes purchased, inventory, revenue, CM, ASP, adjusted opex, fixed opex, SBC from the supplement.
 2. Reconcile weekly “actual” stubs to **Quarterly Financials** (or enter weekly values and let quarterly rows sum).
 3. Update CM guidance and growth / seasonality assumptions if management changes the outlook.
-4. Cross-check listing/acquisition/sold run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and [Accountable](https://accountable.opendoor.com/); update **Likelihood to Close** and weekly **Home Sales** stubs when new prints land.
+4. Cross-check listing/acquisition/sold run-rates against [Open Tracker](https://aubermark.github.io/open-tracker/) and [Accountable](https://accountable.opendoor.com/). Re-run `sync_accountable_home_sales.py` when the Resale COEs chart updates; update **Likelihood to Close** if the funnel drifts.
 5. Confirm transition curves still roughly match disclosed sell-through / days-on-market stats.
 6. If management prints a new Cash Now More Later mix %, overwrite **Cash Now More Later %** waypoints (and optionally B35/B36).
 7. Append the sheet edits to [CHANGELOG.md](CHANGELOG.md).

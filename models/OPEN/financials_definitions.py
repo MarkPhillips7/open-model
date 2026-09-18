@@ -97,9 +97,10 @@ FIELD_NOTES: dict[str, str] = {
         "on Weekly when needed. Drives revenue and ancillary CM."
     ),
     'Home Sales': (
-        "Non-GAAP homes sold (listed + private). Quarterly earnings actual spread ÷13 "
-        "(day-weighted). From Sep 2026, weekly sold counts are also published at "
-        "accountable.opendoor.com (e.g. week ending 2026-09-05 = 223). Model row when blank."
+        "Non-GAAP homes sold (listed + private). Through week ending 2026-06-27: quarterly "
+        "earnings actual spread ÷13 (day-weighted). From 2026-07-04: week-over-week change in "
+        "cumulative Resale COEs on accountable.opendoor.com (QTD recorded closings). Refresh "
+        "with sync_accountable_home_sales.py. Model row when blank."
     ),
     'Private Home Sales - Model': (
         "Never-listed completions: lagged purchases × (1 − Likelihood to List) × Transitions "

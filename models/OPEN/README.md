@@ -43,8 +43,8 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 ### Weekly spine
 
 - Columns are **week ending** dates (`Week Ending`, then `+7` across the horizon).
-- **Quarterly-reported actuals** (homes purchased, home sales, revenue, opex, SBC, inventory, etc.) live on **Quarterly Financials** as quarter totals. **Weekly Financials** spreads them (`quarterly ÷ 13`, day-weighted at quarter boundaries when a week spans two quarters) when the quarterly cell is a hardcoded value. **One-time GAAP items** (debt extinguishment, inventory valuation timing, restructuring, CEO make-whole) use the **week-ending quarter only**—no cross-quarter blend—so a Q4 debt charge does not leak into Q1 boundary weeks.
-- **Weekly-reported actuals** (e.g. acquisition contracts, sparse new-listing counts) are entered on **Weekly Financials**. **Quarterly Financials** sums the matching weeks when the quarterly cell is a formula.
+- **Quarterly-reported actuals** (homes purchased, revenue, opex, SBC, inventory, etc.) live on **Quarterly Financials** as quarter totals. **Weekly Financials** spreads them (`quarterly ÷ 13`, day-weighted at quarter boundaries when a week spans two quarters) when the quarterly cell is a hardcoded value. **Home Sales** uses that spread only through week ending **2026-06-27**. **One-time GAAP items** (debt extinguishment, inventory valuation timing, restructuring, CEO make-whole) use the **week-ending quarter only**—no cross-quarter blend—so a Q4 debt charge does not leak into Q1 boundary weeks.
+- **Weekly-reported actuals** (acquisition contracts, sparse new-listing counts, and **Home Sales from week ending 2026-07-04**) are entered on **Weekly Financials**. Home Sales from that date is the week-over-week change in cumulative **Resale COEs** on [Accountable](https://accountable.opendoor.com/) (`python models/OPEN/scripts/sync_accountable_home_sales.py`). **Quarterly Financials** sums the matching weeks when the quarterly cell is a formula.
 - **Model** rows stay on **Weekly Financials**; formulas fall back between actual and model rows as before.
 
 ### Funnel (actuals vs model)
@@ -52,7 +52,7 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 1. **Acquisition contracts** — Observed weekly contracts where available; model = deseasonalized base × **Acquisition Seasonality Multiplier** × weekly operational growth.
 2. **Homes purchased** — Model = lagged contracts × that cohort’s **Likelihood to Close** × **Transitions** close-timing weights over ~9 weeks (`SUMPRODUCT` / `MAP` lag). Timing weights sum to 100% of closers; attrition lives on the weekly L2C row. **Cash Now More Later %** is a mix of those purchases (2P vs 1P), not a second funnel: CNML homes still close, still sit in inventory, and still print full-home resale revenue. Accountable contract counts already include CNML.
 3. **New listings** — Model = lagged **homes purchased** × **Likelihood to List** × **Transitions** listing-timing weights (row 4 sums to **100% of ultimate listers**). For the first **8 weeks** of the horizon only, add a finite **unlisted 1.0 backlog** (`Transitions!B25`, default 450) draining on row 27. Never-listed share is `(1 − Likelihood to List)` on the weekly row (not a fixed Transitions %).
-4. **Home sales** — Model = lagged listings × **Percent Sold by Listing Week** (**25** weeks on 2.0 / **39** on 1.0) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
+4. **Home sales** — Actuals from week ending **2026-07-04** come from Accountable Resale COEs (weekly = QTD cumulative minus prior week). Model = lagged listings × **Percent Sold by Listing Week** (**25** weeks on 2.0 / **39** on 1.0) **+** private sales. Private sales = lagged purchases × `(1 − Likelihood to List)` on **Percent of Private Completions Sold by Week** (`Transitions!B23:J23`; 9-week purchase→close curve).
 5. **Revenue** — Home-sale revenue = **ASP × Home Sales - Model** + off-inventory ODL. Home Sales already blends 1.0/2.0 sell-through into closed units that week, so revenue does not re-apply listing→cash/financed close lags or a second price-retention haircut.
 6. **Inventory** — Model rolls forward: prior inventory + **homes purchased** − sales (preferring actuals when present). Home **count** does not fall when CNML mix rises. Warehouse **debt** does: modeled senior/mezz scales with homes and with blended cash-at-close `((1 − CNML%) + CNML% × Transitions B35)`.
 
@@ -153,6 +153,7 @@ python scripts/validate_model_formulas.py --ticker OPEN --offline
 python scripts/restore_weekly_model_formulas.py --ticker OPEN
 python scripts/sync_repo_from_live_sheet.py --ticker OPEN
 python models/OPEN/scripts/update_weekly_quarterly_spread.py
+python models/OPEN/scripts/sync_accountable_home_sales.py
 python models/OPEN/scripts/add_cnml_rows.py
 ```
 
@@ -162,7 +163,7 @@ Canonical model-row formulas live in `weekly_model_formulas.py`. Templates use `
 
 1. Run `python scripts/validate_model_formulas.py --ticker OPEN` — fails if templates still use numeric row refs or expected labels are missing.
 2. Run `python scripts/restore_weekly_model_formulas.py --ticker OPEN` — validates first, then re-applies all `* - Model` formulas.
-3. If spread rows moved, run `python models/OPEN/scripts/update_weekly_quarterly_spread.py` (already label-based).
+3. If spread rows moved, run `python models/OPEN/scripts/update_weekly_quarterly_spread.py` (already label-based). **Home Sales** from week ending **2026-07-04** is skipped (Accountable weekly COEs); re-run `sync_accountable_home_sales.py` after a new Accountable print.
 
 Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --ticker OPEN --offline`
 

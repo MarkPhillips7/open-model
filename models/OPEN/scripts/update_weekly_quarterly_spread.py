@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Apply day-weighted quarterly spread formulas to Weekly Financials."""
+"""Apply day-weighted quarterly spread formulas to Weekly Financials.
+
+**Home Sales** from week ending 2026-07-04 is Accountable Resale COEs (weekly
+delta of the QTD chart). This script leaves those cells alone — it will not
+replace hardcoded weekly prints with ÷13, and it clears leftover spread
+formulas on that date range so the next Accountable sync can fill them.
+"""
 
 from __future__ import annotations
 
@@ -17,6 +23,12 @@ from models.OPEN.gaap_below_the_line import (
     DEBT_EXTINGUISHMENT_LABEL,
     INTEREST_EXPENSE_LABEL,
     OTHER_INCOME_LABEL,
+)
+from models.OPEN.accountable import (  # noqa: E402
+    HOME_SALES_ACCOUNTABLE_START,
+    HOME_SALES_LABEL,
+    is_quarterly_spread_formula,
+    sheet_date,
 )
 from sheets.formulas import (  # noqa: E402
     weekly_asp_formula,
@@ -111,6 +123,7 @@ def update_weekly_formulas(client: SheetsClient) -> None:
     row_map = build_row_map(client)
 
     data = ws.get("A1:DY110", value_render_option="FORMULA")
+    header_vals = ws.get("A1:DY1", value_render_option="UNFORMATTED_VALUE")[0]
     n_cols = max(len(row) for row in data) - 1
     end_col = col_letter(n_cols + 1)
 
@@ -123,8 +136,21 @@ def update_weekly_formulas(client: SheetsClient) -> None:
         changed = len(existing) < n_cols
         for col_idx in range(n_cols):
             col = col_letter(col_idx + 2)
-            new_val = weekly_from_quarterly_formula(quarterly_row, col)
-            if str(cells[col_idx]) != new_val:
+            week = sheet_date(header_vals[col_idx + 1] if col_idx + 1 < len(header_vals) else None)
+            if (
+                label == HOME_SALES_LABEL
+                and week is not None
+                and week >= HOME_SALES_ACCOUNTABLE_START
+            ):
+                # Weekly resale COEs from Accountable; do not flatten with ÷13.
+                new_val = (
+                    ""
+                    if is_quarterly_spread_formula(cells[col_idx])
+                    else cells[col_idx]
+                )
+            else:
+                new_val = weekly_from_quarterly_formula(quarterly_row, col)
+            if str(cells[col_idx]) != str(new_val):
                 cells[col_idx] = new_val
                 changed = True
         if changed:
