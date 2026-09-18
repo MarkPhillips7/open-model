@@ -31,8 +31,9 @@ SHARES_SHEET_GRID: list[list] = [
         "3/31/2026",
         0,
         0,
-        "Q1 2026 10-Q: ~339.5M basic, ~544.8M diluted. Actuals row already has the print; "
-        "do not double-count here unless you clear the Actual cell.",
+        "Q1 2026 10-Q: ~339.6M basic; if-converted fully diluted ~546.7M "
+        "(GAAP diluted WAS 544.8M + anti-dilutive leftovers). Actuals row "
+        "already has the print; do not double-count here unless you clear the Actual cell.",
     ],
     [
         "Future convert / warrant exercise (placeholder)",

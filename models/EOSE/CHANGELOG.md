@@ -18,6 +18,43 @@ Entry template:
 
 ---
 
+## 2026-09-18 — Pull live Quarterly Financials into git (no sheet writes)
+
+Captured manual workbook edits so restore/setup cannot roll them back. Read-only pull from **[EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing)**.
+
+- **Tab / range:** repo only. Live **Quarterly Financials** `A1:Z112`, **COGS** `C9`, formats on QF / COGS / Shares were read, not written.
+- **Insert/delete:** none on the sheet. Repo `layout.py` now has **112** rows (was 111): added **MWh shipped - Model** after **MWh shipped - Derived from PTC** (live row 63). Rows below stay as typed.
+- **Formulas:** captured as typed —
+  - **MWh shipped - Model:** copy PTC MWh if present, else prior × **1.22**
+  - **Revenue - Model** / **COGS - Model** / forward **Government credits - Model:** use Model MWh (not PTC-only)
+  - **Z3 ASP - Model:** $260 then × **0.96714** while `column() < 9` (through 2026 Q2); hold after
+  - **Adjusted gross margin - Model:** copy actual through 2026 Q2; after cost-out complete prior × 1.1 capped at 30%; else haircut waterfall
+  - **SG&A / R&D / OpEx - Model:** copy actual if present, else prior Model (OpEx is not SG&A+R&D)
+  - **Fully diluted shares - Model:** copy actual if present, else prior × **1.02**
+  - **Cash - Model:** Q1 copies Cash actual; later prior + adj. EBITDA − capex − interest + Δ debt + Δ diluted shares × prior price × **0.7**
+- **Data:** **Percent of Guided Cost Cutting Achieved** C **70 → 100**. **Terminal unit COGS** (COGS `C9`) **160 → 181**. Live Fully diluted Actuals still show GAAP diluted WAS (Q2 2026 blank); if-converted fills are in the following entry / `actuals.py` and are not yet on the sheet.
+- **Side effects:** Captured number formats (`0.0` vs `#,##0.00`), yellow input cells (haircut / cash OpEx / non-cash COGS in C; pipeline growth C:Z), units column right-align, Year/Quarter center, COGS A1 14pt, Shares date format `m/d/yyyy`. Column widths already matched. No chart API. Welcome copy left as on the sheet (still says haircut default 70%). Financials Definitions notes in git now describe the live formulas (including **MWh shipped - Model**); the live Definitions tab does not yet have that row.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `cogs.py`, `financials_definitions.py`, `README.md`
+- `scripts/setup_eose_workbook.py`, `scripts/setup_cogs.py`
+
+## 2026-09-18 — Fully diluted shares if-converted (fill Q2 2026)
+
+GAAP diluted WAS equals basic in a loss quarter, so the Actual row jumped 436 → 238 → 272 → 308 → 545 and Q2 2026 was left blank. Replaced with the 10-Q/10-K if-converted count (basic WAS + EPS-footnote potential shares, including anti-dilutive).
+
+- **Tab / range:** **Quarterly Financials** Fully diluted shares `C:H` (2025 Q1 – 2026 Q2); **Financials Definitions** notes for Fully diluted shares / - Model
+- **Insert/delete:** none
+- **Formulas:** unchanged. **Fully diluted shares - Model** still copies the Actual when present, else prior Model × 1.02. Filling Q2 2026 Actual therefore sets Q2 Model to 602.930 and the 2% crawl starts from there.
+- **Data:** Fully diluted Actual (million): Q1 2025 **466.742** (was 436.368 GAAP diluted WAS); Q2 2025 **533.668** (was 237.741 = basic); Q3 2025 **552.574** (was 271.618); Q4 2025 **527.998** (was 307.664; Q4 WAS + FY 10-K anti-dilutive — convert line is 11.1M); Q1 2026 **546.671** (was 544.829); Q2 2026 **602.930** (was blank). Q2 2026 = basic 339.799 + options/RSUs 15.958 + warrants 72.839 + converts 58.023 + Series B 116.311.
+- **Side effects:** **Market cap** (price × Fully diluted shares) and forward **Cash - Model** dilution proceeds will recompute. No chart API. If Operations/Money charts plot this row, check series in the UI.
+
+### Repo
+
+- `actuals.py`, `financials_definitions.py`, `sources.py`, `scripts/fetch_sec_gaap.py`
+- `README.md`, `RESOURCES.md`, `shares_events.py`
+
 ## 2026-09-17 — Rename MWh shipped - PTC
 
 - **Tab / range:** **Quarterly Financials** `A62`; **Financials Definitions** matching label

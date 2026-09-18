@@ -9,6 +9,8 @@ Repeatable after each 10-Q / 10-K. Does not write the Google Sheet.
 Adj. EBITDA, pipeline, and backlog are not in XBRL — copy those from the
 earnings 8-K Ex. 99.1 listed in models/EOSE/sources.py. Production Tax Credits
 (45X COGS reduction) are a 10-Q footnote, not a us-gaap companyfacts tag.
+Fully diluted shares is the if-converted EPS-footnote count in actuals.py, not
+XBRL diluted WAS (which equals basic in a loss quarter).
 """
 
 from __future__ import annotations
@@ -153,7 +155,7 @@ def gaap_for_quarter(facts: dict, year: int, quarter: int) -> dict[str, float]:
     for tag, label in GAAP_DURATION_TAGS.items():
         if tag not in usgaap:
             continue
-        allow_fy = label not in ("Basic shares", "Fully diluted shares")
+        allow_fy = label != "Basic shares"
         val = _pick_duration(usd_or_shares(tag), year, quarter, allow_fy_residual=allow_fy)
         if val is None:
             continue

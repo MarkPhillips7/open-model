@@ -42,8 +42,8 @@ GUIDED_TOTAL_PTS = (
     + GUIDED_SCRAP_PTS
 )  # 73
 
-DEFAULT_HAIRCUT_PCT = 70
-DEFAULT_TERMINAL_UNIT_COGS = 160
+DEFAULT_HAIRCUT_PCT = 70  # note / Welcome copy; live Quarterly Financials C is 100
+DEFAULT_TERMINAL_UNIT_COGS = 181
 COST_OUT_START_YEAR = 2026
 COST_OUT_START_QUARTER = 2  # progress 0 at Q2 2026
 COST_OUT_END_YEAR = 2027
@@ -378,6 +378,23 @@ def write_cogs_sheet(client: Any) -> None:
                     }
                 },
                 "fields": "userEnteredFormat.textFormat.bold,userEnteredFormat.backgroundColor",
+            }
+        },
+        {
+            "repeatCell": {
+                "range": {
+                    "sheetId": sid,
+                    "startRowIndex": 0,
+                    "endRowIndex": 1,
+                    "startColumnIndex": 0,
+                    "endColumnIndex": 1,
+                },
+                "cell": {
+                    "userEnteredFormat": {
+                        "textFormat": {"bold": True, "fontSize": 14},
+                    }
+                },
+                "fields": "userEnteredFormat.textFormat.bold,userEnteredFormat.textFormat.fontSize",
             }
         },
         {

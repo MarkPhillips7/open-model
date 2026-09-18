@@ -32,20 +32,16 @@ from models.EOSE.layout import (  # noqa: E402
     CASH_OPEX_RUNRATE_LABEL,
     CELL_MODULE_CREDIT_LABEL,
     COGS_COL_WIDTHS_PX,
-    COST_OUT_PROGRESS_LABEL,
     DEFINITIONS_COL_WIDTHS_PX,
-    EBITDA_200M_GUIDED_LABEL,
-    EBITDA_200M_MODEL_LABEL,
-    GUIDED_ADJ_GM_MODEL_LABEL,
     HAIRCUT_LABEL,
     NONCASH_COGS_LABEL,
     PIPELINE_GROWTH_LABEL,
     QUARTERLY,
     QUARTERLY_COL_WIDTHS_PX,
     ROWS,
-    SCALE_BLEND_LABEL,
     WELCOME_COL_WIDTHS_PX,
     column_width_requests,
+    quarterly_format_requests,
 )
 from models.EOSE.quarterly_model_formulas import COLUMN_C_DEFAULTS  # noqa: E402
 from restore_weekly_model_formulas import restore_model_formulas  # noqa: E402
@@ -185,59 +181,12 @@ def write_units_and_defaults(client: SheetsClient, labels: dict[str, int]) -> No
 
 
 def highlight_haircut(client: SheetsClient, labels: dict[str, int]) -> None:
+    from models.EOSE.layout import label_row_numbers
+
     sid = sheet_id(client, QUARTERLY)
-    yellow = {"red": 1, "green": 0.95, "blue": 0.8}
-    white = {"red": 1, "green": 1, "blue": 1}
-    requests = []
-    for lab in (
-        HAIRCUT_LABEL,
-        CASH_OPEX_RUNRATE_LABEL,
-        NONCASH_COGS_LABEL,
-        PIPELINE_GROWTH_LABEL,
-    ):
-        row = labels[lab]
-        requests.append(
-            {
-                "repeatCell": {
-                    "range": {
-                        "sheetId": sid,
-                        "startRowIndex": row - 1,
-                        "endRowIndex": row,
-                        "startColumnIndex": 2,
-                        "endColumnIndex": 3,
-                    },
-                    "cell": {"userEnteredFormat": {"backgroundColor": yellow}},
-                    "fields": "userEnteredFormat.backgroundColor",
-                }
-            }
-        )
-    # New engine rows inherit yellow from Haircut if inserted just below it.
-    for lab in (
-        COST_OUT_PROGRESS_LABEL,
-        GUIDED_ADJ_GM_MODEL_LABEL,
-        SCALE_BLEND_LABEL,
-        EBITDA_200M_GUIDED_LABEL,
-        EBITDA_200M_MODEL_LABEL,
-    ):
-        if lab not in labels:
-            continue
-        row = labels[lab]
-        requests.append(
-            {
-                "repeatCell": {
-                    "range": {
-                        "sheetId": sid,
-                        "startRowIndex": row - 1,
-                        "endRowIndex": row,
-                        "startColumnIndex": 2,
-                        "endColumnIndex": 26,
-                    },
-                    "cell": {"userEnteredFormat": {"backgroundColor": white}},
-                    "fields": "userEnteredFormat.backgroundColor",
-                }
-            }
-        )
-    client.spreadsheet.batch_update({"requests": requests})
+    requests = quarterly_format_requests(sid, label_row_numbers())
+    if requests:
+        client.spreadsheet.batch_update({"requests": requests})
     ws = client.worksheet(QUARTERLY)
     ws.update_note(f"C{labels[HAIRCUT_LABEL]}", HAIRCUT_NOTE)
 
@@ -303,7 +252,7 @@ def main() -> None:
         print(f"Warning: definitions still missing {missing}")
     print("Done.")
     print(f"{COGS_SHEET} levers written; unit-cost path is on {QUARTERLY}.")
-    print(f"Haircut default {DEFAULT_HAIRCUT_PCT:.0f}% on {QUARTERLY} C{labels[HAIRCUT_LABEL]}.")
+    print(f"Haircut C default {COLUMN_C_DEFAULTS[HAIRCUT_LABEL]} on {QUARTERLY} C{labels[HAIRCUT_LABEL]}.")
 
 
 if __name__ == "__main__":

@@ -8,12 +8,14 @@ from typing import Any
 from sheets.formulas import col_letter as _col_letter
 
 from models.EOSE.cogs import (
-    DEFAULT_HAIRCUT_PCT,
     Q2_2026_CASH_OPEX,
     Q2_2026_NONCASH_COGS,
     cogs_c_ref,
 )
 from models.EOSE.layout import (
+    ADJ_GM_MODEL_CAP,
+    ADJ_GM_MODEL_GROWTH_QOQ,
+    ASP_MODEL_HOLD_FROM_COL,
     ASP_MODEL_QOQ,
     ASP_MODEL_START,
     BOOKED_ORDERS_GWH_KEY,
@@ -21,11 +23,15 @@ from models.EOSE.layout import (
     CELL_MODULE_CREDIT_LABEL,
     CELL_MODULE_CREDIT_PER_KWH,
     COST_OUT_PROGRESS_LABEL,
+    DILUTION_PROCEEDS_FRACTION,
     EBITDA_200M_GUIDED_LABEL,
     EBITDA_200M_MODEL_LABEL,
+    FD_SHARES_MODEL_QOQ,
     FIRST_VALUE_COL,
     FIRST_VALUE_COL_INDEX,
     GUIDED_ADJ_GM_MODEL_LABEL,
+    MWH_MODEL_QOQ,
+    MWH_SHIPPED_MODEL_LABEL,
     MWH_SHIPPED_PTC_LABEL,
     N_QUARTERS,
     PTC_LABEL,
@@ -99,6 +105,26 @@ def _adj_gm_formula(*, guided: bool) -> str:
     return f'=IF({progress}="","",{start}+{progress}*{pts})'
 
 
+def _adj_gm_model_formula() -> str:
+    """Copy actual adj. GM through 2026 Q2; after cost-out complete grow 10%/q (cap 30%); else haircut path."""
+    start = cogs_c_ref("Starting adjusted gross margin")
+    total = cogs_c_ref("Total guided cost-out")
+    progress = f"{{c}}{{{COST_OUT_PROGRESS_LABEL}}}"
+    prior_progress = f"{{cp}}{{{COST_OUT_PROGRESS_LABEL}}}"
+    haircut = (
+        f"{start}+{progress}*({total}*$C${{Percent of Guided Cost Cutting Achieved}}/100)"
+    )
+    grown = (
+        f"min({ADJ_GM_MODEL_CAP},"
+        f"{{cp}}{{Adjusted gross margin - Model}}*{ADJ_GM_MODEL_GROWTH_QOQ})"
+    )
+    return (
+        f'=IF({progress}="","",'
+        f"if(column()<{ASP_MODEL_HOLD_FROM_COL},{{c}}{{Adjusted gross margin}},"
+        f"if({prior_progress}=1,{grown},{haircut})))"
+    )
+
+
 def _scale_blend_formula() -> str:
     start = cogs_c_ref("Scale absorption start lines")
     end = cogs_c_ref("Scale absorption complete lines")
@@ -163,7 +189,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     ),
     "Z3 ASP - Model": (
         f"=if(column()=3,{ASP_MODEL_START},"
-        f"{{cp}}{{Z3 ASP - Model}}*{ASP_MODEL_QOQ})"
+        f"if(column()<{ASP_MODEL_HOLD_FROM_COL},"
+        f"{{cp}}{{Z3 ASP - Model}}*{ASP_MODEL_QOQ},"
+        f"{{cp}}{{Z3 ASP - Model}}))"
     ),
     "Z3 module cycle time - Model": (
         f'=IF({{c}}{{Quarter}}="","",MAX($C${{Cycle time floor}},'
@@ -196,9 +224,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     ),
     "Government credits - Model": (
         f'=IF({{c}}{{{PTC_LABEL}}}<>"",{{c}}{{{PTC_LABEL}}},'
-        f'IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
-        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
-        f"{{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_PTC_LABEL}}}/1000))"
+        f'IF(OR({{c}}{{{MWH_SHIPPED_MODEL_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_MODEL_LABEL}}})=0),"",'
+        f"{{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_MODEL_LABEL}}}/1000))"
     ),
     STATUTORY_PTC_LABEL: (
         f'=IF(OR({{c}}{{{PTC_LABEL}}}="",N({{c}}{{{PTC_LABEL}}})=0),"",'
@@ -209,6 +237,11 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         f'N({{c}}{{{STATUTORY_PTC_LABEL}}})=0),"",'
         f"{{c}}{{{STATUTORY_PTC_LABEL}}}*1000/{{c}}{{{CELL_MODULE_CREDIT_LABEL}}})"
     ),
+    MWH_SHIPPED_MODEL_LABEL: (
+        f"=if(n({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0,"
+        f"{{cp}}{{{MWH_SHIPPED_MODEL_LABEL}}}*{MWH_MODEL_QOQ},"
+        f"{{c}}{{{MWH_SHIPPED_PTC_LABEL}}})"
+    ),
     "Unit COGS - Derived": (
         f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
         f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
@@ -218,14 +251,14 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         "={c}{Unit COGS - Model}-{c}{Effective 45x credit - Model}"
     ),
     "Revenue - Model": (
-        f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
-        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
-        f"{{c}}{{{MWH_SHIPPED_PTC_LABEL}}}/1000*{{c}}{{Z3 ASP - Model}})"
+        f'=IF(OR({{c}}{{{MWH_SHIPPED_MODEL_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_MODEL_LABEL}}})=0),"",'
+        f"{{c}}{{{MWH_SHIPPED_MODEL_LABEL}}}/1000*{{c}}{{Z3 ASP - Model}})"
     ),
     "COGS - Model": (
-        f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
-        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
-        f"{{c}}{{Unit COGS - Model}}*{{c}}{{{MWH_SHIPPED_PTC_LABEL}}}/1000"
+        f'=IF(OR({{c}}{{{MWH_SHIPPED_MODEL_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_MODEL_LABEL}}})=0),"",'
+        f"{{c}}{{Unit COGS - Model}}*{{c}}{{{MWH_SHIPPED_MODEL_LABEL}}}/1000"
         "-{c}{Government credits - Model}+$C${Non-cash COGS (D&A + SBC)})"
     ),
     "Gross profit - Model": "={c}{Revenue - Model}-{c}{COGS - Model}",
@@ -240,21 +273,21 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         '=IF(OR({c}{Adjusted gross profit}="",N({c}{Revenue})=0),"",'
         "{c}{Adjusted gross profit}/{c}{Revenue}*100)"
     ),
-    "Adjusted gross margin - Model": _adj_gm_formula(guided=False),
+    "Adjusted gross margin - Model": _adj_gm_model_formula(),
     COST_OUT_PROGRESS_LABEL: _cost_out_progress_formula(),
     GUIDED_ADJ_GM_MODEL_LABEL: _adj_gm_formula(guided=True),
     SCALE_BLEND_LABEL: _scale_blend_formula(),
     EBITDA_200M_GUIDED_LABEL: _ebitda_at_200m(GUIDED_ADJ_GM_MODEL_LABEL),
     EBITDA_200M_MODEL_LABEL: _ebitda_at_200m("Adjusted gross margin - Model"),
     "SG&A - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'{_prefer(_prior("SG&A"), _prior("SG&A - Model"))})'
+        "=IF(n({c}{SG&A})=0,{cp}{SG&A - Model},{c}{SG&A})"
     ),
     "R&D - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'{_prefer(_prior("R&D"), _prior("R&D - Model"))})'
+        "=IF(n({c}{R&D})=0,{cp}{R&D - Model},{c}{R&D})"
     ),
-    "OpEx - Model": "={c}{SG&A - Model}+{c}{R&D - Model}",
+    "OpEx - Model": (
+        "=IF(n({c}{OpEx})=0,{cp}{OpEx - Model},{c}{OpEx})"
+    ),
     "Adjusted EBITDA - Model": (
         "={c}{Adjusted gross profit - Model}-$C${Cash OpEx run-rate}"
     ),
@@ -276,9 +309,12 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         "*$C${Capex per incremental line})"
     ),
     "Cash - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
+        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),{{c}}{{Cash}},'
         + _prefer(_prior("Cash"), _prior("Cash - Model"))
-        + "+{c}{Adjusted EBITDA - Model}-{c}{Capex - Model}-$C${Net interest run-rate})"
+        + "+{c}{Adjusted EBITDA - Model}-{c}{Capex - Model}-$C${Net interest run-rate}"
+        + "+{c}{Total debt - Model}-{cp}{Total debt - Model}"
+        + "+({c}{Fully diluted shares - Model}-{cp}{Fully diluted shares - Model})"
+        f"*{{cp}}{{Stock price}}*{DILUTION_PROCEEDS_FRACTION})"
     ),
     "Total debt - Model": (
         f'=IF({{c}}{{Quarter}}="","",IF({_first_q()},1000,'
@@ -290,8 +326,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         + _prefer("{c}{Cash}", "{c}{Cash - Model}")
     ),
     "Fully diluted shares - Model": (
-        f'=IF(OR({{c}}{{Quarter}}="",{_first_q()}),"",'
-        f'{_prefer(_prior("Fully diluted shares"), _prior("Fully diluted shares - Model"))})'
+        "=IF(n({c}{Fully diluted shares})=0,"
+        f"{{cp}}{{Fully diluted shares - Model}}*{FD_SHARES_MODEL_QOQ},"
+        "{c}{Fully diluted shares})"
     ),
     "Stock price": (
         '=IF(OR({c}{Quarter ending}="",{c}{Quarter ending}>TODAY()),"",'
@@ -413,7 +450,7 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     CELL_MODULE_CREDIT_LABEL: CELL_MODULE_CREDIT_PER_KWH,
     "45x & active electrode credits": 47,
     "45x transfer rate": 90,
-    "Percent of Guided Cost Cutting Achieved": DEFAULT_HAIRCUT_PCT,
+    "Percent of Guided Cost Cutting Achieved": 100,
     "Non-cash COGS (D&A + SBC)": Q2_2026_NONCASH_COGS,
     "Cash OpEx run-rate": Q2_2026_CASH_OPEX,
     "EV / EBITDA": 30,

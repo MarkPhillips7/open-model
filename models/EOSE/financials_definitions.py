@@ -59,13 +59,19 @@ FIELD_NOTES: dict[str, str] = {
         "Blank when Production Tax Credits is blank. 10-Q: PTC hits COGS when "
         "inventory is sold, so this is shipped kWh, not factory output."
     ),
+    "MWh shipped - Model": (
+        "If MWh shipped - Derived from PTC is present, copy it; otherwise prior "
+        "Model × 1.22. Column C uses the units cell as the prior (B63) — that is "
+        "how the live sheet is typed. Revenue - Model, COGS - Model, and "
+        "Government credits - Model (when PTC is blank) use this energy."
+    ),
     "Z3 ASP - Derived": (
         "If Booked orders (GWh) is 0: Pipeline ($B) × 1000 / Pipeline (GWh); "
         "else Booked orders ($M) / Booked orders (GWh). Mixes Cube and Indensity."
     ),
     "Z3 ASP - Model": (
-        "$260 in 2025 Q1, then prior × 0.97 each quarter. Revenue - Model uses this "
-        "ASP with MWh shipped - Derived from PTC."
+        "$260 in 2025 Q1, then prior × 0.96714 while column() < 9 (through 2026 Q2); "
+        "held flat after. Revenue - Model uses this ASP with MWh shipped - Model."
     ),
     "Z3 Module Energy Capacity": "kWh per Z3 module (product sheet ~1.2 kWh). Scalar in C, copied across.",
     "Z3 module cycle time": "Reported cycle time when disclosed (Line 2 ~10% faster vs Line 1 in Q2 2026).",
@@ -92,9 +98,10 @@ FIELD_NOTES: dict[str, str] = {
     "Factory capacity - Model": "Quarterly GWh = annualized nameplate / 4.",
     "Percent of Guided Cost Cutting Achieved": (
         "Haircut on the Q2 2026 Slide 11 cost-out (73 pts of adj. GM over 12 months). "
-        "Default 70% because management has repeatedly missed cost-out timelines. "
-        "100% = take the CFO plan at face value; 0% = freeze Q2 2026 costs. "
-        "Edit C; D:Z copy C. Cost-out waterfall and yellow levers live on the COGS tab."
+        "Live C is 100 (CFO plan at face value). The cell note still describes a 70% "
+        "default because Eos has repeatedly missed cost-out timelines. "
+        "0% = freeze Q2 2026 costs. Edit C; D:Z copy C. Cost-out waterfall and yellow "
+        "levers live on the COGS tab."
     ),
     "Cost-out plan progress - Model": (
         "0 at the COGS cost-out start quarter (Q2 2026), 1 at the complete quarter "
@@ -127,7 +134,7 @@ FIELD_NOTES: dict[str, str] = {
     "Unit COGS - Model": (
         "Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts phased "
         "Q2 2026→Q2 2027 (COGS tab levers), then blend toward Terminal unit COGS "
-        "(COGS tab, default $160/kWh) as lines go 2→4. Pre-45X; COGS - Model still "
+        "(COGS tab, default $181/kWh) as lines go 2→4. Pre-45X; COGS - Model still "
         "subtracts government credits. $/kWh of energy, not per Cube or Indensity SKU."
     ),
     "45X cell & module credit": (
@@ -153,19 +160,19 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Government credits - Model": (
         "Copy Production Tax Credits actual when present; else effective credit × "
-        "MWh shipped - Derived from PTC / 1000. Applied as a COGS offset only — not added to revenue."
+        "MWh shipped - Model / 1000. Applied as a COGS offset only — not added to revenue."
     ),
     "Unit COGS w/ 45x - Model": "Unit COGS − effective 45X.",
     "FY 2026 revenue guidance — low": "Management FY2026 revenue guide low ($300M as of Q2 2026). Scalar in C.",
     "FY 2026 revenue guidance — high": "Management FY2026 revenue guide high ($350M as of Q2 2026). Scalar in C.",
     "Revenue": "GAAP / earnings-release total revenue ($M). Hardcoded actuals through last print.",
     "Revenue - Model": (
-        "MWh shipped - Derived from PTC / 1000 × Z3 ASP - Model. Does not add 45X credits. "
-        "Blank when PTC energy is blank (no forward shipment path yet)."
+        "MWh shipped - Model / 1000 × Z3 ASP - Model. Does not add 45X credits. "
+        "Follows PTC energy when present, else the 1.22× shipment path."
     ),
     "COGS": "GAAP cost of goods sold ($M).",
     "COGS - Model": (
-        "Unit COGS × MWh shipped - Derived from PTC / 1000 − government credits + Non-cash COGS (D&A + SBC). "
+        "Unit COGS × MWh shipped - Model / 1000 − government credits + Non-cash COGS (D&A + SBC). "
         "The first two terms are cash/adj. COGS; the add-back is Q2 2026 SBC+D&A in COGS held flat."
     ),
     "Gross profit": "Reported gross profit (loss).",
@@ -179,16 +186,26 @@ FIELD_NOTES: dict[str, str] = {
     "Adjusted gross profit - Model": "Revenue - Model × Adjusted gross margin - Model / 100.",
     "Adjusted gross margin": "Adj. GP / Revenue × 100 when both actuals are present. Q2 2026 print −62.3%.",
     "Adjusted gross margin - Model": (
-        "Starting adj. GM (−62.3%) + cost-out plan progress × 73 pts × haircut. "
-        "Levers (start GM, pts, dates) are on the COGS tab. At 70% haircut the "
-        "12-month exit is about −11%, not the guided +10%."
+        "Through 2026 Q2 (column < 9) copies Adjusted gross margin actual. After "
+        "cost-out progress hits 1, prior Model × 1.1 capped at 30%. Otherwise starting "
+        "adj. GM (−62.3%) + cost-out plan progress × 73 pts × haircut. Levers "
+        "(start GM, pts, dates) are on the COGS tab."
     ),
     "SG&A": "Selling, general & administrative ($M).",
-    "SG&A - Model": "Carries last actual SG&A forward (opex hold, OPEN-style).",
+    "SG&A - Model": (
+        "If SG&A actual is present, copy it; otherwise prior Model. Column C uses the "
+        "units cell as the prior — that is how the live sheet is typed."
+    ),
     "R&D": "Research & development ($M).",
-    "R&D - Model": "Carries last actual R&D forward.",
+    "R&D - Model": (
+        "If R&D actual is present, copy it; otherwise prior Model. Same units-cell "
+        "prior in column C as SG&A - Model."
+    ),
     "OpEx": "Total operating expenses when disclosed; else SG&A + R&D.",
-    "OpEx - Model": "SG&A - Model + R&D - Model.",
+    "OpEx - Model": (
+        "If OpEx actual is present, copy it; otherwise prior Model. Not SG&A - Model + "
+        "R&D - Model."
+    ),
     "Adjusted EBITDA": "Company-defined adjusted EBITDA ($M). Actuals from earnings reconciliations.",
     "Adjusted EBITDA - Model": (
         "Adj. GP - Model − Cash OpEx run-rate. Calibrated to the company definition "
@@ -206,8 +223,9 @@ FIELD_NOTES: dict[str, str] = {
     "GAAP net income - Model": "Adj. EBITDA - Model − net interest run-rate. Intentionally ignores FV marks.",
     "Cash": "Cash + restricted cash ($M) as disclosed.",
     "Cash - Model": (
-        "Prior cash (actual if present else model) + Operating cash flow - Model − capex − interest. "
-        "OCF is adj. EBITDA (CFO: ops cash ≈ adj. EBITDA); capex and interest sit on top."
+        "2025 Q1 copies Cash actual. Later: prior cash (actual if present else model) "
+        "+ Operating cash flow - Model − capex − interest + Δ Total debt - Model + "
+        "Δ Fully diluted shares - Model × prior Stock price × 0.7 (dilution proceeds haircut)."
     ),
     "Capex - Model": "Capex per incremental line × MAX(0, Δ lines - Model).",
     "Capex per incremental line": "Guess ($40M). 2025 investing cash outflow was ~$55M for the year.",
@@ -231,8 +249,17 @@ FIELD_NOTES: dict[str, str] = {
     "Total debt - Model": "Carries last actual total debt, else $1,000M placeholder.",
     "Net debt - Model": "Total debt - Model − Cash (actual if present else model).",
     "Basic shares": "Shares outstanding / basic weighted average (million).",
-    "Fully diluted shares": "Diluted weighted average or fully diluted count (million) from the 10-Q.",
-    "Fully diluted shares - Model": "Last actual diluted shares carried forward. Add events on the Shares tab when you want incremental dilution.",
+    "Fully diluted shares": (
+        "If-converted count (million), not GAAP diluted WAS. Basic WAS + every "
+        "potential share in that quarter's 10-Q EPS footnote (converts, warrants, "
+        "Series B, RSUs/options), including shares GAAP excludes as anti-dilutive "
+        "in a loss quarter. Q2 2026: 339.799 + 263.131 = 602.930."
+    ),
+    "Fully diluted shares - Model": (
+        "Copy Fully diluted shares actual when present; otherwise prior Model × "
+        "1.02 per quarter. Add events on the Shares tab when you want a discrete "
+        "dilution increment instead of the 2% QoQ crawl."
+    ),
     "Stock price": "Last daily close on or before quarter-end from Price History (GOOGLEFINANCE).",
     "Market cap": "Stock price × diluted shares / 1000 ($B).",
     "EV / EBITDA": "Multiple applied only when annualized EBITDA - Model is positive (default 30).",

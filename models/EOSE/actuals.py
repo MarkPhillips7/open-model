@@ -7,6 +7,11 @@ GAAP lines: SEC companyfacts / 10-Q / 10-K (see sources.py).
 Adj. EBITDA, pipeline, backlog, booked orders: earnings 8-K Ex. 99.1.
 Pipeline GWh: earnings slides or transcript when the release omits GWh.
 
+Fully diluted shares is **not** GAAP diluted WAS. In a loss quarter diluted WAS
+equals basic (anti-dilutive). This row is basic WAS plus every potential share
+in that period's EPS footnote (dilutive effects in a profit quarter, plus
+shares excluded as anti-dilutive). Used for valuation share count.
+
 Reload the live sheet with::
 
     python models/EOSE/scripts/load_quarterly_actuals.py
@@ -36,7 +41,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 66.215,  # 10-Q "Long-term debt" line
         "Total debt": 325.514,  # all borrowings carrying value
         "Basic shares": 225.474,
-        "Fully diluted shares": 436.368,  # dilutive WAS (GAAP profit quarter)
+        "Fully diluted shares": 466.742,  # GAAP diluted WAS 436.368 + anti-dilutive 30.374
     },
     (2025, 2): {
         "Pipeline": 18.8,
@@ -59,7 +64,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 307.274,
         "Total debt": 445.277,
         "Basic shares": 237.741,
-        "Fully diluted shares": 237.741,  # loss quarter; diluted = basic
+        "Fully diluted shares": 533.668,  # basic + 10-Q anti-dilutive potential shares
     },
     (2025, 3): {
         "Pipeline": 22.6,
@@ -81,7 +86,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 330.407,
         "Total debt": 448.455,
         "Basic shares": 271.618,
-        "Fully diluted shares": 271.618,
+        "Fully diluted shares": 552.574,  # basic + 10-Q anti-dilutive potential shares
     },
     (2025, 4): {
         "Pipeline": 23.6,
@@ -104,7 +109,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 662.467,
         "Total debt": 813.266,
         "Basic shares": 307.664,
-        "Fully diluted shares": 307.664,
+        "Fully diluted shares": 527.998,  # Q4 WAS + FY 10-K anti-dilutive table
     },
     (2026, 1): {
         "Pipeline": 24.3,
@@ -127,7 +132,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 506.399,
         "Total debt": 619.519,
         "Basic shares": 339.602,
-        "Fully diluted shares": 544.829,  # if-converted WAS (GAAP profit quarter)
+        "Fully diluted shares": 546.671,  # GAAP diluted WAS 544.829 + excluded 1.842
     },
     (2026, 2): {
         "Pipeline": 24.6,
@@ -150,8 +155,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "Long term debt": 453.835,
         "Total debt": 617.118,
         "Basic shares": 339.799,
-        # Fully diluted shares omitted: GAAP diluted WAS = basic in a loss quarter.
-        # Leaving blank keeps Fully diluted shares - Model on Q1's 544.8 if-converted.
+        "Fully diluted shares": 602.930,  # basic 339.799 + Q2 10-Q anti-dilutive 263.131
     },
     (2026, 3): {
         "Z3 manufacturing lines": 1.5,  # working in-quarter; not a print

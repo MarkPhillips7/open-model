@@ -34,6 +34,7 @@ from models.EOSE.layout import (  # noqa: E402
     ROWS,
     WELCOME_COL_WIDTHS_PX,
     column_width_requests,
+    quarterly_format_requests,
     quarters,
 )
 from models.EOSE.cogs import write_cogs_sheet, COGS_SHEET  # noqa: E402
@@ -285,6 +286,7 @@ def write_quarterly(client: SheetsClient) -> dict[str, int]:
                 },
             ]
             + column_width_requests(sid, QUARTERLY_COL_WIDTHS_PX)
+            + quarterly_format_requests(sid, label_to_row)
         }
     )
     print(f"Wrote {len(grid)} rows × {2 + N_QUARTERS} cols to {QUARTERLY!r}")
@@ -313,6 +315,30 @@ def write_shares(client: SheetsClient) -> None:
     ws = client.worksheet(SHARES_SHEET)
     ws.clear()
     ws.update(SHARES_SHEET_GRID, range_name="A1:E8", value_input_option="USER_ENTERED")
+    sid = sheet_id(client, SHARES_SHEET)
+    client.spreadsheet.batch_update(
+        {
+            "requests": [
+                {
+                    "repeatCell": {
+                        "range": {
+                            "sheetId": sid,
+                            "startRowIndex": 4,
+                            "endRowIndex": 7,
+                            "startColumnIndex": 1,
+                            "endColumnIndex": 2,
+                        },
+                        "cell": {
+                            "userEnteredFormat": {
+                                "numberFormat": {"type": "DATE", "pattern": "m/d/yyyy"}
+                            }
+                        },
+                        "fields": "userEnteredFormat.numberFormat",
+                    }
+                }
+            ]
+        }
+    )
     print(f"Wrote {SHARES_SHEET} event table")
 
 

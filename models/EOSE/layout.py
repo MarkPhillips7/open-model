@@ -15,6 +15,7 @@ YEARS = (2025, 2026, 2027, 2028, 2029, 2030)
 BOOKED_ORDERS_M_KEY = "Booked orders [$M]"
 BOOKED_ORDERS_GWH_KEY = "Booked orders [GWh]"
 MWH_SHIPPED_PTC_LABEL = "MWh shipped - Derived from PTC"
+MWH_SHIPPED_MODEL_LABEL = "MWh shipped - Model"
 PTC_LABEL = "Production Tax Credits"
 STATUTORY_PTC_LABEL = "Production Tax Credits (statutory) - Derived"
 CELL_MODULE_CREDIT_LABEL = "45X cell & module credit"
@@ -46,6 +47,83 @@ WELCOME_COL_WIDTHS_PX: dict[int, int] = {0: 638, 1: 720}
 DEFINITIONS_COL_WIDTHS_PX: dict[int, int] = {0: 288, 1: 734}
 # COGS: A label, B units, C value (narrow), D notes (wide).
 COGS_COL_WIDTHS_PX: dict[int, int] = {0: 287, 1: 58, 2: 100, 3: 720}
+# Reference is not rewritten by setup; widths captured so they are not lost in docs.
+REFERENCE_COL_WIDTHS_PX: dict[int, int] = {0: 543, 1: 309, 2: 100}
+
+# Live number formats on Quarterly Financials C:Z (0-based cols 2–25).
+NUMBER_FORMAT_0_0 = "0.0"
+NUMBER_FORMAT_2DP = "#,##0.00"
+NUMBER_FORMAT_BY_LABEL: dict[str, str] = {
+    "Years from present": NUMBER_FORMAT_2DP,
+    "Pipeline - Model": NUMBER_FORMAT_0_0,
+    PIPELINE_GROWTH_LABEL: NUMBER_FORMAT_0_0,
+    "Pipeline (GWh) - Model": NUMBER_FORMAT_0_0,
+    BOOKED_ORDERS_M_KEY: NUMBER_FORMAT_2DP,
+    "Booked orders - Model": NUMBER_FORMAT_0_0,
+    BOOKED_ORDERS_GWH_KEY: NUMBER_FORMAT_0_0,
+    "Backlog - Model": NUMBER_FORMAT_0_0,
+    "Backlog (GWh)": NUMBER_FORMAT_2DP,
+    "Backlog (GWh) - Model": NUMBER_FORMAT_0_0,
+    "Backlog conversion lag": NUMBER_FORMAT_2DP,
+    "Z3 ASP - Derived": NUMBER_FORMAT_2DP,
+    "Z3 ASP - Model": NUMBER_FORMAT_2DP,
+    "Z3 module cycle time": NUMBER_FORMAT_2DP,
+    "Z3 module cycle time - Model": NUMBER_FORMAT_2DP,
+    "Quarterly module cycle time reduction rate": NUMBER_FORMAT_2DP,
+    CYCLE_TIME_FLOOR_LABEL: NUMBER_FORMAT_2DP,
+    "Z3 modules per cube": NUMBER_FORMAT_2DP,
+    "Full utilization weeks per year": NUMBER_FORMAT_2DP,
+    "Full utilization days per week": NUMBER_FORMAT_2DP,
+    "Full utilization hours per day": NUMBER_FORMAT_2DP,
+    "Module production count per line - Model": NUMBER_FORMAT_2DP,
+    "Capacity per line - Model": NUMBER_FORMAT_2DP,
+    "Annualized module energy capacity - Model": NUMBER_FORMAT_2DP,
+    "Factory capacity - Model": NUMBER_FORMAT_2DP,
+    HAIRCUT_LABEL: NUMBER_FORMAT_2DP,
+    COST_OUT_PROGRESS_LABEL: NUMBER_FORMAT_2DP,
+    GUIDED_ADJ_GM_MODEL_LABEL: NUMBER_FORMAT_2DP,
+    SCALE_BLEND_LABEL: NUMBER_FORMAT_2DP,
+    EBITDA_200M_GUIDED_LABEL: NUMBER_FORMAT_2DP,
+    EBITDA_200M_MODEL_LABEL: NUMBER_FORMAT_2DP,
+    "Unit COGS - Derived": NUMBER_FORMAT_2DP,
+    "Unit COGS - Model": NUMBER_FORMAT_2DP,
+    CELL_MODULE_CREDIT_LABEL: NUMBER_FORMAT_2DP,
+    "45x transfer rate": NUMBER_FORMAT_2DP,
+    "Effective 45x credit - Model": NUMBER_FORMAT_2DP,
+    PTC_LABEL: NUMBER_FORMAT_2DP,
+    STATUTORY_PTC_LABEL: NUMBER_FORMAT_2DP,
+    "Government credits - Model": NUMBER_FORMAT_2DP,
+    "Unit COGS w/ 45x - Model": NUMBER_FORMAT_2DP,
+    FY2026_GUIDE_LOW_LABEL: NUMBER_FORMAT_2DP,
+    "Revenue": NUMBER_FORMAT_2DP,
+    MWH_SHIPPED_PTC_LABEL: NUMBER_FORMAT_0_0,
+    MWH_SHIPPED_MODEL_LABEL: NUMBER_FORMAT_0_0,
+    "Revenue - Model": NUMBER_FORMAT_2DP,
+    "Adjusted gross profit - Model": NUMBER_FORMAT_2DP,
+    "Adjusted gross margin": NUMBER_FORMAT_2DP,
+    "Adjusted gross margin - Model": NUMBER_FORMAT_2DP,
+    "Basic shares": NUMBER_FORMAT_2DP,
+    "Fully diluted shares": NUMBER_FORMAT_2DP,
+    "Fully diluted shares - Model": NUMBER_FORMAT_2DP,
+    "Market cap": NUMBER_FORMAT_2DP,
+}
+
+YELLOW = {"red": 1, "green": 0.95, "blue": 0.8}
+WHITE = {"red": 1, "green": 1, "blue": 1}
+# Yellow input cells. Pipeline growth is painted C:Z (D:Z copy C).
+YELLOW_C_ONLY_LABELS: tuple[str, ...] = (
+    HAIRCUT_LABEL,
+    CASH_OPEX_RUNRATE_LABEL,
+    NONCASH_COGS_LABEL,
+)
+YELLOW_C_TO_Z_LABELS: tuple[str, ...] = (PIPELINE_GROWTH_LABEL,)
+WHITE_C_TO_Z_LABELS: tuple[str, ...] = (
+    COST_OUT_PROGRESS_LABEL,
+    GUIDED_ADJ_GM_MODEL_LABEL,
+    SCALE_BLEND_LABEL,
+    EBITDA_200M_GUIDED_LABEL,
+    EBITDA_200M_MODEL_LABEL,
+)
 
 # (label, units) in sheet order. Row 1 is the Units header (A blank, B "Units").
 # Empty label = spacer / section break.
@@ -112,6 +190,7 @@ ROWS: list[tuple[str, str]] = [
     (FY2026_GUIDE_HIGH_LABEL, "$M"),
     ("Revenue", "$M"),
     (MWH_SHIPPED_PTC_LABEL, "MWh"),
+    (MWH_SHIPPED_MODEL_LABEL, "MWh"),
     ("Revenue - Model", "$M"),
     ("COGS", "$M"),
     ("COGS - Model", "$M"),
@@ -162,6 +241,122 @@ ROWS: list[tuple[str, str]] = [
     ("Implied future stock price - Model", "$"),
     ("Present stock price discounted - Model", "$"),
 ]
+
+
+def _repeat_fill(
+    sheet_id: int,
+    *,
+    start_row: int,
+    end_row: int,
+    start_col: int,
+    end_col: int,
+    fill: dict,
+    fields: str,
+) -> dict:
+    return {
+        "repeatCell": {
+            "range": {
+                "sheetId": sheet_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_col,
+                "endColumnIndex": end_col,
+            },
+            "cell": {"userEnteredFormat": fill},
+            "fields": fields,
+        }
+    }
+
+
+def quarterly_format_requests(sheet_id: int, label_to_row: dict[str, int]) -> list[dict]:
+    """Number formats, yellow levers, units alignment, Year/Quarter centering."""
+    requests: list[dict] = [
+        _repeat_fill(
+            sheet_id,
+            start_row=0,
+            end_row=max(148, len(ROWS)),
+            start_col=1,
+            end_col=2,
+            fill={"horizontalAlignment": "RIGHT"},
+            fields="userEnteredFormat.horizontalAlignment",
+        ),
+    ]
+    for lab in ("Year", "Quarter"):
+        row = label_to_row.get(lab)
+        if not row:
+            continue
+        requests.append(
+            _repeat_fill(
+                sheet_id,
+                start_row=row - 1,
+                end_row=row,
+                start_col=2,
+                end_col=26,
+                fill={"horizontalAlignment": "CENTER"},
+                fields="userEnteredFormat.horizontalAlignment",
+            )
+        )
+    for key, pattern in NUMBER_FORMAT_BY_LABEL.items():
+        row = label_to_row.get(key)
+        if not row:
+            continue
+        requests.append(
+            _repeat_fill(
+                sheet_id,
+                start_row=row - 1,
+                end_row=row,
+                start_col=2,
+                end_col=26,
+                fill={"numberFormat": {"type": "NUMBER", "pattern": pattern}},
+                fields="userEnteredFormat.numberFormat",
+            )
+        )
+    for lab in YELLOW_C_ONLY_LABELS:
+        row = label_to_row.get(lab)
+        if not row:
+            continue
+        requests.append(
+            _repeat_fill(
+                sheet_id,
+                start_row=row - 1,
+                end_row=row,
+                start_col=2,
+                end_col=3,
+                fill={"backgroundColor": YELLOW},
+                fields="userEnteredFormat.backgroundColor",
+            )
+        )
+    for lab in YELLOW_C_TO_Z_LABELS:
+        row = label_to_row.get(lab)
+        if not row:
+            continue
+        requests.append(
+            _repeat_fill(
+                sheet_id,
+                start_row=row - 1,
+                end_row=row,
+                start_col=2,
+                end_col=26,
+                fill={"backgroundColor": YELLOW},
+                fields="userEnteredFormat.backgroundColor",
+            )
+        )
+    for lab in WHITE_C_TO_Z_LABELS:
+        row = label_to_row.get(lab)
+        if not row:
+            continue
+        requests.append(
+            _repeat_fill(
+                sheet_id,
+                start_row=row - 1,
+                end_row=row,
+                start_col=2,
+                end_col=26,
+                fill={"backgroundColor": WHITE},
+                fields="userEnteredFormat.backgroundColor",
+            )
+        )
+    return requests
 
 
 def column_width_requests(sheet_id: int, widths: dict[int, int]) -> list[dict]:
@@ -290,9 +485,15 @@ LINE_RAMP: list[float] = [
     10.75, 12, 12, 12,
 ]
 
-# Z3 ASP - Model is a formula on the live sheet (260 in C, prior × 0.97).
+# Z3 ASP - Model: 260 in C, prior × 0.96714 while column() < 9 (through 2026 Q2), then hold.
 ASP_MODEL_START = 260
-ASP_MODEL_QOQ = 0.97
+ASP_MODEL_QOQ = 0.96714
+ASP_MODEL_HOLD_FROM_COL = 9  # I = 2026 Q3
+MWH_MODEL_QOQ = 1.22
+FD_SHARES_MODEL_QOQ = 1.02
+DILUTION_PROCEEDS_FRACTION = 0.7  # cash from Δ diluted shares × prior stock price
+ADJ_GM_MODEL_GROWTH_QOQ = 1.1
+ADJ_GM_MODEL_CAP = 30
 
 # IRC 45X $35/kWh cell + $10/kWh module. Used to reverse-engineer MWh from PTC $.
 # Electrode active-material 10% is in "45x & active electrode credits" (default 47), not here.

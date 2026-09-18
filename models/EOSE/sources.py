@@ -124,7 +124,9 @@ GAAP_DURATION_TAGS: dict[str, str] = {
     "SellingGeneralAndAdministrativeExpense": "SG&A",
     "NetIncomeLoss": "GAAP net income",
     "WeightedAverageNumberOfSharesOutstandingBasic": "Basic shares",
-    "WeightedAverageNumberOfDilutedSharesOutstanding": "Fully diluted shares",
+    # GAAP diluted WAS is not the Fully diluted shares row. In a loss quarter it
+    # equals basic (anti-dilutive). Fully diluted is if-converted from the EPS
+    # footnote (actuals.py); do not overwrite it from this tag.
 }
 
 GAAP_INSTANT_TAGS: dict[str, str] = {
@@ -159,5 +161,4 @@ SCALE: dict[str, float] = {
     "Total debt": 1e-6,
     "Long term debt": 1e-6,
     "Basic shares": 1e-6,
-    "Fully diluted shares": 1e-6,
 }
