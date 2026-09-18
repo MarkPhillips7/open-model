@@ -46,15 +46,14 @@ FIELD_NOTES: dict[str, str] = {
         "beginning backlog GWh / conversion lag)."
     ),
     "MWh shipped": (
-        "Renamed on Quarterly Financials to MWh shipped - Derived. This Definitions "
-        "label is the old name. Q1–Q2 2026 hardcoded MWh prints were removed."
+        "No longer a Quarterly Financials row. Old name for a typed MWh print; "
+        "energy now lives on MWh shipped - Derived from PTC."
     ),
     "MWh shipped - Derived": (
-        "If Z3 ASP - Derived is blank, blank; else Revenue × 1000 / Z3 ASP - Model. "
-        "Energy implied from revenue and the Model ASP path — not a shipment actual "
-        "and not the 45X identity (that is MWh shipped - PTC)."
+        "Removed. Was Revenue × 1000 / Z3 ASP - Model — circular with Revenue - Model "
+        "and not a shipment actual. Replaced by MWh shipped - Derived from PTC."
     ),
-    "MWh shipped - PTC": (
+    "MWh shipped - Derived from PTC": (
         "Energy sold (MWh) reverse-engineered from 45X: statutory PTC $M × 1000 / "
         "45X cell & module credit ($/kWh). Q2 2025: 5.069 × 1000 / 45 = 112.6 MWh. "
         "Blank when Production Tax Credits is blank. 10-Q: PTC hits COGS when "
@@ -66,7 +65,7 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Z3 ASP - Model": (
         "$260 in 2025 Q1, then prior × 0.97 each quarter. Revenue - Model uses this "
-        "ASP with MWh shipped - Derived."
+        "ASP with MWh shipped - Derived from PTC."
     ),
     "Z3 Module Energy Capacity": "kWh per Z3 module (product sheet ~1.2 kWh). Scalar in C, copied across.",
     "Z3 module cycle time": "Reported cycle time when disclosed (Line 2 ~10% faster vs Line 1 in Q2 2026).",
@@ -122,10 +121,8 @@ FIELD_NOTES: dict[str, str] = {
         "At the 70% default this stays negative vs ~$28.5M cash OpEx."
     ),
     "Unit COGS - Derived": (
-        "GAAP COGS ($M) × 1000 / MWh shipped - PTC when the 45X energy cell is "
-        "present; else COGS × 1000 / MWh shipped - Derived. Q2 2025 checks to "
-        "~$410/kWh (46.189 × 1000 / 112.6). Product-cost identity from the "
-        "bert_gilfoyle cost-out thread: PTC-implied MWh, not the revenue/ASP path."
+        "GAAP COGS ($M) × 1000 / MWh shipped - Derived from PTC. Q2 2025 checks to ~$410/kWh "
+        "(46.189 × 1000 / 112.6). Blank when PTC energy is blank."
     ),
     "Unit COGS - Model": (
         "Q2 2026 starting adj. GM (−62.3%) plus haircut × guided pts phased "
@@ -135,7 +132,7 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "45X cell & module credit": (
         "IRC 45X statutory $35/kWh cell + $10/kWh module = $45/kWh. Scalar in C, "
-        "copied across. Divisor for MWh shipped - PTC. Does not include the 10% "
+        "copied across. Divisor for MWh shipped - Derived from PTC. Does not include the 10% "
         "electrode active-material add-on (that lives in 45x & active electrode credits)."
     ),
     "45x & active electrode credits": (
@@ -156,18 +153,19 @@ FIELD_NOTES: dict[str, str] = {
     ),
     "Government credits - Model": (
         "Copy Production Tax Credits actual when present; else effective credit × "
-        "MWh shipped - Derived / 1000. Applied as a COGS offset only — not added to revenue."
+        "MWh shipped - Derived from PTC / 1000. Applied as a COGS offset only — not added to revenue."
     ),
     "Unit COGS w/ 45x - Model": "Unit COGS − effective 45X.",
     "FY 2026 revenue guidance — low": "Management FY2026 revenue guide low ($300M as of Q2 2026). Scalar in C.",
     "FY 2026 revenue guidance — high": "Management FY2026 revenue guide high ($350M as of Q2 2026). Scalar in C.",
     "Revenue": "GAAP / earnings-release total revenue ($M). Hardcoded actuals through last print.",
     "Revenue - Model": (
-        "MWh shipped - Derived / 1000 × Z3 ASP - Model. Does not add 45X credits."
+        "MWh shipped - Derived from PTC / 1000 × Z3 ASP - Model. Does not add 45X credits. "
+        "Blank when PTC energy is blank (no forward shipment path yet)."
     ),
     "COGS": "GAAP cost of goods sold ($M).",
     "COGS - Model": (
-        "Unit COGS × MWh shipped - Derived / 1000 − government credits + Non-cash COGS (D&A + SBC). "
+        "Unit COGS × MWh shipped - Derived from PTC / 1000 − government credits + Non-cash COGS (D&A + SBC). "
         "The first two terms are cash/adj. COGS; the add-back is Q2 2026 SBC+D&A in COGS held flat."
     ),
     "Gross profit": "Reported gross profit (loss).",

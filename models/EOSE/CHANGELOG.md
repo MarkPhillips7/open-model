@@ -18,6 +18,41 @@ Entry template:
 
 ---
 
+## 2026-09-17 — Rename MWh shipped - PTC
+
+- **Tab / range:** **Quarterly Financials** `A62`; **Financials Definitions** matching label
+- **Insert/delete:** none
+- **Formulas:** unchanged (row numbers). Label **MWh shipped - PTC** → **MWh shipped - Derived from PTC**
+- **Data:** none
+- **Side effects:** none on charts (series still point at the same row)
+
+### Repo
+
+- `layout.py`, `financials_definitions.py`, `README.md`, `RESOURCES.md`, `scripts/setup_cogs.py`
+
+---
+
+## 2026-09-17 — Remove MWh shipped - Derived
+
+Deleted the revenue/ASP energy row. It was circular with **Revenue - Model** and not a shipment actual. Energy for unit COGS, Revenue - Model, and COGS - Model is **MWh shipped - PTC** only.
+
+- **Tab / range:** **Quarterly Financials** deleted **MWh shipped - Derived**. **Financials Definitions** rewritten.
+- **Insert/delete:** ROWS, **1 deleted** at **MWh shipped - Derived** (was row 62, between Revenue and MWh shipped - PTC). Rows below shift **−1**. Grid is 111 rows (was 112).
+- **Formulas:**
+  - **Unit COGS - Derived:** dropped the ASP-MWh fallback → `COGS × 1000 / MWh shipped - PTC`
+  - **Revenue - Model:** `MWh shipped - PTC / 1000 × Z3 ASP - Model` (blank if no PTC energy)
+  - **COGS - Model:** `Unit COGS × MWh shipped - PTC / 1000 − government credits + non-cash COGS`
+  - **Government credits - Model:** still copies PTC actual; else effective 45X × **MWh shipped - PTC** / 1000
+- **Data:** none (deleted formula row only)
+- **Side effects:** If you added Operations/Money charts, check series in the UI after the row delete. No chart API.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `financials_definitions.py`, `README.md`, `RESOURCES.md`
+- `scripts/setup_cogs.py`
+
+---
+
 ## 2026-09-17 — Production Tax Credits → MWh → Unit COGS
 
 Added 45X PTC actuals so historical **Unit COGS - Derived** follows the bert_gilfoyle identity (GAAP PTC ÷ 90% transfer ÷ $45/kWh = MWh; GAAP COGS / that MWh). Q2 2025 prints **$5.069M** statutory / **112.6 MWh** / **$410/kWh**.

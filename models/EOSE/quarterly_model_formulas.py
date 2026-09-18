@@ -26,7 +26,6 @@ from models.EOSE.layout import (
     FIRST_VALUE_COL,
     FIRST_VALUE_COL_INDEX,
     GUIDED_ADJ_GM_MODEL_LABEL,
-    MWH_SHIPPED_DERIVED_LABEL,
     MWH_SHIPPED_PTC_LABEL,
     N_QUARTERS,
     PTC_LABEL,
@@ -197,7 +196,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     ),
     "Government credits - Model": (
         f'=IF({{c}}{{{PTC_LABEL}}}<>"",{{c}}{{{PTC_LABEL}}},'
-        f"{{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000)"
+        f'IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
+        f"{{c}}{{Effective 45x credit - Model}}*{{c}}{{{MWH_SHIPPED_PTC_LABEL}}}/1000))"
     ),
     STATUTORY_PTC_LABEL: (
         f'=IF(OR({{c}}{{{PTC_LABEL}}}="",N({{c}}{{{PTC_LABEL}}})=0),"",'
@@ -209,25 +210,23 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         f"{{c}}{{{STATUTORY_PTC_LABEL}}}*1000/{{c}}{{{CELL_MODULE_CREDIT_LABEL}}})"
     ),
     "Unit COGS - Derived": (
-        f'=IF(N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})<>0,'
-        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_PTC_LABEL}}},"
-        f'IF(OR({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}="",'
-        f'N({{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}})=0),"",'
-        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}))"
+        f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
+        f"{{c}}{{COGS}}*1000/{{c}}{{{MWH_SHIPPED_PTC_LABEL}}})"
     ),
     "Unit COGS w/ 45x - Model": (
         "={c}{Unit COGS - Model}-{c}{Effective 45x credit - Model}"
     ),
-    MWH_SHIPPED_DERIVED_LABEL: (
-        '=if(n({c}{Z3 ASP - Derived})=0,"",'
-        "{c}{Revenue}*1000/{c}{Z3 ASP - Model})"
-    ),
     "Revenue - Model": (
-        f"={{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000*{{c}}{{Z3 ASP - Model}}"
+        f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
+        f"{{c}}{{{MWH_SHIPPED_PTC_LABEL}}}/1000*{{c}}{{Z3 ASP - Model}})"
     ),
     "COGS - Model": (
-        f"={{c}}{{Unit COGS - Model}}*{{c}}{{{MWH_SHIPPED_DERIVED_LABEL}}}/1000"
-        "-{c}{Government credits - Model}+$C${Non-cash COGS (D&A + SBC)}"
+        f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
+        f'N({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0),"",'
+        f"{{c}}{{Unit COGS - Model}}*{{c}}{{{MWH_SHIPPED_PTC_LABEL}}}/1000"
+        "-{c}{Government credits - Model}+$C${Non-cash COGS (D&A + SBC)})"
     ),
     "Gross profit - Model": "={c}{Revenue - Model}-{c}{COGS - Model}",
     "Gross margin": '=IF(N({c}{Revenue})=0,"",{c}{Gross profit}/{c}{Revenue}*100)',

@@ -14,8 +14,7 @@ YEARS = (2025, 2026, 2027, 2028, 2029, 2030)
 # Duplicate live column-A label: $M on the first Booked orders row, GWh on the second.
 BOOKED_ORDERS_M_KEY = "Booked orders [$M]"
 BOOKED_ORDERS_GWH_KEY = "Booked orders [GWh]"
-MWH_SHIPPED_DERIVED_LABEL = "MWh shipped - Derived"
-MWH_SHIPPED_PTC_LABEL = "MWh shipped - PTC"
+MWH_SHIPPED_PTC_LABEL = "MWh shipped - Derived from PTC"
 PTC_LABEL = "Production Tax Credits"
 STATUTORY_PTC_LABEL = "Production Tax Credits (statutory) - Derived"
 CELL_MODULE_CREDIT_LABEL = "45X cell & module credit"
@@ -112,7 +111,6 @@ ROWS: list[tuple[str, str]] = [
     (FY2026_GUIDE_LOW_LABEL, "$M"),
     (FY2026_GUIDE_HIGH_LABEL, "$M"),
     ("Revenue", "$M"),
-    (MWH_SHIPPED_DERIVED_LABEL, "MWh"),
     (MWH_SHIPPED_PTC_LABEL, "MWh"),
     ("Revenue - Model", "$M"),
     ("COGS", "$M"),

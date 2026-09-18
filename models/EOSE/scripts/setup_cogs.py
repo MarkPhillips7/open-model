@@ -130,7 +130,7 @@ def rename_ambiguous_labels(client: SheetsClient) -> None:
         a = row[0] if row else ""
         b = row[1] if len(row) > 1 else ""
         if a == "Revenue" and str(b).strip().upper() == "MWH":
-            updates.append({"range": f"A{i}", "values": [["MWh shipped - Derived"]]})
+            updates.append({"range": f"A{i}", "values": [["MWh shipped - Derived from PTC"]]})
         if a == "Z3 ASP":
             updates.append({"range": f"A{i}", "values": [["Z3 ASP - Derived"]]})
             if not b:
