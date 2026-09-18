@@ -492,8 +492,9 @@ ASP_MODEL_HOLD_FROM_COL = 9  # I = 2026 Q3
 MWH_MODEL_QOQ = 1.22
 FD_SHARES_MODEL_QOQ = 1.02
 DILUTION_PROCEEDS_FRACTION = 0.7  # cash from Δ diluted shares × prior stock price
-ADJ_GM_MODEL_GROWTH_QOQ = 1.1
+ADJ_GM_MODEL_ADD_PTS = 5  # after cost-out complete, +pts / quarter (capped)
 ADJ_GM_MODEL_CAP = 30
+TOTAL_DEBT_MODEL_QOQ = 1.02  # same crawl as Fully diluted shares - Model
 
 # IRC 45X $35/kWh cell + $10/kWh module. Used to reverse-engineer MWh from PTC $.
 # Electrode active-material 10% is in "45x & active electrode credits" (default 47), not here.

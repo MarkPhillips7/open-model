@@ -8,13 +8,14 @@ from typing import Any
 from sheets.formulas import col_letter as _col_letter
 
 from models.EOSE.cogs import (
+    DEFAULT_HAIRCUT_PCT,
     Q2_2026_CASH_OPEX,
     Q2_2026_NONCASH_COGS,
     cogs_c_ref,
 )
 from models.EOSE.layout import (
+    ADJ_GM_MODEL_ADD_PTS,
     ADJ_GM_MODEL_CAP,
-    ADJ_GM_MODEL_GROWTH_QOQ,
     ASP_MODEL_HOLD_FROM_COL,
     ASP_MODEL_QOQ,
     ASP_MODEL_START,
@@ -38,6 +39,7 @@ from models.EOSE.layout import (
     QUARTERLY,
     SCALE_BLEND_LABEL,
     STATUTORY_PTC_LABEL,
+    TOTAL_DEBT_MODEL_QOQ,
     label_map_from_ab,
     live_quarterly_ab,
     require_live_layout_match,
@@ -106,7 +108,7 @@ def _adj_gm_formula(*, guided: bool) -> str:
 
 
 def _adj_gm_model_formula() -> str:
-    """Copy actual adj. GM through 2026 Q2; after cost-out complete grow 10%/q (cap 30%); else haircut path."""
+    """Copy actual adj. GM through 2026 Q2; after cost-out complete +5 pts/q (cap 30%); else haircut path."""
     start = cogs_c_ref("Starting adjusted gross margin")
     total = cogs_c_ref("Total guided cost-out")
     progress = f"{{c}}{{{COST_OUT_PROGRESS_LABEL}}}"
@@ -116,7 +118,7 @@ def _adj_gm_model_formula() -> str:
     )
     grown = (
         f"min({ADJ_GM_MODEL_CAP},"
-        f"{{cp}}{{Adjusted gross margin - Model}}*{ADJ_GM_MODEL_GROWTH_QOQ})"
+        f"{{cp}}{{Adjusted gross margin - Model}}+{ADJ_GM_MODEL_ADD_PTS})"
     )
     return (
         f'=IF({progress}="","",'
@@ -317,9 +319,9 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         f"*{{cp}}{{Stock price}}*{DILUTION_PROCEEDS_FRACTION})"
     ),
     "Total debt - Model": (
-        f'=IF({{c}}{{Quarter}}="","",IF({_first_q()},1000,'
-        f'IF({_prior("Total debt")}<>"",{_prior("Total debt")},'
-        f'IF({_prior("Total debt - Model")}<>"",{_prior("Total debt - Model")},1000))))'
+        "=IF(n({c}{Total debt})=0,"
+        f"{{cp}}{{Total debt - Model}}*{TOTAL_DEBT_MODEL_QOQ},"
+        "{c}{Total debt})"
     ),
     "Net debt - Model": (
         "={c}{Total debt - Model}-"
@@ -450,7 +452,7 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     CELL_MODULE_CREDIT_LABEL: CELL_MODULE_CREDIT_PER_KWH,
     "45x & active electrode credits": 47,
     "45x transfer rate": 90,
-    "Percent of Guided Cost Cutting Achieved": 100,
+    "Percent of Guided Cost Cutting Achieved": DEFAULT_HAIRCUT_PCT,
     "Non-cash COGS (D&A + SBC)": Q2_2026_NONCASH_COGS,
     "Cash OpEx run-rate": Q2_2026_CASH_OPEX,
     "EV / EBITDA": 30,

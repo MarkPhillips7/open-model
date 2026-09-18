@@ -18,6 +18,22 @@ Entry template:
 
 ---
 
+## 2026-09-18 — Pull live adj. GM / debt / haircut edits into git (no sheet writes)
+
+Captured further manual Quarterly Financials edits. Read-only pull from **[EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing)**.
+
+- **Tab / range:** repo only. Live **Quarterly Financials** `A1:Z112` was read, not written. Layout still 112 rows.
+- **Insert/delete:** none
+- **Formulas:**
+  - **Adjusted gross margin - Model:** after cost-out progress = 1, prior × **1.1** → prior **+ 5** pts/q (still capped at 30%). Copy actual through 2026 Q2 and haircut waterfall unchanged.
+  - **Total debt - Model:** last-actual-or-$1,000 placeholder → copy **Total debt** actual if present, else prior Model × **1.02** (same crawl as Fully diluted shares - Model; column C uses the units cell as prior).
+- **Data:** **Percent of Guided Cost Cutting Achieved** C **100 → 70** (back to the default haircut). Terminal unit COGS still **$181/kWh**. Fully diluted Actuals still the if-converted fills from the earlier 18 Sep entry.
+- **Side effects:** none on charts. Live **Financials Definitions** notes are still the older copy (they do not mention **MWh shipped - Model**); git notes continue to describe the live formulas, including these two edits. Shares tab dates/notes left as in git (live serial dates + pre-if-converted Q1 2026 note are display/stale, not a model change). No chart API.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `financials_definitions.py`, `README.md`
+
 ## 2026-09-18 — Pull live Quarterly Financials into git (no sheet writes)
 
 Captured manual workbook edits so restore/setup cannot roll them back. Read-only pull from **[EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing)**.

@@ -98,10 +98,9 @@ FIELD_NOTES: dict[str, str] = {
     "Factory capacity - Model": "Quarterly GWh = annualized nameplate / 4.",
     "Percent of Guided Cost Cutting Achieved": (
         "Haircut on the Q2 2026 Slide 11 cost-out (73 pts of adj. GM over 12 months). "
-        "Live C is 100 (CFO plan at face value). The cell note still describes a 70% "
-        "default because Eos has repeatedly missed cost-out timelines. "
-        "0% = freeze Q2 2026 costs. Edit C; D:Z copy C. Cost-out waterfall and yellow "
-        "levers live on the COGS tab."
+        "Live C is 70 (default) because Eos has repeatedly missed cost-out timelines. "
+        "100% = take the CFO plan at face value; 0% = freeze Q2 2026 costs. "
+        "Edit C; D:Z copy C. Cost-out waterfall and yellow levers live on the COGS tab."
     ),
     "Cost-out plan progress - Model": (
         "0 at the COGS cost-out start quarter (Q2 2026), 1 at the complete quarter "
@@ -187,7 +186,7 @@ FIELD_NOTES: dict[str, str] = {
     "Adjusted gross margin": "Adj. GP / Revenue × 100 when both actuals are present. Q2 2026 print −62.3%.",
     "Adjusted gross margin - Model": (
         "Through 2026 Q2 (column < 9) copies Adjusted gross margin actual. After "
-        "cost-out progress hits 1, prior Model × 1.1 capped at 30%. Otherwise starting "
+        "cost-out progress hits 1, prior Model + 5 pts/q capped at 30%. Otherwise starting "
         "adj. GM (−62.3%) + cost-out plan progress × 73 pts × haircut. Levers "
         "(start GM, pts, dates) are on the COGS tab."
     ),
@@ -246,7 +245,11 @@ FIELD_NOTES: dict[str, str] = {
         "Carrying value of all borrowings (XBRL LongTermDebt): named long-term debt "
         "+ current portion + related-party notes. Not face/principal."
     ),
-    "Total debt - Model": "Carries last actual total debt, else $1,000M placeholder.",
+    "Total debt - Model": (
+        "Copy Total debt actual when present; otherwise prior Model × 1.02 per "
+        "quarter. Column C uses the units cell as the prior — that is how the live "
+        "sheet is typed. Cash - Model adds the quarter's Δ debt."
+    ),
     "Net debt - Model": "Total debt - Model − Cash (actual if present else model).",
     "Basic shares": "Shares outstanding / basic weighted average (million).",
     "Fully diluted shares": (
