@@ -10,6 +10,11 @@
       "name": "Eos Energy Enterprises",
       "spreadsheet_id": "paste-or-url",
       "price_symbol": "EOSE"
+    },
+    "LODE": {
+      "name": "Comstock Inc.",
+      "spreadsheet_id": "paste-or-url",
+      "price_symbol": "LODE"
     }
   }
 }
