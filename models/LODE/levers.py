@@ -360,16 +360,14 @@ LEVERS: list[object] = [
         0,
         0,
         100,
-        "How much of Comstock's haircut SSOF value is actually SOLD FOR CASH inside the forecast "
-        "window. This is the switch that separates contracted cash from option value, and it "
-        "defaults to ZERO on purpose. Nothing is signed on SSOF — the mining sale has an executed "
-        "purchase agreement, SSOF has comps and a CEO target — so putting a nine-figure land sale "
-        "in the base-case cash line would inflate the balance sheet to ~$140M and make 'Quarters of "
-        "cash remaining' read as 'no funding risk', which is the opposite of the truth. At 0 the "
-        "cash line shows the real unrescued funding gap, and the stake still gets full credit as "
-        "option value on the Valuation tab. Raise it to test 'what if they sell half the fund' — "
-        "the Valuation tab nets out whatever converts to cash, so there is no double-count at any "
-        "setting.",
+        "PERCENTAGE of Comstock's haircut SSOF value sold for cash inside the forecast — not a "
+        "dollar proceeds cell. Defaults to ZERO on purpose: nothing is signed, and every SSOF "
+        "transaction to date is Comstock paying in (~$37M cumulative). At 0 the cash line shows "
+        "the real unrescued funding gap and the stake still gets full credit as option value on "
+        "the Valuation tab. Leave the high at 100 so you can still test 'what if they sell half "
+        "the fund' — the Valuation tab nets out whatever converts to cash, so there is no "
+        "double-count at any setting. Do not lock the high to zero just because cash realised "
+        "to date is $0.",
     ),
     Lever(
         SSOF_PROCEEDS_QUARTER,
@@ -500,9 +498,9 @@ LEVERS: list[object] = [
         "Net smelter return royalty retained on the transferred properties, fixed by contract. "
         "Carried at ZERO in the sum of parts, which is conservative rather than lazy: the agreement "
         "gives Mackay a right to repurchase 100% of it for $3,500,000, rising to $7,000,000 if the "
-        "7-year contingent-payment window lapses unpaid. That buyout is a defensible floor value if "
-        "you want to credit it — add it to the SSOF or fuels line rather than editing this cell, "
-        "which only records the royalty rate.",
+        "7-year contingent-payment window lapses unpaid. That buyout is a defensible floor — credit "
+        "it on the Valuation tab equity note / another dollar line if you want it, never by editing "
+        "this cell, which only records the royalty RATE.",
     ),
     (SECTION, "Valuation"),
     Lever(
@@ -533,10 +531,12 @@ LEVERS: list[object] = [
         100,
         0,
         100,
-        "Share of modelled net cash credited to equity value. 100 treats cash as cash. Reduce it if "
-        "you think the cash will be consumed by losses before it can benefit shareholders — an "
-        "honest concern for a company at this stage, and a cleaner way to express it than "
-        "manipulating the operating levers.",
+        "PERCENTAGE of modelled net cash credited to equity value — not a dollar amount. 100 "
+        "treats cash as cash. Reduce it if you think the cash will be consumed by losses before it "
+        "can benefit shareholders — an honest concern for a company at this stage, and a cleaner "
+        "way to express it than manipulating the operating levers. A near-term cash sanity check "
+        "(~$35–51M after the Mackay Initial Payment, depending on burn) belongs on the Valuation "
+        "tab notes, not in this cell.",
     ),
 ]
 

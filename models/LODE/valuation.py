@@ -135,8 +135,10 @@ ROWS: list[tuple[str, str, str]] = [
     (
         ANNUAL_CORP_GA,
         USD_M,
-        "Four times 'Corporate cash G&A - Model' in the reference quarter. Deducted because a "
-        "shareholder cannot buy the plant without also funding the public company around it.",
+        "Four times 'Corporate cash G&A - Model' in the reference quarter. That model row is "
+        "Corporate/Other SEGMENT cash G&A only (~$2.25M/qtr default on Levers — not consolidated "
+        "G&A of ~$7M, which would double-count Bioleum against the fuels bridge). Deducted because "
+        "a shareholder cannot buy the plant without also funding the public company around it.",
     ),
     (
         METALS_EBITDA,
@@ -163,9 +165,11 @@ ROWS: list[tuple[str, str, str]] = [
     (
         SSOF_CASH_SOLD,
         PCT,
-        "From the Levers tab — the share of the stake sold for cash inside the forecast, which "
-        "defaults to zero because nothing is signed. Whatever is sold shows up in 'Cash - Model' "
-        "instead of as a stake, and gets deducted below so it is never counted twice.",
+        "From the Levers tab — percentage of the haircut stake sold for cash inside the forecast "
+        "(not a dollar amount). Defaults to zero because nothing is signed and every SSOF "
+        "transaction to date is Comstock paying in (~$37M cumulative). Raise it only as a "
+        "scenario test. Whatever is sold shows up in 'Cash - Model' instead of as a stake, and "
+        "gets deducted below so it is never counted twice.",
     ),
     (
         SSOF_ALREADY_IN_CASH,
@@ -200,20 +204,31 @@ ROWS: list[tuple[str, str, str]] = [
         "forecast of insolvency — read it as the equity the company still has to raise.",
     ),
     (DEBT_AT_REF, USD_M, "'Total debt - Model' at the reference quarter. Comstock has run debt-free."),
-    (NET_CASH, USD_M, "Cash less debt at the reference quarter."),
+    (
+        NET_CASH,
+        USD_M,
+        "Cash less debt at the reference quarter. Sanity check near today (not a lever input): "
+        "$31.4M cash at 6/30/26 + $20.0M Mackay Initial Payment received 8/24/26 ≈ $51M before "
+        "Q3 burn; ~$35–43M after a quarter of ~$8M operating burn and ~$3.5M capex is a "
+        "reasonable ballpark. Do not credit the $4.3M reclamation bond deposit — it transferred "
+        "with the mining sale. The Levers 'Net cash credited to equity value' cell is a "
+        "percentage haircut on this modelled figure, not a dollar override.",
+    ),
     (
         NET_CASH_CREDITED,
         USD_M,
-        "Net cash × 'Net cash credited to equity value'. Lower the lever if you think the cash gets "
-        "consumed before shareholders see the benefit.",
+        "Net cash × 'Net cash credited to equity value' (a % lever, default 100%). Lower the "
+        "percentage if you think cash gets consumed before shareholders see the benefit — do not "
+        "paste a dollar target into that lever cell.",
     ),
     (SECTION_RESULT, "", ""),
     (
         EQUITY_VALUE,
         USD_M,
-        "Metals business + SSOF stake + fuels stake + credited net cash. The NSR royalty retained on "
-        "the sold mining district is deliberately carried at zero — it is a real option but pays on "
-        "an unknowable schedule.",
+        "Metals business + SSOF stake + fuels stake + credited net cash. The 1.5% NSR on the sold "
+        "mining district is deliberately carried at zero here — it pays on an unknowable schedule. "
+        "Contract buyout floor if you want to credit it elsewhere (not by editing the rate lever): "
+        "$3.5M anytime, rising to $7.0M if the 7-year contingent window lapses unpaid.",
     ),
     (
         SHARES_AT_REF,
