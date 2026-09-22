@@ -245,26 +245,31 @@ ROWS: list[tuple[str, str]] = [
 # NOT counted here — its revenue shows up in Total revenue actuals only, because
 # counting it as a fraction of a 100,000 t/yr line would distort the cost model.
 # Facility 1 (northern Nevada) commissions August 2026. Management will not order
-# equipment for facility 2 until facility 1 is ramped, so line 2 is not assumed
-# until 2028, with roughly one additional line a year after that.
+# equipment for the next line until facility 1 is operating/ramped; ~9–13 months
+# order→production plus a mid-2027 gate implies line 2 mid-2028. Half-line steps
+# (1.5, 2.5, …) reflect the phased 25→50→75→100k buildout management floated and
+# the FY2025-call sketch that end-2027 has #1 full and #2 only at 20–30% util
+# (modelled as partial second line from 2028). Path reaches 5 lines by end-2030,
+# matching the "at least five facilities … 2026 through 2030" 10-Q framing.
 LINE_PATH: list[float] = [
     0, 0, 0, 0,              # 2025: demo facility only
     0, 0, 1, 1,              # 2026: facility 1 live from Q3
     1, 1, 1, 1,              # 2027: prove and ramp facility 1
-    1, 2, 2, 2,              # 2028: facility 2 (central Ohio)
-    2, 3, 3, 3,              # 2029: facility 3
-    3, 4, 4, 4,              # 2030: facility 4
+    1.5, 1.5, 2, 2,          # 2028: facility 2 ramps in (partial → full)
+    2.5, 3, 3, 3.5,          # 2029: facility 3 (+ start of 4)
+    4, 4, 4.5, 5,            # 2030: facilities 4–5; five lines by year-end
 ]
 
-# Percent of rated capacity. 2026 Q3/Q4 are set to reproduce the company's H2 2026
-# guide (~$5M of revenue at "at least 25% of rated capacity from August through
-# year end"): 5% of a quarter in Q3 for a part-quarter August start, 25% in Q4.
-# Terminal 85% allows for maintenance on a plant designed to run 24/7.
+# Percent of rated capacity. 2026 Q3/Q4 reproduce the H2 2026 guide (~$5M at
+# "at least 25% … from August through year end"): 5% in Q3 for a part-quarter
+# August start, 25% in Q4. 2027 ramps to ~78% exiting the year ("Facility #1
+# running full" by end-2027 on the FY2025 call — ~85% design full, with some
+# slack). Terminal 85% allows for maintenance on a plant designed to run 24/7.
 UTILIZATION_PATH: list[float] = [
     0, 0, 0, 0,              # 2025
     0, 0, 5, 25,             # 2026: August start, ≥25% exiting the year
-    35, 45, 55, 65,          # 2027
-    70, 75, 80, 85,          # 2028
+    45, 60, 70, 78,          # 2027: ramp toward "full" by year-end
+    85, 85, 85, 85,          # 2028: terminal util
     85, 85, 85, 85,          # 2029
     85, 85, 85, 85,          # 2030
 ]

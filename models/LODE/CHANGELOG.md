@@ -18,6 +18,28 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Lines / util plan aligned to guidance
+
+User edited yellow `- Plan` trajectories on Quarterly Financials to better match
+management's end-2027 "full" + facility-2 soft guide and five facilities by 2030.
+
+- **Tab / range:** Quarterly Financials `Operating production lines - Plan` O:Z;
+  `Capacity utilization - Plan` K:Q (other quarters unchanged)
+- **Insert/delete:** none
+- **Formulas:** none (plan rows are data; `- Model` still applies achieved levers)
+- **Data:**
+  - Lines: 2028 **1,2,2,2 → 1.5,1.5,2,2**; 2029 **2,3,3,3 → 2.5,3,3,3.5**;
+    2030 **3,4,4,4 → 4,4,4.5,5** (five lines by 2030 Q4)
+  - Util: 2027 **35,45,55,65 → 45,60,70,78**; 2028 Q1–Q3 **70,75,80 → 85,85,85**
+    (terminal "full" ~85% from early 2028; end-2027 ~78%)
+- **Side effects:** none on chart objects; implied/present price paths will move
+  with higher mid-ramp throughput. Fingerprint re-baselined (`--adopt`).
+
+### Repo
+
+- `layout.py` (`LINE_PATH`, `UTILIZATION_PATH` + comments), `financials_definitions.py`,
+  `live_fingerprint.json`
+
 ## 2026-09-22 — Adopt Metals core business value $50M
 
 User raised the yellow lever on the live sheet; fold into the repo default.

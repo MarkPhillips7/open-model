@@ -70,10 +70,11 @@ DEFINITIONS: dict[str, str] = {
     ),
     L.LINES_PLAN: (
         "EDITABLE TRAJECTORY. The planned number of lines by quarter — your view of the buildout, "
-        "not a derived number. Default assumes facility 1 (northern Nevada) from 2026 Q3, facility "
-        "2 (central Ohio) in 2028, then roughly one line a year. Assumption: management holds to "
-        "its stated discipline of not ordering equipment for the next facility until the first is "
-        "'operating and production is effectively ramped up'. Edit this row freely."
+        "not a derived number. Default: facility 1 from 2026 Q3; partial facility 2 from 2028 "
+        "(1.5) after the order-after-ramp gate and ~9–13 month lead; half-line steps reflect the "
+        "phased buildout management floated; five lines by end-2030 per the 10-Q envelope. "
+        "Assumption: equipment for the next line is not ordered until the first is 'operating and "
+        "production is effectively ramped up'. Edit this row freely."
     ),
     L.LINES_MODEL: (
         "Effective lines after the 'Line expansion achieved' lever. Line 1 is never scaled down "
@@ -90,8 +91,9 @@ DEFINITIONS: dict[str, str] = {
         "EDITABLE TRAJECTORY. The planned ramp as a percent of rated capacity. Calibrated so that "
         "2026 Q3 and Q4 reproduce management's H2 2026 guide of roughly $5M of revenue at 'at least "
         "25% of rated capacity from August through year end': 5% for a part-quarter August start, "
-        "then 25%. Plateaus at 85%, which allows for maintenance on a plant intended to run 24/7. "
-        "This row and the tipping fee are the two things the whole model turns on."
+        "then 25%. 2027 ramps to ~78% exiting the year (management's end-2027 'Facility #1 running "
+        "full'), then plateaus at 85% for maintenance on a 24/7 plant. This row and the tipping fee "
+        "are the two things the whole model turns on."
     ),
     L.UTILIZATION_MODEL: (
         "Planned utilization × the 'Utilization ramp achieved' lever — the master scepticism dial on "
