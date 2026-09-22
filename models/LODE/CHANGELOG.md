@@ -18,6 +18,22 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Adopt lever + Valuation inputs; freeze Year/Quarter
+
+User edited yellow inputs on the live sheet; fold into the repo. Also freeze Year and Quarter with the Units header on Quarterly Financials.
+
+- **Tab / range:** Levers `C29` (SSOF value achieved); Valuation `C3` (Reference quarter); Quarterly Financials grid freeze
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:**
+  - `SSOF value achieved` **55 → 80** (Levers value; repo default matched)
+  - `Reference quarter` **2029 Q4 → 2028 Q4** (Valuation input; `DEFAULT_REFERENCE_QUARTER` matched)
+- **Side effects:** Quarterly Financials `frozenRowCount` **1 → 3** (Units + Year + Quarter). No charts.
+
+### Repo
+
+- `levers.py`, `valuation.py`, `scripts/setup_lode_workbook.py`, `live_fingerprint.json`
+
 ## 2026-09-22 — Fix Valuation (+ Asset Monetization) after Levers rebuild
 
 Levers row numbers shifted when the tab was rebuilt (tailings / silver levers). Valuation and Asset Monetization still pointed at the old `Levers!$C$…` cells. On Valuation, Metals business value multiplied by **Mining sale second tranche quarter** (`2027 Q4`) and produced `#VALUE!` down through equity value / per-share / upside; SSOF, fuels, multiple, and net-cash-credited were also reading the wrong levers. Asset Monetization had the same stale refs (wrong numbers, no `#VALUE!`).

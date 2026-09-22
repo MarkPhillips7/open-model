@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-09-22T14:25:23Z",
+  "recorded": "2026-09-22T16:53:17Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
@@ -1603,7 +1603,7 @@
         [
           "SSOF value achieved",
           "%",
-          "55",
+          "80",
           "55",
           "0",
           "100",
@@ -1967,7 +1967,7 @@
         [
           "Reference quarter",
           "quarter",
-          "2029 Q4",
+          "2028 Q4",
           "Quarter whose results are annualized and capitalized below. Must be a quarter in the Quarterly Financials spine (2025 Q1 \u2013 2030 Q4). Push it later for a more mature run-rate but a longer discount; pull it earlier for the opposite. This is an input \u2014 edit it."
         ],
         [

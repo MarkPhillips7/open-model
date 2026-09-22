@@ -41,7 +41,7 @@ COL_WIDTHS_PX: dict[int, int] = {0: 330, 1: 80, 2: 118, 3: 820}
 # in the default plan: utilization has plateaued at 85% and the uplift phase-in is
 # essentially complete, so four times that quarter is a fair annual run-rate
 # rather than a snapshot of a half-built ramp.
-DEFAULT_REFERENCE_QUARTER = "2029 Q4"
+DEFAULT_REFERENCE_QUARTER = "2028 Q4"
 
 REFERENCE_QUARTER = "Reference quarter"
 REFERENCE_OFFSET = "Reference quarter column offset"

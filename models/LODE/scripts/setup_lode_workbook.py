@@ -245,13 +245,13 @@ def format_quarterly(client: SheetsClient, sheet_id: int) -> None:
     last_col_idx = L.FIRST_VALUE_COL_INDEX + n - 1
     requests: list[dict] = _col_width_requests(sheet_id, L.QUARTERLY_COL_WIDTHS_PX)
 
-    # Frozen header row and label columns.
+    # Freeze Units header + Year + Quarter, and label columns.
     requests.append(
         {
             "updateSheetProperties": {
                 "properties": {
                     "sheetId": sheet_id,
-                    "gridProperties": {"frozenRowCount": 1, "frozenColumnCount": 2},
+                    "gridProperties": {"frozenRowCount": 3, "frozenColumnCount": 2},
                 },
                 "fields": "gridProperties.frozenRowCount,gridProperties.frozenColumnCount",
             }

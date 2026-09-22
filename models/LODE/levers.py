@@ -405,7 +405,7 @@ LEVERS: list[object] = [
     Lever(
         SSOF_ACHIEVED,
         PCT,
-        55,
+        80,
         0,
         100,
         "Share of the gross SSOF value that converts into cash for Comstock shareholders. Haircuts "
