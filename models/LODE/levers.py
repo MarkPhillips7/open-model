@@ -83,11 +83,13 @@ CORP_CASH_GA = "Corporate cash G&A per quarter"
 MINING_COST_SAVINGS = "Legacy mining cost removed per year"
 
 SSOF_GROSS_VALUE = "SSOF gross asset value"
+SSOF_VALUE_GROWTH = "SSOF value quarterly growth rate"
 SSOF_OWNERSHIP = "Comstock ownership of SSOF"
 SSOF_ACHIEVED = "SSOF value achieved"
 SSOF_CASH_SOLD = "SSOF stake sold for cash"
 SSOF_PROCEEDS_QUARTER = "SSOF monetization quarter"
 FUELS_VALUE = "Comstock Fuels value to Comstock"
+FUELS_VALUE_GROWTH = "Comstock Fuels value quarterly growth rate"
 FUELS_ACHIEVED = "Comstock Fuels value achieved"
 FUELS_BRIDGE_TOTAL = "Comstock Fuels bridge loan"
 FUELS_MONTHLY_BURN = "Comstock Fuels monthly burn"
@@ -378,18 +380,32 @@ LEVERS: list[object] = [
         500,
         76,
         900,
-        "Whole-asset value of Sierra Springs Opportunity Fund: 2,500 owned acres plus ~2,000 "
-        "acre-feet of water rights in Silver Springs NV, with 300 MW of gas equivalent secured "
-        "(pipeline delivery November 2028) and a further 900–1,200 MW targeted for 2030. CEO on "
-        "comps: 'four hundred, five hundred, six hundred million for the powered land thesis is "
-        "out there' (2026-08-11, 00:47:54). Buyers increasingly price by the megawatt, not the acre. "
-        "TREAT THE DEFAULT AS A COMPARABLE, NOT A VALUATION: Comstock has never disclosed a gross "
-        "asset value, NAV or appraisal for this land, and an EDGAR full-text search finds no use of "
-        "the phrase in any recent filing. The $76M low is the only market-tested anchor available — "
-        "it back-solves from SSOF's own $0.65/share primary issue price, and at that level "
-        "Comstock's 47.63% is worth about $36M, i.e. BELOW the $49.0M equity-method carrying value, "
-        "which is the genuine bear case. Also note Comstock took actual title to the land only "
-        "weeks before 2026-08-11, by exercising a 2019 option.",
+        "Whole-asset value of Sierra Springs Opportunity Fund as of the As of date: 2,500 owned "
+        "acres plus ~2,000 acre-feet of water rights in Silver Springs NV, with 300 MW of gas "
+        "equivalent secured (pipeline delivery November 2028) and a further 900–1,200 MW targeted "
+        "for 2030. CEO on comps: 'four hundred, five hundred, six hundred million for the powered "
+        "land thesis is out there' (2026-08-11, 00:47:54). Buyers increasingly price by the "
+        "megawatt, not the acre. TREAT THE DEFAULT AS A COMPARABLE, NOT A VALUATION: Comstock has "
+        "never disclosed a gross asset value, NAV or appraisal for this land, and an EDGAR "
+        "full-text search finds no use of the phrase in any recent filing. The $76M low is the only "
+        "market-tested anchor available — it back-solves from SSOF's own $0.65/share primary issue "
+        "price, and at that level Comstock's 47.63% is worth about $36M, i.e. BELOW the $49.0M "
+        "equity-method carrying value, which is the genuine bear case. Also note Comstock took "
+        "actual title to the land only weeks before 2026-08-11, by exercising a 2019 option. "
+        "Quarterly Financials compounds this at 'SSOF value quarterly growth rate' from the As of "
+        "date — set that growth to zero to freeze the comparable.",
+    ),
+    Lever(
+        SSOF_VALUE_GROWTH,
+        "% / q",
+        2.0,
+        -5,
+        5,
+        "QoQ % applied to 'SSOF gross asset value' on Quarterly Financials, measured from the As of "
+        "date (exponent zero in that quarter). Default 2%/q (~8%/yr) is a modest path toward the "
+        "powered-land comps as the Nov 2028 gas delivery and further MW allocations land — not a "
+        "fitted NAV. Set to 0 to hold the comparable flat; use a negative rate if you think comps "
+        "compress or the thesis slips.",
     ),
     Lever(
         SSOF_OWNERSHIP,
@@ -449,12 +465,26 @@ LEVERS: list[object] = [
         65,
         0,
         200,
-        "Value attributed to Comstock's stake in the fuels business. Default 65 is management's own "
-        "FLOOR, not its hope: Comstock sits at the top of the capital stack with a liquidation "
-        "preference and 'would expect to recover our sixty-five million dollars for sure' "
-        "(2026-08-11, 01:17:47). For reference only, the upside marks are a Marathon Petroleum "
+        "Value attributed to Comstock's stake in the fuels business as of the As of date. Default 65 "
+        "is management's own FLOOR, not its hope: Comstock sits at the top of the capital stack with "
+        "a liquidation preference and 'would expect to recover our sixty-five million dollars for "
+        "sure' (2026-08-11, 01:17:47). For reference only, the upside marks are a Marathon Petroleum "
         "$325M term sheet at ~$700M valuation (2024) and ~$1B from third-party investors. Those "
-        "are stale and pre-date the founder departures, so they are not the default.",
+        "are stale and pre-date the founder departures, so they are not the default. Quarterly "
+        "Financials compounds this at 'Comstock Fuels value quarterly growth rate' from the As of "
+        "date.",
+    ),
+    Lever(
+        FUELS_VALUE_GROWTH,
+        "% / q",
+        0,
+        -5,
+        5,
+        "QoQ % applied to 'Comstock Fuels value to Comstock' on Quarterly Financials, measured from "
+        "the As of date. Default 0 keeps the liquidation-preference floor flat — the conservative "
+        "read of a pre-revenue TRL-6 business. Raise it if you underwrite Hexas materials revenue "
+        "or a path toward the stale Marathon / third-party marks; use a negative rate if you think "
+        "the preference is at risk.",
     ),
     Lever(
         FUELS_ACHIEVED,

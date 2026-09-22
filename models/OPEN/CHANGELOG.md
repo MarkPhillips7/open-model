@@ -18,6 +18,26 @@ Entry template:
 
 ---
 
+## 2026-09-22 — ASP blank without revenue; weekly carry-forward on 0/#DIV/0!
+
+Forward quarters had no revenue but nonzero (or zero) Home Sales, so Quarterly ASP was `0` (blank÷sales) or `#DIV/0!`, and Weekly ASP passed those through instead of keeping Q2’s ~$377.5K.
+
+- **Tab / range:** **Quarterly Financials** `B19:L19`; **Weekly Financials** `B18:DY18`; **Financials Definitions** ASP note
+- **Insert/delete:** none
+- **Formulas:**
+  - **Quarterly ASP:** `=IF(B20="","",B25/B20)` → `=IF(OR(N(B20)=0,N(B25)=0),"",B25/B20)` (blank when revenue or home sales missing/zero)
+  - **Weekly ASP:** carry-forward only when `qAsp=""` → also treat `0` / `#DIV/0!` as missing (`IFERROR` + `N(qAsp)=0`) and use prior week
+- **Data:** Q3+ quarterly ASP blank until revenue prints; weekly ASP from week ending **7/4/2026** onward carries **~$377,512** (Q2)
+- **Side effects:** none on charts (series unchanged)
+
+### Repo
+
+- `sheets/formulas.py` — `quarterly_asp_formula()`; `weekly_asp_formula()` ignores 0/errors
+- `models/OPEN/scripts/update_weekly_quarterly_spread.py` — restores quarterly ASP on refresh
+- `models/OPEN/financials_definitions.py` — ASP note
+
+---
+
 ## 2026-09-18 — Home Sales from Accountable Resale COEs (from 7/4/2026)
 
 Restored weekly **Home Sales** that had been overwritten by the quarterly ÷13 spread, and stopped that restore from wiping them again. From week ending **2026-07-04**, actuals are the week-over-week change in cumulative [Accountable Resale COEs](https://accountable.opendoor.com/) (data as of Sep 12, 2026). Earlier weeks stay on the earnings ÷13 spread.

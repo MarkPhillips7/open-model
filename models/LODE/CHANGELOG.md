@@ -18,6 +18,27 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Quarterly SoP valuation + SSOF/Fuels growth levers
+
+Add a full sum-of-parts series on Quarterly Financials (chartable implied / present prices) and let SSOF and Bioleum values compound from the As of date instead of sitting flat through 2030.
+
+- **Tab / range:** Levers (full rebuild A:G); Quarterly Financials — **inserted 14 rows** after `Market cap`; A:B labels; all `* - Model` formulas C:Z; Valuation A:D; Financials Definitions; Welcome
+- **Insert/delete:** rows, start after `Market cap`, count **14** (spacer + `VALUATION` + 12 SoP metrics)
+- **Formulas:**
+  - New QF block: annualized metals contribution / corp G&A → Metals EBITDA proxy → Metals business value (× Metals EV / annualized cash contribution × achieved); SSOF gross grown from As of date; SSOF / Fuels stake values; net cash credited; equity; **Implied stock price - Model**; **Present stock price discounted - Model**
+  - `SSOF monetization proceeds - Model` now uses grown `SSOF gross asset value - Model` at the monetization quarter (was flat Levers gross)
+  - Valuation tab reads metals / SSOF / Fuels / equity / implied / present from QF at the reference quarter (single source of truth)
+- **Data (Levers defaults):**
+  - New: `SSOF value quarterly growth rate` **2** %/q (−5…5)
+  - New: `Comstock Fuels value quarterly growth rate` **0** %/q (−5…5) — flat liquidation floor by default
+  - Prior lever Values preserved (including SSOF value achieved 80)
+- **Side effects:** No chart objects touched — **chart `Implied stock price - Model` (and optionally Present) manually in the Sheets UI**. Fingerprint refreshed.
+
+### Repo
+
+- `levers.py`, `layout.py`, `quarterly_model_formulas.py`, `valuation.py`, `financials_definitions.py`, `welcome.py`
+- `scripts/sync_quarterly_valuation.py`, `live_fingerprint.json`
+
 ## 2026-09-22 — Adopt lever + Valuation inputs; freeze Year/Quarter
 
 User edited yellow inputs on the live sheet; fold into the repo. Also freeze Year and Quarter with the Units header on Quarterly Financials.

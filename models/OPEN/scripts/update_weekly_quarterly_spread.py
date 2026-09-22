@@ -31,6 +31,7 @@ from models.OPEN.accountable import (  # noqa: E402
     sheet_date,
 )
 from sheets.formulas import (  # noqa: E402
+    quarterly_asp_formula,
     weekly_asp_formula,
     weekly_from_quarterly_end_quarter_formula,
     weekly_from_quarterly_formula,
@@ -279,6 +280,40 @@ def update_weekly_formulas(client: SheetsClient) -> None:
         )
 
     print(f"Updated weekly formulas on rows: {sorted(rows_to_update)}")
+    update_quarterly_asp(client, row_map)
+
+
+def update_quarterly_asp(
+    client: SheetsClient, row_map: dict[str, tuple[int, int]] | None = None
+) -> None:
+    """Revenue ÷ Home Sales on Quarterly ASP; blank when either side is 0/blank."""
+    row_map = row_map or build_row_map(client)
+    _, quarterly_asp_row = row_map[ASP_LABEL]
+    _, revenue_row = row_map["Revenue"]
+    _, home_sales_row = row_map["Home Sales"]
+    qws = client.worksheet(QUARTERLY)
+    headers = qws.get("B1:L1", value_render_option="UNFORMATTED_VALUE")[0]
+    existing = qws.get(
+        f"B{quarterly_asp_row}:{col_letter(1 + len(headers))}{quarterly_asp_row}",
+        value_render_option="FORMULA",
+    )[0]
+    cells = [
+        quarterly_asp_formula(
+            col_letter(i + 2),
+            home_sales_row=home_sales_row,
+            revenue_row=revenue_row,
+        )
+        for i in range(len(headers))
+    ]
+    if [str(x) for x in existing] != cells:
+        qws.update(
+            [cells],
+            range_name=f"B{quarterly_asp_row}:{col_letter(1 + len(cells))}{quarterly_asp_row}",
+            value_input_option="USER_ENTERED",
+        )
+        print(f"Updated Quarterly ASP formulas on row {quarterly_asp_row}")
+    else:
+        print(f"Quarterly ASP row {quarterly_asp_row} already current")
 
 
 def clear_misplaced_spread_formulas(client: SheetsClient) -> None:

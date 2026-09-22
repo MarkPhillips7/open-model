@@ -26,6 +26,8 @@ from sheets.formulas import col_letter as _col_letter
 from models.LODE import levers as lv
 from models.LODE.layout import (
     ADJ_EBITDA_MODEL,
+    ANNUAL_CORP_GA_MODEL,
+    ANNUAL_METALS_CONTRIB_MODEL,
     AS_OF_DATE,
     BREAKEVEN_UTILIZATION_MODEL,
     CAPEX_ACTUAL,
@@ -35,17 +37,22 @@ from models.LODE.layout import (
     CORP_GA_MODEL,
     EQUITY_ISSUED_ACTUAL,
     EQUITY_ISSUED_MODEL,
+    EQUITY_VALUE_MODEL,
     FIRST_VALUE_COL,
     FIRST_VALUE_COL_INDEX,
     FUELS_BRIDGE_MODEL,
+    FUELS_STAKE_VALUE_MODEL,
+    IMPLIED_STOCK_PRICE_MODEL,
     LINES_ACTUAL,
     LINES_MODEL,
     LINES_PLAN,
     MARKET_CAP,
     MATERIAL_MODEL,
+    METALS_BUSINESS_VALUE_MODEL,
     METALS_CAPEX_MODEL,
     METALS_CONTRIBUTION_MODEL,
     METALS_COST_MODEL,
+    METALS_EBITDA_PROXY_MODEL,
     METALS_FIXED_COST_MODEL,
     METALS_MARGIN_MODEL,
     METALS_REVENUE_ACTUAL,
@@ -53,8 +60,11 @@ from models.LODE.layout import (
     METALS_VARIABLE_COST_MODEL,
     MINING_PROCEEDS_MODEL,
     N_QUARTERS,
+    NET_CASH_CREDITED_MODEL,
+    NET_CASH_MODEL,
     OCF_ACTUAL,
     OCF_MODEL,
+    PRESENT_STOCK_PRICE_MODEL,
     QUARTER,
     QUARTER_ENDING,
     QUARTERLY,
@@ -64,7 +74,9 @@ from models.LODE.layout import (
     SHARES_ACTUAL,
     SHARES_MODEL,
     SHARES_MODEL_QOQ,
+    SSOF_GROSS_MODEL,
     SSOF_PROCEEDS_MODEL,
+    SSOF_STAKE_VALUE_MODEL,
     STOCK_PRICE,
     STOCKPILE_METAL_REVENUE,
     TAILINGS_INVENTORY,
@@ -402,11 +414,12 @@ def _ssof_proceeds_model() -> str:
     """Only the portion of the SSOF stake actually sold for cash, which defaults to none.
 
     SSOF is unsigned, so it is deliberately kept out of the base-case cash line and
-    credited as option value on the Valuation tab instead. The last factor is the
-    switch that lets you move it into cash.
+    credited as option value on the Valuation / Quarterly Financials stake rows instead.
+    Uses the grown gross at the monetization quarter so cash proceeds track the value path.
+    The last factor is the switch that lets you move it into cash.
     """
     value = (
-        f"{_lever(lv.SSOF_GROSS_VALUE)}*{_lever(lv.SSOF_OWNERSHIP)}/100"
+        f"{_cur(SSOF_GROSS_MODEL)}*{_lever(lv.SSOF_OWNERSHIP)}/100"
         f"*{_lever(lv.SSOF_ACHIEVED)}/100*{_lever(lv.SSOF_CASH_SOLD)}/100"
     )
     return _blank_if_no_quarter(
@@ -506,6 +519,96 @@ def _market_cap() -> str:
     )
 
 
+def _quarters_from_as_of() -> str:
+    """Integer quarters between this column and the As of date (0 in the as-of quarter)."""
+    as_of_qi = f"(YEAR({_cur(AS_OF_DATE)})*4+ROUNDUP(MONTH({_cur(AS_OF_DATE)})/3,0))"
+    return f"({_cur(YEAR)}*4+{_cur(QUARTER)})-{as_of_qi}"
+
+
+def _annual_metals_contrib_model() -> str:
+    return _blank_if_no_quarter(f"4*N({_cur(METALS_CONTRIBUTION_MODEL)})")
+
+
+def _annual_corp_ga_model() -> str:
+    return _blank_if_no_quarter(f"4*N({_cur(CORP_GA_MODEL)})")
+
+
+def _metals_ebitda_proxy_model() -> str:
+    return _blank_if_no_quarter(
+        f"{_cur(ANNUAL_METALS_CONTRIB_MODEL)}-{_cur(ANNUAL_CORP_GA_MODEL)}"
+    )
+
+
+def _metals_business_value_model() -> str:
+    return _blank_if_no_quarter(
+        f"MAX(0,{_cur(METALS_EBITDA_PROXY_MODEL)}*{_lever(lv.METALS_MULTIPLE)}"
+        f"*{_lever(lv.METALS_ACHIEVED)}/100)"
+    )
+
+
+def _ssof_gross_model() -> str:
+    """Lever comparable as of the As of date, compounded at the SSOF growth lever."""
+    return _blank_if_no_quarter(
+        f"{_lever(lv.SSOF_GROSS_VALUE)}*(1+{_lever(lv.SSOF_VALUE_GROWTH)}/100)"
+        f"^({_quarters_from_as_of()})"
+    )
+
+
+def _ssof_stake_value_model() -> str:
+    """Haircut SSOF stake, net of any portion already sold into Cash - Model this quarter."""
+    sold = (
+        f"IF({_quarter_index()}>={_lever_quarter_index(lv.SSOF_PROCEEDS_QUARTER)},"
+        f"{_lever(lv.SSOF_CASH_SOLD)}/100,0)"
+    )
+    return _blank_if_no_quarter(
+        f"{_cur(SSOF_GROSS_MODEL)}*{_lever(lv.SSOF_OWNERSHIP)}/100"
+        f"*{_lever(lv.SSOF_ACHIEVED)}/100*(1-{sold})"
+    )
+
+
+def _fuels_stake_value_model() -> str:
+    """Lever fuels value as of the As of date, grown, then × achieved."""
+    return _blank_if_no_quarter(
+        f"{_lever(lv.FUELS_VALUE)}*(1+{_lever(lv.FUELS_VALUE_GROWTH)}/100)"
+        f"^({_quarters_from_as_of()})*{_lever(lv.FUELS_ACHIEVED)}/100"
+    )
+
+
+def _net_cash_model() -> str:
+    return _blank_if_no_quarter(
+        f"N({_cur(CASH_MODEL)})-N({_cur(TOTAL_DEBT_MODEL)})"
+    )
+
+
+def _net_cash_credited_model() -> str:
+    return _blank_if_no_quarter(
+        f"{_cur(NET_CASH_MODEL)}*{_lever(lv.NET_CASH_CREDIT)}/100"
+    )
+
+
+def _equity_value_model() -> str:
+    return _blank_if_no_quarter(
+        f"{_cur(METALS_BUSINESS_VALUE_MODEL)}+{_cur(SSOF_STAKE_VALUE_MODEL)}"
+        f"+{_cur(FUELS_STAKE_VALUE_MODEL)}+{_cur(NET_CASH_CREDITED_MODEL)}"
+    )
+
+
+def _implied_stock_price_model() -> str:
+    return (
+        f'=IF(OR({_cur(YEAR)}="",N({_cur(SHARES_MODEL)})<=0),"",'
+        f"{_cur(EQUITY_VALUE_MODEL)}/{_cur(SHARES_MODEL)})"
+    )
+
+
+def _present_stock_price_model() -> str:
+    """Discount the quarter's implied price back to the As of date; blank for past quarters."""
+    return (
+        f'=IF(OR({_cur(IMPLIED_STOCK_PRICE_MODEL)}="",N({_cur(YEARS_FROM_PRESENT)})<=0),"",'
+        f"-PV({_lever(lv.DISCOUNT_RATE)}/100,{_cur(YEARS_FROM_PRESENT)},0,"
+        f"{_cur(IMPLIED_STOCK_PRICE_MODEL)}))"
+    )
+
+
 # --- template registry ----------------------------------------------------
 
 UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
@@ -545,6 +648,18 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     SHARES_MODEL: _shares_model(),
     STOCK_PRICE: _stock_price(),
     MARKET_CAP: _market_cap(),
+    ANNUAL_METALS_CONTRIB_MODEL: _annual_metals_contrib_model(),
+    ANNUAL_CORP_GA_MODEL: _annual_corp_ga_model(),
+    METALS_EBITDA_PROXY_MODEL: _metals_ebitda_proxy_model(),
+    METALS_BUSINESS_VALUE_MODEL: _metals_business_value_model(),
+    SSOF_GROSS_MODEL: _ssof_gross_model(),
+    SSOF_STAKE_VALUE_MODEL: _ssof_stake_value_model(),
+    FUELS_STAKE_VALUE_MODEL: _fuels_stake_value_model(),
+    NET_CASH_MODEL: _net_cash_model(),
+    NET_CASH_CREDITED_MODEL: _net_cash_credited_model(),
+    EQUITY_VALUE_MODEL: _equity_value_model(),
+    IMPLIED_STOCK_PRICE_MODEL: _implied_stock_price_model(),
+    PRESENT_STOCK_PRICE_MODEL: _present_stock_price_model(),
 }
 
 # Column C has no prior column, so rows that roll forward need their own opener.

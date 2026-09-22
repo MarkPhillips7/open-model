@@ -8,8 +8,11 @@ them separately also means each pillar gets its own "achieved" lever, so you can
 say "I believe the plant but not the land" and see what that is worth.
 
 The mechanic is: pick a **reference quarter** far enough out that the recycling
-plant is running at steady state, value the business as at that quarter, then
-discount the resulting per-share figure back to today.
+plant is running at steady state, read the sum-of-parts already computed on
+Quarterly Financials for that quarter (metals EV on annualized cash contribution,
+grown SSOF / Fuels stakes, net cash), then compare the discounted per-share figure
+to today. SSOF and Fuels grow (or decline) from the As of date at their Levers
+quarterly growth rates — they are not held flat through 2030.
 
 Double-counting guard
 ---------------------
@@ -154,12 +157,18 @@ ROWS: list[tuple[str, str, str]] = [
     (
         METALS_VALUE,
         USD_M,
-        "EBITDA proxy × multiple × 'Metals business value achieved'. Floored at zero: if the plant "
-        "is still loss-making at the reference quarter the business is worth nothing in this frame, "
-        "not a negative number — the cash drain already shows up in the net cash line.",
+        "From Quarterly Financials at the reference quarter: EBITDA proxy × multiple × "
+        "'Metals business value achieved', floored at zero. Same formula as "
+        "'Metals business value - Model' so the Valuation tab and the quarterly series agree.",
     ),
     (SECTION_SSOF, "", ""),
-    (SSOF_GROSS, USD_M, "From the Levers tab — whole-asset value of the land, water, and power."),
+    (
+        SSOF_GROSS,
+        USD_M,
+        "From Quarterly Financials: the Levers comparable as of the As of date, compounded at "
+        "'SSOF value quarterly growth rate'. At the default 2%/q this is no longer a flat $500M "
+        "through 2030.",
+    ),
     (SSOF_SHARE, PCT, "From the Levers tab — Comstock's equity interest in the fund."),
     (SSOF_ACHIEVED, PCT, "From the Levers tab — how much of the gross value reaches shareholders."),
     (
@@ -181,18 +190,16 @@ ROWS: list[tuple[str, str, str]] = [
     (
         SSOF_VALUE,
         USD_M,
-        "Comstock's haircut share of SSOF, less whatever has already been converted to cash by the "
-        "reference quarter. At the default zero-cash-sold setting this is the full stake value and "
-        "the cash line is untouched; at 100% sold before the reference quarter it is zero and the "
-        "value lives entirely in net cash. In between it splits, with no double-count either way.",
+        "From Quarterly Financials at the reference quarter ('SSOF stake value - Model'): haircut "
+        "share of the grown gross, less whatever has already been converted to cash by then.",
     ),
     (SECTION_FUELS, "", ""),
     (
         FUELS_VALUE,
         USD_M,
-        "From the Levers tab: value × achieved. Never appears in the cash line, because the model "
-        "does not assume the fuels stake is ever sold — only that it is worth something. The "
-        "default is management's stated liquidation-preference floor, not a growth valuation.",
+        "From Quarterly Financials at the reference quarter: Levers fuels value compounded at "
+        "'Comstock Fuels value quarterly growth rate' (default 0 — flat floor), then × achieved. "
+        "Never appears in the cash line.",
     ),
     (SECTION_CASH, "", ""),
     (
@@ -225,10 +232,11 @@ ROWS: list[tuple[str, str, str]] = [
     (
         EQUITY_VALUE,
         USD_M,
-        "Metals business + SSOF stake + fuels stake + credited net cash. The 1.5% NSR on the sold "
-        "mining district is deliberately carried at zero here — it pays on an unknowable schedule. "
-        "Contract buyout floor if you want to credit it elsewhere (not by editing the rate lever): "
-        "$3.5M anytime, rising to $7.0M if the 7-year contingent window lapses unpaid.",
+        "From Quarterly Financials at the reference quarter: metals + SSOF + fuels + credited net "
+        "cash. The 1.5% NSR on the sold mining district is deliberately carried at zero here — it "
+        "pays on an unknowable schedule. Contract buyout floor if you want to credit it elsewhere "
+        "(not by editing the rate lever): $3.5M anytime, rising to $7.0M if the 7-year contingent "
+        "window lapses unpaid.",
     ),
     (
         SHARES_AT_REF,
@@ -239,7 +247,9 @@ ROWS: list[tuple[str, str, str]] = [
     (
         VALUE_PER_SHARE,
         "$",
-        "Equity value ÷ shares, both as at the reference quarter. A future price, not today's.",
+        "From Quarterly Financials ('Implied stock price - Model') at the reference quarter. A "
+        "future price, not today's. Chart that row (or Present stock price discounted) for the "
+        "quarterly path.",
     ),
     (
         CURRENT_PRICE,
@@ -249,8 +259,8 @@ ROWS: list[tuple[str, str, str]] = [
     (
         PRESENT_VALUE_PER_SHARE,
         "$",
-        "The reference-quarter price discounted back to the As of date at the Levers discount rate. "
-        "This is the number to compare with the current share price.",
+        "From Quarterly Financials at the reference quarter: implied price discounted back to the "
+        "As of date at the Levers discount rate. Compare with the current share price.",
     ),
     (
         UPSIDE_TO_PRESENT,
@@ -305,44 +315,29 @@ def value_formulas(qf_rows: dict[str, int]) -> dict[str, Any]:
         ANNUAL_CORP_GA: f"=4*N({_qf_at_ref(L.CORP_GA_MODEL, qf_rows)})",
         METALS_EBITDA: f"={_ref(ANNUAL_CONTRIBUTION)}-{_ref(ANNUAL_CORP_GA)}",
         METALS_MULTIPLE: f"={lv.lever_ref(lv.METALS_MULTIPLE)}",
-        METALS_VALUE: (
-            f"=MAX(0,{_ref(METALS_EBITDA)}*{_ref(METALS_MULTIPLE)}"
-            f"*{lv.lever_ref(lv.METALS_ACHIEVED)}/100)"
-        ),
-        SSOF_GROSS: f"={lv.lever_ref(lv.SSOF_GROSS_VALUE)}",
+        METALS_VALUE: f"=N({_qf_at_ref(L.METALS_BUSINESS_VALUE_MODEL, qf_rows)})",
+        SSOF_GROSS: f"=N({_qf_at_ref(L.SSOF_GROSS_MODEL, qf_rows)})",
         SSOF_SHARE: f"={lv.lever_ref(lv.SSOF_OWNERSHIP)}",
         SSOF_ACHIEVED: f"={lv.lever_ref(lv.SSOF_ACHIEVED)}",
         SSOF_CASH_SOLD: f"={lv.lever_ref(lv.SSOF_CASH_SOLD)}",
         SSOF_ALREADY_IN_CASH: ssof_already,
-        SSOF_VALUE: (
-            f"={_ref(SSOF_GROSS)}*{_ref(SSOF_SHARE)}/100*{_ref(SSOF_ACHIEVED)}/100"
-            f'*(1-IF({_ref(SSOF_ALREADY_IN_CASH)}="yes",{_ref(SSOF_CASH_SOLD)}/100,0))'
-        ),
-        FUELS_VALUE: (
-            f"={lv.lever_ref(lv.FUELS_VALUE)}*{lv.lever_ref(lv.FUELS_ACHIEVED)}/100"
-        ),
+        SSOF_VALUE: f"=N({_qf_at_ref(L.SSOF_STAKE_VALUE_MODEL, qf_rows)})",
+        FUELS_VALUE: f"=N({_qf_at_ref(L.FUELS_STAKE_VALUE_MODEL, qf_rows)})",
         CASH_AT_REF: f"=N({_qf_at_ref(L.CASH_MODEL, qf_rows)})",
         DEBT_AT_REF: f"=N({_qf_at_ref(L.TOTAL_DEBT_MODEL, qf_rows)})",
         NET_CASH: f"={_ref(CASH_AT_REF)}-{_ref(DEBT_AT_REF)}",
         NET_CASH_CREDITED: (
             f"={_ref(NET_CASH)}*{lv.lever_ref(lv.NET_CASH_CREDIT)}/100"
         ),
-        EQUITY_VALUE: (
-            f"={_ref(METALS_VALUE)}+{_ref(SSOF_VALUE)}+{_ref(FUELS_VALUE)}"
-            f"+{_ref(NET_CASH_CREDITED)}"
-        ),
+        EQUITY_VALUE: f"=N({_qf_at_ref(L.EQUITY_VALUE_MODEL, qf_rows)})",
         SHARES_AT_REF: f"=N({_qf_at_ref(L.SHARES_MODEL, qf_rows)})",
-        VALUE_PER_SHARE: (
-            f'=IF({_ref(SHARES_AT_REF)}<=0,"",{_ref(EQUITY_VALUE)}/{_ref(SHARES_AT_REF)})'
-        ),
+        VALUE_PER_SHARE: f"=N({_qf_at_ref(L.IMPLIED_STOCK_PRICE_MODEL, qf_rows)})",
         CURRENT_PRICE: (
             "=LET(d,'Price History'!$A$2:$E,"
             'IFERROR(INDEX(SORT(FILTER(d,INDEX(d,0,1)<>""),1,FALSE),1,5),""))'
         ),
         PRESENT_VALUE_PER_SHARE: (
-            f'=IF(OR({_ref(VALUE_PER_SHARE)}="",{_ref(YEARS_TO_REFERENCE)}<=0),"",'
-            f"-PV({lv.lever_ref(lv.DISCOUNT_RATE)}/100,{_ref(YEARS_TO_REFERENCE)},0,"
-            f"{_ref(VALUE_PER_SHARE)}))"
+            f"=N({_qf_at_ref(L.PRESENT_STOCK_PRICE_MODEL, qf_rows)})"
         ),
         UPSIDE_TO_PRESENT: (
             f'=IF(OR(N({_ref(CURRENT_PRICE)})=0,{_ref(PRESENT_VALUE_PER_SHARE)}=""),"",'

@@ -92,9 +92,9 @@ FIELD_NOTES: dict[str, str] = {
         "(Transitions B25, drained over first 8 weeks). Calibrated to ~45-day reno wait."
     ),
     'Average Sale Price (homes sold by OPEN)': (
-        "Average resale price on Opendoor-sold homes (~$377.5K at Q2 2026). Quarterly actual "
-        "spread to weeks (carries quarter value, day-weighted at boundaries); manual override "
-        "on Weekly when needed. Drives revenue and ancillary CM."
+        "Average resale price on Opendoor-sold homes (~$377.5K at Q2 2026). Quarterly = "
+        "Revenue ÷ Home Sales when both are nonzero; otherwise blank. Weekly uses that "
+        "quarter’s ASP when >0, else prior week (carry-forward). Drives revenue and ancillary CM."
     ),
     'Home Sales': (
         "Non-GAAP homes sold (listed + private). Through week ending 2026-06-27: quarterly "

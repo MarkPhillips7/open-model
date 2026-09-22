@@ -1,9 +1,9 @@
 {
-  "recorded": "2026-09-22T16:53:17Z",
+  "recorded": "2026-09-22T17:13:51Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
-      "range": "A1:Z72",
+      "range": "A1:Z86",
       "rows": [
         [
           "",
@@ -910,30 +910,30 @@
         [
           "Corporate cash G&A - Model",
           "$M",
-          "=IF(C2=\"\",\"\",Levers!$C$24-IF((C2*4+C3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(D2=\"\",\"\",Levers!$C$24-IF((D2*4+D3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(E2=\"\",\"\",Levers!$C$24-IF((E2*4+E3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(F2=\"\",\"\",Levers!$C$24-IF((F2*4+F3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(G2=\"\",\"\",Levers!$C$24-IF((G2*4+G3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(H2=\"\",\"\",Levers!$C$24-IF((H2*4+H3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(I2=\"\",\"\",Levers!$C$24-IF((I2*4+I3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(J2=\"\",\"\",Levers!$C$24-IF((J2*4+J3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(K2=\"\",\"\",Levers!$C$24-IF((K2*4+K3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(L2=\"\",\"\",Levers!$C$24-IF((L2*4+L3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(M2=\"\",\"\",Levers!$C$24-IF((M2*4+M3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(N2=\"\",\"\",Levers!$C$24-IF((N2*4+N3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(O2=\"\",\"\",Levers!$C$24-IF((O2*4+O3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(P2=\"\",\"\",Levers!$C$24-IF((P2*4+P3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(Q2=\"\",\"\",Levers!$C$24-IF((Q2*4+Q3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(R2=\"\",\"\",Levers!$C$24-IF((R2*4+R3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(S2=\"\",\"\",Levers!$C$24-IF((S2*4+S3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(T2=\"\",\"\",Levers!$C$24-IF((T2*4+T3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(U2=\"\",\"\",Levers!$C$24-IF((U2*4+U3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(V2=\"\",\"\",Levers!$C$24-IF((V2*4+V3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(W2=\"\",\"\",Levers!$C$24-IF((W2*4+W3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(X2=\"\",\"\",Levers!$C$24-IF((X2*4+X3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(Y2=\"\",\"\",Levers!$C$24-IF((Y2*4+Y3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))",
-          "=IF(Z2=\"\",\"\",Levers!$C$24-IF((Z2*4+Z3)>=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$25/4,0))"
+          "=IF(C2=\"\",\"\",Levers!$C$24-IF((C2*4+C3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(D2=\"\",\"\",Levers!$C$24-IF((D2*4+D3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(E2=\"\",\"\",Levers!$C$24-IF((E2*4+E3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(F2=\"\",\"\",Levers!$C$24-IF((F2*4+F3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(G2=\"\",\"\",Levers!$C$24-IF((G2*4+G3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(H2=\"\",\"\",Levers!$C$24-IF((H2*4+H3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(I2=\"\",\"\",Levers!$C$24-IF((I2*4+I3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(J2=\"\",\"\",Levers!$C$24-IF((J2*4+J3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(K2=\"\",\"\",Levers!$C$24-IF((K2*4+K3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(L2=\"\",\"\",Levers!$C$24-IF((L2*4+L3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(M2=\"\",\"\",Levers!$C$24-IF((M2*4+M3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(N2=\"\",\"\",Levers!$C$24-IF((N2*4+N3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(O2=\"\",\"\",Levers!$C$24-IF((O2*4+O3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(P2=\"\",\"\",Levers!$C$24-IF((P2*4+P3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(Q2=\"\",\"\",Levers!$C$24-IF((Q2*4+Q3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(R2=\"\",\"\",Levers!$C$24-IF((R2*4+R3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(S2=\"\",\"\",Levers!$C$24-IF((S2*4+S3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(T2=\"\",\"\",Levers!$C$24-IF((T2*4+T3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(U2=\"\",\"\",Levers!$C$24-IF((U2*4+U3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(V2=\"\",\"\",Levers!$C$24-IF((V2*4+V3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(W2=\"\",\"\",Levers!$C$24-IF((W2*4+W3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(X2=\"\",\"\",Levers!$C$24-IF((X2*4+X3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(Y2=\"\",\"\",Levers!$C$24-IF((Y2*4+Y3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))",
+          "=IF(Z2=\"\",\"\",Levers!$C$24-IF((Z2*4+Z3)>=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$25/4,0))"
         ],
         [
           "Adjusted EBITDA - Model",
@@ -1056,86 +1056,86 @@
         [
           "Mining sale proceeds - Model",
           "$M",
-          "=IF(C2=\"\",\"\",IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(D2=\"\",\"\",IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(E2=\"\",\"\",IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(F2=\"\",\"\",IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(G2=\"\",\"\",IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(H2=\"\",\"\",IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(I2=\"\",\"\",IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(J2=\"\",\"\",IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(K2=\"\",\"\",IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(L2=\"\",\"\",IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(M2=\"\",\"\",IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(N2=\"\",\"\",IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(O2=\"\",\"\",IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(P2=\"\",\"\",IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(Q2=\"\",\"\",IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(R2=\"\",\"\",IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(S2=\"\",\"\",IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(T2=\"\",\"\",IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(U2=\"\",\"\",IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(V2=\"\",\"\",IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(W2=\"\",\"\",IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(X2=\"\",\"\",IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(Y2=\"\",\"\",IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))",
-          "=IF(Z2=\"\",\"\",IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$38,0)+IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0))"
+          "=IF(C2=\"\",\"\",IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(D2=\"\",\"\",IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(E2=\"\",\"\",IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(F2=\"\",\"\",IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(G2=\"\",\"\",IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(H2=\"\",\"\",IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(I2=\"\",\"\",IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(J2=\"\",\"\",IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(K2=\"\",\"\",IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(L2=\"\",\"\",IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(M2=\"\",\"\",IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(N2=\"\",\"\",IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(O2=\"\",\"\",IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(P2=\"\",\"\",IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(Q2=\"\",\"\",IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(R2=\"\",\"\",IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(S2=\"\",\"\",IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(T2=\"\",\"\",IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(U2=\"\",\"\",IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(V2=\"\",\"\",IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(W2=\"\",\"\",IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(X2=\"\",\"\",IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(Y2=\"\",\"\",IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))",
+          "=IF(Z2=\"\",\"\",IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$40,0)+IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$43,4))*4+VALUE(RIGHT(Levers!$C$43,1))),Levers!$C$42,0))"
         ],
         [
           "SSOF monetization proceeds - Model",
           "$M",
-          "=IF(C2=\"\",\"\",IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(D2=\"\",\"\",IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(E2=\"\",\"\",IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(F2=\"\",\"\",IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(G2=\"\",\"\",IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(H2=\"\",\"\",IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(I2=\"\",\"\",IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(J2=\"\",\"\",IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(K2=\"\",\"\",IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(L2=\"\",\"\",IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(M2=\"\",\"\",IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(N2=\"\",\"\",IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(O2=\"\",\"\",IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(P2=\"\",\"\",IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(Q2=\"\",\"\",IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(R2=\"\",\"\",IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(S2=\"\",\"\",IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(T2=\"\",\"\",IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(U2=\"\",\"\",IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(V2=\"\",\"\",IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(W2=\"\",\"\",IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(X2=\"\",\"\",IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(Y2=\"\",\"\",IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))",
-          "=IF(Z2=\"\",\"\",IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1))),Levers!$C$27*Levers!$C$28/100*Levers!$C$29/100*Levers!$C$30/100,0))"
+          "=IF(C2=\"\",\"\",IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),C79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(D2=\"\",\"\",IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),D79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(E2=\"\",\"\",IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),E79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(F2=\"\",\"\",IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),F79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(G2=\"\",\"\",IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),G79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(H2=\"\",\"\",IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),H79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(I2=\"\",\"\",IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),I79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(J2=\"\",\"\",IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),J79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(K2=\"\",\"\",IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),K79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(L2=\"\",\"\",IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),L79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(M2=\"\",\"\",IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),M79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(N2=\"\",\"\",IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),N79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(O2=\"\",\"\",IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),O79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(P2=\"\",\"\",IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),P79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(Q2=\"\",\"\",IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Q79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(R2=\"\",\"\",IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),R79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(S2=\"\",\"\",IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),S79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(T2=\"\",\"\",IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),T79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(U2=\"\",\"\",IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),U79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(V2=\"\",\"\",IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),V79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(W2=\"\",\"\",IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),W79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(X2=\"\",\"\",IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),X79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(Y2=\"\",\"\",IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Y79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))",
+          "=IF(Z2=\"\",\"\",IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Z79*Levers!$C$29/100*Levers!$C$30/100*Levers!$C$31/100,0))"
         ],
         [
           "Comstock Fuels bridge loan - Model",
           "$M",
-          "=IF(C2=\"\",\"\",IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(D2=\"\",\"\",IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(E2=\"\",\"\",IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(F2=\"\",\"\",IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(G2=\"\",\"\",IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(H2=\"\",\"\",IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(I2=\"\",\"\",IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(J2=\"\",\"\",IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(K2=\"\",\"\",IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(L2=\"\",\"\",IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(M2=\"\",\"\",IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(N2=\"\",\"\",IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(O2=\"\",\"\",IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(P2=\"\",\"\",IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(Q2=\"\",\"\",IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(R2=\"\",\"\",IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(S2=\"\",\"\",IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(T2=\"\",\"\",IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(U2=\"\",\"\",IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(V2=\"\",\"\",IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(W2=\"\",\"\",IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(X2=\"\",\"\",IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(Y2=\"\",\"\",IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))",
-          "=IF(Z2=\"\",\"\",IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$39,4))*4+VALUE(RIGHT(Levers!$C$39,1))),Levers!$C$35,0))"
+          "=IF(C2=\"\",\"\",IF((C2*4+C3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(D2=\"\",\"\",IF((D2*4+D3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(E2=\"\",\"\",IF((E2*4+E3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(F2=\"\",\"\",IF((F2*4+F3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(G2=\"\",\"\",IF((G2*4+G3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(H2=\"\",\"\",IF((H2*4+H3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(I2=\"\",\"\",IF((I2*4+I3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(J2=\"\",\"\",IF((J2*4+J3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(K2=\"\",\"\",IF((K2*4+K3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(L2=\"\",\"\",IF((L2*4+L3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(M2=\"\",\"\",IF((M2*4+M3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(N2=\"\",\"\",IF((N2*4+N3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(O2=\"\",\"\",IF((O2*4+O3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(P2=\"\",\"\",IF((P2*4+P3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(Q2=\"\",\"\",IF((Q2*4+Q3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(R2=\"\",\"\",IF((R2*4+R3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(S2=\"\",\"\",IF((S2*4+S3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(T2=\"\",\"\",IF((T2*4+T3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(U2=\"\",\"\",IF((U2*4+U3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(V2=\"\",\"\",IF((V2*4+V3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(W2=\"\",\"\",IF((W2*4+W3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(X2=\"\",\"\",IF((X2*4+X3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(Y2=\"\",\"\",IF((Y2*4+Y3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))",
+          "=IF(Z2=\"\",\"\",IF((Z2*4+Z3)=(VALUE(LEFT(Levers!$C$41,4))*4+VALUE(RIGHT(Levers!$C$41,1))),Levers!$C$37,0))"
         ],
         [
           "Equity issued",
@@ -1366,11 +1366,351 @@
           "=IF(OR(N(X70)=0,N(X71)=0),\"\",X70*X71)",
           "=IF(OR(N(Y70)=0,N(Y71)=0),\"\",Y70*Y71)",
           "=IF(OR(N(Z70)=0,N(Z71)=0),\"\",Z70*Z71)"
+        ],
+        [],
+        [
+          "VALUATION"
+        ],
+        [
+          "Annualized metals cash contribution - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",4*N(C35))",
+          "=IF(D2=\"\",\"\",4*N(D35))",
+          "=IF(E2=\"\",\"\",4*N(E35))",
+          "=IF(F2=\"\",\"\",4*N(F35))",
+          "=IF(G2=\"\",\"\",4*N(G35))",
+          "=IF(H2=\"\",\"\",4*N(H35))",
+          "=IF(I2=\"\",\"\",4*N(I35))",
+          "=IF(J2=\"\",\"\",4*N(J35))",
+          "=IF(K2=\"\",\"\",4*N(K35))",
+          "=IF(L2=\"\",\"\",4*N(L35))",
+          "=IF(M2=\"\",\"\",4*N(M35))",
+          "=IF(N2=\"\",\"\",4*N(N35))",
+          "=IF(O2=\"\",\"\",4*N(O35))",
+          "=IF(P2=\"\",\"\",4*N(P35))",
+          "=IF(Q2=\"\",\"\",4*N(Q35))",
+          "=IF(R2=\"\",\"\",4*N(R35))",
+          "=IF(S2=\"\",\"\",4*N(S35))",
+          "=IF(T2=\"\",\"\",4*N(T35))",
+          "=IF(U2=\"\",\"\",4*N(U35))",
+          "=IF(V2=\"\",\"\",4*N(V35))",
+          "=IF(W2=\"\",\"\",4*N(W35))",
+          "=IF(X2=\"\",\"\",4*N(X35))",
+          "=IF(Y2=\"\",\"\",4*N(Y35))",
+          "=IF(Z2=\"\",\"\",4*N(Z35))"
+        ],
+        [
+          "Annualized corporate cash G&A - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",4*N(C49))",
+          "=IF(D2=\"\",\"\",4*N(D49))",
+          "=IF(E2=\"\",\"\",4*N(E49))",
+          "=IF(F2=\"\",\"\",4*N(F49))",
+          "=IF(G2=\"\",\"\",4*N(G49))",
+          "=IF(H2=\"\",\"\",4*N(H49))",
+          "=IF(I2=\"\",\"\",4*N(I49))",
+          "=IF(J2=\"\",\"\",4*N(J49))",
+          "=IF(K2=\"\",\"\",4*N(K49))",
+          "=IF(L2=\"\",\"\",4*N(L49))",
+          "=IF(M2=\"\",\"\",4*N(M49))",
+          "=IF(N2=\"\",\"\",4*N(N49))",
+          "=IF(O2=\"\",\"\",4*N(O49))",
+          "=IF(P2=\"\",\"\",4*N(P49))",
+          "=IF(Q2=\"\",\"\",4*N(Q49))",
+          "=IF(R2=\"\",\"\",4*N(R49))",
+          "=IF(S2=\"\",\"\",4*N(S49))",
+          "=IF(T2=\"\",\"\",4*N(T49))",
+          "=IF(U2=\"\",\"\",4*N(U49))",
+          "=IF(V2=\"\",\"\",4*N(V49))",
+          "=IF(W2=\"\",\"\",4*N(W49))",
+          "=IF(X2=\"\",\"\",4*N(X49))",
+          "=IF(Y2=\"\",\"\",4*N(Y49))",
+          "=IF(Z2=\"\",\"\",4*N(Z49))"
+        ],
+        [
+          "Metals EBITDA proxy - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",C75-C76)",
+          "=IF(D2=\"\",\"\",D75-D76)",
+          "=IF(E2=\"\",\"\",E75-E76)",
+          "=IF(F2=\"\",\"\",F75-F76)",
+          "=IF(G2=\"\",\"\",G75-G76)",
+          "=IF(H2=\"\",\"\",H75-H76)",
+          "=IF(I2=\"\",\"\",I75-I76)",
+          "=IF(J2=\"\",\"\",J75-J76)",
+          "=IF(K2=\"\",\"\",K75-K76)",
+          "=IF(L2=\"\",\"\",L75-L76)",
+          "=IF(M2=\"\",\"\",M75-M76)",
+          "=IF(N2=\"\",\"\",N75-N76)",
+          "=IF(O2=\"\",\"\",O75-O76)",
+          "=IF(P2=\"\",\"\",P75-P76)",
+          "=IF(Q2=\"\",\"\",Q75-Q76)",
+          "=IF(R2=\"\",\"\",R75-R76)",
+          "=IF(S2=\"\",\"\",S75-S76)",
+          "=IF(T2=\"\",\"\",T75-T76)",
+          "=IF(U2=\"\",\"\",U75-U76)",
+          "=IF(V2=\"\",\"\",V75-V76)",
+          "=IF(W2=\"\",\"\",W75-W76)",
+          "=IF(X2=\"\",\"\",X75-X76)",
+          "=IF(Y2=\"\",\"\",Y75-Y76)",
+          "=IF(Z2=\"\",\"\",Z75-Z76)"
+        ],
+        [
+          "Metals business value - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",MAX(0,C77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(D2=\"\",\"\",MAX(0,D77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(E2=\"\",\"\",MAX(0,E77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(F2=\"\",\"\",MAX(0,F77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(G2=\"\",\"\",MAX(0,G77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(H2=\"\",\"\",MAX(0,H77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(I2=\"\",\"\",MAX(0,I77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(J2=\"\",\"\",MAX(0,J77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(K2=\"\",\"\",MAX(0,K77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(L2=\"\",\"\",MAX(0,L77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(M2=\"\",\"\",MAX(0,M77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(N2=\"\",\"\",MAX(0,N77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(O2=\"\",\"\",MAX(0,O77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(P2=\"\",\"\",MAX(0,P77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(Q2=\"\",\"\",MAX(0,Q77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(R2=\"\",\"\",MAX(0,R77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(S2=\"\",\"\",MAX(0,S77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(T2=\"\",\"\",MAX(0,T77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(U2=\"\",\"\",MAX(0,U77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(V2=\"\",\"\",MAX(0,V77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(W2=\"\",\"\",MAX(0,W77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(X2=\"\",\"\",MAX(0,X77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(Y2=\"\",\"\",MAX(0,Y77*Levers!$C$47*Levers!$C$48/100))",
+          "=IF(Z2=\"\",\"\",MAX(0,Z77*Levers!$C$47*Levers!$C$48/100))"
+        ],
+        [
+          "SSOF gross asset value - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((C2*4+C3)-(YEAR(C5)*4+ROUNDUP(MONTH(C5)/3,0))))",
+          "=IF(D2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((D2*4+D3)-(YEAR(D5)*4+ROUNDUP(MONTH(D5)/3,0))))",
+          "=IF(E2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((E2*4+E3)-(YEAR(E5)*4+ROUNDUP(MONTH(E5)/3,0))))",
+          "=IF(F2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((F2*4+F3)-(YEAR(F5)*4+ROUNDUP(MONTH(F5)/3,0))))",
+          "=IF(G2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((G2*4+G3)-(YEAR(G5)*4+ROUNDUP(MONTH(G5)/3,0))))",
+          "=IF(H2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((H2*4+H3)-(YEAR(H5)*4+ROUNDUP(MONTH(H5)/3,0))))",
+          "=IF(I2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((I2*4+I3)-(YEAR(I5)*4+ROUNDUP(MONTH(I5)/3,0))))",
+          "=IF(J2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((J2*4+J3)-(YEAR(J5)*4+ROUNDUP(MONTH(J5)/3,0))))",
+          "=IF(K2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((K2*4+K3)-(YEAR(K5)*4+ROUNDUP(MONTH(K5)/3,0))))",
+          "=IF(L2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((L2*4+L3)-(YEAR(L5)*4+ROUNDUP(MONTH(L5)/3,0))))",
+          "=IF(M2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((M2*4+M3)-(YEAR(M5)*4+ROUNDUP(MONTH(M5)/3,0))))",
+          "=IF(N2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((N2*4+N3)-(YEAR(N5)*4+ROUNDUP(MONTH(N5)/3,0))))",
+          "=IF(O2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((O2*4+O3)-(YEAR(O5)*4+ROUNDUP(MONTH(O5)/3,0))))",
+          "=IF(P2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((P2*4+P3)-(YEAR(P5)*4+ROUNDUP(MONTH(P5)/3,0))))",
+          "=IF(Q2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((Q2*4+Q3)-(YEAR(Q5)*4+ROUNDUP(MONTH(Q5)/3,0))))",
+          "=IF(R2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((R2*4+R3)-(YEAR(R5)*4+ROUNDUP(MONTH(R5)/3,0))))",
+          "=IF(S2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((S2*4+S3)-(YEAR(S5)*4+ROUNDUP(MONTH(S5)/3,0))))",
+          "=IF(T2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((T2*4+T3)-(YEAR(T5)*4+ROUNDUP(MONTH(T5)/3,0))))",
+          "=IF(U2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((U2*4+U3)-(YEAR(U5)*4+ROUNDUP(MONTH(U5)/3,0))))",
+          "=IF(V2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((V2*4+V3)-(YEAR(V5)*4+ROUNDUP(MONTH(V5)/3,0))))",
+          "=IF(W2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((W2*4+W3)-(YEAR(W5)*4+ROUNDUP(MONTH(W5)/3,0))))",
+          "=IF(X2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((X2*4+X3)-(YEAR(X5)*4+ROUNDUP(MONTH(X5)/3,0))))",
+          "=IF(Y2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((Y2*4+Y3)-(YEAR(Y5)*4+ROUNDUP(MONTH(Y5)/3,0))))",
+          "=IF(Z2=\"\",\"\",Levers!$C$27*(1+Levers!$C$28/100)^((Z2*4+Z3)-(YEAR(Z5)*4+ROUNDUP(MONTH(Z5)/3,0))))"
+        ],
+        [
+          "SSOF stake value - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",C79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((C2*4+C3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(D2=\"\",\"\",D79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((D2*4+D3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(E2=\"\",\"\",E79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((E2*4+E3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(F2=\"\",\"\",F79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((F2*4+F3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(G2=\"\",\"\",G79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((G2*4+G3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(H2=\"\",\"\",H79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((H2*4+H3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(I2=\"\",\"\",I79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((I2*4+I3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(J2=\"\",\"\",J79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((J2*4+J3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(K2=\"\",\"\",K79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((K2*4+K3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(L2=\"\",\"\",L79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((L2*4+L3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(M2=\"\",\"\",M79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((M2*4+M3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(N2=\"\",\"\",N79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((N2*4+N3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(O2=\"\",\"\",O79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((O2*4+O3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(P2=\"\",\"\",P79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((P2*4+P3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(Q2=\"\",\"\",Q79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((Q2*4+Q3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(R2=\"\",\"\",R79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((R2*4+R3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(S2=\"\",\"\",S79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((S2*4+S3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(T2=\"\",\"\",T79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((T2*4+T3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(U2=\"\",\"\",U79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((U2*4+U3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(V2=\"\",\"\",V79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((V2*4+V3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(W2=\"\",\"\",W79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((W2*4+W3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(X2=\"\",\"\",X79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((X2*4+X3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(Y2=\"\",\"\",Y79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((Y2*4+Y3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))",
+          "=IF(Z2=\"\",\"\",Z79*Levers!$C$29/100*Levers!$C$30/100*(1-IF((Z2*4+Z3)>=(VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1))),Levers!$C$31/100,0)))"
+        ],
+        [
+          "Comstock Fuels stake value - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((C2*4+C3)-(YEAR(C5)*4+ROUNDUP(MONTH(C5)/3,0)))*Levers!$C$36/100)",
+          "=IF(D2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((D2*4+D3)-(YEAR(D5)*4+ROUNDUP(MONTH(D5)/3,0)))*Levers!$C$36/100)",
+          "=IF(E2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((E2*4+E3)-(YEAR(E5)*4+ROUNDUP(MONTH(E5)/3,0)))*Levers!$C$36/100)",
+          "=IF(F2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((F2*4+F3)-(YEAR(F5)*4+ROUNDUP(MONTH(F5)/3,0)))*Levers!$C$36/100)",
+          "=IF(G2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((G2*4+G3)-(YEAR(G5)*4+ROUNDUP(MONTH(G5)/3,0)))*Levers!$C$36/100)",
+          "=IF(H2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((H2*4+H3)-(YEAR(H5)*4+ROUNDUP(MONTH(H5)/3,0)))*Levers!$C$36/100)",
+          "=IF(I2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((I2*4+I3)-(YEAR(I5)*4+ROUNDUP(MONTH(I5)/3,0)))*Levers!$C$36/100)",
+          "=IF(J2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((J2*4+J3)-(YEAR(J5)*4+ROUNDUP(MONTH(J5)/3,0)))*Levers!$C$36/100)",
+          "=IF(K2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((K2*4+K3)-(YEAR(K5)*4+ROUNDUP(MONTH(K5)/3,0)))*Levers!$C$36/100)",
+          "=IF(L2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((L2*4+L3)-(YEAR(L5)*4+ROUNDUP(MONTH(L5)/3,0)))*Levers!$C$36/100)",
+          "=IF(M2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((M2*4+M3)-(YEAR(M5)*4+ROUNDUP(MONTH(M5)/3,0)))*Levers!$C$36/100)",
+          "=IF(N2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((N2*4+N3)-(YEAR(N5)*4+ROUNDUP(MONTH(N5)/3,0)))*Levers!$C$36/100)",
+          "=IF(O2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((O2*4+O3)-(YEAR(O5)*4+ROUNDUP(MONTH(O5)/3,0)))*Levers!$C$36/100)",
+          "=IF(P2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((P2*4+P3)-(YEAR(P5)*4+ROUNDUP(MONTH(P5)/3,0)))*Levers!$C$36/100)",
+          "=IF(Q2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((Q2*4+Q3)-(YEAR(Q5)*4+ROUNDUP(MONTH(Q5)/3,0)))*Levers!$C$36/100)",
+          "=IF(R2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((R2*4+R3)-(YEAR(R5)*4+ROUNDUP(MONTH(R5)/3,0)))*Levers!$C$36/100)",
+          "=IF(S2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((S2*4+S3)-(YEAR(S5)*4+ROUNDUP(MONTH(S5)/3,0)))*Levers!$C$36/100)",
+          "=IF(T2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((T2*4+T3)-(YEAR(T5)*4+ROUNDUP(MONTH(T5)/3,0)))*Levers!$C$36/100)",
+          "=IF(U2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((U2*4+U3)-(YEAR(U5)*4+ROUNDUP(MONTH(U5)/3,0)))*Levers!$C$36/100)",
+          "=IF(V2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((V2*4+V3)-(YEAR(V5)*4+ROUNDUP(MONTH(V5)/3,0)))*Levers!$C$36/100)",
+          "=IF(W2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((W2*4+W3)-(YEAR(W5)*4+ROUNDUP(MONTH(W5)/3,0)))*Levers!$C$36/100)",
+          "=IF(X2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((X2*4+X3)-(YEAR(X5)*4+ROUNDUP(MONTH(X5)/3,0)))*Levers!$C$36/100)",
+          "=IF(Y2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((Y2*4+Y3)-(YEAR(Y5)*4+ROUNDUP(MONTH(Y5)/3,0)))*Levers!$C$36/100)",
+          "=IF(Z2=\"\",\"\",Levers!$C$34*(1+Levers!$C$35/100)^((Z2*4+Z3)-(YEAR(Z5)*4+ROUNDUP(MONTH(Z5)/3,0)))*Levers!$C$36/100)"
+        ],
+        [
+          "Net cash - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",N(C63)-N(C68))",
+          "=IF(D2=\"\",\"\",N(D63)-N(D68))",
+          "=IF(E2=\"\",\"\",N(E63)-N(E68))",
+          "=IF(F2=\"\",\"\",N(F63)-N(F68))",
+          "=IF(G2=\"\",\"\",N(G63)-N(G68))",
+          "=IF(H2=\"\",\"\",N(H63)-N(H68))",
+          "=IF(I2=\"\",\"\",N(I63)-N(I68))",
+          "=IF(J2=\"\",\"\",N(J63)-N(J68))",
+          "=IF(K2=\"\",\"\",N(K63)-N(K68))",
+          "=IF(L2=\"\",\"\",N(L63)-N(L68))",
+          "=IF(M2=\"\",\"\",N(M63)-N(M68))",
+          "=IF(N2=\"\",\"\",N(N63)-N(N68))",
+          "=IF(O2=\"\",\"\",N(O63)-N(O68))",
+          "=IF(P2=\"\",\"\",N(P63)-N(P68))",
+          "=IF(Q2=\"\",\"\",N(Q63)-N(Q68))",
+          "=IF(R2=\"\",\"\",N(R63)-N(R68))",
+          "=IF(S2=\"\",\"\",N(S63)-N(S68))",
+          "=IF(T2=\"\",\"\",N(T63)-N(T68))",
+          "=IF(U2=\"\",\"\",N(U63)-N(U68))",
+          "=IF(V2=\"\",\"\",N(V63)-N(V68))",
+          "=IF(W2=\"\",\"\",N(W63)-N(W68))",
+          "=IF(X2=\"\",\"\",N(X63)-N(X68))",
+          "=IF(Y2=\"\",\"\",N(Y63)-N(Y68))",
+          "=IF(Z2=\"\",\"\",N(Z63)-N(Z68))"
+        ],
+        [
+          "Net cash credited - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",C82*Levers!$C$49/100)",
+          "=IF(D2=\"\",\"\",D82*Levers!$C$49/100)",
+          "=IF(E2=\"\",\"\",E82*Levers!$C$49/100)",
+          "=IF(F2=\"\",\"\",F82*Levers!$C$49/100)",
+          "=IF(G2=\"\",\"\",G82*Levers!$C$49/100)",
+          "=IF(H2=\"\",\"\",H82*Levers!$C$49/100)",
+          "=IF(I2=\"\",\"\",I82*Levers!$C$49/100)",
+          "=IF(J2=\"\",\"\",J82*Levers!$C$49/100)",
+          "=IF(K2=\"\",\"\",K82*Levers!$C$49/100)",
+          "=IF(L2=\"\",\"\",L82*Levers!$C$49/100)",
+          "=IF(M2=\"\",\"\",M82*Levers!$C$49/100)",
+          "=IF(N2=\"\",\"\",N82*Levers!$C$49/100)",
+          "=IF(O2=\"\",\"\",O82*Levers!$C$49/100)",
+          "=IF(P2=\"\",\"\",P82*Levers!$C$49/100)",
+          "=IF(Q2=\"\",\"\",Q82*Levers!$C$49/100)",
+          "=IF(R2=\"\",\"\",R82*Levers!$C$49/100)",
+          "=IF(S2=\"\",\"\",S82*Levers!$C$49/100)",
+          "=IF(T2=\"\",\"\",T82*Levers!$C$49/100)",
+          "=IF(U2=\"\",\"\",U82*Levers!$C$49/100)",
+          "=IF(V2=\"\",\"\",V82*Levers!$C$49/100)",
+          "=IF(W2=\"\",\"\",W82*Levers!$C$49/100)",
+          "=IF(X2=\"\",\"\",X82*Levers!$C$49/100)",
+          "=IF(Y2=\"\",\"\",Y82*Levers!$C$49/100)",
+          "=IF(Z2=\"\",\"\",Z82*Levers!$C$49/100)"
+        ],
+        [
+          "Equity value - Model",
+          "$M",
+          "=IF(C2=\"\",\"\",C78+C80+C81+C83)",
+          "=IF(D2=\"\",\"\",D78+D80+D81+D83)",
+          "=IF(E2=\"\",\"\",E78+E80+E81+E83)",
+          "=IF(F2=\"\",\"\",F78+F80+F81+F83)",
+          "=IF(G2=\"\",\"\",G78+G80+G81+G83)",
+          "=IF(H2=\"\",\"\",H78+H80+H81+H83)",
+          "=IF(I2=\"\",\"\",I78+I80+I81+I83)",
+          "=IF(J2=\"\",\"\",J78+J80+J81+J83)",
+          "=IF(K2=\"\",\"\",K78+K80+K81+K83)",
+          "=IF(L2=\"\",\"\",L78+L80+L81+L83)",
+          "=IF(M2=\"\",\"\",M78+M80+M81+M83)",
+          "=IF(N2=\"\",\"\",N78+N80+N81+N83)",
+          "=IF(O2=\"\",\"\",O78+O80+O81+O83)",
+          "=IF(P2=\"\",\"\",P78+P80+P81+P83)",
+          "=IF(Q2=\"\",\"\",Q78+Q80+Q81+Q83)",
+          "=IF(R2=\"\",\"\",R78+R80+R81+R83)",
+          "=IF(S2=\"\",\"\",S78+S80+S81+S83)",
+          "=IF(T2=\"\",\"\",T78+T80+T81+T83)",
+          "=IF(U2=\"\",\"\",U78+U80+U81+U83)",
+          "=IF(V2=\"\",\"\",V78+V80+V81+V83)",
+          "=IF(W2=\"\",\"\",W78+W80+W81+W83)",
+          "=IF(X2=\"\",\"\",X78+X80+X81+X83)",
+          "=IF(Y2=\"\",\"\",Y78+Y80+Y81+Y83)",
+          "=IF(Z2=\"\",\"\",Z78+Z80+Z81+Z83)"
+        ],
+        [
+          "Implied stock price - Model",
+          "$",
+          "=IF(OR(C2=\"\",N(C70)<=0),\"\",C84/C70)",
+          "=IF(OR(D2=\"\",N(D70)<=0),\"\",D84/D70)",
+          "=IF(OR(E2=\"\",N(E70)<=0),\"\",E84/E70)",
+          "=IF(OR(F2=\"\",N(F70)<=0),\"\",F84/F70)",
+          "=IF(OR(G2=\"\",N(G70)<=0),\"\",G84/G70)",
+          "=IF(OR(H2=\"\",N(H70)<=0),\"\",H84/H70)",
+          "=IF(OR(I2=\"\",N(I70)<=0),\"\",I84/I70)",
+          "=IF(OR(J2=\"\",N(J70)<=0),\"\",J84/J70)",
+          "=IF(OR(K2=\"\",N(K70)<=0),\"\",K84/K70)",
+          "=IF(OR(L2=\"\",N(L70)<=0),\"\",L84/L70)",
+          "=IF(OR(M2=\"\",N(M70)<=0),\"\",M84/M70)",
+          "=IF(OR(N2=\"\",N(N70)<=0),\"\",N84/N70)",
+          "=IF(OR(O2=\"\",N(O70)<=0),\"\",O84/O70)",
+          "=IF(OR(P2=\"\",N(P70)<=0),\"\",P84/P70)",
+          "=IF(OR(Q2=\"\",N(Q70)<=0),\"\",Q84/Q70)",
+          "=IF(OR(R2=\"\",N(R70)<=0),\"\",R84/R70)",
+          "=IF(OR(S2=\"\",N(S70)<=0),\"\",S84/S70)",
+          "=IF(OR(T2=\"\",N(T70)<=0),\"\",T84/T70)",
+          "=IF(OR(U2=\"\",N(U70)<=0),\"\",U84/U70)",
+          "=IF(OR(V2=\"\",N(V70)<=0),\"\",V84/V70)",
+          "=IF(OR(W2=\"\",N(W70)<=0),\"\",W84/W70)",
+          "=IF(OR(X2=\"\",N(X70)<=0),\"\",X84/X70)",
+          "=IF(OR(Y2=\"\",N(Y70)<=0),\"\",Y84/Y70)",
+          "=IF(OR(Z2=\"\",N(Z70)<=0),\"\",Z84/Z70)"
+        ],
+        [
+          "Present stock price discounted - Model",
+          "$",
+          "=IF(OR(C85=\"\",N(C6)<=0),\"\",-PV(Levers!$C$4/100,C6,0,C85))",
+          "=IF(OR(D85=\"\",N(D6)<=0),\"\",-PV(Levers!$C$4/100,D6,0,D85))",
+          "=IF(OR(E85=\"\",N(E6)<=0),\"\",-PV(Levers!$C$4/100,E6,0,E85))",
+          "=IF(OR(F85=\"\",N(F6)<=0),\"\",-PV(Levers!$C$4/100,F6,0,F85))",
+          "=IF(OR(G85=\"\",N(G6)<=0),\"\",-PV(Levers!$C$4/100,G6,0,G85))",
+          "=IF(OR(H85=\"\",N(H6)<=0),\"\",-PV(Levers!$C$4/100,H6,0,H85))",
+          "=IF(OR(I85=\"\",N(I6)<=0),\"\",-PV(Levers!$C$4/100,I6,0,I85))",
+          "=IF(OR(J85=\"\",N(J6)<=0),\"\",-PV(Levers!$C$4/100,J6,0,J85))",
+          "=IF(OR(K85=\"\",N(K6)<=0),\"\",-PV(Levers!$C$4/100,K6,0,K85))",
+          "=IF(OR(L85=\"\",N(L6)<=0),\"\",-PV(Levers!$C$4/100,L6,0,L85))",
+          "=IF(OR(M85=\"\",N(M6)<=0),\"\",-PV(Levers!$C$4/100,M6,0,M85))",
+          "=IF(OR(N85=\"\",N(N6)<=0),\"\",-PV(Levers!$C$4/100,N6,0,N85))",
+          "=IF(OR(O85=\"\",N(O6)<=0),\"\",-PV(Levers!$C$4/100,O6,0,O85))",
+          "=IF(OR(P85=\"\",N(P6)<=0),\"\",-PV(Levers!$C$4/100,P6,0,P85))",
+          "=IF(OR(Q85=\"\",N(Q6)<=0),\"\",-PV(Levers!$C$4/100,Q6,0,Q85))",
+          "=IF(OR(R85=\"\",N(R6)<=0),\"\",-PV(Levers!$C$4/100,R6,0,R85))",
+          "=IF(OR(S85=\"\",N(S6)<=0),\"\",-PV(Levers!$C$4/100,S6,0,S85))",
+          "=IF(OR(T85=\"\",N(T6)<=0),\"\",-PV(Levers!$C$4/100,T6,0,T85))",
+          "=IF(OR(U85=\"\",N(U6)<=0),\"\",-PV(Levers!$C$4/100,U6,0,U85))",
+          "=IF(OR(V85=\"\",N(V6)<=0),\"\",-PV(Levers!$C$4/100,V6,0,V85))",
+          "=IF(OR(W85=\"\",N(W6)<=0),\"\",-PV(Levers!$C$4/100,W6,0,W85))",
+          "=IF(OR(X85=\"\",N(X6)<=0),\"\",-PV(Levers!$C$4/100,X6,0,X85))",
+          "=IF(OR(Y85=\"\",N(Y6)<=0),\"\",-PV(Levers!$C$4/100,Y6,0,Y85))",
+          "=IF(OR(Z85=\"\",N(Z6)<=0),\"\",-PV(Levers!$C$4/100,Z6,0,Z85))"
         ]
       ]
     },
     "Levers": {
-      "range": "A1:G47",
+      "range": "A1:G49",
       "rows": [
         [
           "Lever",
@@ -1589,7 +1929,16 @@
           "500",
           "76",
           "900",
-          "Whole-asset value of Sierra Springs Opportunity Fund: 2,500 owned acres plus ~2,000 acre-feet of water rights in Silver Springs NV, with 300 MW of gas equivalent secured (pipeline delivery November 2028) and a further 900\u20131,200 MW targeted for 2030. CEO on comps: 'four hundred, five hundred, six hundred million for the powered land thesis is out there' (2026-08-11, 00:47:54). Buyers increasingly price by the megawatt, not the acre. TREAT THE DEFAULT AS A COMPARABLE, NOT A VALUATION: Comstock has never disclosed a gross asset value, NAV or appraisal for this land, and an EDGAR full-text search finds no use of the phrase in any recent filing. The $76M low is the only market-tested anchor available \u2014 it back-solves from SSOF's own $0.65/share primary issue price, and at that level Comstock's 47.63% is worth about $36M, i.e. BELOW the $49.0M equity-method carrying value, which is the genuine bear case. Also note Comstock took actual title to the land only weeks before 2026-08-11, by exercising a 2019 option."
+          "Whole-asset value of Sierra Springs Opportunity Fund as of the As of date: 2,500 owned acres plus ~2,000 acre-feet of water rights in Silver Springs NV, with 300 MW of gas equivalent secured (pipeline delivery November 2028) and a further 900\u20131,200 MW targeted for 2030. CEO on comps: 'four hundred, five hundred, six hundred million for the powered land thesis is out there' (2026-08-11, 00:47:54). Buyers increasingly price by the megawatt, not the acre. TREAT THE DEFAULT AS A COMPARABLE, NOT A VALUATION: Comstock has never disclosed a gross asset value, NAV or appraisal for this land, and an EDGAR full-text search finds no use of the phrase in any recent filing. The $76M low is the only market-tested anchor available \u2014 it back-solves from SSOF's own $0.65/share primary issue price, and at that level Comstock's 47.63% is worth about $36M, i.e. BELOW the $49.0M equity-method carrying value, which is the genuine bear case. Also note Comstock took actual title to the land only weeks before 2026-08-11, by exercising a 2019 option. Quarterly Financials compounds this at 'SSOF value quarterly growth rate' from the As of date \u2014 set that growth to zero to freeze the comparable."
+        ],
+        [
+          "SSOF value quarterly growth rate",
+          "% / q",
+          "2",
+          "2",
+          "-5",
+          "5",
+          "QoQ % applied to 'SSOF gross asset value' on Quarterly Financials, measured from the As of date (exponent zero in that quarter). Default 2%/q (~8%/yr) is a modest path toward the powered-land comps as the Nov 2028 gas delivery and further MW allocations land \u2014 not a fitted NAV. Set to 0 to hold the comparable flat; use a negative rate if you think comps compress or the thesis slips."
         ],
         [
           "Comstock ownership of SSOF",
@@ -1604,7 +1953,7 @@
           "SSOF value achieved",
           "%",
           "80",
-          "55",
+          "80",
           "0",
           "100",
           "Share of the gross SSOF value that converts into cash for Comstock shareholders. Haircuts three separate things at once: whether comps hold, minority-stake and structuring friction, and timing. As of Aug 2026 nothing is signed \u2014 management's own year-end test is only 'some defined transaction with some derivable value', explicitly not a close. Land ownership and the power source are secured, which is why this is not lower."
@@ -1637,7 +1986,16 @@
           "65",
           "0",
           "200",
-          "Value attributed to Comstock's stake in the fuels business. Default 65 is management's own FLOOR, not its hope: Comstock sits at the top of the capital stack with a liquidation preference and 'would expect to recover our sixty-five million dollars for sure' (2026-08-11, 01:17:47). For reference only, the upside marks are a Marathon Petroleum $325M term sheet at ~$700M valuation (2024) and ~$1B from third-party investors. Those are stale and pre-date the founder departures, so they are not the default."
+          "Value attributed to Comstock's stake in the fuels business as of the As of date. Default 65 is management's own FLOOR, not its hope: Comstock sits at the top of the capital stack with a liquidation preference and 'would expect to recover our sixty-five million dollars for sure' (2026-08-11, 01:17:47). For reference only, the upside marks are a Marathon Petroleum $325M term sheet at ~$700M valuation (2024) and ~$1B from third-party investors. Those are stale and pre-date the founder departures, so they are not the default. Quarterly Financials compounds this at 'Comstock Fuels value quarterly growth rate' from the As of date."
+        ],
+        [
+          "Comstock Fuels value quarterly growth rate",
+          "% / q",
+          "0",
+          "0",
+          "-5",
+          "5",
+          "QoQ % applied to 'Comstock Fuels value to Comstock' on Quarterly Financials, measured from the As of date. Default 0 keeps the liquidation-preference floor flat \u2014 the conservative read of a pre-revenue TRL-6 business. Raise it if you underwrite Hexas materials revenue or a path toward the stale Marathon / third-party marks; use a negative rate if you think the preference is at risk."
         ],
         [
           "Comstock Fuels value achieved",
@@ -2012,14 +2370,14 @@
         [
           "Metals EV / EBITDA multiple",
           "x",
-          "=Levers!$C$45",
+          "=Levers!$C$47",
           "From the Levers tab. Applied to the cash earnings figure above."
         ],
         [
           "Comstock Metals business value",
           "$M",
-          "=MAX(0,$C$10*$C$11*Levers!$C$46/100)",
-          "EBITDA proxy \u00d7 multiple \u00d7 'Metals business value achieved'. Floored at zero: if the plant is still loss-making at the reference quarter the business is worth nothing in this frame, not a negative number \u2014 the cash drain already shows up in the net cash line."
+          "=N(OFFSET('Quarterly Financials'!$C$78,0,$C$4))",
+          "From Quarterly Financials at the reference quarter: EBITDA proxy \u00d7 multiple \u00d7 'Metals business value achieved', floored at zero. Same formula as 'Metals business value - Model' so the Valuation tab and the quarterly series agree."
         ],
         [
           "SSOF \u2014 POWERED LAND"
@@ -2027,38 +2385,38 @@
         [
           "SSOF gross asset value",
           "$M",
-          "=Levers!$C$27",
-          "From the Levers tab \u2014 whole-asset value of the land, water, and power."
+          "=N(OFFSET('Quarterly Financials'!$C$79,0,$C$4))",
+          "From Quarterly Financials: the Levers comparable as of the As of date, compounded at 'SSOF value quarterly growth rate'. At the default 2%/q this is no longer a flat $500M through 2030."
         ],
         [
           "Comstock ownership of SSOF",
           "%",
-          "=Levers!$C$28",
+          "=Levers!$C$29",
           "From the Levers tab \u2014 Comstock's equity interest in the fund."
         ],
         [
           "SSOF value achieved",
           "%",
-          "=Levers!$C$29",
+          "=Levers!$C$30",
           "From the Levers tab \u2014 how much of the gross value reaches shareholders."
         ],
         [
           "SSOF stake sold for cash",
           "%",
-          "=Levers!$C$30",
+          "=Levers!$C$31",
           "From the Levers tab \u2014 percentage of the haircut stake sold for cash inside the forecast (not a dollar amount). Defaults to zero because nothing is signed and every SSOF transaction to date is Comstock paying in (~$37M cumulative). Raise it only as a scenario test. Whatever is sold shows up in 'Cash - Model' instead of as a stake, and gets deducted below so it is never counted twice."
         ],
         [
           "SSOF already monetized by reference quarter",
           "yes / no",
-          "=IF((VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1)))<=(VALUE(LEFT($C$3,4))*4+VALUE(RIGHT($C$3,1))),\"yes\",\"no\")",
+          "=IF((VALUE(LEFT(Levers!$C$32,4))*4+VALUE(RIGHT(Levers!$C$32,1)))<=(VALUE(LEFT($C$3,4))*4+VALUE(RIGHT($C$3,1))),\"yes\",\"no\")",
           "Yes when the SSOF monetization quarter is at or before the reference quarter, which means any sold portion is already sitting in 'Cash - Model'. Only then does the deduction below apply \u2014 a sale scheduled after the reference quarter has not hit cash yet."
         ],
         [
           "SSOF stake value",
           "$M",
-          "=$C$14*$C$15/100*$C$16/100*(1-IF($C$18=\"yes\",$C$17/100,0))",
-          "Comstock's haircut share of SSOF, less whatever has already been converted to cash by the reference quarter. At the default zero-cash-sold setting this is the full stake value and the cash line is untouched; at 100% sold before the reference quarter it is zero and the value lives entirely in net cash. In between it splits, with no double-count either way."
+          "=N(OFFSET('Quarterly Financials'!$C$80,0,$C$4))",
+          "From Quarterly Financials at the reference quarter ('SSOF stake value - Model'): haircut share of the grown gross, less whatever has already been converted to cash by then."
         ],
         [
           "COMSTOCK FUELS"
@@ -2066,8 +2424,8 @@
         [
           "Comstock Fuels stake value",
           "$M",
-          "=Levers!$C$33*Levers!$C$34/100",
-          "From the Levers tab: value \u00d7 achieved. Never appears in the cash line, because the model does not assume the fuels stake is ever sold \u2014 only that it is worth something. The default is management's stated liquidation-preference floor, not a growth valuation."
+          "=N(OFFSET('Quarterly Financials'!$C$81,0,$C$4))",
+          "From Quarterly Financials at the reference quarter: Levers fuels value compounded at 'Comstock Fuels value quarterly growth rate' (default 0 \u2014 flat floor), then \u00d7 achieved. Never appears in the cash line."
         ],
         [
           "NET CASH"
@@ -2093,7 +2451,7 @@
         [
           "Net cash credited",
           "$M",
-          "=$C$25*Levers!$C$47/100",
+          "=$C$25*Levers!$C$49/100",
           "Net cash \u00d7 'Net cash credited to equity value' (a % lever, default 100%). Lower the percentage if you think cash gets consumed before shareholders see the benefit \u2014 do not paste a dollar target into that lever cell."
         ],
         [
@@ -2102,8 +2460,8 @@
         [
           "Equity value at reference quarter",
           "$M",
-          "=$C$12+$C$19+$C$21+$C$26",
-          "Metals business + SSOF stake + fuels stake + credited net cash. The 1.5% NSR on the sold mining district is deliberately carried at zero here \u2014 it pays on an unknowable schedule. Contract buyout floor if you want to credit it elsewhere (not by editing the rate lever): $3.5M anytime, rising to $7.0M if the 7-year contingent window lapses unpaid."
+          "=N(OFFSET('Quarterly Financials'!$C$84,0,$C$4))",
+          "From Quarterly Financials at the reference quarter: metals + SSOF + fuels + credited net cash. The 1.5% NSR on the sold mining district is deliberately carried at zero here \u2014 it pays on an unknowable schedule. Contract buyout floor if you want to credit it elsewhere (not by editing the rate lever): $3.5M anytime, rising to $7.0M if the 7-year contingent window lapses unpaid."
         ],
         [
           "Shares outstanding at reference quarter",
@@ -2114,8 +2472,8 @@
         [
           "Implied value per share at reference quarter",
           "$",
-          "=IF($C$29<=0,\"\",$C$28/$C$29)",
-          "Equity value \u00f7 shares, both as at the reference quarter. A future price, not today's."
+          "=N(OFFSET('Quarterly Financials'!$C$85,0,$C$4))",
+          "From Quarterly Financials ('Implied stock price - Model') at the reference quarter. A future price, not today's. Chart that row (or Present stock price discounted) for the quarterly path."
         ],
         [
           "Current share price",
@@ -2126,8 +2484,8 @@
         [
           "Present value per share",
           "$",
-          "=IF(OR($C$30=\"\",$C$6<=0),\"\",-PV(Levers!$C$4/100,$C$6,0,$C$30))",
-          "The reference-quarter price discounted back to the As of date at the Levers discount rate. This is the number to compare with the current share price."
+          "=N(OFFSET('Quarterly Financials'!$C$86,0,$C$4))",
+          "From Quarterly Financials at the reference quarter: implied price discounted back to the As of date at the Levers discount rate. Compare with the current share price."
         ],
         [
           "Upside to present value",
@@ -2150,7 +2508,7 @@
         ],
         [
           "Where the value comes from",
-          "Comstock is one ramping operating business (solar panel recycling) plus two lumpy asset stakes (SSOF powered land, Comstock Fuels) plus a signed legacy mining sale. The Valuation tab therefore does a sum of parts rather than putting one multiple on consolidated earnings, and each pillar carries its own 'achieved' lever so you can believe one and doubt another."
+          "Comstock is one ramping operating business (solar panel recycling) plus two lumpy asset stakes (SSOF powered land, Comstock Fuels) plus a signed legacy mining sale. Quarterly Financials carries the sum of parts every quarter \u2014 metals EV on annualized cash contribution, SSOF and Fuels grown (or declined) from the As of date at their Levers growth rates, plus net cash \u2014 so you can chart Implied / Present stock price. The Valuation tab is the annotated view of one reference quarter of that series, and each pillar still has its own 'achieved' lever so you can believe one and doubt another."
         ],
         [
           "What is deliberately left blank",
@@ -2423,6 +2781,59 @@
         [
           "Market cap",
           "Modelled shares outstanding \u00d7 stock price, in $M. Blank whenever either input is missing, so it is only populated for quarters that have actually traded."
+        ],
+        [],
+        [
+          "VALUATION",
+          "Sum of parts each quarter: metals EV on annualized cash contribution, grown SSOF and Fuels stakes, net cash. Implied and present stock prices live here so you can chart the path; the Valuation tab is the annotated view of one reference quarter of this series."
+        ],
+        [
+          "Annualized metals cash contribution - Model",
+          "Four times 'Metals cash contribution - Model' in this quarter. Cash EBITDA for the recycling segment before corporate overhead; the multiple in the sum of parts is applied to this less annualized corporate G&A."
+        ],
+        [
+          "Annualized corporate cash G&A - Model",
+          "Four times 'Corporate cash G&A - Model'. Deducted from annualized metals contribution because a shareholder cannot buy the plant without funding the public company around it."
+        ],
+        [
+          "Metals EBITDA proxy - Model",
+          "Annualized metals cash contribution less annualized corporate cash G&A \u2014 the consolidated cash earnings the Metals EV / annualized cash contribution multiple is applied to."
+        ],
+        [
+          "Metals business value - Model",
+          "MAX(0, Metals EBITDA proxy \u00d7 Metals EV / annualized cash contribution \u00d7 Metals business value achieved / 100). Floored at zero while the plant is still loss-making; the cash drain already shows up in Net cash - Model."
+        ],
+        [
+          "SSOF gross asset value - Model",
+          "SSOF gross asset value lever as of the As of date, compounded at 'SSOF value quarterly growth rate'. Exponent is zero in the as-of quarter, positive afterward, negative before. Default 2%/q is a modest path toward powered-land comps as gas delivery and further MW allocations land \u2014 set the growth lever to 0 to freeze the comparable."
+        ],
+        [
+          "SSOF stake value - Model",
+          "Grown gross \u00d7 ownership \u00d7 achieved, less the 'SSOF stake sold for cash' fraction once the monetization quarter has arrived (so value moved into Cash - Model is not counted twice)."
+        ],
+        [
+          "Comstock Fuels stake value - Model",
+          "Comstock Fuels value to Comstock lever as of the As of date, compounded at 'Comstock Fuels value quarterly growth rate' (default 0 \u2014 flat liquidation floor), then \u00d7 achieved. Never enters the cash line."
+        ],
+        [
+          "Net cash - Model",
+          "Cash - Model less Total debt - Model in this quarter. Negative means a funding gap, not a forecast of insolvency."
+        ],
+        [
+          "Net cash credited - Model",
+          "Net cash \u00d7 'Net cash credited to equity value'. Lower the percentage lever if you think cash is consumed before shareholders see it."
+        ],
+        [
+          "Equity value - Model",
+          "Metals business + SSOF stake + Fuels stake + credited net cash. The chartable sum of parts for the quarter; Implied stock price - Model divides this by shares."
+        ],
+        [
+          "Implied stock price - Model",
+          "Equity value - Model \u00f7 Shares outstanding - Model. Future (or retrospective) SoP price for the quarter \u2014 the series to chart for quarterly projected prices. Not discounted."
+        ],
+        [
+          "Present stock price discounted - Model",
+          "Implied stock price discounted back to the As of date at the Levers discount rate. Blank when years from present \u2264 0 (past or current quarter). Chart this for today's dollars; chart Implied stock price - Model for the undiscounted path."
         ]
       ]
     },
@@ -2443,7 +2854,7 @@
         ],
         [
           "Approach",
-          "Comstock is really three things: a solar-panel recycling business that is just beginning to ramp, a roughly half-owned 'powered land' position (SSOF), and a pre-commercial fuels venture \u2014 plus a signed sale of the legacy mining assets. Putting one earnings multiple on that mixture would describe none of it, so the Valuation tab does a sum of parts and gives each pillar its own realization lever. That way you can believe the recycling plant and still discount the land, or the reverse."
+          "Comstock is really three things: a solar-panel recycling business that is just beginning to ramp, a roughly half-owned 'powered land' position (SSOF), and a pre-commercial fuels venture \u2014 plus a signed sale of the legacy mining assets. Putting one earnings multiple on that mixture would describe none of it, so Quarterly Financials (and the Valuation tab at a reference quarter) do a sum of parts and give each pillar its own realization lever. SSOF and Fuels values compound from the As of date at Levers growth rates rather than sitting flat through 2030. That way you can believe the recycling plant and still discount the land, or the reverse."
         ],
         [
           "Why levers",
@@ -2479,7 +2890,7 @@
         ],
         [
           "Quarterly Financials",
-          "The main time series, one column per quarter from 2025 Q1 to 2030 Q4. Recycling volume and unit economics, reported results, cash, and share count. Yellow '- Plan' rows are the ramp trajectories you own."
+          "The main time series, one column per quarter from 2025 Q1 to 2030 Q4. Recycling volume and unit economics, reported results, cash, share count, and the sum-of-parts valuation (Implied / Present stock price). Yellow '- Plan' rows are the ramp trajectories you own."
         ],
         [
           "Financials Definitions",
@@ -2491,7 +2902,7 @@
         ],
         [
           "Valuation",
-          "Sum of parts as at a reference quarter, then discounted back to today. Includes a guard so an asset sale that already landed in cash is not also counted as a stake."
+          "Annotated sum of parts for one reference quarter of the Quarterly Financials valuation series, including the guard so an asset sale that already landed in cash is not also counted as a stake. Chart the quarterly Implied / Present stock price rows instead of this tab."
         ],
         [
           "Shares",

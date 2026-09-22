@@ -166,6 +166,14 @@ def weekly_inventory_formula(
     )
 
 
+def quarterly_asp_formula(col: str, *, home_sales_row: int, revenue_row: int) -> str:
+    """Revenue ÷ home sales; blank when either side is missing or zero (no #DIV/0!)."""
+    return (
+        f'=IF(OR(N({col}{home_sales_row})=0,N({col}{revenue_row})=0),"",'
+        f"{col}{revenue_row}/{col}{home_sales_row})"
+    )
+
+
 def weekly_asp_formula(
     col: str,
     prev_col: str,
@@ -175,7 +183,11 @@ def weekly_asp_formula(
     week_date_row: int = WEEK_DATE_ROW,
     first_col_fallback: int | float = 377_500,
 ) -> str:
-    """Use quarterly ASP when populated; otherwise carry forward the prior week."""
+    """Use quarterly ASP when populated (>0); otherwise carry forward the prior week.
+
+    Treats blank, zero, and quarterly #DIV/0! (via IFERROR) as missing so forward
+    weeks keep the last known ASP instead of propagating 0 / errors.
+    """
     q_asp = f"INDEX('{QUARTERLY}'!$B${quarterly_row}:$M${quarterly_row},1,qCol)"
     fallback = str(first_col_fallback) if col == "B" else f"{prev_col}{weekly_row}"
     return (
@@ -183,8 +195,8 @@ def weekly_asp_formula(
         f"wk,{col}${week_date_row},"
         f'qKey,IF(wk="","",YEAR(wk)&" Q"&ROUNDUP(MONTH(wk)/3,0)),'
         f"qCol,IFERROR(MATCH(qKey,'{QUARTERLY}'!$B$1:$1,0),0),"
-        f"qAsp,IF(qCol=0,\"\",{q_asp}),"
-        f'IF(wk="","",IF(qAsp="",{fallback},qAsp))'
+        f"qAsp,IFERROR(IF(qCol=0,\"\",{q_asp}),\"\"),"
+        f'IF(wk="","",IF(OR(qAsp="",N(qAsp)=0),{fallback},qAsp))'
         f")"
     )
 

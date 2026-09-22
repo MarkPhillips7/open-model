@@ -11,6 +11,11 @@ Entry template:
 - **Why:** motivation
 ```
 
+## 2026-09-22 — ASP formulas treat missing revenue / zero as blank
+
+- **What:** `sheets/formulas.py` adds `quarterly_asp_formula()` (blank when revenue or home sales is 0) and `weekly_asp_formula()` now carry-forwards on 0 / `#DIV/0!`, not only blank. OPEN spread script restores quarterly ASP.
+- **Why:** Forward quarters with Accountable home sales but no revenue were printing ASP `0` / `#DIV/0!` into Weekly Financials.
+
 ## 2026-09-10 — Re-prompt Google OAuth when the saved token is revoked
 
 - **What:** `sheets.auth.get_client()` catches `RefreshError`, deletes `config/authorized_user.json`, and retries so `auth_setup.py` opens a browser instead of dying on `invalid_grant`.

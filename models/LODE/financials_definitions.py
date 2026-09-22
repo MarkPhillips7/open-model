@@ -371,6 +371,60 @@ DEFINITIONS: dict[str, str] = {
         "Modelled shares outstanding × stock price, in $M. Blank whenever either input is missing, "
         "so it is only populated for quarters that have actually traded."
     ),
+    L.ANNUAL_METALS_CONTRIB_MODEL: (
+        "Four times 'Metals cash contribution - Model' in this quarter. Cash EBITDA for the "
+        "recycling segment before corporate overhead; the multiple in the sum of parts is applied "
+        "to this less annualized corporate G&A."
+    ),
+    L.ANNUAL_CORP_GA_MODEL: (
+        "Four times 'Corporate cash G&A - Model'. Deducted from annualized metals contribution "
+        "because a shareholder cannot buy the plant without funding the public company around it."
+    ),
+    L.METALS_EBITDA_PROXY_MODEL: (
+        "Annualized metals cash contribution less annualized corporate cash G&A — the consolidated "
+        "cash earnings the Metals EV / annualized cash contribution multiple is applied to."
+    ),
+    L.METALS_BUSINESS_VALUE_MODEL: (
+        "MAX(0, Metals EBITDA proxy × Metals EV / annualized cash contribution × Metals business "
+        "value achieved / 100). Floored at zero while the plant is still loss-making; the cash "
+        "drain already shows up in Net cash - Model."
+    ),
+    L.SSOF_GROSS_MODEL: (
+        "SSOF gross asset value lever as of the As of date, compounded at 'SSOF value quarterly "
+        "growth rate'. Exponent is zero in the as-of quarter, positive afterward, negative before. "
+        "Default 2%/q is a modest path toward powered-land comps as gas delivery and further MW "
+        "allocations land — set the growth lever to 0 to freeze the comparable."
+    ),
+    L.SSOF_STAKE_VALUE_MODEL: (
+        "Grown gross × ownership × achieved, less the 'SSOF stake sold for cash' fraction once the "
+        "monetization quarter has arrived (so value moved into Cash - Model is not counted twice)."
+    ),
+    L.FUELS_STAKE_VALUE_MODEL: (
+        "Comstock Fuels value to Comstock lever as of the As of date, compounded at 'Comstock Fuels "
+        "value quarterly growth rate' (default 0 — flat liquidation floor), then × achieved. Never "
+        "enters the cash line."
+    ),
+    L.NET_CASH_MODEL: (
+        "Cash - Model less Total debt - Model in this quarter. Negative means a funding gap, not a "
+        "forecast of insolvency."
+    ),
+    L.NET_CASH_CREDITED_MODEL: (
+        "Net cash × 'Net cash credited to equity value'. Lower the percentage lever if you think "
+        "cash is consumed before shareholders see it."
+    ),
+    L.EQUITY_VALUE_MODEL: (
+        "Metals business + SSOF stake + Fuels stake + credited net cash. The chartable sum of parts "
+        "for the quarter; Implied stock price - Model divides this by shares."
+    ),
+    L.IMPLIED_STOCK_PRICE_MODEL: (
+        "Equity value - Model ÷ Shares outstanding - Model. Future (or retrospective) SoP price for "
+        "the quarter — the series to chart for quarterly projected prices. Not discounted."
+    ),
+    L.PRESENT_STOCK_PRICE_MODEL: (
+        "Implied stock price discounted back to the As of date at the Levers discount rate. Blank "
+        "when years from present ≤ 0 (past or current quarter). Chart this for today's dollars; "
+        "chart Implied stock price - Model for the undiscounted path."
+    ),
 }
 
 
@@ -399,6 +453,11 @@ SECTION_NOTES: dict[str, str] = {
         "Denominator and market price. Dilution has been the main destroyer of per-share value at "
         "this company, so this section is not an afterthought."
     ),
+    L.SECTION_VALUATION: (
+        "Sum of parts each quarter: metals EV on annualized cash contribution, grown SSOF and "
+        "Fuels stakes, net cash. Implied and present stock prices live here so you can chart the "
+        "path; the Valuation tab is the annotated view of one reference quarter of this series."
+    ),
 }
 
 
@@ -415,10 +474,12 @@ INTRO: list[tuple[str, str]] = [
     (
         "Where the value comes from",
         "Comstock is one ramping operating business (solar panel recycling) plus two lumpy asset "
-        "stakes (SSOF powered land, Comstock Fuels) plus a signed legacy mining sale. The Valuation "
-        "tab therefore does a sum of parts rather than putting one multiple on consolidated "
-        "earnings, and each pillar carries its own 'achieved' lever so you can believe one and doubt "
-        "another.",
+        "stakes (SSOF powered land, Comstock Fuels) plus a signed legacy mining sale. Quarterly "
+        "Financials carries the sum of parts every quarter — metals EV on annualized cash "
+        "contribution, SSOF and Fuels grown (or declined) from the As of date at their Levers "
+        "growth rates, plus net cash — so you can chart Implied / Present stock price. The "
+        "Valuation tab is the annotated view of one reference quarter of that series, and each "
+        "pillar still has its own 'achieved' lever so you can believe one and doubt another.",
     ),
     (
         "What is deliberately left blank",

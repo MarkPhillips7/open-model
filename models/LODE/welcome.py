@@ -36,9 +36,11 @@ APPROACH = (
     "Comstock is really three things: a solar-panel recycling business that is just beginning to "
     "ramp, a roughly half-owned 'powered land' position (SSOF), and a pre-commercial fuels venture "
     "— plus a signed sale of the legacy mining assets. Putting one earnings multiple on that "
-    "mixture would describe none of it, so the Valuation tab does a sum of parts and gives each "
-    "pillar its own realization lever. That way you can believe the recycling plant and still "
-    "discount the land, or the reverse."
+    "mixture would describe none of it, so Quarterly Financials (and the Valuation tab at a "
+    "reference quarter) do a sum of parts and give each pillar its own realization lever. SSOF and "
+    "Fuels values compound from the As of date at Levers growth rates rather than sitting flat "
+    "through 2030. That way you can believe the recycling plant and still discount the land, or "
+    "the reverse."
 )
 
 WHY_LEVERS = (
@@ -92,8 +94,8 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     (
         "Quarterly Financials",
         "The main time series, one column per quarter from 2025 Q1 to 2030 Q4. Recycling volume and "
-        "unit economics, reported results, cash, and share count. Yellow '- Plan' rows are the ramp "
-        "trajectories you own.",
+        "unit economics, reported results, cash, share count, and the sum-of-parts valuation "
+        "(Implied / Present stock price). Yellow '- Plan' rows are the ramp trajectories you own.",
     ),
     (
         "Financials Definitions",
@@ -108,8 +110,10 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     ),
     (
         "Valuation",
-        "Sum of parts as at a reference quarter, then discounted back to today. Includes a guard so "
-        "an asset sale that already landed in cash is not also counted as a stake.",
+        "Annotated sum of parts for one reference quarter of the Quarterly Financials valuation "
+        "series, including the guard so an asset sale that already landed in cash is not also "
+        "counted as a stake. Chart the quarterly Implied / Present stock price rows instead of "
+        "this tab.",
     ),
     (
         "Shares",
