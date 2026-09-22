@@ -18,6 +18,24 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Fix Valuation (+ Asset Monetization) after Levers rebuild
+
+Levers row numbers shifted when the tab was rebuilt (tailings / silver levers). Valuation and Asset Monetization still pointed at the old `Levers!$C$…` cells. On Valuation, Metals business value multiplied by **Mining sale second tranche quarter** (`2027 Q4`) and produced `#VALUE!` down through equity value / per-share / upside; SSOF, fuels, multiple, and net-cash-credited were also reading the wrong levers. Asset Monetization had the same stale refs (wrong numbers, no `#VALUE!`).
+
+- **Tab / range:** Valuation `A1:D33`; Asset Monetization `A1:D34` (full rewrites from repo)
+- **Insert/delete:** none (Valuation gained one data row vs prior live layout: `SSOF stake sold for cash`)
+- **Formulas:** stale absolute Levers refs → current `lever_ref()` targets, e.g. Valuation
+  - Metals multiple: `Levers!$C$40` → `Levers!$C$45`
+  - Metals achieved: `Levers!$C$41` → `Levers!$C$46`
+  - Net cash credit: `Levers!$C$42` → `Levers!$C$47`
+  - SSOF / Fuels blocks similarly retargeted; SSOF stake value now nets `SSOF stake sold for cash` when monetization ≤ reference quarter
+- **Data:** Reference quarter left at `2029 Q4` (default input)
+- **Side effects:** `#VALUE!` cleared on Valuation result lines; fingerprint refreshed. No chart tabs.
+
+### Repo
+
+- `live_fingerprint.json` only (no Python changes; sheet caught up to existing `valuation.py` / `asset_monetization.py`)
+
 ## 2026-09-21 — Tailings stockpile + strong-2030 silver underwrite
 
 Model the CEO's "prefer not to sell tailings once extraction is in sight" path, and raise the metal underwrite toward most-of-the-silver / higher-purity product by 2030.

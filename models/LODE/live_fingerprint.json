@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-09-21T20:30:38Z",
+  "recorded": "2026-09-22T14:25:23Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
@@ -1782,13 +1782,13 @@
         [
           "Cash at closing",
           "$M",
-          "=Levers!$C$33",
+          "=Levers!$C$38",
           "The 'Initial Payment'. The 10-Q states '$20,000,000 in cash' outright. A $150,000 non-refundable buyer deposit is credited against it at closing."
         ],
         [
           "Second tranche",
           "$M",
-          "=Levers!$C$35",
+          "=Levers!$C$40",
           "Due within 18 months of the effective date, secured by a Deed of Trust on the sold properties, and bearing 12% interest after the due date. Up to $2M may be settled in Mackay Parent stock depending on its volume-weighted average price."
         ],
         [
@@ -1806,7 +1806,7 @@
         [
           "NSR royalty retained",
           "%",
-          "=Levers!$C$38",
+          "=Levers!$C$43",
           "1.5% net smelter return on minerals produced from the transferred properties. Mackay may repurchase 100% of it for $3,500,000, rising to $7,000,000 if the 7-year contingent window lapses unpaid. That repurchase right is a defensible floor if you want to credit it; the model carries it at zero."
         ],
         [
@@ -1822,10 +1822,10 @@
           "Carrying value at 2026-06-30: mineral properties and water rights $11.25M, buildings, land and equipment $7.43M, reclamation bond deposit $4.29M, other $0.02M. Because the disposal is classified held for sale and NOT discontinued operations, no prior period is restated and mining revenue stays inside reported revenue in every historical quarter."
         ],
         [
-          "Closing condition",
+          "Closing status",
           "",
-          "TSX-V approval",
-          "The only outstanding condition. Cash was expected in August 2026 and the CEO described the close as 'imminent' on 2026-08-11. If it has not closed, the closing-quarter lever is the first thing to move."
+          "CLOSED 2026-08-24",
+          "The sale completed on 2026-08-24 and the $20.0M Initial Payment is received, so the closing quarter (2026 Q3) and the cash amount are now facts rather than estimates. What remains open is the $7.0M second tranche, the $10.0M contingent payment, and the NSR buyout."
         ],
         [
           "SSOF 'POWERED LAND' \u2014 assets secured, no transaction yet"
@@ -1833,7 +1833,7 @@
         [
           "Comstock ownership",
           "%",
-          "=Levers!$C$24",
+          "=Levers!$C$28",
           "47.63% as of Q2 2026, up materially during 2026. Accounted for under the equity method, so the balance-sheet carrying value is far below this share of the values below \u2014 that gap is the option value this section exists to surface."
         ],
         [
@@ -1863,19 +1863,19 @@
         [
           "Gross asset value",
           "$M",
-          "=Levers!$C$23",
+          "=Levers!$C$27",
           "Management's comparable range for the powered-land thesis is '$400, $500, $600 million' (CEO, 2026-08-11). Northern Nevada sits next to the Tahoe Reno Industrial Center, and the CEO names Switch, Apple, Microsoft and Google as present in the region. This is a comp, not a bid \u2014 hence the achievement lever."
         ],
         [
           "Value achieved",
           "%",
-          "=Levers!$C$25",
+          "=Levers!$C$29",
           "The haircut. Covers whether the comps hold, minority-stake and structuring friction, and timing all at once."
         ],
         [
           "Monetization quarter",
           "quarter",
-          "=Levers!$C$26",
+          "=Levers!$C$31",
           "When proceeds are assumed to land. Management's own year-end 2026 test is only 'some defined transaction with some derivable value', and the CEO said a close by then is 'probably not'. Comstock is explicit it wants to pull capital out of SSOF, not put more in."
         ],
         [
@@ -1884,7 +1884,7 @@
         [
           "Comstock value attributed",
           "$M",
-          "=Levers!$C$28",
+          "=Levers!$C$33",
           "Default is the liquidation-preference floor, not a growth valuation. Comstock sits at the top of the capital stack and the CEO expects to recover '$65 million for sure' in a wind-up (2026-08-11)."
         ],
         [
@@ -1902,13 +1902,13 @@
         [
           "Bridge loan from Comstock",
           "$M",
-          "=Levers!$C$30",
+          "=Levers!$C$35",
           "A LOAN, not equity: 'we're not putting more equity in' (CEO, 2026-08-11). Sized to carry a downsized team three to four months while third-party capital is raised."
         ],
         [
           "Monthly burn",
           "$M",
-          "=Levers!$C$31",
+          "=Levers!$C$36",
           "About $600\u2013700k per month for the downsized team. Used only to size and pace the bridge \u2014 it is not a Comstock operating expense, because the subsidiary is separately funded."
         ],
         [
@@ -2001,7 +2001,7 @@
           "Annualized corporate cash G&A",
           "$M",
           "=4*N(OFFSET('Quarterly Financials'!$C$49,0,$C$4))",
-          "Four times 'Corporate cash G&A - Model' in the reference quarter. Deducted because a shareholder cannot buy the plant without also funding the public company around it."
+          "Four times 'Corporate cash G&A - Model' in the reference quarter. That model row is Corporate/Other SEGMENT cash G&A only (~$2.25M/qtr default on Levers \u2014 not consolidated G&A of ~$7M, which would double-count Bioleum against the fuels bridge). Deducted because a shareholder cannot buy the plant without also funding the public company around it."
         ],
         [
           "Metals EBITDA proxy",
@@ -2012,13 +2012,13 @@
         [
           "Metals EV / EBITDA multiple",
           "x",
-          "=Levers!$C$40",
+          "=Levers!$C$45",
           "From the Levers tab. Applied to the cash earnings figure above."
         ],
         [
           "Comstock Metals business value",
           "$M",
-          "=MAX(0,$C$10*$C$11*Levers!$C$41/100)",
+          "=MAX(0,$C$10*$C$11*Levers!$C$46/100)",
           "EBITDA proxy \u00d7 multiple \u00d7 'Metals business value achieved'. Floored at zero: if the plant is still loss-making at the reference quarter the business is worth nothing in this frame, not a negative number \u2014 the cash drain already shows up in the net cash line."
         ],
         [
@@ -2027,32 +2027,38 @@
         [
           "SSOF gross asset value",
           "$M",
-          "=Levers!$C$23",
+          "=Levers!$C$27",
           "From the Levers tab \u2014 whole-asset value of the land, water, and power."
         ],
         [
           "Comstock ownership of SSOF",
           "%",
-          "=Levers!$C$24",
+          "=Levers!$C$28",
           "From the Levers tab \u2014 Comstock's equity interest in the fund."
         ],
         [
           "SSOF value achieved",
           "%",
-          "=Levers!$C$25",
+          "=Levers!$C$29",
           "From the Levers tab \u2014 how much of the gross value reaches shareholders."
+        ],
+        [
+          "SSOF stake sold for cash",
+          "%",
+          "=Levers!$C$30",
+          "From the Levers tab \u2014 percentage of the haircut stake sold for cash inside the forecast (not a dollar amount). Defaults to zero because nothing is signed and every SSOF transaction to date is Comstock paying in (~$37M cumulative). Raise it only as a scenario test. Whatever is sold shows up in 'Cash - Model' instead of as a stake, and gets deducted below so it is never counted twice."
         ],
         [
           "SSOF already monetized by reference quarter",
           "yes / no",
-          "=IF((VALUE(LEFT(Levers!$C$26,4))*4+VALUE(RIGHT(Levers!$C$26,1)))<=(VALUE(LEFT($C$3,4))*4+VALUE(RIGHT($C$3,1))),\"yes\",\"no\")",
-          "Yes when the SSOF monetization quarter is at or before the reference quarter, which means the proceeds are already sitting in 'Cash - Model'. The stake value below then shows zero so the same asset is not counted twice."
+          "=IF((VALUE(LEFT(Levers!$C$31,4))*4+VALUE(RIGHT(Levers!$C$31,1)))<=(VALUE(LEFT($C$3,4))*4+VALUE(RIGHT($C$3,1))),\"yes\",\"no\")",
+          "Yes when the SSOF monetization quarter is at or before the reference quarter, which means any sold portion is already sitting in 'Cash - Model'. Only then does the deduction below apply \u2014 a sale scheduled after the reference quarter has not hit cash yet."
         ],
         [
           "SSOF stake value",
           "$M",
-          "=IF($C$17=\"yes\",0,$C$14*$C$15/100*$C$16/100)",
-          "Comstock's haircut share of SSOF, but only if it has not yet been monetized by the reference quarter. Otherwise zero \u2014 see the row above."
+          "=$C$14*$C$15/100*$C$16/100*(1-IF($C$18=\"yes\",$C$17/100,0))",
+          "Comstock's haircut share of SSOF, less whatever has already been converted to cash by the reference quarter. At the default zero-cash-sold setting this is the full stake value and the cash line is untouched; at 100% sold before the reference quarter it is zero and the value lives entirely in net cash. In between it splits, with no double-count either way."
         ],
         [
           "COMSTOCK FUELS"
@@ -2060,7 +2066,7 @@
         [
           "Comstock Fuels stake value",
           "$M",
-          "=Levers!$C$28*Levers!$C$29/100",
+          "=Levers!$C$33*Levers!$C$34/100",
           "From the Levers tab: value \u00d7 achieved. Never appears in the cash line, because the model does not assume the fuels stake is ever sold \u2014 only that it is worth something. The default is management's stated liquidation-preference floor, not a growth valuation."
         ],
         [
@@ -2081,14 +2087,14 @@
         [
           "Net cash",
           "$M",
-          "=$C$22-$C$23",
-          "Cash less debt at the reference quarter."
+          "=$C$23-$C$24",
+          "Cash less debt at the reference quarter. Sanity check near today (not a lever input): $31.4M cash at 6/30/26 + $20.0M Mackay Initial Payment received 8/24/26 \u2248 $51M before Q3 burn; ~$35\u201343M after a quarter of ~$8M operating burn and ~$3.5M capex is a reasonable ballpark. Do not credit the $4.3M reclamation bond deposit \u2014 it transferred with the mining sale. The Levers 'Net cash credited to equity value' cell is a percentage haircut on this modelled figure, not a dollar override."
         ],
         [
           "Net cash credited",
           "$M",
-          "=$C$24*Levers!$C$42/100",
-          "Net cash \u00d7 'Net cash credited to equity value'. Lower the lever if you think the cash gets consumed before shareholders see the benefit."
+          "=$C$25*Levers!$C$47/100",
+          "Net cash \u00d7 'Net cash credited to equity value' (a % lever, default 100%). Lower the percentage if you think cash gets consumed before shareholders see the benefit \u2014 do not paste a dollar target into that lever cell."
         ],
         [
           "RESULT"
@@ -2096,8 +2102,8 @@
         [
           "Equity value at reference quarter",
           "$M",
-          "=$C$12+$C$18+$C$20+$C$25",
-          "Metals business + SSOF stake + fuels stake + credited net cash. The NSR royalty retained on the sold mining district is deliberately carried at zero \u2014 it is a real option but pays on an unknowable schedule."
+          "=$C$12+$C$19+$C$21+$C$26",
+          "Metals business + SSOF stake + fuels stake + credited net cash. The 1.5% NSR on the sold mining district is deliberately carried at zero here \u2014 it pays on an unknowable schedule. Contract buyout floor if you want to credit it elsewhere (not by editing the rate lever): $3.5M anytime, rising to $7.0M if the 7-year contingent window lapses unpaid."
         ],
         [
           "Shares outstanding at reference quarter",
@@ -2108,7 +2114,7 @@
         [
           "Implied value per share at reference quarter",
           "$",
-          "=IF($C$28<=0,\"\",$C$27/$C$28)",
+          "=IF($C$29<=0,\"\",$C$28/$C$29)",
           "Equity value \u00f7 shares, both as at the reference quarter. A future price, not today's."
         ],
         [
@@ -2120,13 +2126,13 @@
         [
           "Present value per share",
           "$",
-          "=IF(OR($C$29=\"\",$C$6<=0),\"\",-PV(Levers!$C$4/100,$C$6,0,$C$29))",
+          "=IF(OR($C$30=\"\",$C$6<=0),\"\",-PV(Levers!$C$4/100,$C$6,0,$C$30))",
           "The reference-quarter price discounted back to the As of date at the Levers discount rate. This is the number to compare with the current share price."
         ],
         [
           "Upside to present value",
           "%",
-          "=IF(OR(N($C$30)=0,$C$31=\"\"),\"\",($C$31/$C$30-1)*100)",
+          "=IF(OR(N($C$31)=0,$C$32=\"\"),\"\",($C$32/$C$31-1)*100)",
           "Present value per share versus the current price. Blank until both are available."
         ]
       ]
