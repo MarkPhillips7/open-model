@@ -66,6 +66,10 @@ from models.LODE.layout import (
     SHARES_MODEL_QOQ,
     SSOF_PROCEEDS_MODEL,
     STOCK_PRICE,
+    STOCKPILE_METAL_REVENUE,
+    TAILINGS_INVENTORY,
+    TAILINGS_STOCKPILE_ADD,
+    TAILINGS_STOCKPILE_DRAW,
     TIPPING_MODEL,
     TONS_ACTUAL,
     TONS_MODEL,
@@ -193,13 +197,32 @@ def _tipping_model() -> str:
     )
 
 
+def _stockpile_frac() -> str:
+    """0 before the start quarter; stockpile % / 100 afterwards."""
+    started = (
+        f"IF({_quarter_index()}>={_lever_quarter_index(lv.TAILINGS_STOCKPILE_START)},"
+        f"{_lever(lv.TAILINGS_STOCKPILE_PCT)}/100,0)"
+    )
+    return started
+
+
 def _material_model() -> str:
-    """Today's realised material value, plus the two unproven uplifts once phased in."""
+    """Base offtake, less withheld tailings, plus phased glass/metal uplifts.
+
+    When stockpiling, the tailings offtake slice is removed up front and returned
+    as ``phase × metal_achieved`` rises (so full extraction converges on
+    base + uplifts, same as the sell path — the difference is timing plus the
+    separate backlog revenue row).
+    """
     glass = f"{_lever(lv.GLASS_UPLIFT_PER_TON)}*{_lever(lv.GLASS_UPLIFT_ACHIEVED)}/100"
     metal = f"{_lever(lv.METAL_UPLIFT_PER_TON)}*{_lever(lv.METAL_UPLIFT_ACHIEVED)}/100"
     phase = f"{_cur(UPLIFT_PHASE_IN)}/100"
+    ach = f"{_lever(lv.METAL_UPLIFT_ACHIEVED)}/100"
+    forgone = f"{_lever(lv.TAILINGS_OFFTAKE_PER_TON)}*{_stockpile_frac()}"
     return _blank_if_no_quarter(
-        f"{_lever(lv.MATERIAL_BASE_PER_TON)}+({glass}+{metal})*{phase}"
+        f"{_lever(lv.MATERIAL_BASE_PER_TON)}"
+        f"-{forgone}*(1-{phase}*{ach})"
+        f"+({glass}+{metal})*{phase}"
     )
 
 
@@ -207,8 +230,58 @@ def _revenue_per_ton_model() -> str:
     return _blank_if_no_quarter(f"{_cur(TIPPING_MODEL)}+{_cur(MATERIAL_MODEL)}")
 
 
+def _tailings_stockpile_add() -> str:
+    """Panel-equivalent tons of tailings withheld this quarter (not processed yet)."""
+    phase = f"{_cur(UPLIFT_PHASE_IN)}/100"
+    return _blank_if_no_quarter(
+        f"{_cur(TONS_MODEL)}*{_stockpile_frac()}*MAX(0,1-{phase})"
+    )
+
+
+def _tailings_stockpile_draw() -> str:
+    """Backlog processed this quarter once extraction phase-in is underway."""
+    phase = f"{_cur(UPLIFT_PHASE_IN)}/100"
+    # Extra panel-equivalent capacity available to flush inventory this quarter.
+    capacity = (
+        f"{_cur(TONS_MODEL)}*{phase}*{_lever(lv.TAILINGS_BACKLOG_DRAW)}"
+    )
+    prior_inv = f"N({_prev(TAILINGS_INVENTORY)})"
+    return _blank_if_no_quarter(f"MIN({prior_inv},{capacity})")
+
+
+def _tailings_stockpile_draw_first() -> str:
+    return _blank_if_no_quarter("0")
+
+
+def _tailings_inventory() -> str:
+    return _blank_if_no_quarter(
+        f"MAX(0,N({_prev(TAILINGS_INVENTORY)})"
+        f"+{_cur(TAILINGS_STOCKPILE_ADD)}-{_cur(TAILINGS_STOCKPILE_DRAW)})"
+    )
+
+
+def _tailings_inventory_first() -> str:
+    return _blank_if_no_quarter(
+        f"MAX(0,{_cur(TAILINGS_STOCKPILE_ADD)}-{_cur(TAILINGS_STOCKPILE_DRAW)})"
+    )
+
+
+def _stockpile_metal_revenue() -> str:
+    """$M from drawing the stockpile — full offtake + incremental metal uplift."""
+    value_per_ton = (
+        f"({_lever(lv.TAILINGS_OFFTAKE_PER_TON)}"
+        f"+{_lever(lv.METAL_UPLIFT_PER_TON)}*{_lever(lv.METAL_UPLIFT_ACHIEVED)}/100)"
+    )
+    return _blank_if_no_quarter(
+        f"{_cur(TAILINGS_STOCKPILE_DRAW)}*{value_per_ton}/1000000"
+    )
+
+
 def _metals_revenue_model() -> str:
-    model = f"{_cur(TONS_MODEL)}*{_cur(REVENUE_PER_TON_MODEL)}/1000000"
+    model = (
+        f"{_cur(TONS_MODEL)}*{_cur(REVENUE_PER_TON_MODEL)}/1000000"
+        f"+{_cur(STOCKPILE_METAL_REVENUE)}"
+    )
     return _blank_if_no_quarter(_prefer_actual(_cur(METALS_REVENUE_ACTUAL), model))
 
 
@@ -445,6 +518,10 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     TIPPING_MODEL: _tipping_model(),
     MATERIAL_MODEL: _material_model(),
     REVENUE_PER_TON_MODEL: _revenue_per_ton_model(),
+    TAILINGS_STOCKPILE_ADD: _tailings_stockpile_add(),
+    TAILINGS_STOCKPILE_DRAW: _tailings_stockpile_draw(),
+    TAILINGS_INVENTORY: _tailings_inventory(),
+    STOCKPILE_METAL_REVENUE: _stockpile_metal_revenue(),
     METALS_REVENUE_MODEL: _metals_revenue_model(),
     METALS_FIXED_COST_MODEL: _metals_fixed_cost_model(),
     METALS_VARIABLE_COST_MODEL: _metals_variable_cost_model(),
@@ -473,6 +550,8 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
 # Column C has no prior column, so rows that roll forward need their own opener.
 FIRST_COL_TEMPLATES: dict[str, str] = {
     METALS_CAPEX_MODEL: _metals_capex_model_first(),
+    TAILINGS_STOCKPILE_DRAW: _tailings_stockpile_draw_first(),
+    TAILINGS_INVENTORY: _tailings_inventory_first(),
     CASH_MODEL: _cash_model_first(),
     TOTAL_DEBT_MODEL: _total_debt_model_first(),
     SHARES_MODEL: _shares_model_first(),

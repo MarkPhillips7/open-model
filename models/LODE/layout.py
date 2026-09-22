@@ -62,6 +62,10 @@ TONS_MODEL = "Tons processed - Model"
 TIPPING_MODEL = "Tipping fee per ton - Model"
 MATERIAL_MODEL = "Recovered material per ton - Model"
 UPLIFT_PHASE_IN = "Uplift phase-in - Plan"
+TAILINGS_STOCKPILE_ADD = "Tailings stockpile add - Model"
+TAILINGS_INVENTORY = "Tailings inventory - Model"
+TAILINGS_STOCKPILE_DRAW = "Tailings stockpile draw - Model"
+STOCKPILE_METAL_REVENUE = "Stockpile metal revenue - Model"
 REVENUE_PER_TON_MODEL = "Revenue per ton - Model"
 
 METALS_REVENUE_ACTUAL = "Metals revenue"
@@ -149,6 +153,10 @@ ROWS: list[tuple[str, str]] = [
     (UPLIFT_PHASE_IN, UNITS_PCT),
     (MATERIAL_MODEL, UNITS_USD_TON),
     (REVENUE_PER_TON_MODEL, UNITS_USD_TON),
+    (TAILINGS_STOCKPILE_ADD, UNITS_TONS),
+    (TAILINGS_INVENTORY, UNITS_TONS),
+    (TAILINGS_STOCKPILE_DRAW, UNITS_TONS),
+    (STOCKPILE_METAL_REVENUE, UNITS_M),
     ("", ""),
     (SECTION_METALS_ECON, ""),
     (METALS_REVENUE_ACTUAL, UNITS_M),
@@ -232,16 +240,16 @@ UTILIZATION_PATH: list[float] = [
 
 # Gate on the two unproven revenue uplifts (upgraded glass, extracted metals).
 # Zero through 2026 so the model reproduces guided H2 2026 revenue on today's
-# realised economics ($500 tipping + $160 material). Phases in as throughput
+# realised economics ($500 tipping + ~$200 material). Phases in as throughput
 # rises, because both uplifts are gated on volume and certification, not on
 # invention: the glass buyers want 50,000-ton flows, and metal extraction runs
 # 1 t/day pilot → 25 t/day → industry scale.
 UPLIFT_PHASE_IN_PATH: list[float] = [
     0, 0, 0, 0,              # 2025
-    0, 0, 0, 0,              # 2026: neither uplift is being sold at volume
-    10, 20, 30, 40,          # 2027
-    50, 60, 70, 80,          # 2028
-    85, 90, 95, 100,         # 2029
+    0, 0, 0, 0,              # 2026: 1 t/d pilot only — not commercial offtake
+    15, 25, 40, 55,          # 2027: 25 t/d demo year (TARGET)
+    65, 75, 85, 90,          # 2028: scale toward industry
+    95, 100, 100, 100,       # 2029
     100, 100, 100, 100,      # 2030
 ]
 
@@ -290,6 +298,10 @@ NUMBER_FORMAT_BY_LABEL: dict[str, str] = {
     MATERIAL_MODEL: NUMBER_FORMAT_MONEY,
     UPLIFT_PHASE_IN: NUMBER_FORMAT_1DP,
     REVENUE_PER_TON_MODEL: NUMBER_FORMAT_MONEY,
+    TAILINGS_STOCKPILE_ADD: NUMBER_FORMAT_INT,
+    TAILINGS_INVENTORY: NUMBER_FORMAT_INT,
+    TAILINGS_STOCKPILE_DRAW: NUMBER_FORMAT_INT,
+    STOCKPILE_METAL_REVENUE: NUMBER_FORMAT_2DP,
     METALS_REVENUE_ACTUAL: NUMBER_FORMAT_2DP,
     METALS_REVENUE_MODEL: NUMBER_FORMAT_2DP,
     METALS_FIXED_COST_MODEL: NUMBER_FORMAT_2DP,

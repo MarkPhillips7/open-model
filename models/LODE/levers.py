@@ -67,10 +67,14 @@ LINE_EXPANSION_ACHIEVED = "Line expansion achieved"
 TIPPING_FEE_PER_TON = "Tipping fee per ton"
 TIPPING_FEE_ACHIEVED = "Tipping fee achieved"
 MATERIAL_BASE_PER_TON = "Recovered material per ton - base"
+TAILINGS_OFFTAKE_PER_TON = "Tailings offtake in material base"
+TAILINGS_STOCKPILE_PCT = "Tailings stockpiled"
+TAILINGS_STOCKPILE_START = "Tailings stockpile start quarter"
 GLASS_UPLIFT_PER_TON = "Glass upgrade uplift per ton"
 GLASS_UPLIFT_ACHIEVED = "Glass upgrade achieved"
 METAL_UPLIFT_PER_TON = "Metal extraction uplift per ton"
 METAL_UPLIFT_ACHIEVED = "Metal extraction achieved"
+TAILINGS_BACKLOG_DRAW = "Tailings backlog draw rate"
 FIXED_COST_PER_LINE = "Fixed cash cost per line per year"
 VARIABLE_COST_PCT = "Variable cash cost"
 CAPEX_PER_LINE = "Capex per production line"
@@ -189,13 +193,52 @@ LEVERS: list[object] = [
     Lever(
         MATERIAL_BASE_PER_TON,
         USD_TON,
-        160,
-        125,
         200,
-        "Value of recovered materials Comstock realises TODAY: aluminium, copper, low-spec glass, "
-        "and only 'a portion of the silver content' because the industrial tailings are not yet "
-        "refined. CEO: 'Today we're only getting between $125 to $200' (2026-08-11, 00:20:10). "
-        "The theoretical full content is ~$1,000/ton — the gap is the next two levers.",
+        125,
+        450,
+        "Value of recovered materials while selling all three offtake streams (Al, glass, "
+        "tailings): CEO band today '$125 to $200' (2026-08-11, 00:20:10). Default at the top of "
+        "that band with silver ~$66/oz. The tailings slice inside this number is broken out in "
+        "the next lever so a stockpile policy can withhold it. High (~$450) is full MTM offtake "
+        "if commercial sales mark to spot. Keep the default near realised so H2 2026 still "
+        "tracks the ~$5M guide.",
+    ),
+    Lever(
+        TAILINGS_OFFTAKE_PER_TON,
+        USD_TON,
+        100,
+        50,
+        375,
+        "Portion of the material-base $/ton that comes from SELLING silver-rich tailings to a "
+        "third-party refiner (~50–60% of silver value). Midpoint of the CEO's $125–200 band "
+        "attributed to the 'portion of the silver content' (2026-08-11). High 375 is management's "
+        "stated silver-offtake line at ~$60/oz (FY2025 call). When 'Tailings stockpiled' is on, "
+        "this amount is removed from near-term revenue and only returns as in-house metal is "
+        "phased in (plus any backlog draw).",
+    ),
+    Lever(
+        TAILINGS_STOCKPILE_PCT,
+        PCT,
+        100,
+        0,
+        100,
+        "Share of current-period tailings withheld from sale once the stockpile start quarter "
+        "hits. CEO (2026-08-11, 00:26:22): once they 'feel that we can extract the silver "
+        "economically… we prefer not to sell those tailings' and 'preserve the higher value for "
+        "ourselves,' even while the pilot is only 1 t/d. Default 100 = stop selling and store. "
+        "Set to 0 to keep today's sell-as-you-go offtake.",
+    ),
+    Lever(
+        TAILINGS_STOCKPILE_START,
+        "quarter",
+        "2027 Q1",
+        None,
+        None,
+        "First quarter the stockpile policy applies. Default 2027 Q1: after the end-2026 1 t/d "
+        "pilot is supposed to 'prove and demonstrate' silver recovery (Q1 2026 call), which is "
+        "when the CEO's 'clear line of sight' test is most likely to flip. Move earlier only if "
+        "they announce they are already holding tailings; keep at 2026 Q4 or later so H2 2026 "
+        "guided revenue is not stripped of offtake.",
     ),
     Lever(
         GLASS_UPLIFT_PER_TON,
@@ -211,37 +254,54 @@ LEVERS: list[object] = [
     Lever(
         GLASS_UPLIFT_ACHIEVED,
         PCT,
-        40,
+        65,
         0,
         100,
-        "Share of the glass uplift actually captured. The equipment is built and running, but the "
-        "buyers are large industrials that need certification and 50,000-ton flows, not 1,000-ton "
-        "flows: 'we have to get the machine up and running and operating at a much higher level "
-        "before we start supplementing those higher value sales.' So the uplift is gated on "
-        "throughput, not on technology. 40% is a mid-ramp assumption.",
+        "Share of the glass uplift actually captured. Equipment is built and running; the binding "
+        "gate is certification plus buyer demand for ~50,000-ton flows, not invention. Default 65 "
+        "is an expected-value mid-ramp: most likely they sell a majority of upgraded glass once "
+        "facility #1 is through its utilization ramp (the uplift phase-in row still times it), "
+        "not a full offtake on day one and not a zero.",
     ),
     Lever(
         METAL_UPLIFT_PER_TON,
         USD_TON,
-        190,
+        350,
         0,
         400,
-        "Incremental $/ton from extracting silver and other metals out of the tailings instead of "
-        "selling tailings. CEO sizes the prize at 1.5–2 lb of metal per ton of tailings, much of it "
-        "silver (2026-08-11, 00:20:10). This is the single largest unproven revenue item and the "
-        "main reason total material value could approach the ~$1,000/ton theoretical figure.",
+        "Incremental $/ton from in-house extraction vs selling tailings at ~50–60% silver-value "
+        "capture — moving toward the >90% recovery target and Doré-type product (Q1 2026 call). "
+        "Default 350 underwrites 'most of the silver by 2030' at ~$66/oz: the 50–60%→>90% gap "
+        "plus other metals, approaching management's framing that metal recoveries can look "
+        "'just as good, if not better, than our tipping fees.' High 400 is tipping-fee parity. "
+        "With stockpiling on, forgone offtake is returned through the material formula as "
+        "phase-in × achieved rises, so do not also inflate this to include the base offtake.",
     ),
     Lever(
         METAL_UPLIFT_ACHIEVED,
         PCT,
-        20,
+        85,
         0,
         100,
-        "Share of the metal-extraction uplift captured. Deliberately low: as of Aug 2026 this is at "
-        "bench/pilot stage — a one-ton-per-day pilot, then 25 tons/day, then industry scale. "
-        "Management's own sequencing language ('we want to get silver out first') implies years, "
-        "not quarters. Treat anything above ~40 here as a bull case that needs published pilot "
-        "results behind it.",
+        "Share of the metal-extraction uplift underwritten by 2030. Default 85 reflects the view "
+        "that the funded 1→25→250 t/d path largely works and they sell mostly higher-purity "
+        "silver product rather than tailings — short of 100% only for residual scale/ops risk. "
+        "The uplift phase-in row still times WHEN capacity arrives; this dial is HOW MUCH of "
+        "the >90% recovery prize you believe. Drop toward 50 if the end-2026 pilot slips or "
+        "publishes weak recoveries.",
+    ),
+    Lever(
+        TAILINGS_BACKLOG_DRAW,
+        "× current tons",
+        1.0,
+        0,
+        3,
+        "When metal phase-in is running, how fast the stockpile is worked off relative to "
+        "current-quarter panel tons. 1.0 = leftover extraction capacity equal to current "
+        "throughput can also chew backlog (so inventory clears over a few quarters once phase-in "
+        "is high). Raise toward 2–3 if you think the 25→250 t/d metal plants outrun panel "
+        "recycling and flush the pile quickly; 0 disables backlog revenue (stockpile is then "
+        "only a near-term offtake haircut).",
     ),
     Lever(
         FIXED_COST_PER_LINE,
@@ -568,7 +628,9 @@ def lever_ref(label: str) -> str:
     rows = lever_rows()
     if label not in rows:
         raise KeyError(f"No lever named {label!r}")
-    return f"'{LEVERS_SHEET}'!${VALUE_COL}${rows[label]}"
+    # No quotes: sheet name has no spaces; Sheets also strips them on read, which
+    # would otherwise make validate_model_formulas report false drift.
+    return f"{LEVERS_SHEET}!${VALUE_COL}${rows[label]}"
 
 
 def grid() -> list[list[object]]:
@@ -620,4 +682,5 @@ QUARTER_LEVERS: tuple[str, ...] = (
     SSOF_PROCEEDS_QUARTER,
     MINING_SALE_QUARTER,
     MINING_SECOND_TRANCHE_QUARTER,
+    TAILINGS_STOCKPILE_START,
 )

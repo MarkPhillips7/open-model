@@ -119,25 +119,51 @@ DEFINITIONS: dict[str, str] = {
     L.UPLIFT_PHASE_IN: (
         "EDITABLE TRAJECTORY. Gates the two UNPROVEN revenue uplifts — upgraded glass and extracted "
         "metals — without touching today's proven economics. Zero through 2026 so the model "
-        "reproduces guided H2 2026 revenue on what Comstock actually realises now. Phases in "
-        "afterwards because both uplifts are gated on THROUGHPUT and certification rather than on "
-        "invention: the high-spec glass buyers want 50,000-ton flows, and metal extraction runs a "
-        "1 ton/day pilot before 25 tons/day before industry scale. Set this to zero throughout for "
-        "a clean 'today's economics only' case."
+        "reproduces guided H2 2026 revenue on what Comstock actually realises now (1 t/d metal "
+        "pilot is validation, not commercial offtake). Ramps through the 2027 25 t/d demo year "
+        "toward industry scale: both uplifts are gated on THROUGHPUT and certification rather than "
+        "on invention. Also gates how fast the tailings stockpile can be drawn. Set this to zero "
+        "throughout for a clean 'today's economics only' case."
     ),
     L.MATERIAL_MODEL: (
-        "Revenue per ton from selling recovered materials — Comstock's 'Off-take' revenue line. "
-        "Built as the base value realised today, plus (glass uplift × its achieved lever + metal "
-        "extraction uplift × its achieved lever) × the phase-in above. The base is ~$160/ton: "
-        "aluminium, copper, low-spec glass, and only a PORTION of the silver, because the tailings "
-        "are not yet refined. Full theoretical content is ~$1,000/ton, and the gap between $160 and "
-        "$1,000 is exactly what the two uplift levers describe."
+        "Revenue per ton from selling recovered materials on CURRENT throughput — Comstock's "
+        "'Off-take' line, before stockpile backlog revenue. Equals material base, minus any "
+        "tailings offtake withheld under the stockpile policy (returned as phase-in × metal "
+        "achieved rises), plus (glass uplift × achieved + metal uplift × achieved) × phase-in. "
+        "Base defaults near ~$200/ton; the tailings slice inside it is the 'Tailings offtake in "
+        "material base' lever. Full theoretical content is ~$1,000/ton."
     ),
     L.REVENUE_PER_TON_MODEL: (
-        "Tipping fee + recovered material value. At default levers this is ~$660/ton today, rising "
-        "toward ~$716/ton as the uplifts phase in. Worth sanity-checking against the CEO's framing "
-        "of '$500 in tipping fees and $250 in material value' — the model is deliberately below the "
-        "$250 material figure until extraction is proven."
+        "Tipping fee + recovered material value on current tons. Excludes stockpile backlog "
+        "revenue, which is a separate $M line (inventory was produced in prior quarters). At "
+        "default levers with stockpiling from 2027 Q1 this dips when offtake is withheld, then "
+        "recovers toward ~$500 tip + ~$200 base + uplifts as extraction phases in — the path to "
+        "management's ~$1,000/t framing at high silver with >90% in-house recovery."
+    ),
+    L.TAILINGS_STOCKPILE_ADD: (
+        "Panel-equivalent tons of tailings withheld from sale this quarter. Equals tons processed "
+        "× stockpile % (from the start quarter onward) × (1 − uplift phase-in). CEO framing "
+        "(2026-08-11): once they have line of sight on extraction, 'we prefer not to sell those "
+        "tailings' and hold them for the pilot→demo→scale path even if current capacity is only "
+        "1 t/d. Zero before the stockpile start quarter and once phase-in is 100%."
+    ),
+    L.TAILINGS_INVENTORY: (
+        "Cumulative panel-equivalent tons of unprocessed stockpiled tailings. Prior inventory + "
+        "adds − draws, floored at zero. This is the physical expression of the CEO's 'preserve "
+        "the higher value for ourselves' debate — value sits here until metal extraction "
+        "phase-in can work it off."
+    ),
+    L.TAILINGS_STOCKPILE_DRAW: (
+        "Panel-equivalent tons drawn from inventory this quarter for in-house metal recovery. "
+        "Capped at prior inventory and at (current tons × phase-in × backlog draw rate). Default "
+        "draw rate 1.0 means once extraction is ramping, about one quarter of current throughput "
+        "can also clear backlog each quarter."
+    ),
+    L.STOCKPILE_METAL_REVENUE: (
+        "Cash from processing the stockpile: draw × (tailings offtake + metal uplift × achieved) "
+        "÷ 1,000,000. Uses offtake + uplift together because these tons were never sold — the "
+        "full in-house silver/metal value is new revenue when extracted, not an incremental "
+        "uplift on an offtake already booked."
     ),
     L.METALS_REVENUE_ACTUAL: (
         "Reported Metals segment revenue, from the 10-Q segment note. Comprises Recycling, "
@@ -146,7 +172,7 @@ DEFINITIONS: dict[str, str] = {
         "history."
     ),
     L.METALS_REVENUE_MODEL: (
-        "Tons processed × revenue per ton ÷ 1,000,000. " + _PREFER
+        "Tons processed × revenue per ton ÷ 1,000,000, plus stockpile metal revenue. " + _PREFER
     ),
     L.METALS_FIXED_COST_MODEL: (
         "Effective lines × the 'Fixed cash cost per line per year' lever ÷ 4. Modelled as FIXED, "

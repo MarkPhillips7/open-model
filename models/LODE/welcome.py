@@ -45,9 +45,11 @@ WHY_LEVERS = (
     "Wherever a future outcome is genuinely questionable, the plan number stays at what management "
     "said and a separate 'achieved' percentage carries the scepticism. So the tipping fee stays at "
     "$500/ton and 'Tipping fee achieved' is where you express doubt; the metal-extraction uplift "
-    "stays at management's sizing and 'Metal extraction achieved' defaults to 20% because it is "
-    "still a one-ton-per-day pilot. Keeping the two apart means you can always see what the company "
-    "claimed next to what you are willing to underwrite."
+    "stays near the 50–60%→>90% recovery gap at current silver and 'Metal extraction achieved' "
+    "defaults to 85% under a 'most of the silver by 2030 as higher-purity product' underwrite. "
+    "Tailings stockpiling (CEO: prefer to hold once extraction is in sight) is a separate dial: "
+    "start quarter, % withheld, and backlog draw rate. Keeping these apart means you can always "
+    "see what the company claimed next to what you are willing to underwrite."
 )
 
 CALIBRATION = (
