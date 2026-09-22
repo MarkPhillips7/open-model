@@ -55,6 +55,7 @@ ANNUAL_CONTRIBUTION = "Annualized metals cash contribution"
 ANNUAL_CORP_GA = "Annualized corporate cash G&A"
 METALS_EBITDA = "Metals EBITDA proxy"
 METALS_MULTIPLE = "Metals EV / EBITDA multiple"
+METALS_CORE = "Metals core business value"
 METALS_VALUE = "Comstock Metals business value"
 
 SSOF_GROSS = "SSOF gross asset value"
@@ -152,13 +153,21 @@ ROWS: list[tuple[str, str, str]] = [
     (
         METALS_MULTIPLE,
         "x",
-        "From the Levers tab. Applied to the cash earnings figure above.",
+        "From the Levers tab. Applied to the cash earnings figure above (operations only).",
+    ),
+    (
+        METALS_CORE,
+        USD_M,
+        "From the Levers tab — fixed credit for demo-plant assets, process IP, and R&D as of "
+        "2025 Q1. Added on top of the operating EV so the platform is not valued at zero while "
+        "contribution is still ramping. Same dollars as 'Metals core business value - Model' on "
+        "Quarterly Financials.",
     ),
     (
         METALS_VALUE,
         USD_M,
-        "From Quarterly Financials at the reference quarter: EBITDA proxy × multiple × "
-        "'Metals business value achieved', floored at zero. Same formula as "
+        "From Quarterly Financials at the reference quarter: (EBITDA proxy × multiple × "
+        "'Metals business value achieved') + core business value. Same formula as "
         "'Metals business value - Model' so the Valuation tab and the quarterly series agree.",
     ),
     (SECTION_SSOF, "", ""),
@@ -315,6 +324,7 @@ def value_formulas(qf_rows: dict[str, int]) -> dict[str, Any]:
         ANNUAL_CORP_GA: f"=4*N({_qf_at_ref(L.CORP_GA_MODEL, qf_rows)})",
         METALS_EBITDA: f"={_ref(ANNUAL_CONTRIBUTION)}-{_ref(ANNUAL_CORP_GA)}",
         METALS_MULTIPLE: f"={lv.lever_ref(lv.METALS_MULTIPLE)}",
+        METALS_CORE: f"={lv.lever_ref(lv.METALS_CORE_VALUE)}",
         METALS_VALUE: f"=N({_qf_at_ref(L.METALS_BUSINESS_VALUE_MODEL, qf_rows)})",
         SSOF_GROSS: f"=N({_qf_at_ref(L.SSOF_GROSS_MODEL, qf_rows)})",
         SSOF_SHARE: f"={lv.lever_ref(lv.SSOF_OWNERSHIP)}",
@@ -353,6 +363,7 @@ NUMBER_FORMAT_BY_LABEL: dict[str, str] = {
     ANNUAL_CORP_GA: "#,##0.00",
     METALS_EBITDA: "#,##0.00",
     METALS_MULTIPLE: "#,##0.0",
+    METALS_CORE: "#,##0.00",
     METALS_VALUE: "#,##0.00",
     SSOF_GROSS: "#,##0.00",
     SSOF_SHARE: "#,##0.00",

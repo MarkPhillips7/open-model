@@ -101,6 +101,7 @@ MINING_SALE_TOTAL = "Mining sale total consideration"
 NSR_ROYALTY = "Mining NSR royalty retained"
 
 METALS_MULTIPLE = "Metals EV / annualized cash contribution"
+METALS_CORE_VALUE = "Metals core business value"
 METALS_ACHIEVED = "Metals business value achieved"
 NET_CASH_CREDIT = "Net cash credited to equity value"
 
@@ -600,9 +601,25 @@ LEVERS: list[object] = [
         6,
         16,
         "Multiple applied to annualised metals cash contribution less corporate overhead to value "
-        "the recycling business. 10x is a mid-range industrial/waste-services multiple. Note this "
-        "is applied to a *cash contribution* figure, so it already sits above the EBIT line — it "
-        "does not need a separate capex deduction, but it also is not a free-cash-flow multiple.",
+        "the recycling *operations*. 10x is a mid-range industrial/waste-services multiple. Note "
+        "this is applied to a *cash contribution* figure, so it already sits above the EBIT line — "
+        "it does not need a separate capex deduction, but it also is not a free-cash-flow multiple. "
+        "Plant assets, process IP and R&D are valued separately via 'Metals core business value'.",
+    ),
+    Lever(
+        METALS_CORE_VALUE,
+        USD_M,
+        25,
+        0,
+        60,
+        "Fixed add-on to Metals business value for assets, process IP, and R&D already in place as "
+        "of the start of the spine (2025 Q1) — the demonstration plant, know-how, customer MSAs, and "
+        "early metal-recovery work that a cash-contribution multiple alone would miss while the "
+        "ramp is still loss-making. ASSUMPTION — Comstock has never published a Metals NAV or IP "
+        "appraisal. $25M is a soft package (~demo-scale plant plus a modest IP/R&D credit), not a "
+        "fitted number; set to 0 to value operations only. Held flat through the forecast: "
+        "incremental industry-scale lines are already in Cash - Model (capex) and in the "
+        "contribution multiple once they earn.",
     ),
     Lever(
         METALS_ACHIEVED,
@@ -610,10 +627,11 @@ LEVERS: list[object] = [
         100,
         50,
         100,
-        "Final haircut on the metals business value in the sum of parts. Held at 100 by default "
-        "because the operating levers above already carry the execution risk, and discounting "
-        "twice would be double-counting. Use this only if you want a single overall margin of "
-        "safety on the operating business while leaving the unit economics at management's numbers.",
+        "Final haircut on the *operating* metals EV (proxy × multiple) in the sum of parts — not "
+        "on the core asset/IP add-on, which you size directly. Held at 100 by default because the "
+        "operating levers above already carry the execution risk, and discounting twice would be "
+        "double-counting. Use this only if you want a single overall margin of safety on the "
+        "operating business while leaving the unit economics at management's numbers.",
     ),
     Lever(
         NET_CASH_CREDIT,

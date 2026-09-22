@@ -18,6 +18,34 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Metals core business value (assets / IP / R&D)
+
+Add a fixed platform credit as of 2025 Q1 so metals SoP is not just the cash-contribution multiple while the ramp is loss-making.
+
+- **Tab / range:** Levers (full rebuild A:G); Quarterly Financials — **inserted 1 row** before `Metals business value - Model`; A:B; valuation formulas; Valuation A:D; Financials Definitions
+- **Insert/delete:** rows, before `Metals business value - Model`, count **1** (`Metals core business value - Model`)
+- **Formulas:** `Metals business value - Model` = `(EBITDA proxy × multiple × achieved/100) + Metals core business value - Model`; core row = Levers scalar (flat)
+- **Data (Levers defaults):** new `Metals core business value` **25** $M (0…60) — ASSUMPTION for demo plant + process IP + R&D as of 2025 Q1; prior Values preserved
+- **Side effects:** Chart series may need a one-row nudge if any chart pointed below this insert — verify manually. Fingerprint refreshed.
+
+### Repo
+
+- `levers.py`, `layout.py`, `quarterly_model_formulas.py`, `valuation.py`, `financials_definitions.py`, `live_fingerprint.json`
+
+## 2026-09-22 — Allow negative Metals business value
+
+Drop the zero floor so early-ramp losses flow through the SoP instead of blanking the metals pillar.
+
+- **Tab / range:** Quarterly Financials `Metals business value - Model` C:Z; Financials Definitions; Valuation notes
+- **Insert/delete:** none
+- **Formulas:** `MAX(0, EBITDA proxy × multiple × achieved/100)` → `EBITDA proxy × multiple × achieved/100`
+- **Data:** none
+- **Side effects:** Implied / Present stock price can go negative (or more negative) in loss-making quarters. Fingerprint refreshed.
+
+### Repo
+
+- `quarterly_model_formulas.py`, `financials_definitions.py`, `valuation.py`, `live_fingerprint.json`
+
 ## 2026-09-22 — Quarterly SoP valuation + SSOF/Fuels growth levers
 
 Add a full sum-of-parts series on Quarterly Financials (chartable implied / present prices) and let SSOF and Bioleum values compound from the As of date instead of sitting flat through 2030.

@@ -384,10 +384,16 @@ DEFINITIONS: dict[str, str] = {
         "Annualized metals cash contribution less annualized corporate cash G&A — the consolidated "
         "cash earnings the Metals EV / annualized cash contribution multiple is applied to."
     ),
+    L.METALS_CORE_VALUE_MODEL: (
+        "From the Levers tab ('Metals core business value'): fixed $M credit for demo-plant "
+        "assets, process IP, and R&D as of 2025 Q1. Held flat across the spine. Added into "
+        "Metals business value - Model on top of the operating EV."
+    ),
     L.METALS_BUSINESS_VALUE_MODEL: (
-        "MAX(0, Metals EBITDA proxy × Metals EV / annualized cash contribution × Metals business "
-        "value achieved / 100). Floored at zero while the plant is still loss-making; the cash "
-        "drain already shows up in Net cash - Model."
+        "(Metals EBITDA proxy × Metals EV / annualized cash contribution × Metals business "
+        "value achieved / 100) + Metals core business value - Model. Operating EV can be "
+        "negative while the ramp is loss-making; the core add-on keeps a platform floor under "
+        "the pillar without flooring the whole line at zero."
     ),
     L.SSOF_GROSS_MODEL: (
         "SSOF gross asset value lever as of the As of date, compounded at 'SSOF value quarterly "

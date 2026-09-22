@@ -51,6 +51,7 @@ from models.LODE.layout import (
     METALS_BUSINESS_VALUE_MODEL,
     METALS_CAPEX_MODEL,
     METALS_CONTRIBUTION_MODEL,
+    METALS_CORE_VALUE_MODEL,
     METALS_COST_MODEL,
     METALS_EBITDA_PROXY_MODEL,
     METALS_FIXED_COST_MODEL,
@@ -539,10 +540,16 @@ def _metals_ebitda_proxy_model() -> str:
     )
 
 
+def _metals_core_value_model() -> str:
+    """Platform value as of 2025 Q1 — flat add-on; sized on the Levers tab."""
+    return _blank_if_no_quarter(f"{_lever(lv.METALS_CORE_VALUE)}")
+
+
 def _metals_business_value_model() -> str:
+    """Operating EV (proxy × multiple × achieved) plus core asset/IP value."""
     return _blank_if_no_quarter(
-        f"MAX(0,{_cur(METALS_EBITDA_PROXY_MODEL)}*{_lever(lv.METALS_MULTIPLE)}"
-        f"*{_lever(lv.METALS_ACHIEVED)}/100)"
+        f"{_cur(METALS_EBITDA_PROXY_MODEL)}*{_lever(lv.METALS_MULTIPLE)}"
+        f"*{_lever(lv.METALS_ACHIEVED)}/100+{_cur(METALS_CORE_VALUE_MODEL)}"
     )
 
 
@@ -651,6 +658,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     ANNUAL_METALS_CONTRIB_MODEL: _annual_metals_contrib_model(),
     ANNUAL_CORP_GA_MODEL: _annual_corp_ga_model(),
     METALS_EBITDA_PROXY_MODEL: _metals_ebitda_proxy_model(),
+    METALS_CORE_VALUE_MODEL: _metals_core_value_model(),
     METALS_BUSINESS_VALUE_MODEL: _metals_business_value_model(),
     SSOF_GROSS_MODEL: _ssof_gross_model(),
     SSOF_STAKE_VALUE_MODEL: _ssof_stake_value_model(),
