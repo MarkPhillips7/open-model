@@ -609,17 +609,17 @@ LEVERS: list[object] = [
     Lever(
         METALS_CORE_VALUE,
         USD_M,
-        25,
+        50,
         0,
         60,
         "Fixed add-on to Metals business value for assets, process IP, and R&D already in place as "
         "of the start of the spine (2025 Q1) — the demonstration plant, know-how, customer MSAs, and "
         "early metal-recovery work that a cash-contribution multiple alone would miss while the "
         "ramp is still loss-making. ASSUMPTION — Comstock has never published a Metals NAV or IP "
-        "appraisal. $25M is a soft package (~demo-scale plant plus a modest IP/R&D credit), not a "
-        "fitted number; set to 0 to value operations only. Held flat through the forecast: "
-        "incremental industry-scale lines are already in Cash - Model (capex) and in the "
-        "contribution multiple once they earn.",
+        "appraisal. $50M is a soft package (demo-scale plant plus IP/R&D credit), not a fitted "
+        "number; set to 0 to value operations only. Held flat through the forecast: incremental "
+        "industry-scale lines are already in Cash - Model (capex) and in the contribution multiple "
+        "once they earn.",
     ),
     Lever(
         METALS_ACHIEVED,

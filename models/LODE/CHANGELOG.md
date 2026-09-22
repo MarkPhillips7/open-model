@@ -18,6 +18,20 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Adopt Metals core business value $50M
+
+User raised the yellow lever on the live sheet; fold into the repo default.
+
+- **Tab / range:** Levers `Metals core business value` (Value + Default)
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `Metals core business value` **25 → 50** (live Value; repo default matched)
+- **Side effects:** none (QF already reads the lever). Fingerprint not required for Value-only adopt if unchanged elsewhere — refresh if recording.
+
+### Repo
+
+- `levers.py`
+
 ## 2026-09-22 — Metals core business value (assets / IP / R&D)
 
 Add a fixed platform credit as of 2025 Q1 so metals SoP is not just the cash-contribution multiple while the ramp is loss-making.
