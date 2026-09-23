@@ -104,9 +104,9 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
     ),
     (
         "Money Charts",
-        "One line chart — LODE Profit and Price. Left axis: Stock price (actual), Implied stock "
-        "price - Model, and Present stock price discounted - Model. Right axis: Metals cash "
-        "contribution - Model. Domain is the Quarterly Financials quarter-ending spine.",
+        "One line chart — Comstock Quarterly Profit and Price. Left axis: Projected stock "
+        "price - Model and Stock price (actual). Right axis: Metals cash contribution - Model. "
+        "Domain is the Quarterly Financials quarter-ending spine.",
     ),
     (
         "Asset Monetization",

@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-09-23T19:13:20Z",
+  "recorded": "2026-09-23T19:17:56Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
@@ -2977,7 +2977,7 @@
         ],
         [
           "Money Charts",
-          "One line chart \u2014 LODE Profit and Price. Left axis: Stock price (actual), Implied stock price - Model, and Present stock price discounted - Model. Right axis: Metals cash contribution - Model. Domain is the Quarterly Financials quarter-ending spine."
+          "One line chart \u2014 Comstock Quarterly Profit and Price. Left axis: Projected stock price - Model and Stock price (actual). Right axis: Metals cash contribution - Model. Domain is the Quarterly Financials quarter-ending spine."
         ],
         [
           "Asset Monetization",

@@ -18,6 +18,24 @@ Entry template:
 
 ---
 
+## 2026-09-23 — Welcome Money Charts blurb
+
+User retitled Money Charts and swapped series (Projected in; Implied/Present out).
+Welcome tab guide updated to match; snapshot refreshed from live.
+
+- **Tab / range:** Welcome Money Charts row (tab guide); `snapshot.json`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** Money Charts description now **Comstock Quarterly Profit and Price** —
+  left: Projected stock price - Model + Stock price (actual); right: Metals cash
+  contribution - Model (was LODE Profit and Price with Implied / Present)
+- **Side effects:** Chart objects untouched (user already edited in UI). Fingerprint
+  refreshed after Welcome push.
+
+### Repo
+
+- `welcome.py`, `snapshot.json`, `live_fingerprint.json`
+
 ## 2026-09-23 — Metals EV multiple 10 → 15
 
 User raised the metals operating multiple for expected high growth through the

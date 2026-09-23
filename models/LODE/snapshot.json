@@ -14,33 +14,27 @@
   "charts": [
     {
       "tab": "Money Charts",
-      "title": "LODE Profit and Price",
+      "title": "Comstock Quarterly Profit and Price",
       "domain_row": 4,
-      "domain_end_col": 26,
+      "domain_end_col": 18,
       "series": [
         {
-          "weekly_row": 86,
+          "weekly_row": 88,
           "line_style": "DOTTED",
           "axis": "LEFT_AXIS",
-          "end_column": 26
+          "end_column": 18
         },
         {
           "weekly_row": 71,
           "line_style": "SOLID",
           "axis": "LEFT_AXIS",
-          "end_column": 28
-        },
-        {
-          "weekly_row": 87,
-          "line_style": "DOTTED",
-          "axis": "LEFT_AXIS",
-          "end_column": 28
+          "end_column": 18
         },
         {
           "weekly_row": 35,
           "line_style": "DOTTED",
           "axis": "RIGHT_AXIS",
-          "end_column": 28
+          "end_column": 18
         }
       ]
     }
