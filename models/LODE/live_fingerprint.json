@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-09-23T18:47:25Z",
+  "recorded": "2026-09-23T19:13:20Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
@@ -2038,7 +2038,7 @@
         [
           "Comstock Fuels value to Comstock",
           "$M",
-          "170",
+          "150",
           "65",
           "0",
           "200",
@@ -2143,11 +2143,11 @@
         [
           "Metals EV / annualized cash contribution",
           "x",
-          "10",
-          "10",
+          "15",
+          "15",
           "6",
           "16",
-          "Multiple applied to annualised metals cash contribution less corporate overhead to value the recycling *operations*. 10x is a mid-range industrial/waste-services multiple. Note this is applied to a *cash contribution* figure, so it already sits above the EBIT line \u2014 it does not need a separate capex deduction, but it also is not a free-cash-flow multiple. Plant assets, process IP and R&D are valued separately via 'Metals core business value'."
+          "Multiple applied to annualised metals cash contribution less corporate overhead to value the recycling *operations*. Default 15 underwrites expected high growth through the ramp; ~10x is a mid-range industrial/waste-services multiple if you want a steadier comps read. Note this is applied to a *cash contribution* figure, so it already sits above the EBIT line \u2014 it does not need a separate capex deduction, but it also is not a free-cash-flow multiple. Plant assets, process IP and R&D are valued separately via 'Metals core business value'."
         ],
         [
           "Metals core business value",

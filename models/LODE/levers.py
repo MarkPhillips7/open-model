@@ -463,7 +463,7 @@ LEVERS: list[object] = [
     Lever(
         FUELS_VALUE,
         USD_M,
-        65,
+        150,
         0,
         200,
         "Value attributed to Comstock's stake in the fuels business as of the As of date. Default 65 "
@@ -597,14 +597,16 @@ LEVERS: list[object] = [
     Lever(
         METALS_MULTIPLE,
         "x",
-        10,
+        15,
         6,
         16,
         "Multiple applied to annualised metals cash contribution less corporate overhead to value "
-        "the recycling *operations*. 10x is a mid-range industrial/waste-services multiple. Note "
-        "this is applied to a *cash contribution* figure, so it already sits above the EBIT line — "
-        "it does not need a separate capex deduction, but it also is not a free-cash-flow multiple. "
-        "Plant assets, process IP and R&D are valued separately via 'Metals core business value'.",
+        "the recycling *operations*. Default 15 underwrites expected high growth through the ramp; "
+        "~10x is a mid-range industrial/waste-services multiple if you want a steadier comps read. "
+        "Note this is applied to a *cash contribution* figure, so it already sits above the EBIT "
+        "line — it does not need a separate capex deduction, but it also is not a free-cash-flow "
+        "multiple. Plant assets, process IP and R&D are valued separately via 'Metals core "
+        "business value'.",
     ),
     Lever(
         METALS_CORE_VALUE,

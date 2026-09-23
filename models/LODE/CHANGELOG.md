@@ -18,6 +18,38 @@ Entry template:
 
 ---
 
+## 2026-09-23 — Metals EV multiple 10 → 15
+
+User raised the metals operating multiple for expected high growth through the
+ramp. Adopted into `levers.py`; Default + rationale synced on the sheet.
+
+- **Tab / range:** Levers `C47`/`D47`/`G47`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `Metals EV / annualized cash contribution` **10 → 15**; Default matched;
+  rationale now cites 15x for high-growth underwriting (~10x as mid-range comps)
+- **Side effects:** Fingerprint re-baselined
+
+### Repo
+
+- `levers.py`, `live_fingerprint.json`
+
+## 2026-09-23 — Comstock Fuels value 170 → 150
+
+User lowered the fuels stake underwriting on the live Levers tab. Adopted into
+`levers.py` (Python default had still been 65 while sheet Value had been 170).
+
+- **Tab / range:** Levers `C34`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `Comstock Fuels value to Comstock` **170 → 150** (Default column `D34`
+  still 65 — liquidation-preference floor in the rationale)
+- **Side effects:** Fingerprint re-baselined (`--adopt`)
+
+### Repo
+
+- `levers.py`, `live_fingerprint.json`
+
 ## 2026-09-23 — Projected stock price + Present defaults to Implied
 
 - **Tab / range:** Quarterly Financials `A88:Z88` (new), `C87:Z87` (Present formula);
