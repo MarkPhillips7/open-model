@@ -66,6 +66,7 @@ from models.LODE.layout import (
     OCF_ACTUAL,
     OCF_MODEL,
     PRESENT_STOCK_PRICE_MODEL,
+    PROJECTED_STOCK_PRICE_MODEL,
     QUARTER,
     QUARTER_ENDING,
     QUARTERLY,
@@ -608,11 +609,25 @@ def _implied_stock_price_model() -> str:
 
 
 def _present_stock_price_model() -> str:
-    """Discount the quarter's implied price back to the As of date; blank for past quarters."""
+    """Discount implied price to the As of date; past/current quarters keep Implied as-is."""
+    implied = _cur(IMPLIED_STOCK_PRICE_MODEL)
+    years = _cur(YEARS_FROM_PRESENT)
     return (
-        f'=IF(OR({_cur(IMPLIED_STOCK_PRICE_MODEL)}="",N({_cur(YEARS_FROM_PRESENT)})<=0),"",'
-        f"-PV({_lever(lv.DISCOUNT_RATE)}/100,{_cur(YEARS_FROM_PRESENT)},0,"
-        f"{_cur(IMPLIED_STOCK_PRICE_MODEL)}))"
+        f'=IF({implied}="","",'
+        f"IF(N({years})<=0,{implied},"
+        f"-PV({_lever(lv.DISCOUNT_RATE)}/100,{years},0,{implied})))"
+    )
+
+
+def _projected_stock_price_model() -> str:
+    """44% / 33% / 23% blend of Present at t, t+4, t+8."""
+    p0 = _cur(PRESENT_STOCK_PRICE_MODEL)
+    p4 = f"OFFSET({_cur(PRESENT_STOCK_PRICE_MODEL)},0,4)"
+    p8 = f"OFFSET({_cur(PRESENT_STOCK_PRICE_MODEL)},0,8)"
+    return (
+        f'=IF(OR({_cur(YEAR)}="",OFFSET({_cur(YEAR)},0,4)="",OFFSET({_cur(YEAR)},0,8)="",'
+        f'{p0}="",{p4}="",{p8}=""),"",'
+        f"0.44*N({p0})+0.33*N({p4})+0.23*N({p8}))"
     )
 
 
@@ -668,6 +683,7 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     EQUITY_VALUE_MODEL: _equity_value_model(),
     IMPLIED_STOCK_PRICE_MODEL: _implied_stock_price_model(),
     PRESENT_STOCK_PRICE_MODEL: _present_stock_price_model(),
+    PROJECTED_STOCK_PRICE_MODEL: _projected_stock_price_model(),
 }
 
 # Column C has no prior column, so rows that roll forward need their own opener.

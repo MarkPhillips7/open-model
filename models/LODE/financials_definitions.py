@@ -429,9 +429,14 @@ DEFINITIONS: dict[str, str] = {
         "the quarter — the series to chart for quarterly projected prices. Not discounted."
     ),
     L.PRESENT_STOCK_PRICE_MODEL: (
-        "Implied stock price discounted back to the As of date at the Levers discount rate. Blank "
-        "when years from present ≤ 0 (past or current quarter). Chart this for today's dollars; "
-        "chart Implied stock price - Model for the undiscounted path."
+        "Implied stock price discounted back to the As of date at the Levers discount rate. When "
+        "years from present ≤ 0 (past or current quarter), equals Implied stock price - Model "
+        "instead of blanking. Chart this for today's dollars; chart Implied for the undiscounted path."
+    ),
+    L.PROJECTED_STOCK_PRICE_MODEL: (
+        "Weighted blend of Present stock price discounted - Model: 44% this quarter, 33% four "
+        "quarters ahead, 23% eight quarters ahead. Blank when any of those three legs is missing "
+        "(near the end of the spine)."
     ),
 }
 
@@ -463,8 +468,9 @@ SECTION_NOTES: dict[str, str] = {
     ),
     L.SECTION_VALUATION: (
         "Sum of parts each quarter: metals EV on annualized cash contribution, grown SSOF and "
-        "Fuels stakes, net cash. Implied and present stock prices live here so you can chart the "
-        "path; the Valuation tab is the annotated view of one reference quarter of this series."
+        "Fuels stakes, net cash. Implied, present, and projected stock prices live here so you can "
+        "chart the path; the Valuation tab is the annotated view of one reference quarter of this "
+        "series."
     ),
 }
 

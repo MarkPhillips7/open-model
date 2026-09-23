@@ -1,9 +1,9 @@
 {
-  "recorded": "2026-09-23T14:07:30Z",
+  "recorded": "2026-09-23T18:47:25Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
-      "range": "A1:Z87",
+      "range": "A1:Z88",
       "rows": [
         [
           "",
@@ -1710,30 +1710,58 @@
         [
           "Present stock price discounted - Model",
           "$",
-          "=IF(OR(C86=\"\",N(C6)<=0),\"\",-PV(Levers!$C$4/100,C6,0,C86))",
-          "=IF(OR(D86=\"\",N(D6)<=0),\"\",-PV(Levers!$C$4/100,D6,0,D86))",
-          "=IF(OR(E86=\"\",N(E6)<=0),\"\",-PV(Levers!$C$4/100,E6,0,E86))",
-          "=IF(OR(F86=\"\",N(F6)<=0),\"\",-PV(Levers!$C$4/100,F6,0,F86))",
-          "=IF(OR(G86=\"\",N(G6)<=0),\"\",-PV(Levers!$C$4/100,G6,0,G86))",
-          "=IF(OR(H86=\"\",N(H6)<=0),\"\",-PV(Levers!$C$4/100,H6,0,H86))",
-          "=IF(OR(I86=\"\",N(I6)<=0),\"\",-PV(Levers!$C$4/100,I6,0,I86))",
-          "=IF(OR(J86=\"\",N(J6)<=0),\"\",-PV(Levers!$C$4/100,J6,0,J86))",
-          "=IF(OR(K86=\"\",N(K6)<=0),\"\",-PV(Levers!$C$4/100,K6,0,K86))",
-          "=IF(OR(L86=\"\",N(L6)<=0),\"\",-PV(Levers!$C$4/100,L6,0,L86))",
-          "=IF(OR(M86=\"\",N(M6)<=0),\"\",-PV(Levers!$C$4/100,M6,0,M86))",
-          "=IF(OR(N86=\"\",N(N6)<=0),\"\",-PV(Levers!$C$4/100,N6,0,N86))",
-          "=IF(OR(O86=\"\",N(O6)<=0),\"\",-PV(Levers!$C$4/100,O6,0,O86))",
-          "=IF(OR(P86=\"\",N(P6)<=0),\"\",-PV(Levers!$C$4/100,P6,0,P86))",
-          "=IF(OR(Q86=\"\",N(Q6)<=0),\"\",-PV(Levers!$C$4/100,Q6,0,Q86))",
-          "=IF(OR(R86=\"\",N(R6)<=0),\"\",-PV(Levers!$C$4/100,R6,0,R86))",
-          "=IF(OR(S86=\"\",N(S6)<=0),\"\",-PV(Levers!$C$4/100,S6,0,S86))",
-          "=IF(OR(T86=\"\",N(T6)<=0),\"\",-PV(Levers!$C$4/100,T6,0,T86))",
-          "=IF(OR(U86=\"\",N(U6)<=0),\"\",-PV(Levers!$C$4/100,U6,0,U86))",
-          "=IF(OR(V86=\"\",N(V6)<=0),\"\",-PV(Levers!$C$4/100,V6,0,V86))",
-          "=IF(OR(W86=\"\",N(W6)<=0),\"\",-PV(Levers!$C$4/100,W6,0,W86))",
-          "=IF(OR(X86=\"\",N(X6)<=0),\"\",-PV(Levers!$C$4/100,X6,0,X86))",
-          "=IF(OR(Y86=\"\",N(Y6)<=0),\"\",-PV(Levers!$C$4/100,Y6,0,Y86))",
-          "=IF(OR(Z86=\"\",N(Z6)<=0),\"\",-PV(Levers!$C$4/100,Z6,0,Z86))"
+          "=IF(C86=\"\",\"\",IF(N(C6)<=0,C86,-PV(Levers!$C$4/100,C6,0,C86)))",
+          "=IF(D86=\"\",\"\",IF(N(D6)<=0,D86,-PV(Levers!$C$4/100,D6,0,D86)))",
+          "=IF(E86=\"\",\"\",IF(N(E6)<=0,E86,-PV(Levers!$C$4/100,E6,0,E86)))",
+          "=IF(F86=\"\",\"\",IF(N(F6)<=0,F86,-PV(Levers!$C$4/100,F6,0,F86)))",
+          "=IF(G86=\"\",\"\",IF(N(G6)<=0,G86,-PV(Levers!$C$4/100,G6,0,G86)))",
+          "=IF(H86=\"\",\"\",IF(N(H6)<=0,H86,-PV(Levers!$C$4/100,H6,0,H86)))",
+          "=IF(I86=\"\",\"\",IF(N(I6)<=0,I86,-PV(Levers!$C$4/100,I6,0,I86)))",
+          "=IF(J86=\"\",\"\",IF(N(J6)<=0,J86,-PV(Levers!$C$4/100,J6,0,J86)))",
+          "=IF(K86=\"\",\"\",IF(N(K6)<=0,K86,-PV(Levers!$C$4/100,K6,0,K86)))",
+          "=IF(L86=\"\",\"\",IF(N(L6)<=0,L86,-PV(Levers!$C$4/100,L6,0,L86)))",
+          "=IF(M86=\"\",\"\",IF(N(M6)<=0,M86,-PV(Levers!$C$4/100,M6,0,M86)))",
+          "=IF(N86=\"\",\"\",IF(N(N6)<=0,N86,-PV(Levers!$C$4/100,N6,0,N86)))",
+          "=IF(O86=\"\",\"\",IF(N(O6)<=0,O86,-PV(Levers!$C$4/100,O6,0,O86)))",
+          "=IF(P86=\"\",\"\",IF(N(P6)<=0,P86,-PV(Levers!$C$4/100,P6,0,P86)))",
+          "=IF(Q86=\"\",\"\",IF(N(Q6)<=0,Q86,-PV(Levers!$C$4/100,Q6,0,Q86)))",
+          "=IF(R86=\"\",\"\",IF(N(R6)<=0,R86,-PV(Levers!$C$4/100,R6,0,R86)))",
+          "=IF(S86=\"\",\"\",IF(N(S6)<=0,S86,-PV(Levers!$C$4/100,S6,0,S86)))",
+          "=IF(T86=\"\",\"\",IF(N(T6)<=0,T86,-PV(Levers!$C$4/100,T6,0,T86)))",
+          "=IF(U86=\"\",\"\",IF(N(U6)<=0,U86,-PV(Levers!$C$4/100,U6,0,U86)))",
+          "=IF(V86=\"\",\"\",IF(N(V6)<=0,V86,-PV(Levers!$C$4/100,V6,0,V86)))",
+          "=IF(W86=\"\",\"\",IF(N(W6)<=0,W86,-PV(Levers!$C$4/100,W6,0,W86)))",
+          "=IF(X86=\"\",\"\",IF(N(X6)<=0,X86,-PV(Levers!$C$4/100,X6,0,X86)))",
+          "=IF(Y86=\"\",\"\",IF(N(Y6)<=0,Y86,-PV(Levers!$C$4/100,Y6,0,Y86)))",
+          "=IF(Z86=\"\",\"\",IF(N(Z6)<=0,Z86,-PV(Levers!$C$4/100,Z6,0,Z86)))"
+        ],
+        [
+          "Projected stock price - Model",
+          "$",
+          "=IF(OR(C2=\"\",OFFSET(C2,0,4)=\"\",OFFSET(C2,0,8)=\"\",C87=\"\",OFFSET(C87,0,4)=\"\",OFFSET(C87,0,8)=\"\"),\"\",0.44*N(C87)+0.33*N(OFFSET(C87,0,4))+0.23*N(OFFSET(C87,0,8)))",
+          "=IF(OR(D2=\"\",OFFSET(D2,0,4)=\"\",OFFSET(D2,0,8)=\"\",D87=\"\",OFFSET(D87,0,4)=\"\",OFFSET(D87,0,8)=\"\"),\"\",0.44*N(D87)+0.33*N(OFFSET(D87,0,4))+0.23*N(OFFSET(D87,0,8)))",
+          "=IF(OR(E2=\"\",OFFSET(E2,0,4)=\"\",OFFSET(E2,0,8)=\"\",E87=\"\",OFFSET(E87,0,4)=\"\",OFFSET(E87,0,8)=\"\"),\"\",0.44*N(E87)+0.33*N(OFFSET(E87,0,4))+0.23*N(OFFSET(E87,0,8)))",
+          "=IF(OR(F2=\"\",OFFSET(F2,0,4)=\"\",OFFSET(F2,0,8)=\"\",F87=\"\",OFFSET(F87,0,4)=\"\",OFFSET(F87,0,8)=\"\"),\"\",0.44*N(F87)+0.33*N(OFFSET(F87,0,4))+0.23*N(OFFSET(F87,0,8)))",
+          "=IF(OR(G2=\"\",OFFSET(G2,0,4)=\"\",OFFSET(G2,0,8)=\"\",G87=\"\",OFFSET(G87,0,4)=\"\",OFFSET(G87,0,8)=\"\"),\"\",0.44*N(G87)+0.33*N(OFFSET(G87,0,4))+0.23*N(OFFSET(G87,0,8)))",
+          "=IF(OR(H2=\"\",OFFSET(H2,0,4)=\"\",OFFSET(H2,0,8)=\"\",H87=\"\",OFFSET(H87,0,4)=\"\",OFFSET(H87,0,8)=\"\"),\"\",0.44*N(H87)+0.33*N(OFFSET(H87,0,4))+0.23*N(OFFSET(H87,0,8)))",
+          "=IF(OR(I2=\"\",OFFSET(I2,0,4)=\"\",OFFSET(I2,0,8)=\"\",I87=\"\",OFFSET(I87,0,4)=\"\",OFFSET(I87,0,8)=\"\"),\"\",0.44*N(I87)+0.33*N(OFFSET(I87,0,4))+0.23*N(OFFSET(I87,0,8)))",
+          "=IF(OR(J2=\"\",OFFSET(J2,0,4)=\"\",OFFSET(J2,0,8)=\"\",J87=\"\",OFFSET(J87,0,4)=\"\",OFFSET(J87,0,8)=\"\"),\"\",0.44*N(J87)+0.33*N(OFFSET(J87,0,4))+0.23*N(OFFSET(J87,0,8)))",
+          "=IF(OR(K2=\"\",OFFSET(K2,0,4)=\"\",OFFSET(K2,0,8)=\"\",K87=\"\",OFFSET(K87,0,4)=\"\",OFFSET(K87,0,8)=\"\"),\"\",0.44*N(K87)+0.33*N(OFFSET(K87,0,4))+0.23*N(OFFSET(K87,0,8)))",
+          "=IF(OR(L2=\"\",OFFSET(L2,0,4)=\"\",OFFSET(L2,0,8)=\"\",L87=\"\",OFFSET(L87,0,4)=\"\",OFFSET(L87,0,8)=\"\"),\"\",0.44*N(L87)+0.33*N(OFFSET(L87,0,4))+0.23*N(OFFSET(L87,0,8)))",
+          "=IF(OR(M2=\"\",OFFSET(M2,0,4)=\"\",OFFSET(M2,0,8)=\"\",M87=\"\",OFFSET(M87,0,4)=\"\",OFFSET(M87,0,8)=\"\"),\"\",0.44*N(M87)+0.33*N(OFFSET(M87,0,4))+0.23*N(OFFSET(M87,0,8)))",
+          "=IF(OR(N2=\"\",OFFSET(N2,0,4)=\"\",OFFSET(N2,0,8)=\"\",N87=\"\",OFFSET(N87,0,4)=\"\",OFFSET(N87,0,8)=\"\"),\"\",0.44*N(N87)+0.33*N(OFFSET(N87,0,4))+0.23*N(OFFSET(N87,0,8)))",
+          "=IF(OR(O2=\"\",OFFSET(O2,0,4)=\"\",OFFSET(O2,0,8)=\"\",O87=\"\",OFFSET(O87,0,4)=\"\",OFFSET(O87,0,8)=\"\"),\"\",0.44*N(O87)+0.33*N(OFFSET(O87,0,4))+0.23*N(OFFSET(O87,0,8)))",
+          "=IF(OR(P2=\"\",OFFSET(P2,0,4)=\"\",OFFSET(P2,0,8)=\"\",P87=\"\",OFFSET(P87,0,4)=\"\",OFFSET(P87,0,8)=\"\"),\"\",0.44*N(P87)+0.33*N(OFFSET(P87,0,4))+0.23*N(OFFSET(P87,0,8)))",
+          "=IF(OR(Q2=\"\",OFFSET(Q2,0,4)=\"\",OFFSET(Q2,0,8)=\"\",Q87=\"\",OFFSET(Q87,0,4)=\"\",OFFSET(Q87,0,8)=\"\"),\"\",0.44*N(Q87)+0.33*N(OFFSET(Q87,0,4))+0.23*N(OFFSET(Q87,0,8)))",
+          "=IF(OR(R2=\"\",OFFSET(R2,0,4)=\"\",OFFSET(R2,0,8)=\"\",R87=\"\",OFFSET(R87,0,4)=\"\",OFFSET(R87,0,8)=\"\"),\"\",0.44*N(R87)+0.33*N(OFFSET(R87,0,4))+0.23*N(OFFSET(R87,0,8)))",
+          "=IF(OR(S2=\"\",OFFSET(S2,0,4)=\"\",OFFSET(S2,0,8)=\"\",S87=\"\",OFFSET(S87,0,4)=\"\",OFFSET(S87,0,8)=\"\"),\"\",0.44*N(S87)+0.33*N(OFFSET(S87,0,4))+0.23*N(OFFSET(S87,0,8)))",
+          "=IF(OR(T2=\"\",OFFSET(T2,0,4)=\"\",OFFSET(T2,0,8)=\"\",T87=\"\",OFFSET(T87,0,4)=\"\",OFFSET(T87,0,8)=\"\"),\"\",0.44*N(T87)+0.33*N(OFFSET(T87,0,4))+0.23*N(OFFSET(T87,0,8)))",
+          "=IF(OR(U2=\"\",OFFSET(U2,0,4)=\"\",OFFSET(U2,0,8)=\"\",U87=\"\",OFFSET(U87,0,4)=\"\",OFFSET(U87,0,8)=\"\"),\"\",0.44*N(U87)+0.33*N(OFFSET(U87,0,4))+0.23*N(OFFSET(U87,0,8)))",
+          "=IF(OR(V2=\"\",OFFSET(V2,0,4)=\"\",OFFSET(V2,0,8)=\"\",V87=\"\",OFFSET(V87,0,4)=\"\",OFFSET(V87,0,8)=\"\"),\"\",0.44*N(V87)+0.33*N(OFFSET(V87,0,4))+0.23*N(OFFSET(V87,0,8)))",
+          "=IF(OR(W2=\"\",OFFSET(W2,0,4)=\"\",OFFSET(W2,0,8)=\"\",W87=\"\",OFFSET(W87,0,4)=\"\",OFFSET(W87,0,8)=\"\"),\"\",0.44*N(W87)+0.33*N(OFFSET(W87,0,4))+0.23*N(OFFSET(W87,0,8)))",
+          "=IF(OR(X2=\"\",OFFSET(X2,0,4)=\"\",OFFSET(X2,0,8)=\"\",X87=\"\",OFFSET(X87,0,4)=\"\",OFFSET(X87,0,8)=\"\"),\"\",0.44*N(X87)+0.33*N(OFFSET(X87,0,4))+0.23*N(OFFSET(X87,0,8)))",
+          "=IF(OR(Y2=\"\",OFFSET(Y2,0,4)=\"\",OFFSET(Y2,0,8)=\"\",Y87=\"\",OFFSET(Y87,0,4)=\"\",OFFSET(Y87,0,8)=\"\"),\"\",0.44*N(Y87)+0.33*N(OFFSET(Y87,0,4))+0.23*N(OFFSET(Y87,0,8)))",
+          "=IF(OR(Z2=\"\",OFFSET(Z2,0,4)=\"\",OFFSET(Z2,0,8)=\"\",Z87=\"\",OFFSET(Z87,0,4)=\"\",OFFSET(Z87,0,8)=\"\"),\"\",0.44*N(Z87)+0.33*N(OFFSET(Z87,0,4))+0.23*N(OFFSET(Z87,0,8)))"
         ]
       ]
     },
@@ -1953,7 +1981,7 @@
         [
           "SSOF gross asset value",
           "$M",
-          "500",
+          "600",
           "500",
           "76",
           "900",
@@ -2010,7 +2038,7 @@
         [
           "Comstock Fuels value to Comstock",
           "$M",
-          "65",
+          "170",
           "65",
           "0",
           "200",
@@ -2594,7 +2622,7 @@
         ],
         [
           "Operating production lines - Plan",
-          "EDITABLE TRAJECTORY. The planned number of lines by quarter \u2014 your view of the buildout, not a derived number. Default assumes facility 1 (northern Nevada) from 2026 Q3, facility 2 (central Ohio) in 2028, then roughly one line a year. Assumption: management holds to its stated discipline of not ordering equipment for the next facility until the first is 'operating and production is effectively ramped up'. Edit this row freely."
+          "EDITABLE TRAJECTORY. The planned number of lines by quarter \u2014 your view of the buildout, not a derived number. Default: facility 1 from 2026 Q3; partial facility 2 from 2028 (1.5) after the order-after-ramp gate and ~9\u201313 month lead; half-line steps reflect the phased buildout management floated; five lines by end-2030 per the 10-Q envelope. Assumption: equipment for the next line is not ordered until the first is 'operating and production is effectively ramped up'. Edit this row freely."
         ],
         [
           "Operating production lines - Model",
@@ -2606,7 +2634,7 @@
         ],
         [
           "Capacity utilization - Plan",
-          "EDITABLE TRAJECTORY. The planned ramp as a percent of rated capacity. Calibrated so that 2026 Q3 and Q4 reproduce management's H2 2026 guide of roughly $5M of revenue at 'at least 25% of rated capacity from August through year end': 5% for a part-quarter August start, then 25%. Plateaus at 85%, which allows for maintenance on a plant intended to run 24/7. This row and the tipping fee are the two things the whole model turns on."
+          "EDITABLE TRAJECTORY. The planned ramp as a percent of rated capacity. Calibrated so that 2026 Q3 and Q4 reproduce management's H2 2026 guide of roughly $5M of revenue at 'at least 25% of rated capacity from August through year end': 5% for a part-quarter August start, then 25%. 2027 ramps to ~78% exiting the year (management's end-2027 'Facility #1 running full'), then plateaus at 85% for maintenance on a 24/7 plant. This row and the tipping fee are the two things the whole model turns on."
         ],
         [
           "Capacity utilization - Model",
@@ -2828,7 +2856,7 @@
         [],
         [
           "VALUATION",
-          "Sum of parts each quarter: metals EV on annualized cash contribution, grown SSOF and Fuels stakes, net cash. Implied and present stock prices live here so you can chart the path; the Valuation tab is the annotated view of one reference quarter of this series."
+          "Sum of parts each quarter: metals EV on annualized cash contribution, grown SSOF and Fuels stakes, net cash. Implied, present, and projected stock prices live here so you can chart the path; the Valuation tab is the annotated view of one reference quarter of this series."
         ],
         [
           "Annualized metals cash contribution - Model",
@@ -2880,7 +2908,11 @@
         ],
         [
           "Present stock price discounted - Model",
-          "Implied stock price discounted back to the As of date at the Levers discount rate. Blank when years from present \u2264 0 (past or current quarter). Chart this for today's dollars; chart Implied stock price - Model for the undiscounted path."
+          "Implied stock price discounted back to the As of date at the Levers discount rate. When years from present \u2264 0 (past or current quarter), equals Implied stock price - Model instead of blanking. Chart this for today's dollars; chart Implied for the undiscounted path."
+        ],
+        [
+          "Projected stock price - Model",
+          "Weighted blend of Present stock price discounted - Model: 44% this quarter, 33% four quarters ahead, 23% eight quarters ahead. Blank when any of those three legs is missing (near the end of the spine)."
         ]
       ]
     },

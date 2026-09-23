@@ -44,24 +44,30 @@ NEW_QF_LABELS = [lab for lab, _u in VALUATION_BLOCK]
 
 def _ensure_qf_rows(client: SheetsClient) -> None:
     live = {row[0] for row in L.live_quarterly_ab(client) if row}
-    if L.SECTION_VALUATION in live and L.IMPLIED_STOCK_PRICE_MODEL in live:
-        print("QF valuation block already present")
-        return
-    missing = [lab for lab in NEW_QF_LABELS if lab and lab not in live]
-    # Spacer "" may already exist elsewhere; only require named rows.
-    required = [lab for lab in NEW_QF_LABELS if lab]
-    if any(lab in live for lab in required) and L.SECTION_VALUATION not in live:
-        raise RuntimeError(
-            f"Partial valuation rows on sheet ({missing}); fix layout by hand before syncing"
+    if L.SECTION_VALUATION not in live or L.IMPLIED_STOCK_PRICE_MODEL not in live:
+        missing = [lab for lab in NEW_QF_LABELS if lab and lab not in live]
+        required = [lab for lab in NEW_QF_LABELS if lab]
+        if any(lab in live for lab in required) and L.SECTION_VALUATION not in live:
+            raise RuntimeError(
+                f"Partial valuation rows on sheet ({missing}); fix layout by hand before syncing"
+            )
+        insert_rows_after_label(
+            client,
+            tab=L.QUARTERLY,
+            after_label=L.MARKET_CAP,
+            labels=NEW_QF_LABELS,
         )
-    insert_rows_after_label(
-        client,
-        tab=L.QUARTERLY,
-        after_label=L.MARKET_CAP,
-        labels=NEW_QF_LABELS,
-    )
-    print(f"Inserted {len(NEW_QF_LABELS)} rows after {L.MARKET_CAP!r}")
-
+        print(f"Inserted {len(NEW_QF_LABELS)} rows after {L.MARKET_CAP!r}")
+    elif L.PROJECTED_STOCK_PRICE_MODEL not in live:
+        insert_rows_after_label(
+            client,
+            tab=L.QUARTERLY,
+            after_label=L.PRESENT_STOCK_PRICE_MODEL,
+            labels=[L.PROJECTED_STOCK_PRICE_MODEL],
+        )
+        print(f"Inserted {L.PROJECTED_STOCK_PRICE_MODEL!r} after {L.PRESENT_STOCK_PRICE_MODEL!r}")
+    else:
+        print("QF valuation block already present")
 
 def _write_qf_labels(client: SheetsClient) -> None:
     ws = client.worksheet(L.QUARTERLY)
@@ -143,6 +149,7 @@ def _format_valuation_block(client: SheetsClient) -> None:
             L.EQUITY_VALUE_MODEL,
             L.IMPLIED_STOCK_PRICE_MODEL,
             L.PRESENT_STOCK_PRICE_MODEL,
+            L.PROJECTED_STOCK_PRICE_MODEL,
         }:
             continue
         r = labels[label] - 1

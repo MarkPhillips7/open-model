@@ -18,6 +18,25 @@ Entry template:
 
 ---
 
+## 2026-09-23 — Projected stock price + Present defaults to Implied
+
+- **Tab / range:** Quarterly Financials `A88:Z88` (new), `C87:Z87` (Present formula);
+  Financials Definitions (Present / Projected notes)
+- **Insert/delete:** ROWS, start index 87 (0-based after Present), count 1
+- **Formulas:**
+  - **Present stock price discounted - Model:** when years from present ≤ 0, was `""`
+    → now equals **Implied stock price - Model** (still discounts when years > 0)
+  - **Projected stock price - Model** (new): `0.44×Present(t) + 0.33×Present(t+4) + 0.23×Present(t+8)`;
+    blank near spine end when t+8 missing
+- **Data:** none
+- **Side effects:** Number format `#,##0.00` on Projected. Chart objects untouched —
+  add Projected to Money Charts manually if desired. Fingerprint refreshed.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `financials_definitions.py`,
+  `scripts/sync_quarterly_valuation.py`, `live_fingerprint.json`
+
 ## 2026-09-23 — Lever tweaks + Money Charts tab
 
 User raised three achieved levers on the live sheet and added a **Money Charts**
