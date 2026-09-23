@@ -1,5 +1,5 @@
 {
-  "recorded": "2026-09-22T21:05:16Z",
+  "recorded": "2026-09-23T14:07:30Z",
   "spreadsheet_id": "1_2X0QzVWN5XiH4WX2V_outtKgQQYti81T28H22g9xDM",
   "tabs": {
     "Quarterly Financials": {
@@ -1794,11 +1794,11 @@
         [
           "Line expansion achieved",
           "%",
-          "70",
-          "70",
+          "75",
+          "75",
           "0",
           "100",
-          "Scepticism dial on production lines beyond the first. Scales only the *incremental* lines in 'Operating production lines - Model'; line 1 is never scaled because it is built. Management is explicit that it will not order equipment for facility 2 until facility 1 is 'operating and production is effectively ramped up' (Q2 2026 release), and sites 2\u20135 are at site-selection/permitting stage. 70% reflects real intent plus real funding and timing risk."
+          "Scepticism dial on production lines beyond the first. Scales only the *incremental* lines in 'Operating production lines - Model'; line 1 is never scaled because it is built. Management is explicit that it will not order equipment for facility 2 until facility 1 is 'operating and production is effectively ramped up' (Q2 2026 release), and sites 2\u20135 are at site-selection/permitting stage. 75% reflects real intent plus real funding and timing risk."
         ],
         [
           "Tipping fee per ton",
@@ -1866,11 +1866,11 @@
         [
           "Glass upgrade achieved",
           "%",
-          "65",
-          "65",
+          "70",
+          "70",
           "0",
           "100",
-          "Share of the glass uplift actually captured. Equipment is built and running; the binding gate is certification plus buyer demand for ~50,000-ton flows, not invention. Default 65 is an expected-value mid-ramp: most likely they sell a majority of upgraded glass once facility #1 is through its utilization ramp (the uplift phase-in row still times it), not a full offtake on day one and not a zero."
+          "Share of the glass uplift actually captured. Equipment is built and running; the binding gate is certification plus buyer demand for ~50,000-ton flows, not invention. Default 70 is an expected-value mid-ramp: most likely they sell a majority of upgraded glass once facility #1 is through its utilization ramp (the uplift phase-in row still times it), not a full offtake on day one and not a zero."
         ],
         [
           "Metal extraction uplift per ton",
@@ -1980,8 +1980,8 @@
         [
           "SSOF value achieved",
           "%",
-          "80",
-          "80",
+          "85",
+          "85",
           "0",
           "100",
           "Share of the gross SSOF value that converts into cash for Comstock shareholders. Haircuts three separate things at once: whether comps hold, minority-stake and structuring friction, and timing. As of Aug 2026 nothing is signed \u2014 management's own year-end test is only 'some defined transaction with some derivable value', explicitly not a close. Land ownership and the power source are secured, which is why this is not lower."
@@ -2125,10 +2125,10 @@
           "Metals core business value",
           "$M",
           "50",
-          "25",
+          "50",
           "0",
           "60",
-          "Fixed add-on to Metals business value for assets, process IP, and R&D already in place as of the start of the spine (2025 Q1) \u2014 the demonstration plant, know-how, customer MSAs, and early metal-recovery work that a cash-contribution multiple alone would miss while the ramp is still loss-making. ASSUMPTION \u2014 Comstock has never published a Metals NAV or IP appraisal. $25M is a soft package (~demo-scale plant plus a modest IP/R&D credit), not a fitted number; set to 0 to value operations only. Held flat through the forecast: incremental industry-scale lines are already in Cash - Model (capex) and in the contribution multiple once they earn."
+          "Fixed add-on to Metals business value for assets, process IP, and R&D already in place as of the start of the spine (2025 Q1) \u2014 the demonstration plant, know-how, customer MSAs, and early metal-recovery work that a cash-contribution multiple alone would miss while the ramp is still loss-making. ASSUMPTION \u2014 Comstock has never published a Metals NAV or IP appraisal. $50M is a soft package (demo-scale plant plus IP/R&D credit), not a fitted number; set to 0 to value operations only. Held flat through the forecast: incremental industry-scale lines are already in Cash - Model (capex) and in the contribution multiple once they earn."
         ],
         [
           "Metals business value achieved",
@@ -2942,6 +2942,10 @@
         [
           "Financials Definitions",
           "Every row on Quarterly Financials explained: what it is, where it came from, and what has to be true for it to hold."
+        ],
+        [
+          "Money Charts",
+          "One line chart \u2014 LODE Profit and Price. Left axis: Stock price (actual), Implied stock price - Model, and Present stock price discounted - Model. Right axis: Metals cash contribution - Model. Domain is the Quarterly Financials quarter-ending spine."
         ],
         [
           "Asset Monetization",

@@ -46,11 +46,15 @@ from models.LODE import welcome as WEL  # noqa: E402
 TICKER = "LODE"
 
 # Tab order in the workbook. Levers sits second because it is where you start.
+# Money Charts is created/edited only in the Sheets UI — listed here so a rebuild
+# does not delete it as a stray tab (see .cursor/rules/charts-manual-only.mdc).
+MONEY_CHARTS_SHEET = "Money Charts"
 TAB_ORDER: tuple[str, ...] = (
     WEL.WELCOME_SHEET,
     LV.LEVERS_SHEET,
     L.QUARTERLY,
     DEF.DEFINITIONS_SHEET,
+    MONEY_CHARTS_SHEET,
     AM.ASSET_SHEET,
     VAL.VALUATION_SHEET,
     SH.SHARES_SHEET,
@@ -77,7 +81,11 @@ def _sheet_ids(client: SheetsClient) -> dict[str, int]:
 
 
 def ensure_tabs(client: SheetsClient) -> dict[str, int]:
-    """Create any missing tab, drop the default 'Sheet1', and order them."""
+    """Create any missing tab, drop the default 'Sheet1', and order them.
+
+    Chart tabs (Money Charts) are never created here — only preserved if already
+    present so a rebuild does not wipe the user's charts.
+    """
     existing = client.list_worksheets()
     requests: list[dict] = []
 
@@ -92,9 +100,11 @@ def ensure_tabs(client: SheetsClient) -> dict[str, int]:
         REF.REFERENCE_SHEET: (len(REF.ROWS) + 6, 4),
         PRICE_HISTORY_SHEET: (2000, 8),
     }
+    # Never auto-create chart tabs; charts are manual-only in the Sheets UI.
+    do_not_create = {MONEY_CHARTS_SHEET}
 
     for index, title in enumerate(TAB_ORDER):
-        if title in existing:
+        if title in existing or title in do_not_create:
             continue
         rows, cols = sizes.get(title, (200, 26))
         requests.append(

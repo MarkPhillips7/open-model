@@ -103,6 +103,12 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
         "to be true for it to hold.",
     ),
     (
+        "Money Charts",
+        "One line chart — LODE Profit and Price. Left axis: Stock price (actual), Implied stock "
+        "price - Model, and Present stock price discounted - Model. Right axis: Metals cash "
+        "contribution - Model. Domain is the Quarterly Financials quarter-ending spine.",
+    ),
+    (
         "Asset Monetization",
         "The evidence behind the three non-operating pillars — the mining sale, SSOF, and Comstock "
         "Fuels — with sources and dates, plus an explicit list of what is deliberately given no "

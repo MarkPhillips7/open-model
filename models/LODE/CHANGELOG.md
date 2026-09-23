@@ -18,6 +18,36 @@ Entry template:
 
 ---
 
+## 2026-09-23 — Lever tweaks + Money Charts tab
+
+User raised three achieved levers on the live sheet and added a **Money Charts**
+tab with **LODE Profit and Price**. Folded into the repo; Welcome tab guide
+updated to describe the new chart.
+
+- **Tab / range:** Levers `C8`/`D8`, `C16`/`D16`, `C30`/`D30` (+ rationale `G`);
+  new worksheet **Money Charts**; Welcome tab-guide rows; `snapshot.json`
+- **Insert/delete:** new worksheet **Money Charts** (user-created in UI; between
+  Financials Definitions and Asset Monetization)
+- **Formulas:** none
+- **Data:**
+  - `Line expansion achieved` **70 → 75**
+  - `Glass upgrade achieved` **65 → 70**
+  - `SSOF value achieved` **80 → 85**
+  - Defaults + glass/line-expansion rationale text matched to the new values;
+    also synced stale `Metals core business value` Default **25 → 50** (Value
+    already 50 from earlier adopt)
+  - Welcome: new **Money Charts** blurb (Profit and Price: stock / implied /
+    present on left; metals cash contribution on right)
+- **Side effects:** Chart objects untouched by agents (manual UI only).
+  `snapshot.json` created from live (1 chart). `setup_lode_workbook.py`
+  TAB_ORDER now preserves **Money Charts** on rebuild without auto-creating it.
+  Fingerprint re-baselined (`--adopt` + Welcome/Default push).
+
+### Repo
+
+- `levers.py`, `welcome.py`, `scripts/setup_lode_workbook.py`,
+  `live_fingerprint.json`, `snapshot.json` (new)
+
 ## 2026-09-22 — Lines / util plan aligned to guidance
 
 User edited yellow `- Plan` trajectories on Quarterly Financials to better match

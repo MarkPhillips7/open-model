@@ -161,14 +161,14 @@ LEVERS: list[object] = [
     Lever(
         LINE_EXPANSION_ACHIEVED,
         PCT,
-        70,
+        75,
         0,
         100,
         "Scepticism dial on production lines beyond the first. Scales only the *incremental* lines "
         "in 'Operating production lines - Model'; line 1 is never scaled because it is built. "
         "Management is explicit that it will not order equipment for facility 2 until facility 1 is "
         "'operating and production is effectively ramped up' (Q2 2026 release), and sites 2–5 are at "
-        "site-selection/permitting stage. 70% reflects real intent plus real funding and timing risk.",
+        "site-selection/permitting stage. 75% reflects real intent plus real funding and timing risk.",
     ),
     Lever(
         TIPPING_FEE_PER_TON,
@@ -257,11 +257,11 @@ LEVERS: list[object] = [
     Lever(
         GLASS_UPLIFT_ACHIEVED,
         PCT,
-        65,
+        70,
         0,
         100,
         "Share of the glass uplift actually captured. Equipment is built and running; the binding "
-        "gate is certification plus buyer demand for ~50,000-ton flows, not invention. Default 65 "
+        "gate is certification plus buyer demand for ~50,000-ton flows, not invention. Default 70 "
         "is an expected-value mid-ramp: most likely they sell a majority of upgraded glass once "
         "facility #1 is through its utilization ramp (the uplift phase-in row still times it), "
         "not a full offtake on day one and not a zero.",
@@ -422,7 +422,7 @@ LEVERS: list[object] = [
     Lever(
         SSOF_ACHIEVED,
         PCT,
-        80,
+        85,
         0,
         100,
         "Share of the gross SSOF value that converts into cash for Comstock shareholders. Haircuts "
