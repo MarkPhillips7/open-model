@@ -12,9 +12,9 @@ FIELD_NOTES: dict[str, str] = {
     ),
     'Acquisition Contracts': (
         "Weekly count of signed home-purchase contracts (seller accepts Opendoor's offer). "
-        "Entered manually on Weekly Financials when tracker/company data is available; "
-        "Quarterly Financials sums the weeks when the quarterly cell is a formula. Sparse "
-        "actuals; model row fills gaps."
+        "Synced from accountable.opendoor.com via sync_weekly_actuals.py (Saturday "
+        "week-ending actuals). Quarterly Financials sums the weeks when the quarterly cell "
+        "is a formula. Sparse actuals; model row fills gaps."
     ),
     'Acquisition Contracts - Model': (
         "Forward projection of weekly contracts. Formula: Acquisition Contracts - no "
@@ -70,8 +70,9 @@ FIELD_NOTES: dict[str, str] = {
         "on Transitions."
     ),
     'New Listings': (
-        "Homes newly listed on Opendoor.com. Weekly manual actuals where available (tracker); "
-        "Quarterly Financials may sum weeks. Sparse — model fills forward."
+        "Homes newly listed on Opendoor.com. Synced from Open Tracker Cohort Sell-Through "
+        "Listed counts via sync_weekly_actuals.py (tracker Sunday week-ending → sheet "
+        "Saturday). Quarterly Financials may sum weeks. Sparse — model fills forward."
     ),
     'OPEN 1.0-2.0 Transition Completeness': (
         "Blend weight from pre-Kaz OPEN 1.0 ops to OPEN 2.0 (0% Feb 7 2026 → 100% Sep 4 2027). "
@@ -100,7 +101,7 @@ FIELD_NOTES: dict[str, str] = {
         "Non-GAAP homes sold (listed + private). Through week ending 2026-06-27: quarterly "
         "earnings actual spread ÷13 (day-weighted). From 2026-07-04: week-over-week change in "
         "cumulative Resale COEs on accountable.opendoor.com (QTD recorded closings). Refresh "
-        "with sync_accountable_home_sales.py. Model row when blank."
+        "with sync_weekly_actuals.py (or sync_accountable_home_sales.py). Model row when blank."
     ),
     'Private Home Sales - Model': (
         "Never-listed completions: lagged purchases × (1 − Likelihood to List) × Transitions "

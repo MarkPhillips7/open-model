@@ -1,7 +1,7 @@
 {
   "source": "https://accountable.opendoor.com/",
   "metric": "Resale COEs (cumulative QTD) \u2192 weekly Home Sales",
-  "as_of": "Sep 12, 2026",
+  "as_of": "Sep 19, 2026",
   "weekly_start": "2026-07-04",
   "cumulative": [
     {
@@ -50,7 +50,7 @@
     },
     {
       "date": "2026-09-19",
-      "value": null
+      "value": 2314
     },
     {
       "date": "2026-09-26",
@@ -72,6 +72,7 @@
     "2026-08-22": 231,
     "2026-08-29": 235,
     "2026-09-05": 223,
-    "2026-09-12": 185
+    "2026-09-12": 185,
+    "2026-09-19": 225
   }
 }

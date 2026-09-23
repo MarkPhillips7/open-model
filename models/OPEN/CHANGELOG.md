@@ -18,6 +18,25 @@ Entry template:
 
 ---
 
+## 2026-09-22 — Weekly actuals through 9/19 (Accountable + Open Tracker)
+
+Accountable “Data as of Sep 19, 2026” and Open Tracker (last update 22/09/2026) — new week ending **2026-09-19** plus a small listings revision.
+
+- **Tab / range:** **Weekly Financials** **Home Sales** `AR19:DY19`; **Acquisition Contracts** `BC2`; **New Listings** `AY13`/`BC13`; **Quarterly Financials** Home Sales weekly SUM (unchanged formula); **Financials Definitions** refresh; snapshot `models/OPEN/data/accountable_resale_coes.json`
+- **Insert/delete:** none
+- **Formulas:** none new — Home Sales still Accountable COE deltas from **2026-07-04**; Q3+ quarterly Home Sales remains weekly `SUM(FILTER(…))`
+- **Data:**
+  - **Home Sales** week ending **9/19** **225** (QTD cumulative Resale COEs **2,089 → 2,314**). Prior weeks unchanged.
+  - **Acquisition Contracts** `BC` (**9/19**): **444** (Accountable; **+16.8%** vs **380** prior week).
+  - **New Listings** `BC` (**9/19**): **354** (Open Tracker cohort week ending **2026-09-20**). `AY` (**8/22**): **418 → 414** (tracker revision).
+- **Side effects:** Definitions note on Home Sales refreshed by sync. **Homes Charts** funnel actuals will step for 9/19 — please eyeball in the UI; agents did not edit chart objects.
+
+### Repo
+
+- `models/OPEN/data/accountable_resale_coes.json` (as of Sep 19, 2026)
+
+---
+
 ## 2026-09-22 — ASP blank without revenue; weekly carry-forward on 0/#DIV/0!
 
 Forward quarters had no revenue but nonzero (or zero) Home Sales, so Quarterly ASP was `0` (blank÷sales) or `#DIV/0!`, and Weekly ASP passed those through instead of keeping Q2’s ~$377.5K.

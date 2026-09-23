@@ -11,6 +11,13 @@ Entry template:
 - **Why:** motivation
 ```
 
+## 2026-09-23 — OPEN weekly actuals sync (Accountable + Open Tracker)
+
+- **What:** Added `models/OPEN/scripts/sync_weekly_actuals.py` plus Accountable acquisition-contract parsing and Open Tracker New Listings parsing (`open_tracker.py`). Snapshots for contracts/listings under `models/OPEN/data/`.
+- **Why:** Weekly funnel refreshes were mostly manual (only Home Sales was scripted); one CLI now covers contracts, listings, and Home Sales.
+
+---
+
 ## 2026-09-22 — ASP formulas treat missing revenue / zero as blank
 
 - **What:** `sheets/formulas.py` adds `quarterly_asp_formula()` (blank when revenue or home sales is 0) and `weekly_asp_formula()` now carry-forwards on 0 / `#DIV/0!`, not only blank. OPEN spread script restores quarterly ASP.

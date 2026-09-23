@@ -3,6 +3,9 @@
 Resale COEs on Accountable are cumulative quarter-to-date closings. Weekly
 **Home Sales** is the week-over-week change in that series, starting the first
 Q3 2026 week-ending date (2026-07-04).
+
+**Acquisition Contracts** are the weekly `actual` series on the same page
+(Saturday week-ending dates, matching Weekly Financials).
 """
 
 from __future__ import annotations
@@ -16,6 +19,7 @@ from urllib.request import Request, urlopen
 ACCOUNTABLE_URL = "https://accountable.opendoor.com/"
 RESALE_COES_TITLE = "Resale COEs"
 HOME_SALES_LABEL = "Home Sales"
+ACQUISITION_CONTRACTS_LABEL = "Acquisition Contracts"
 # First Saturday week-ending in Q3 2026 — Accountable Q3 COE chart starts here.
 HOME_SALES_ACCOUNTABLE_START = date(2026, 7, 4)
 
@@ -25,6 +29,10 @@ _USER_AGENT = (
 )
 _NEXT_F_RE = re.compile(r'self\.__next_f\.push\(\[1,"((?:\\.|[^"\\])*)"\]\)')
 _AS_OF_RE = re.compile(r"Data as of ([A-Za-z]{3} \d{1,2}, \d{4})")
+# Acquisition chart rows look like {"date":"2026-09-19","actual":444,"proposedLow":...}
+_ACQUISITION_ROW_RE = re.compile(
+    r'\{"date":"(\d{4}-\d{2}-\d{2})","actual":(null|\d+),'
+)
 
 
 def sheet_date(value: Any) -> date | None:
@@ -124,6 +132,55 @@ def fetch_weekly_home_sales(
     return weekly_from_cumulative(points), points, parse_as_of(page)
 
 
+def extract_acquisition_contracts(rsc_text: str) -> dict[date, int]:
+    """Parse weekly Acquisition Contracts `actual` values (skip null future weeks)."""
+    # Prefer the longest contiguous run of {"date","actual",...} objects — that is
+    # the contracts chart (Resale COEs use "value", not "actual").
+    best: list[tuple[date, int]] = []
+    for match in re.finditer(r'\[\{"date":"\d{4}-\d{2}-\d{2}","actual":', rsc_text):
+        try:
+            raw, _ = json.JSONDecoder().raw_decode(rsc_text, match.start())
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(raw, list) or not raw:
+            continue
+        if not isinstance(raw[0], dict) or "actual" not in raw[0]:
+            continue
+        rows: list[tuple[date, int]] = []
+        for row in raw:
+            if not isinstance(row, dict):
+                continue
+            week = sheet_date(row.get("date"))
+            actual = row.get("actual")
+            if week is None or actual is None:
+                continue
+            rows.append((week, int(actual)))
+        if len(rows) > len(best):
+            best = rows
+    if not best:
+        # Fallback: regex scan if JSON array boundaries shift.
+        rows = []
+        for m in _ACQUISITION_ROW_RE.finditer(rsc_text):
+            if m.group(2) == "null":
+                continue
+            week = sheet_date(m.group(1))
+            if week is not None:
+                rows.append((week, int(m.group(2))))
+        best = rows
+    if not best:
+        raise ValueError("Acquisition Contracts actual series not found in Accountable RSC")
+    return dict(best)
+
+
+def fetch_acquisition_contracts(
+    *,
+    html: str | None = None,
+) -> tuple[dict[date, int], str | None]:
+    """Return (week_ending → contract count, as-of label)."""
+    page = html if html is not None else fetch_accountable_html()
+    return extract_acquisition_contracts(parse_rsc_text(page)), parse_as_of(page)
+
+
 def snapshot_payload(
     weekly: dict[date, int],
     cumulative: list[tuple[date, int | float | None]],
@@ -139,4 +196,17 @@ def snapshot_payload(
             {"date": week.isoformat(), "value": value} for week, value in cumulative
         ],
         "weekly": {week.isoformat(): count for week, count in weekly.items()},
+    }
+
+
+def acquisition_snapshot_payload(
+    weekly: dict[date, int],
+    *,
+    as_of: str | None,
+) -> dict[str, Any]:
+    return {
+        "source": ACCOUNTABLE_URL,
+        "metric": "Acquisition Contracts (weekly actual)",
+        "as_of": as_of,
+        "weekly": {week.isoformat(): count for week, count in sorted(weekly.items())},
     }

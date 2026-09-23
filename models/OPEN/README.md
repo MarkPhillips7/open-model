@@ -44,7 +44,19 @@ Sources and citations: **[RESOURCES.md](RESOURCES.md)**. Spreadsheet edits made 
 
 - Columns are **week ending** dates (`Week Ending`, then `+7` across the horizon).
 - **Quarterly-reported actuals** (homes purchased, revenue, opex, SBC, inventory, etc.) live on **Quarterly Financials** as quarter totals. **Weekly Financials** spreads them (`quarterly ÷ 13`, day-weighted at quarter boundaries when a week spans two quarters) when the quarterly cell is a hardcoded value. **Home Sales** uses that spread only through week ending **2026-06-27**. **One-time GAAP items** (debt extinguishment, inventory valuation timing, restructuring, CEO make-whole) use the **week-ending quarter only**—no cross-quarter blend—so a Q4 debt charge does not leak into Q1 boundary weeks.
-- **Weekly-reported actuals** (acquisition contracts, sparse new-listing counts, and **Home Sales from week ending 2026-07-04**) are entered on **Weekly Financials**. Home Sales from that date is the week-over-week change in cumulative **Resale COEs** on [Accountable](https://accountable.opendoor.com/) (`python models/OPEN/scripts/sync_accountable_home_sales.py`). **Quarterly Financials** sums the matching weeks when the quarterly cell is a formula.
+- **Weekly-reported actuals** (acquisition contracts, sparse new-listing counts, and **Home Sales from week ending 2026-07-04**) are entered on **Weekly Financials**. Refresh all three from public sources with:
+
+```bash
+python models/OPEN/scripts/sync_weekly_actuals.py
+python models/OPEN/scripts/sync_weekly_actuals.py --dry-run   # preview diffs
+python models/OPEN/scripts/sync_weekly_actuals.py --changelog # also append models/OPEN/CHANGELOG.md
+```
+
+  - **Home Sales** ← week-over-week change in cumulative **Resale COEs** on [Accountable](https://accountable.opendoor.com/) (from 2026-07-04; Home Sales-only: `sync_accountable_home_sales.py`)
+  - **Acquisition Contracts** ← Accountable weekly `actual` series
+  - **New Listings** ← [Open Tracker](https://aubermark.github.io/open-tracker/) Cohort Sell-Through Listed (Sunday week-ending → sheet Saturday; skips PARTIAL weeks)
+
+  Contracts/listings default to filling blanks and revising the last ~12 weeks (`--since`, or `--all` for full history). **Quarterly Financials** sums the matching weeks when the quarterly cell is a formula.
 - **Model** rows stay on **Weekly Financials**; formulas fall back between actual and model rows as before.
 
 ### Funnel (actuals vs model)
@@ -153,6 +165,7 @@ python scripts/validate_model_formulas.py --ticker OPEN --offline
 python scripts/restore_weekly_model_formulas.py --ticker OPEN
 python scripts/sync_repo_from_live_sheet.py --ticker OPEN
 python models/OPEN/scripts/update_weekly_quarterly_spread.py
+python models/OPEN/scripts/sync_weekly_actuals.py
 python models/OPEN/scripts/sync_accountable_home_sales.py
 python models/OPEN/scripts/add_cnml_rows.py
 ```
@@ -163,7 +176,7 @@ Canonical model-row formulas live in `weekly_model_formulas.py`. Templates use `
 
 1. Run `python scripts/validate_model_formulas.py --ticker OPEN` — fails if templates still use numeric row refs or expected labels are missing.
 2. Run `python scripts/restore_weekly_model_formulas.py --ticker OPEN` — validates first, then re-applies all `* - Model` formulas.
-3. If spread rows moved, run `python models/OPEN/scripts/update_weekly_quarterly_spread.py` (already label-based). **Home Sales** from week ending **2026-07-04** is skipped (Accountable weekly COEs); re-run `sync_accountable_home_sales.py` after a new Accountable print.
+3. If spread rows moved, run `python models/OPEN/scripts/update_weekly_quarterly_spread.py` (already label-based). **Home Sales** from week ending **2026-07-04** is skipped (Accountable weekly COEs); re-run `sync_weekly_actuals.py` (or `sync_accountable_home_sales.py`) after a new Accountable print.
 
 Offline template checks (no Google credentials): `python scripts/validate_model_formulas.py --ticker OPEN --offline`
 

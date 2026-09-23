@@ -40,7 +40,8 @@ HOME_SALES_NOTE = (
     f"are the week-over-week change in cumulative Resale COEs on {ACCOUNTABLE_URL} "
     "(QTD closings; later recordings stay in the then-current period). "
     "Earlier weeks remain quarterly earnings actual ÷13 (day-weighted). "
-    "Refresh with models/OPEN/scripts/sync_accountable_home_sales.py. "
+    "Refresh with models/OPEN/scripts/sync_weekly_actuals.py "
+    "(or sync_accountable_home_sales.py for Home Sales only). "
     "Do not restore quarterly spread on this row from 7/4/2026 onward."
 )
 
