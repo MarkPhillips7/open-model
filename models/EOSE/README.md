@@ -27,7 +27,7 @@ There is no weekly spine. Eos does not publish a high-frequency unit funnel.
 | --- | --- |
 | **Welcome** | Disclaimer, goals, tab guide with links. Canonical copy in `welcome.py`. |
 | **Financials Definitions** | Column A mirrors Quarterly Financials labels; column B documents each field. Canonical text in `financials_definitions.py`. |
-| **Quarterly Financials** | Main time series. Column A label, B units, **C–Z** = **2025 Q1 – 2030 Q4**. Actuals + Model rows. Includes **MWh shipped - Model** (PTC energy, else ×1.22). |
+| **Quarterly Financials** | Main time series. Column A label, B units, **C–Z** = **2025 Q1 – 2030 Q4**. Actuals + Model rows. **MWh shipped - Model** = MIN(backlog-lag MWh, max factory MWh). |
 | **Shares** | Dated dilution events (offerings, converts, warrants). Model currently carries last reported diluted shares; fill Δ when you want incremental dilution. |
 | **Price History** | One `GOOGLEFINANCE` spill of EOSE daily OHLCV. **Stock price** XLOOKUPs the close by quarter-ending date. |
 | **Reference** | Source links (ASP, 45X treatment, Feltonomics). |
@@ -48,12 +48,12 @@ OPEN pattern: bare label = hardcoded print (or derived from prints); `Label - Mo
 
 Eos defines backlog as prior + booked orders − shipments. Pipeline is proposals + LOI. Booked orders require a PO or MSA.
 
-The live Quarterly Financials tab currently uses a **different** (WIP) path than the old capacity/backlog identity. Repo templates match the sheet as typed, including known-wrong formulas:
+The live Quarterly Financials tab projects shipments as the lesser of backlog-lag demand and factory capacity:
 
 1. **Pipeline / Backlog ($ and GWh)** — Actuals from earnings through **Q2 2026**. Pipeline - Model compounds at the column's growth rate. Backlog - Model copies Q1 actual then × **1.03** per quarter. Backlog (GWh) - Model = dollar model / Z3 ASP - Model.
 2. **Booked orders - Model** — copy $M actual if present, else prior Model × **1.2**. A second **Booked orders** row (units GWh) holds Q4 2025 **1.1**.
 3. **Z3 ASP - Model** — **$260** in 2025 Q1, then prior × **0.96714** through 2026 Q2 (`column() < 9`); held flat after.
-4. **MWh shipped - Derived from PTC** — 45X statutory dollars / $45 per kWh. **MWh shipped - Model** copies that when present, else prior Model × **1.22**. **Revenue - Model** = Model MWh / 1000 × ASP. There is no GWh shipped row.
+4. **MWh shipped - Derived from PTC** — 45X statutory dollars / $45 per kWh (sold energy for Unit COGS - Derived). **MWh shipped - from Backlog Lag** = backlog GWh from **lag** quarters ago / lag × 1000 (2024 prints when lookback is before 2025 Q1). **MWh shipped - Max Factory Output** = Factory capacity - Model × 1000. **MWh shipped - Model** = `MIN` of those two. **Revenue - Model** = Model MWh / 1000 × ASP.
 
 ### Factory (supply ceiling)
 
@@ -71,7 +71,7 @@ Eos sells energy, but talks about three different physical packages:
 
 **Unit COGS / ASP in this model are $/kWh of energy**, not $/Cube or $/Indensity SKU. Bert’s [cost-out thread](https://x.com/bert_gilfoyle/status/2096422051376742414) follows Slide 11: **percentage points of adjusted gross margin** (of revenue) and Adj. EBITDA in **$M**. Older factory notes mix that with implied **$/kWh** and management’s **per-cube** cost KPIs. Eos has **not disclosed** a Cube vs Indensity sales split. Q2 2026 still reported cube deliveries (+207% YoY, +20% QoQ); Line 2 was ~1% of Q2 production. Q1 2026 commentary was that the *pipeline* has a higher mix of large-scale / Indensity quotes — that is not current-period shipments.
 
-**MWh shipped - Model** is the energy used for Revenue - Model, COGS - Model, and forward Government credits. **MWh shipped - Derived from PTC** still feeds Unit COGS - Derived. Treat factory defaults (18s cycle, 672/cube) as guesses until replaced.
+**MWh shipped - Model** is the energy used for Revenue - Model, COGS - Model, and forward Government credits (`MIN` of backlog-lag and max factory output). **MWh shipped - Derived from PTC** still feeds Unit COGS - Derived. Treat factory defaults (18s cycle, 672/cube) as guesses until replaced.
 
 ### Profitability
 

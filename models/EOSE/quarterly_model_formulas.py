@@ -19,6 +19,7 @@ from models.EOSE.layout import (
     ASP_MODEL_HOLD_FROM_COL,
     ASP_MODEL_QOQ,
     ASP_MODEL_START,
+    BACKLOG_GWH_2024,
     BOOKED_ORDERS_GWH_KEY,
     BOOKED_ORDERS_M_KEY,
     CELL_MODULE_CREDIT_LABEL,
@@ -31,7 +32,8 @@ from models.EOSE.layout import (
     FIRST_VALUE_COL,
     FIRST_VALUE_COL_INDEX,
     GUIDED_ADJ_GM_MODEL_LABEL,
-    MWH_MODEL_QOQ,
+    MWH_SHIPPED_BACKLOG_LAG_LABEL,
+    MWH_SHIPPED_MAX_FACTORY_LABEL,
     MWH_SHIPPED_MODEL_LABEL,
     MWH_SHIPPED_PTC_LABEL,
     N_QUARTERS,
@@ -239,10 +241,26 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         f'N({{c}}{{{STATUTORY_PTC_LABEL}}})=0),"",'
         f"{{c}}{{{STATUTORY_PTC_LABEL}}}*1000/{{c}}{{{CELL_MODULE_CREDIT_LABEL}}})"
     ),
+    MWH_SHIPPED_BACKLOG_LAG_LABEL: (
+        # Look back *lag* quarters (not 1); divide by lag so that vintage is
+        # spread across the conversion window. Pre-C columns use 2024 prints.
+        f'=IF({{c}}{{Quarter}}="","",'
+        f"IFERROR("
+        f"IF(COLUMN()-{{c}}{{Backlog conversion lag}}<{FIRST_VALUE_COL_INDEX},"
+        f"CHOOSE(COLUMN()-{{c}}{{Backlog conversion lag}}+2,"
+        f"{','.join(str(g) for g in BACKLOG_GWH_2024)}),"
+        f'IF(OFFSET({{c}}{{Backlog (GWh)}},0,-{{c}}{{Backlog conversion lag}})<>"",'
+        f"OFFSET({{c}}{{Backlog (GWh)}},0,-{{c}}{{Backlog conversion lag}}),"
+        f"OFFSET({{c}}{{Backlog (GWh) - Model}},0,-{{c}}{{Backlog conversion lag}}))"
+        f")/{{c}}{{Backlog conversion lag}}*1000,0))"
+    ),
+    MWH_SHIPPED_MAX_FACTORY_LABEL: (
+        '=IF({c}{Quarter}="","",{c}{Factory capacity - Model}*1000)'
+    ),
     MWH_SHIPPED_MODEL_LABEL: (
-        f"=if(n({{c}}{{{MWH_SHIPPED_PTC_LABEL}}})=0,"
-        f"{{cp}}{{{MWH_SHIPPED_MODEL_LABEL}}}*{MWH_MODEL_QOQ},"
-        f"{{c}}{{{MWH_SHIPPED_PTC_LABEL}}})"
+        f'=IF({{c}}{{Quarter}}="","",'
+        f"MIN({{c}}{{{MWH_SHIPPED_BACKLOG_LAG_LABEL}}},"
+        f"{{c}}{{{MWH_SHIPPED_MAX_FACTORY_LABEL}}}))"
     ),
     "Unit COGS - Derived": (
         f'=IF(OR({{c}}{{{MWH_SHIPPED_PTC_LABEL}}}="",'
@@ -445,7 +463,7 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     "Backlog conversion lag": 4,
     "Z3 Module Energy Capacity": 1.19047619,
     "Z3 modules per cube": 672,
-    "Capacity utilization": 85,
+    "Capacity utilization": 75,
     "Full utilization days per week": 7,
     "Full utilization hours per day": 24,
     "Quarterly module cycle time reduction rate": 2.9,

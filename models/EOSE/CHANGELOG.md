@@ -18,6 +18,39 @@ Entry template:
 
 ---
 
+## 2026-09-24 — Fix MWh shipped - from Backlog Lag lookback
+
+Lookback was prior quarter only; it should be **Backlog conversion lag** quarters, still ÷ lag.
+
+- **Tab / range:** **Quarterly Financials** **MWh shipped - from Backlog Lag** `C:Z`; **Financials Definitions** note update.
+- **Insert/delete:** none
+- **Formulas:** `OFFSET(…,0,-1)` beginning-backlog → `OFFSET(…,0,-lag)`; when `COLUMN()-lag < 3` use 2024 ending backlog GWh via `CHOOSE`: **2.4 / 2.3 / 2.3 / 2.6** (Q1–Q4), then `/ lag × 1000`.
+- **Data:** 2024 GWh from Q1–Q3 earnings slides (~GWh) and Q4 call / YE print (**2.6 GWh** at $682M). Constants in `layout.BACKLOG_GWH_2024`.
+- **Side effects:** none on charts.
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `financials_definitions.py`, `README.md`
+
+## 2026-09-24 — Sync manual util edit + restore MIN(backlog, factory) MWh path
+
+Pulled live Definitions into git, captured **Capacity utilization** **85 → 75**, then restored the capacity/backlog shipment identity as two explicit MWh rows.
+
+- **Tab / range:** **Quarterly Financials** rows around **MWh shipped - Model**; **Financials Definitions** rewritten from git.
+- **Insert/delete:** ROWS, **2 inserted** before **MWh shipped - Model** (was row 63; now rows 63–64). Grid **112 → 114**. Rows below shift **+2**.
+- **Formulas:**
+  - **MWh shipped - from Backlog Lag:** beginning backlog GWh (actual if present else Model) / **Backlog conversion lag** × 1000 (Q1 2025 = 0)
+  - **MWh shipped - Max Factory Output:** **Factory capacity - Model** × 1000
+  - **MWh shipped - Model:** prior PTC-copy-or-×1.22 → `MIN(from Backlog Lag, Max Factory Output)`
+  - **Revenue - Model** / **COGS - Model** / forward **Government credits - Model** still use Model MWh (unchanged wiring)
+- **Data:** **Capacity utilization** C (and D:Z copies) **75** (manual edit; previously 85). Q2 2026 check: backlog-lag **650** MWh, max factory **~660** MWh, Model **650** (vs PTC **307.6**).
+- **Side effects:** number formats reapplied on Quarterly Financials. No chart objects in this workbook; if charts are added later, series rows shifted **+2** below the insert — fix in the UI. PTC MWh row unchanged (still feeds Unit COGS - Derived only).
+
+### Repo
+
+- `layout.py`, `quarterly_model_formulas.py`, `financials_definitions.py`, `README.md`
+- Dropped unused `MWH_MODEL_QOQ = 1.22`
+
 ## 2026-09-18 — Pull live adj. GM / debt / haircut edits into git (no sheet writes)
 
 Captured further manual Quarterly Financials edits. Read-only pull from **[EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing)**.

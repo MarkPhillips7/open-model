@@ -15,6 +15,8 @@ YEARS = (2025, 2026, 2027, 2028, 2029, 2030)
 BOOKED_ORDERS_M_KEY = "Booked orders [$M]"
 BOOKED_ORDERS_GWH_KEY = "Booked orders [GWh]"
 MWH_SHIPPED_PTC_LABEL = "MWh shipped - Derived from PTC"
+MWH_SHIPPED_BACKLOG_LAG_LABEL = "MWh shipped - from Backlog Lag"
+MWH_SHIPPED_MAX_FACTORY_LABEL = "MWh shipped - Max Factory Output"
 MWH_SHIPPED_MODEL_LABEL = "MWh shipped - Model"
 PTC_LABEL = "Production Tax Credits"
 STATUTORY_PTC_LABEL = "Production Tax Credits (statutory) - Derived"
@@ -97,6 +99,8 @@ NUMBER_FORMAT_BY_LABEL: dict[str, str] = {
     FY2026_GUIDE_LOW_LABEL: NUMBER_FORMAT_2DP,
     "Revenue": NUMBER_FORMAT_2DP,
     MWH_SHIPPED_PTC_LABEL: NUMBER_FORMAT_0_0,
+    MWH_SHIPPED_BACKLOG_LAG_LABEL: NUMBER_FORMAT_0_0,
+    MWH_SHIPPED_MAX_FACTORY_LABEL: NUMBER_FORMAT_0_0,
     MWH_SHIPPED_MODEL_LABEL: NUMBER_FORMAT_0_0,
     "Revenue - Model": NUMBER_FORMAT_2DP,
     "Adjusted gross profit - Model": NUMBER_FORMAT_2DP,
@@ -190,6 +194,8 @@ ROWS: list[tuple[str, str]] = [
     (FY2026_GUIDE_HIGH_LABEL, "$M"),
     ("Revenue", "$M"),
     (MWH_SHIPPED_PTC_LABEL, "MWh"),
+    (MWH_SHIPPED_BACKLOG_LAG_LABEL, "MWh"),
+    (MWH_SHIPPED_MAX_FACTORY_LABEL, "MWh"),
     (MWH_SHIPPED_MODEL_LABEL, "MWh"),
     ("Revenue - Model", "$M"),
     ("COGS", "$M"),
@@ -489,8 +495,12 @@ LINE_RAMP: list[float] = [
 ASP_MODEL_START = 260
 ASP_MODEL_QOQ = 0.96714
 ASP_MODEL_HOLD_FROM_COL = 9  # I = 2026 Q3
-MWH_MODEL_QOQ = 1.22
 FD_SHARES_MODEL_QOQ = 1.02
+
+# Ending Backlog (GWh) for 2024 — used when MWh shipped - from Backlog Lag
+# looks back before column C (2025 Q1). Sources: Q1–Q3 slides (~GWh);
+# Q4 call / YE print 2.6 GWh at $682M.
+BACKLOG_GWH_2024: tuple[float, ...] = (2.4, 2.3, 2.3, 2.6)
 DILUTION_PROCEEDS_FRACTION = 0.7  # cash from Δ diluted shares × prior stock price
 ADJ_GM_MODEL_ADD_PTS = 5  # after cost-out complete, +pts / quarter (capped)
 ADJ_GM_MODEL_CAP = 30

@@ -29,6 +29,7 @@ Canonical links and XBRL tag map: [`sources.py`](sources.py). Reported Actuals: 
 | Basic / Fully diluted shares | Weighted-average shares in the quarter column | Basic: XBRL. **Fully diluted is if-converted from the EPS footnote**, not XBRL diluted WAS. **Q4 basic WAS is in the 8-K three-month column**, not the 10-K FY average |
 | Adjusted EBITDA | Earnings 8-K Ex. 99.1 reconciliation | **not in XBRL** |
 | Pipeline $ / GWh, backlog $ / GWh | Earnings highlights + slides; GWh often only on the call | IR release / transcript |
+| 2024 ending backlog GWh (pre-spine) | Q1 **~2.4**, Q2 **~2.3**, Q3 **~2.3**, Q4 **2.6** ($682M) — used when MWh shipped - from Backlog Lag looks before 2025 Q1 | Q1–Q3 slides; [Q4 call](https://www.insidermonkey.com/blog/eos-energy-enterprises-inc-nasdaqeose-q4-2024-earnings-call-transcript-1473791/) |
 | Booked orders | Disclosed in release or slides; else implied Δbacklog + revenue (adjustments can break the identity — Q4 2025 disclosed $240M vs ~$115M implied) | same |
 | Z3 manufacturing lines | Capacity commentary (Line 2 commercial production Q2 2026). Q3 2026 **1.5** is a working in-quarter figure, not a print | earnings ops section; Q3 2026 typed |
 | Production Tax Credits | 10-Q/10-K government-grant footnote: 45X recognized as a reduction of COGS (thousands → $M). Not in standard us-gaap XBRL | copy the three-month (Q4: FY − 9M) print after each filing |
