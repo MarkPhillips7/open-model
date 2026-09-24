@@ -57,7 +57,7 @@ The live Quarterly Financials tab projects shipments as the lesser of backlog-la
 
 ### Factory (supply ceiling)
 
-Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle time - Model starts at 18s, compounds at 2.9%/quarter, floored at 10s. Line ramp is an editable Model series (1 → 12). Actual lines: 1 through Q1 2026, 2 in Q2 2026 (Line 2 launch), working **1.5** in Q3 2026 (in-quarter, not a print). **Z3 modules per cube (672)** is the original **Cube** packing only — do not use it for Indensity.
+Same physics as the old sheet: cycle time, lines, utilization, kWh/module. Cycle time - Model starts at 18s, compounds at 2.9%/quarter, floored at 10s. Line ramp is an editable Model series (1 → 12). Actual lines: 1 through Q1 2026, 2 in Q2 2026 (Line 2 launch), working **1.5** in Q3 2026 (in-quarter, not a print). **Capacity utilization** is hardcoded for completed prints (PTC-implied vs 24/7 nameplate: **9 / 22 / 26 / 41 / 45 / 52** for 2025 Q1–2026 Q2); later quarters copy the prior cell. **Z3 modules per cube (672)** is the original **Cube** packing only — do not use it for Indensity.
 
 ### What “unit” means
 

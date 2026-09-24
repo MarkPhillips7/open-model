@@ -79,7 +79,12 @@ FIELD_NOTES: dict[str, str] = {
         "launch; Q3 2026 working 1.5 — in-quarter, not a print)."
     ),
     'Z3 manufacturing lines - Model': "Editable ramp (1 → 12). Capacity ceiling, not a demand forecast.",
-    'Capacity utilization': "Utilization % assumption (default 75). Apply to Model lines.",
+    'Capacity utilization': (
+        "Utilization % of Model-line nameplate (24/7 × cycle time). Completed prints "
+        "2025 Q1–2026 Q2 are PTC-implied vs that nameplate (9 / 22 / 26 / 41 / 45 / 52); "
+        "later columns copy the prior quarter. Edit the first open cell to change the "
+        "forward assumption."
+    ),
     'Z3 manufacturing lines utilized - Model': "Lines - Model × utilization.",
     'Full utilization weeks per year': "365/7.",
     'Full utilization days per week': "Default 7.",

@@ -120,7 +120,7 @@ YELLOW_C_ONLY_LABELS: tuple[str, ...] = (
     CASH_OPEX_RUNRATE_LABEL,
     NONCASH_COGS_LABEL,
 )
-YELLOW_C_TO_Z_LABELS: tuple[str, ...] = (PIPELINE_GROWTH_LABEL,)
+YELLOW_C_TO_Z_LABELS: tuple[str, ...] = (PIPELINE_GROWTH_LABEL, "Capacity utilization")
 WHITE_C_TO_Z_LABELS: tuple[str, ...] = (
     COST_OUT_PROGRESS_LABEL,
     GUIDED_ADJ_GM_MODEL_LABEL,
@@ -479,6 +479,12 @@ def quarters() -> list[tuple[int, int]]:
             out.append((year, q))
     return out
 
+
+# Capacity utilization % for completed prints (2025 Q1 – 2026 Q2).
+# PTC-implied vs Model-line nameplate at 24/7 (cycle-time path as typed).
+# Later quarters copy the prior cell; edit the first open quarter to change the
+# forward assumption (was a flat 75 everywhere).
+CAPACITY_UTILIZATION_COMPLETED: tuple[int, ...] = (9, 22, 26, 41, 45, 52)
 
 # Factory line-count path (editable Model assumptions). 2025 stays at 1 line;
 # ramp starts 2026 Q1. Last two 2030 quarters hold at 12.

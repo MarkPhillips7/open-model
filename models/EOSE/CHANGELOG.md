@@ -18,6 +18,20 @@ Entry template:
 
 ---
 
+## 2026-09-24 — Capacity utilization ramp for completed quarters
+
+Flat **75** everywhere was wrong for the 2025–H1 2026 line ramp. Completed prints now use PTC-implied util vs Model-line 24/7 nameplate; later columns copy the prior quarter.
+
+- **Tab / range:** **Quarterly Financials** **Capacity utilization** `C:Z`; **Financials Definitions** `B` note for that label.
+- **Insert/delete:** none
+- **Formulas:** D:Z `=$C$32` → C–H hardcoded; I:Z `=prior` (`=H32`, `=I32`, …).
+- **Data:** C–H **9 / 22 / 26 / 41 / 45 / 52** (2025 Q1–2026 Q2). Factory capacity now tracks PTC MWh (~47 / 115 / 140 / 227 / 256 / 305 vs PTC 44 / 113 / 140 / 228 / 255 / 308). Forward util carries **52** until you edit an open cell (e.g. type **75** in Q3 if you want the old steady-state assumption).
+- **Side effects:** yellow fill on **Capacity utilization** C:Z (editable time series). No chart API.
+
+### Repo
+
+- `layout.py` (`CAPACITY_UTILIZATION_COMPLETED`, yellow C:Z), `quarterly_model_formulas.py`, `financials_definitions.py`, `README.md`
+
 ## 2026-09-24 — Fix MWh shipped - from Backlog Lag lookback
 
 Lookback was prior quarter only; it should be **Backlog conversion lag** quarters, still ÷ lag.

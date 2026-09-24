@@ -22,6 +22,7 @@ from models.EOSE.layout import (
     BACKLOG_GWH_2024,
     BOOKED_ORDERS_GWH_KEY,
     BOOKED_ORDERS_M_KEY,
+    CAPACITY_UTILIZATION_COMPLETED,
     CELL_MODULE_CREDIT_LABEL,
     CELL_MODULE_CREDIT_PER_KWH,
     COST_OUT_PROGRESS_LABEL,
@@ -46,6 +47,8 @@ from models.EOSE.layout import (
     live_quarterly_ab,
     require_live_layout_match,
 )
+
+CAPACITY_UTILIZATION_LABEL = "Capacity utilization"
 
 FINANCIALS_TAB = QUARTERLY
 FIRST_VALUE_COL = FIRST_VALUE_COL
@@ -379,7 +382,8 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
     "Backlog conversion lag": "=$C${Backlog conversion lag}",
     "Z3 Module Energy Capacity": "=$C${Z3 Module Energy Capacity}",
     "Z3 modules per cube": "=$C${Z3 modules per cube}",
-    "Capacity utilization": "=$C${Capacity utilization}",
+    # Completed prints are hardcoded; later columns copy prior (see row_cells_for_label).
+    CAPACITY_UTILIZATION_LABEL: "={cp}{" + CAPACITY_UTILIZATION_LABEL + "}",
     "Full utilization days per week": "=$C${Full utilization days per week}",
     "Full utilization hours per day": "=$C${Full utilization hours per day}",
     "Quarterly module cycle time reduction rate": (
@@ -421,7 +425,6 @@ COPY_FROM_C_LABELS: frozenset[str] = frozenset(
         "Backlog conversion lag",
         "Z3 Module Energy Capacity",
         "Z3 modules per cube",
-        "Capacity utilization",
         "Full utilization days per week",
         "Full utilization hours per day",
         "Quarterly module cycle time reduction rate",
@@ -447,10 +450,24 @@ def row_cells_for_label(
     if label not in UNIFORM_FORMULA_TEMPLATES:
         return None
     label_to_row = label_to_row or {}
+    if label == CAPACITY_UTILIZATION_LABEL:
+        row = label_to_row.get(label)
+        if not row:
+            raise KeyError(
+                f"{CAPACITY_UTILIZATION_LABEL!r} row required to build prior-copy formulas"
+            )
+        cells: list[Any] = []
+        for i in range(n_cols):
+            if i < len(CAPACITY_UTILIZATION_COMPLETED):
+                cells.append(CAPACITY_UTILIZATION_COMPLETED[i])
+            else:
+                prior = col_letter(FIRST_VALUE_COL_INDEX + i - 1)
+                cells.append(f"={prior}{row}")
+        return cells
     resolved = apply_row_labels(UNIFORM_FORMULA_TEMPLATES[label], label_to_row)
     if label in COPY_FROM_C_LABELS:
         return [None] + [resolved] * max(0, n_cols - 1)
-    cells: list[Any] = []
+    cells = []
     for i in range(n_cols):
         col = col_letter(FIRST_VALUE_COL_INDEX + i)
         prior = col_letter(FIRST_VALUE_COL_INDEX + i - 1)
@@ -463,7 +480,6 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
     "Backlog conversion lag": 4,
     "Z3 Module Energy Capacity": 1.19047619,
     "Z3 modules per cube": 672,
-    "Capacity utilization": 75,
     "Full utilization days per week": 7,
     "Full utilization hours per day": 24,
     "Quarterly module cycle time reduction rate": 2.9,
@@ -480,3 +496,4 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
 
 assert COPY_FROM_C_LABELS == frozenset(COLUMN_C_DEFAULTS)
 assert N_QUARTERS == 24
+assert len(CAPACITY_UTILIZATION_COMPLETED) == 6
