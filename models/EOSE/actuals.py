@@ -32,6 +32,7 @@ ACTUALS: dict[tuple[int, int], dict[str, float]] = {
         "COGS": 34.996,
         "Gross profit": -24.539,
         "Production Tax Credits": 1.799,  # 10-Q 45X COGS reduction
+        "Adjusted gross profit": -21.125,  # Q1'26 8-K YoY recon: GP + SBC/COGS + D&A/COGS
         "SG&A": 20.995,
         "R&D": 6.837,
         "OpEx": 28.393,  # incl. $0.561M PP&E write-down

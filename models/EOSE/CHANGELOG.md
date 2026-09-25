@@ -18,6 +18,22 @@ Entry template:
 
 ---
 
+## 2026-09-24 — Sync manual util ramp + fill Q1 2025 adj. GP
+
+Adopted live workbook edits into git, then filled the blank Q1 2025 Adjusted gross profit actual.
+
+- **Tab / range:** **Quarterly Financials** **Adjusted gross profit** `C`; **Capacity utilization** / **Z3 ASP - Model** (repo only — already on sheet); **Financials Definitions** `B` for Capacity utilization + Adjusted gross profit; `snapshot.json` (new **Money Charts** tab + 2 charts).
+- **Insert/delete:** none
+- **Formulas:**
+  - **Capacity utilization:** completed seed extended **9 / 22 / 26 / 41 / 45 / 52 → + 63 / 72 / 75** (through 2027 Q1); L:Z still prior-copy.
+  - **Z3 ASP - Model** C: nested hold-flat else → shorter `=if(column()=3,260,B23*0.96714)` (D:Z unchanged).
+- **Data:** **Adjusted gross profit** C (2025 Q1) blank → **−21.125** ($M). Source: [Q1 2026 earnings release](https://investors.eose.com/news-releases/news-release-details/eos-energy-enterprises-reports-first-quarter-2026-financial) YoY adjusted-gross recon (GAAP GP −24.539 + SBC in COGS 1.020 + D&A in COGS 2.394). **Adjusted gross margin** C now computes (~−202%).
+- **Side effects:** snapshot now tracks **Money Charts** (Backlog/Revenue; Costs/Profit). Chart objects not touched via API — verify series in the UI if rows shift later.
+
+### Repo
+
+- `actuals.py`, `layout.py` (`CAPACITY_UTILIZATION_COMPLETED` len 6→9), `quarterly_model_formulas.py`, `financials_definitions.py`, `README.md`, `RESOURCES.md`, `snapshot.json`
+
 ## 2026-09-24 — Capacity utilization ramp for completed quarters
 
 Flat **75** everywhere was wrong for the 2025–H1 2026 line ramp. Completed prints now use PTC-implied util vs Model-line 24/7 nameplate; later columns copy the prior quarter.

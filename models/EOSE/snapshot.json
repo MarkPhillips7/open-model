@@ -3,11 +3,77 @@
     "Welcome",
     "Financials Definitions",
     "Quarterly Financials",
+    "Money Charts",
     "Shares",
     "Price History",
     "Reference",
     "Feltonomics",
     "COGS"
   ],
-  "charts": []
+  "charts": [
+    {
+      "tab": "Money Charts",
+      "title": "Eos Energy Quarterly Backlog and Revenue",
+      "domain_row": 4,
+      "domain_end_col": 28,
+      "series": [
+        {
+          "weekly_row": 61,
+          "line_style": "SOLID",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        },
+        {
+          "weekly_row": 66,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        },
+        {
+          "weekly_row": 16,
+          "line_style": "SOLID",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        },
+        {
+          "weekly_row": 17,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        }
+      ]
+    },
+    {
+      "tab": "Money Charts",
+      "title": "Eos Energy Quarterly Costs and Profit",
+      "domain_row": 4,
+      "domain_end_col": 28,
+      "series": [
+        {
+          "weekly_row": 67,
+          "line_style": "SOLID",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        },
+        {
+          "weekly_row": 68,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        },
+        {
+          "weekly_row": 83,
+          "line_style": "SOLID",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        },
+        {
+          "weekly_row": 84,
+          "line_style": "DOTTED",
+          "axis": "LEFT_AXIS",
+          "end_column": 28
+        }
+      ]
+    }
+  ]
 }

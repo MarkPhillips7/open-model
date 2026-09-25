@@ -464,6 +464,27 @@ def row_cells_for_label(
                 prior = col_letter(FIRST_VALUE_COL_INDEX + i - 1)
                 cells.append(f"={prior}{row}")
         return cells
+    if label == "Z3 ASP - Model":
+        # Column C uses a shorter else-branch (never taken when column()=3); D:Z keep
+        # the hold-flat nest. Matches the live sheet after a manual C edit.
+        row = label_to_row.get(label)
+        if not row:
+            raise KeyError("'Z3 ASP - Model' row required to build ASP formulas")
+        cells = []
+        for i in range(n_cols):
+            prior = col_letter(FIRST_VALUE_COL_INDEX + i - 1)
+            if i == 0:
+                cells.append(
+                    f"=if(column()=3,{ASP_MODEL_START},{prior}{row}*{ASP_MODEL_QOQ})"
+                )
+            else:
+                cells.append(
+                    f"=if(column()=3,{ASP_MODEL_START},"
+                    f"if(column()<{ASP_MODEL_HOLD_FROM_COL},"
+                    f"{prior}{row}*{ASP_MODEL_QOQ},"
+                    f"{prior}{row}))"
+                )
+        return cells
     resolved = apply_row_labels(UNIFORM_FORMULA_TEMPLATES[label], label_to_row)
     if label in COPY_FROM_C_LABELS:
         return [None] + [resolved] * max(0, n_cols - 1)
@@ -496,4 +517,4 @@ COLUMN_C_DEFAULTS: dict[str, Any] = {
 
 assert COPY_FROM_C_LABELS == frozenset(COLUMN_C_DEFAULTS)
 assert N_QUARTERS == 24
-assert len(CAPACITY_UTILIZATION_COMPLETED) == 6
+assert len(CAPACITY_UTILIZATION_COMPLETED) == 9

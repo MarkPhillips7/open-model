@@ -80,10 +80,9 @@ FIELD_NOTES: dict[str, str] = {
     ),
     'Z3 manufacturing lines - Model': "Editable ramp (1 → 12). Capacity ceiling, not a demand forecast.",
     'Capacity utilization': (
-        "Utilization % of Model-line nameplate (24/7 × cycle time). Completed prints "
-        "2025 Q1–2026 Q2 are PTC-implied vs that nameplate (9 / 22 / 26 / 41 / 45 / 52); "
-        "later columns copy the prior quarter. Edit the first open cell to change the "
-        "forward assumption."
+        "Utilization % of Model-line nameplate (24/7 × cycle time). 2025 Q1–2026 Q2 are "
+        "PTC-implied (9 / 22 / 26 / 41 / 45 / 52); 2026 Q3–2027 Q1 are a manual ramp "
+        "(63 / 72 / 75); later columns copy the prior quarter."
     ),
     'Z3 manufacturing lines utilized - Model': "Lines - Model × utilization.",
     'Full utilization weeks per year': "365/7.",
@@ -195,7 +194,7 @@ FIELD_NOTES: dict[str, str] = {
     'Gross margin - Model': "Gross profit - Model / Revenue - Model × 100 (GAAP-like; includes non-cash COGS).",
     'Adjusted gross profit': (
         "Company adj. GP = GAAP GP + SBC in COGS + D&A in COGS. Actuals from the earnings "
-        "recon (Q2 2025–Q2 2026 on Slide 11 / 8-K)."
+        "recon (Q1 2025 from Q1 2026 8-K YoY column; Q2 2025–Q2 2026 on Slide 11 / 8-K)."
     ),
     'Adjusted gross profit - Model': "Revenue - Model × Adjusted gross margin - Model / 100.",
     'Adjusted gross margin': "Adj. GP / Revenue × 100 when both actuals are present. Q2 2026 print −62.3%.",

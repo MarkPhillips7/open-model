@@ -480,11 +480,10 @@ def quarters() -> list[tuple[int, int]]:
     return out
 
 
-# Capacity utilization % for completed prints (2025 Q1 – 2026 Q2).
-# PTC-implied vs Model-line nameplate at 24/7 (cycle-time path as typed).
-# Later quarters copy the prior cell; edit the first open quarter to change the
-# forward assumption (was a flat 75 everywhere).
-CAPACITY_UTILIZATION_COMPLETED: tuple[int, ...] = (9, 22, 26, 41, 45, 52)
+# Capacity utilization % time series seed (hardcoded through 2027 Q1).
+# 2025 Q1–2026 Q2: PTC-implied vs Model-line nameplate at 24/7 (cycle-time path).
+# 2026 Q3–2027 Q1: manual forward ramp to 75; later quarters copy the prior cell.
+CAPACITY_UTILIZATION_COMPLETED: tuple[int, ...] = (9, 22, 26, 41, 45, 52, 63, 72, 75)
 
 # Factory line-count path (editable Model assumptions). 2025 stays at 1 line;
 # ramp starts 2026 Q1. Last two 2030 quarters hold at 12.
