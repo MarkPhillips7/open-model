@@ -502,6 +502,12 @@ ASP_MODEL_QOQ = 0.96714
 ASP_MODEL_HOLD_FROM_COL = 9  # I = 2026 Q3
 FD_SHARES_MODEL_QOQ = 1.02
 
+# Backlog - Model: Q1 copies Backlog actual; then ×1.01 while column() < 8
+# (through 2026 Q1), then ×1.1 from 2026 Q2 onward.
+BACKLOG_MODEL_NEAR_QOQ = 1.01
+BACKLOG_MODEL_FAR_QOQ = 1.1
+BACKLOG_MODEL_FAST_FROM_COL = 8  # H = 2026 Q2
+
 # Ending Backlog (GWh) for 2024 — used when MWh shipped - from Backlog Lag
 # looks back before column C (2025 Q1). Sources: Q1–Q3 slides (~GWh);
 # Q4 call / YE print 2.6 GWh at $682M.

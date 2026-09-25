@@ -2,7 +2,7 @@
 
 The near-term plan is management's Slide 11 waterfall (materials / conversion /
 projects / scrap) phased in over four quarters. Because Eos has repeatedly missed
-cost-out timelines, **Percent of Guided Cost Cutting Achieved** (default 70%)
+cost-out timelines, **Percent of Guided Cost Cutting Achieved** (default 85%)
 scales the guided points. After the plan completes, remaining gap to terminal
 unit COGS is absorbed as Lines 3–4 come in (Indensity / single-piece flow).
 
@@ -42,7 +42,7 @@ GUIDED_TOTAL_PTS = (
     + GUIDED_SCRAP_PTS
 )  # 73
 
-DEFAULT_HAIRCUT_PCT = 70  # note / Welcome copy; live Quarterly Financials C is 100
+DEFAULT_HAIRCUT_PCT = 85  # live Quarterly Financials C (was 70)
 DEFAULT_TERMINAL_UNIT_COGS = 181
 COST_OUT_START_YEAR = 2026
 COST_OUT_START_QUARTER = 2  # progress 0 at Q2 2026
@@ -109,7 +109,8 @@ LEVER_ROWS: list[tuple[str, str, Any, str]] = [
         "Percent of Guided Cost Cutting Achieved",
         "%",
         f"={_qf_c('Percent of Guided Cost Cutting Achieved')}",
-        "Default 70%. 100% = take the CFO's 73 pts at face value. 0% = freeze Q2 2026 costs.",
+        f"Default {DEFAULT_HAIRCUT_PCT:.0f}%. 100% = take the CFO's 73 pts at face value. "
+        "0% = freeze Q2 2026 costs.",
     ),
     (
         "Terminal unit COGS",

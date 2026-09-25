@@ -18,6 +18,20 @@ Entry template:
 
 ---
 
+## 2026-09-25 — Sync backlog growth + haircut edits
+
+Adopted live Quarterly Financials edits into git (no formula restore).
+
+- **Tab / range:** repo only for formulas; **Financials Definitions** `B` for Backlog - Model + Percent of Guided Cost Cutting Achieved; **COGS** `D` note for haircut lever; **Welcome** goals line.
+- **Insert/delete:** none
+- **Formulas:** **Backlog - Model** prior × **1.03** → Q1 copies Backlog actual; then prior × **1.01** while `column() < 8` (through 2026 Q1), then × **1.1** from 2026 Q2.
+- **Data:** **Percent of Guided Cost Cutting Achieved** C **70 → 85** (also reflected on COGS via INDEX/MATCH).
+- **Side effects:** none on charts.
+
+### Repo
+
+- `layout.py` (`BACKLOG_MODEL_*`), `quarterly_model_formulas.py`, `cogs.py` (`DEFAULT_HAIRCUT_PCT`), `financials_definitions.py`, `welcome.py`, `README.md`, `RESOURCES.md`
+
 ## 2026-09-24 — Sync manual util ramp + fill Q1 2025 adj. GP
 
 Adopted live workbook edits into git, then filled the blank Q1 2025 Adjusted gross profit actual.

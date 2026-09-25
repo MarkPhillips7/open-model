@@ -33,7 +33,7 @@ There is no weekly spine. Eos does not publish a high-frequency unit funnel.
 | **Price History** | One `GOOGLEFINANCE` spill of EOSE daily OHLCV. **Stock price** XLOOKUPs the close by quarter-ending date. |
 | **Reference** | Source links (ASP, 45X treatment, Feltonomics). |
 | **Feltonomics** | Placeholder (empty) — independent model cited on Reference. Kept for later. |
-| **COGS** | Cost-out levers and notes. Frozen header: **Units / Value / Notes**. Q2 2026 Slide 11 waterfall (25/20/20/8 pts of adj. GM) × **Percent of Guided Cost Cutting Achieved** (default 70% on Quarterly Financials); **Terminal unit COGS** (default $160/kWh) is edited here. Quarterly path (progress, adj. GM, unit COGS, $200M illustration) lives on **Quarterly Financials**. |
+| **COGS** | Cost-out levers and notes. Frozen header: **Units / Value / Notes**. Q2 2026 Slide 11 waterfall (25/20/20/8 pts of adj. GM) × **Percent of Guided Cost Cutting Achieved** (default 85% on Quarterly Financials); **Terminal unit COGS** (default $160/kWh) is edited here. Quarterly path (progress, adj. GM, unit COGS, $200M illustration) lives on **Quarterly Financials**. |
 
 **Charts are manual-only.** Add Operations / Money charts in the Google Sheets UI if you want Actual (solid) vs Model (dotted). Agents must not create or edit chart objects via the API.
 
@@ -51,7 +51,7 @@ Eos defines backlog as prior + booked orders − shipments. Pipeline is proposal
 
 The live Quarterly Financials tab projects shipments as the lesser of backlog-lag demand and factory capacity:
 
-1. **Pipeline / Backlog ($ and GWh)** — Actuals from earnings through **Q2 2026**. Pipeline - Model compounds at the column's growth rate. Backlog - Model copies Q1 actual then × **1.03** per quarter. Backlog (GWh) - Model = dollar model / Z3 ASP - Model.
+1. **Pipeline / Backlog ($ and GWh)** — Actuals from earnings through **Q2 2026**. Pipeline - Model compounds at the column's growth rate. Backlog - Model copies Q1 actual, then × **1.01** through 2026 Q1 (`column() < 8`), then × **1.1**. Backlog (GWh) - Model = dollar model / Z3 ASP - Model.
 2. **Booked orders - Model** — copy $M actual if present, else prior Model × **1.2**. A second **Booked orders** row (units GWh) holds Q4 2025 **1.1**.
 3. **Z3 ASP - Model** — **$260** in 2025 Q1, then prior × **0.96714** through 2026 Q2 (`column() < 9`); held flat after.
 4. **MWh shipped - Derived from PTC** — 45X statutory dollars / $45 per kWh (sold energy for Unit COGS - Derived). **MWh shipped - from Backlog Lag** = backlog GWh from **lag** quarters ago / lag × 1000 (2024 prints when lookback is before 2025 Q1). **MWh shipped - Max Factory Output** = Factory capacity - Model × 1000. **MWh shipped - Model** = `MIN` of those two. **Revenue - Model** = Model MWh / 1000 × ASP.
@@ -76,7 +76,7 @@ Eos sells energy, but talks about three different physical packages:
 
 ### Profitability
 
-- **Unit COGS - Model** is computed on **Quarterly Financials** from COGS-tab levers, not a flat $160. Starting point is Q2 2026 adj. GM (−62.3%). Management's 12-month waterfall is **73 pts** (materials 25 / conversion 20 / projects 20 / scrap 8). **Percent of Guided Cost Cutting Achieved** lives on Quarterly Financials (**70** on the live sheet) and scales those points. After Q2 2027 the remaining gap to **Terminal unit COGS** (**$181/kWh**, edited on the COGS tab) is blended in as manufacturing lines go from 2 → 4.
+- **Unit COGS - Model** is computed on **Quarterly Financials** from COGS-tab levers, not a flat $160. Starting point is Q2 2026 adj. GM (−62.3%). Management's 12-month waterfall is **73 pts** (materials 25 / conversion 20 / projects 20 / scrap 8). **Percent of Guided Cost Cutting Achieved** lives on Quarterly Financials (**85** on the live sheet) and scales those points. After Q2 2027 the remaining gap to **Terminal unit COGS** (**$181/kWh**, edited on the COGS tab) is blended in as manufacturing lines go from 2 → 4.
 - **45X / Production Tax Credits** — Actuals are the 10-Q footnote amount recognized as a **reduction of GAAP COGS** (transfer value, not XBRL). **Production Tax Credits (statutory) - Derived** grosses that up by **45x transfer rate** (default 90%). **MWh shipped - Derived from PTC** = statutory $M × 1000 / **45X cell & module credit** ($45). **Unit COGS - Derived** = GAAP COGS × 1000 / that MWh (Q2 2025 ≈ **$410/kWh**). **Government credits - Model** copies the PTC print when present, else effective 45X × **MWh shipped - Model**. Credits remain a COGS offset only (`COGS - Model` = unit COGS × Model MWh / 1000 − credits + non-cash COGS D&A/SBC).
 - **SG&A / R&D / OpEx - Model** copy the actual when present, else prior Model (OpEx is not SG&A+R&D). **Cash OpEx run-rate** is Q2 implied adj. GP − adj. EBITDA ($28.5M), held flat.
 - **Adjusted gross margin - Model** copies actual adj. GM through 2026 Q2; after cost-out completes, prior + **5 pts**/q capped at 30%; otherwise the haircut waterfall. **Adjusted EBITDA - Model** = adj. GP − cash OpEx (company definition). **Operating cash flow - Model** equals that — the CFO said Q2 ops cash use tracked adj. EBITDA.

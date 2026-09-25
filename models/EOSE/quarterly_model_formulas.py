@@ -20,6 +20,9 @@ from models.EOSE.layout import (
     ASP_MODEL_QOQ,
     ASP_MODEL_START,
     BACKLOG_GWH_2024,
+    BACKLOG_MODEL_FAR_QOQ,
+    BACKLOG_MODEL_FAST_FROM_COL,
+    BACKLOG_MODEL_NEAR_QOQ,
     BOOKED_ORDERS_GWH_KEY,
     BOOKED_ORDERS_M_KEY,
     CAPACITY_UTILIZATION_COMPLETED,
@@ -185,7 +188,10 @@ UNIFORM_FORMULA_TEMPLATES: dict[str, str] = {
         "{c}{" + BOOKED_ORDERS_M_KEY + "})"
     ),
     "Backlog - Model": (
-        "=IF(column()=3,$C${Backlog},{cp}{Backlog - Model}*1.03)"
+        f"=IF(column()=3,$C${{Backlog}},"
+        f"IF(column()<{BACKLOG_MODEL_FAST_FROM_COL},"
+        f"{{cp}}{{Backlog - Model}}*{BACKLOG_MODEL_NEAR_QOQ},"
+        f"{{cp}}{{Backlog - Model}}*{BACKLOG_MODEL_FAR_QOQ}))"
     ),
     "Backlog (GWh) - Model": "={c}{Backlog - Model}/{c}{Z3 ASP - Model}",
     "Z3 ASP - Derived": (

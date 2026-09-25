@@ -71,7 +71,7 @@ Backlog identity (company): prior + new orders − shipments. Pipeline = proposa
 | Derive average selling price from PTC credits | [x.com/x_times_1](https://x.com/x_times_1/status/1950885635100717222) | |
 | Tax credits are not recorded as revenue. They are recorded as negative cost of goods sold. | [x.com/x_times_1](https://x.com/x_times_1/status/2006569905122898296) | **COGS - Model** subtracts **Government credits - Model**. Revenue - Model does **not** add credits. |
 | Unit COGS from 45X PTC dollars | [x.com/bert_gilfoyle](https://x.com/bert_gilfoyle/status/2096422067503878558) | GAAP PTC / 90% transfer = statutory $; ÷ $45/kWh = MWh; Unit COGS = GAAP COGS / (MWh × 1000). Q2 2025: $4.562M → $5.069M → 112.6 MWh → **$410/kWh**. |
-| Cost-out plan → adj. GM / cash burn | [x.com/bert_gilfoyle](https://x.com/bert_gilfoyle/status/2096422051376742414) | Slide 11 waterfall (25/20/20/8 pts); ops cash ≈ adj. EBITDA; $325M FY2026 midpoint / $200M qtr illustration. **COGS** tab + **Percent of Guided Cost Cutting Achieved** (default 70%). |
+| Cost-out plan → adj. GM / cash burn | [x.com/bert_gilfoyle](https://x.com/bert_gilfoyle/status/2096422051376742414) | Slide 11 waterfall (25/20/20/8 pts); ops cash ≈ adj. EBITDA; $325M FY2026 midpoint / $200M qtr illustration. **COGS** tab + **Percent of Guided Cost Cutting Achieved** (default 85%). |
 | Feltonomics | [x.com/philroberts](https://x.com/philroberts/status/2006725760514453566) | Independent model; **Feltonomics** tab is kept empty for later |
 | Module and cell are interchangeable words with respect to Z3 | (model note) | |
 

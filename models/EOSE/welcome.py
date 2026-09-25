@@ -48,7 +48,7 @@ GOALS = (
     "offset, not as revenue. Historical unit COGS is derived from 10-Q PTC dollars "
     "($45/kWh cell+module ÷ transfer rate → MWh; GAAP COGS / that MWh). Unit COGS - Model "
     "follows the Q2 2026 cost-out waterfall on the COGS tab, scaled by Percent of Guided "
-    "Cost Cutting Achieved (default 70%)."
+    "Cost Cutting Achieved (default 85%)."
 )
 
 TAB_GUIDE_INTRO = (
@@ -89,7 +89,7 @@ TAB_DESCRIPTIONS: list[tuple[str, str]] = [
         "COGS",
         "Cost-out levers and notes (Units / Value / Notes). Slide 11 waterfall "
         "(materials 25 / conversion 20 / projects 20 / scrap 8 pts of adj. GM). "
-        "Haircut defaults to 70% on Quarterly Financials. After the 12-month plan, "
+        "Haircut defaults to 85% on Quarterly Financials. After the 12-month plan, "
         "remaining gap to terminal $/kWh is absorbed as Lines 3–4 ramp. Quarterly "
         "progress / adj. GM / unit COGS live on Quarterly Financials.",
     ),

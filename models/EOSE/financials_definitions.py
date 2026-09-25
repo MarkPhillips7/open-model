@@ -42,24 +42,24 @@ FIELD_NOTES: dict[str, str] = {
     ),
     'Backlog': "Ending backlog ($M). Company identity: prior + orders − shipments.",
     'Backlog - Model': (
-        "Column C copies Q1 Backlog actual ($C$ Backlog). Later columns are prior Backlog - "
-        "Model × 1.03. Not the company prior + orders − shipments identity."
+        "Column C copies Q1 Backlog actual ($C$ Backlog). Later columns: prior × 1.01 while "
+        "column() < 8 (through 2026 Q1), then prior × 1.1 from 2026 Q2. Not the company "
+        "prior + orders − shipments identity."
     ),
     'Backlog (GWh)': "Ending backlog energy (GWh) as disclosed.",
     'Backlog (GWh) - Model': "Backlog - Model ($M) / Z3 ASP - Model ($/kWh).",
     'Backlog conversion lag': (
-        "Quarters of lag before a backlog vintage is assumed shippable, and the "
-        "divisor that spreads that vintage across the conversion window. Default 4. "
-        "Scalar in C. MWh shipped - from Backlog Lag = backlog GWh from lag quarters "
-        "ago / lag × 1000."
+        "Quarters of lag before a backlog vintage is assumed shippable, and the divisor that "
+        "spreads that vintage across the conversion window. Default 4. Scalar in C. MWh "
+        "shipped - from Backlog Lag = backlog GWh from lag quarters ago / lag × 1000."
     ),
     'Z3 ASP - Derived': (
         "If Booked orders (GWh) is 0: Pipeline ($B) × 1000 / Pipeline (GWh); else Booked "
         "orders ($M) / Booked orders (GWh). Mixes Cube and Indensity."
     ),
     'Z3 ASP - Model': (
-        "$260 in 2025 Q1, then prior × 0.96714 while column() < 9 (through 2026 Q2); "
-        "held flat after. Revenue - Model uses this ASP with MWh shipped - Model."
+        "$260 in 2025 Q1, then prior × 0.96714 while column() < 9 (through 2026 Q2); held flat "
+        "after. Revenue - Model uses this ASP with MWh shipped - Model."
     ),
     'Z3 Module Energy Capacity': "kWh per Z3 module (product sheet ~1.2 kWh). Scalar in C, copied across.",
     'Z3 module cycle time': "Reported cycle time when disclosed (Line 2 ~10% faster vs Line 1 in Q2 2026).",
@@ -81,8 +81,8 @@ FIELD_NOTES: dict[str, str] = {
     'Z3 manufacturing lines - Model': "Editable ramp (1 → 12). Capacity ceiling, not a demand forecast.",
     'Capacity utilization': (
         "Utilization % of Model-line nameplate (24/7 × cycle time). 2025 Q1–2026 Q2 are "
-        "PTC-implied (9 / 22 / 26 / 41 / 45 / 52); 2026 Q3–2027 Q1 are a manual ramp "
-        "(63 / 72 / 75); later columns copy the prior quarter."
+        "PTC-implied (9 / 22 / 26 / 41 / 45 / 52); 2026 Q3–2027 Q1 are a manual ramp (63 / 72 "
+        "/ 75); later columns copy the prior quarter."
     ),
     'Z3 manufacturing lines utilized - Model': "Lines - Model × utilization.",
     'Full utilization weeks per year': "365/7.",
@@ -93,10 +93,9 @@ FIELD_NOTES: dict[str, str] = {
     'Annualized module energy capacity - Model': "Capacity per line × lines (nameplate, not utilized).",
     'Factory capacity - Model': "Quarterly GWh = annualized nameplate / 4.",
     'Percent of Guided Cost Cutting Achieved': (
-        "Haircut on the Q2 2026 Slide 11 cost-out (73 pts of adj. GM over 12 months). Default "
-        "70% because management has repeatedly missed cost-out timelines. 100% = take the CFO "
-        "plan at face value; 0% = freeze Q2 2026 costs. Edit C; D:Z copy C. Cost-out waterfall "
-        "and yellow levers live on the COGS tab."
+        "Haircut on the Q2 2026 Slide 11 cost-out (73 pts of adj. GM over 12 months). Live "
+        "sheet is 85% (was 70%). 100% = take the CFO plan at face value; 0% = freeze Q2 2026 "
+        "costs. Edit C; D:Z copy C. Cost-out waterfall and yellow levers live on the COGS tab."
     ),
     'Cost-out plan progress - Model': (
         "0 at the COGS cost-out start quarter (Q2 2026), 1 at the complete quarter (Q2 2027), "
@@ -154,8 +153,8 @@ FIELD_NOTES: dict[str, str] = {
         "transfer discount. Q2 2025: 4.562 / 0.90 = 5.069."
     ),
     'Government credits - Model': (
-        "Copy Production Tax Credits actual when present; else effective credit × "
-        "MWh shipped - Model / 1000. Applied as a COGS offset only — not added to revenue."
+        "Copy Production Tax Credits actual when present; else effective credit × MWh shipped "
+        "- Model / 1000. Applied as a COGS offset only — not added to revenue."
     ),
     'Unit COGS w/ 45x - Model': "Unit COGS − effective 45X.",
     'FY 2026 revenue guidance — low': "Management FY2026 revenue guide low ($300M as of Q2 2026). Scalar in C.",
@@ -168,25 +167,21 @@ FIELD_NOTES: dict[str, str] = {
         "kWh, not factory output. Feeds Unit COGS - Derived; does not drive Revenue - Model."
     ),
     'MWh shipped - from Backlog Lag': (
-        "Demand ceiling (MWh): ending backlog GWh from Backlog conversion lag quarters "
-        "ago (actual if present else Model) / lag × 1000. When the lookback falls before "
-        "2025 Q1, uses 2024 prints: Q1 2.4 / Q2 2.3 / Q3 2.3 / Q4 2.6 GWh."
+        "Demand ceiling (MWh): ending backlog GWh from Backlog conversion lag quarters ago "
+        "(actual if present else Model) / lag × 1000. When the lookback falls before 2025 Q1, "
+        "uses 2024 prints: Q1 2.4 / Q2 2.3 / Q3 2.3 / Q4 2.6 GWh."
     ),
-    'MWh shipped - Max Factory Output': (
-        "Supply ceiling (MWh): Factory capacity - Model (GWh) × 1000."
-    ),
+    'MWh shipped - Max Factory Output': "Supply ceiling (MWh): Factory capacity - Model (GWh) × 1000.",
     'MWh shipped - Model': (
-        "MIN(MWh shipped - from Backlog Lag, MWh shipped - Max Factory Output). "
-        "Revenue - Model, COGS - Model, and forward Government credits - Model use this energy."
+        "MIN(MWh shipped - from Backlog Lag, MWh shipped - Max Factory Output). Revenue - "
+        "Model, COGS - Model, and forward Government credits - Model use this energy."
     ),
-    'Revenue - Model': (
-        "MWh shipped - Model / 1000 × Z3 ASP - Model. Does not add 45X credits."
-    ),
+    'Revenue - Model': "MWh shipped - Model / 1000 × Z3 ASP - Model. Does not add 45X credits.",
     'COGS': "GAAP cost of goods sold ($M).",
     'COGS - Model': (
-        "Unit COGS × MWh shipped - Model / 1000 − government credits + Non-cash "
-        "COGS (D&A + SBC). The first two terms are cash/adj. COGS; the add-back is Q2 2026 "
-        "SBC+D&A in COGS held flat."
+        "Unit COGS × MWh shipped - Model / 1000 − government credits + Non-cash COGS (D&A + "
+        "SBC). The first two terms are cash/adj. COGS; the add-back is Q2 2026 SBC+D&A in COGS "
+        "held flat."
     ),
     'Gross profit': "Reported gross profit (loss).",
     'Gross profit - Model': "Revenue - Model − COGS - Model.",
