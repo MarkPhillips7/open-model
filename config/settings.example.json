@@ -15,6 +15,11 @@
       "name": "Comstock Inc.",
       "spreadsheet_id": "paste-or-url",
       "price_symbol": "LODE"
+    },
+    "CSIQ": {
+      "name": "Canadian Solar",
+      "spreadsheet_id": "paste-or-url",
+      "price_symbol": "CSIQ"
     }
   }
 }

@@ -11,6 +11,11 @@ Entry template:
 - **Why:** motivation
 ```
 
+## 2026-09-25 — CSIQ model pack
+
+- **What:** Added `models/CSIQ/` for Canadian Solar, on the Comstock workbook pattern (levers, actuals vs model rows, yellow plans, sum of parts). Settings example and the models table include CSIQ.
+- **Why:** The live CSIQ sheet needed a pack of its own. Operating formulas are Canadian Solar's, not a copy of Comstock's recycling math.
+
 ## 2026-09-23 — OPEN weekly actuals sync (Accountable + Open Tracker)
 
 - **What:** Added `models/OPEN/scripts/sync_weekly_actuals.py` plus Accountable acquisition-contract parsing and Open Tracker New Listings parsing (`open_tracker.py`). Snapshots for contracts/listings under `models/OPEN/data/`.

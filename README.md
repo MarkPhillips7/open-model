@@ -12,6 +12,7 @@ Each vehicle (stock, ETF, or other `GOOGLEFINANCE` symbol) is a **model pack** u
 | --- | --- | --- | --- |
 | **OPEN** | Opendoor Technologies | [models/OPEN](models/OPEN/README.md) | [Opendoor Model](https://docs.google.com/spreadsheets/d/1BhauTzGc9Nyt1J9gQl3NdCnpSSKCpSLbY9H7p5Obvc4) |
 | **EOSE** | Eos Energy Enterprises | [models/EOSE](models/EOSE/README.md) | [EOSE Model](https://docs.google.com/spreadsheets/d/1mkceZ4pgKhCAsWszlUVzk0RoHGeRRORfWIX9lB7Ejek/edit?usp=sharing) (view or comment) |
+| **CSIQ** | Canadian Solar | [models/CSIQ](models/CSIQ/README.md) | [CSIQ Model](https://docs.google.com/spreadsheets/d/1kCYZnwJyOKNRnyDPlyQyGCYOwkelu944fJ7yEEKyEeo/edit) |
 
 ## Layout
 
@@ -37,6 +38,11 @@ config/              OAuth credentials and settings.json (gitignored IDs)
       "name": "Eos Energy Enterprises",
       "spreadsheet_id": "paste-or-url",
       "price_symbol": "EOSE"
+    },
+    "CSIQ": {
+      "name": "Canadian Solar",
+      "spreadsheet_id": "paste-or-url",
+      "price_symbol": "CSIQ"
     }
   }
 }
