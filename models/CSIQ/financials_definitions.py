@@ -81,9 +81,9 @@ DEFINITIONS: dict[str, str] = {
         "costs, not rebuilding a 25 GW run-rate. Does not get its own valuation."
     ),
     L.MODULE_GW_ACTUAL: (
-        "Module GW recognized as revenue, from the earnings release. 2.5 GW in 2026 Q1 "
-        "(above 2.2–2.4 guidance) and 3.1 GW in 2026 Q2. Blank where the release did not "
-        "state the number. The US/ex-US split is not in this row."
+        "Module GW recognized as revenue, from the earnings release. 2025 was 6.9, 7.9, "
+        "5.1, and 4.3 GW. 2026 Q1 was 2.5 GW (above 2.2–2.4 guidance) and Q2 was 3.1 GW. "
+        "The US/ex-US split is not in this row."
     ),
     L.MODULE_GW_MODEL: (
         "US plan × US volume achieved, plus ex-US plan × ex-US volume achieved. " + _PREFER
@@ -100,9 +100,12 @@ DEFINITIONS: dict[str, str] = {
         "3.4–3.8 guidance. Revenue bridge only."
     ),
     L.STORAGE_GWH_ACTUAL: (
-        "Storage GWh recognized as revenue. 2.1 GWh in 2026 Q1 (guide was 1.7–1.9) and "
-        "3.7 GWh in 2026 Q2 (guide was 2.8–3.2). On the Q2 call, revenue was recognized on 3.3 GWh; 471 MWh of the 3.7 was internal "
-        "and that revenue is deferred. Blank elsewhere."
+        "Storage GWh recognized as revenue. 2025 is 0.8, 2.3, 2.7, and 2.0 GWh. Q1 is the "
+        "0.8 GWh on the Q1 shipment slide (also shown as 849 MWh). Q3 is the stated 2.7 GWh. "
+        "Q4 is 2.0 because Q1 2026's 2.1 GWh was up 5% from it. Q2 is 2.3, the residual of "
+        "the stated 7.8 GWh full year. 2026 Q1 was 2.1 GWh (guide 1.7–1.9) and Q2 was 3.7 GWh "
+        "(guide 2.8–3.2). On the Q2 2026 call, revenue was recognized on 3.3 GWh; 471 MWh of "
+        "the 3.7 was internal and that revenue is deferred."
     ),
     L.STORAGE_GWH_MODEL: "US plan plus ex-US plan, each times its achieved lever. " + _PREFER,
     L.US_MODULE_PHASE: (
@@ -164,8 +167,9 @@ DEFINITIONS: dict[str, str] = {
         "consolidated margin. Q1 is first-half minus Q2."
     ),
     L.MFG_GM_ACTUAL: (
-        "Manufacturing gross margin, percent, if you type it. Not back-solved here, "
-        "because Q1's margin is a refund, not a run-rate."
+        "Manufacturing gross margin, one decimal: segment gross profit divided by segment "
+        "revenue from the same table. 2026 Q1 is 29.1% and includes the IEEPA tariff refund, "
+        "so it is not a run-rate. Q2 2026 is 11.9%."
     ),
     L.MFG_OI_ACTUAL: (
         "Manufacturing segment operating income. Q1 2026 profit $127M, Q2 2026 loss $49M. "
@@ -250,12 +254,13 @@ DEFINITIONS: dict[str, str] = {
         "redeemable preferred shares."
     ),
     L.CASH_ACTUAL: (
-        "Cash and equivalents. $1,461M at June 30, 2026 and $1,370M at December 31, 2025. "
-        "Manufacturing held $1,344M of the June cash; Recurrent held $75M; $42M was unallocated."
+        "Cash and equivalents from the balance sheet or segment note. $1,461M at June 30, 2026 "
+        "and $1,441M at March 31, 2026. Manufacturing held $1,344M of the June cash; Recurrent "
+        "held $75M; $42M was unallocated."
     ),
     L.RESTRICTED_ACTUAL: (
-        "Current plus non-current restricted cash. $389M at June 30, 2026 and $570M at "
-        "December 31, 2025. Mostly project cash, not holdco cash."
+        "Current plus non-current restricted cash. $389M at June 30, 2026 and $442M at "
+        "March 31, 2026. Mostly project cash, not holdco cash."
     ),
     L.CASH_RESTRICTED_ACTUAL: (
         "Cash, equivalents, and restricted cash, the total the cash-flow statement rolls. "
@@ -264,25 +269,28 @@ DEFINITIONS: dict[str, str] = {
     ),
     L.OCF_ACTUAL: (
         "Operating cash flow, signed. Q2 2026 used $181M and Q1 used $209M, both on working "
-        "capital (inventories in Q1). Q1 and Q4 2025 are the rounded figures from the releases "
-        "(−$264M and −$65M). Not projected."
+        "capital (inventories in Q1). 2025 is the cash-flow line, not the rounded narrative. "
+        "Not projected."
     ),
     L.CAPEX_ACTUAL: (
-        "Cash paid for property, plant, and equipment, as a positive spend. About $172M in "
-        "each of the first two quarters of 2026. The Indiana and Texas buildout is in here. "
+        "Cash paid for property, plant, and equipment, as a positive spend. The 2025 quarters "
+        "and the first two quarters of 2026 are the purchase-of-PP&E line. The Indiana and "
+        "Texas buildout is in here. "
         "Not projected; the US lease lever is the thesis's stand-in for the ongoing cost of "
         "those factories."
     ),
     L.DEBT_ACTUAL: (
         "Total debt including financing liabilities, the rounded total from the release: "
-        "$6.5B at December 31, 2025, $6.8B at March 31, 2026, $7.1B at June 30, 2026. "
+        "$5.7B, $6.3B, $6.4B, and $6.5B through 2025, then $6.8B at March 31, 2026 and "
+        "$7.1B at June 30, 2026. "
         "Of the June figure, about $4.1B is Recurrent, $2.5B manufacturing, $0.4B converts. "
         "Not subtracted in full in the valuation — see Holdco net debt."
     ),
     L.CONVERTS_ACTUAL: (
-        "Convertible notes. $195M at December 31, 2025 and $420M at June 30, 2026. "
-        "Q1 2026 is left blank: the company said 'about $0.4B' and disclosed $223M of "
-        "issuance proceeds, which is not the same as a quarter-end carrying value."
+        "Convertible notes. $275M at June 30, 2025, $195M at September 30 and December 31, "
+        "2025, and $420M at June 30, 2026. Q1 2025 and Q1 2026 are left blank: Q1 2026 was "
+        "described as about $0.4B, and the $223M of issuance proceeds is not a quarter-end "
+        "carrying value."
     ),
     L.CONVERTS_MODEL: (
         "The actual when one exists. After the As of date, the convertible-notes lever "
@@ -290,12 +298,13 @@ DEFINITIONS: dict[str, str] = {
         "so 2025 is not loaded with the 2026 balance. " + _PREFER
     ),
     L.NONRECOURSE_ACTUAL: (
-        "Recurrent non-recourse project debt. $2.3B at March 31, 2026 and $2.62B at "
-        "June 30, 2026. Stays inside the Recurrent equity mark. Not subtracted again."
+        "Recurrent non-recourse project debt, from the segment note. $1.26B at March 31, 2025, "
+        "rising to $2.17B at year-end 2025, $2.3B at March 31, 2026, and $2.62B at June 30, 2026. "
+        "Stays inside the Recurrent equity mark. Not subtracted again."
     ),
     L.SHARES_ACTUAL: (
-        "Basic weighted-average shares, millions. 67.167M in Q2 2025, 67.818M in Q1 2026, "
-        "67.908M in Q2 2026. Not the 90M fully diluted count Lucas used."
+        "Basic weighted-average shares, millions. 66.963M in Q1 2025 through 67.908M in Q2 2026. "
+        "Not the 90M fully diluted count Lucas used."
     ),
     L.SHARES_MODEL: (
         "The actual, otherwise the prior quarter grown by the share-drip lever (default 0). "

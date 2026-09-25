@@ -18,6 +18,14 @@ Entry template:
 
 ---
 
+## 2026-09-25 — Fill 2025 quarterly actuals
+
+- **Tab / range:** Quarterly Financials, actual rows only, columns C:H (2025 Q1–2026 Q2). Future quarters stay blank. Yellow `- Plan` rows and `- Model` formulas were not rewritten. Financials Definitions column B was rewritten so the notes match the new figures.
+- **Insert/delete:** none
+- **Formulas:** unchanged. Model rows already prefer a typed actual, so 2025 Q3–Q4 revenue and the shipment model rows now show the actual instead of the plan.
+- **Data:** From the Q1, Q2, Q3, and Q4 2025 earnings releases (and the Q1 2026 release for March 31 cash). Segment lines that were blank — manufacturing revenue, gross profit, gross margin, and operating income, and Recurrent revenue, gross profit, and operating income — are the CSI Solar / Manufacturing and Recurrent Energy segment tables. Q3–Q4 module, storage, and other manufacturing revenue, and Q3–Q4 total revenue, are the product and consolidated lines. Gross margin is segment gross profit divided by segment revenue, to one decimal. Also filled 2025 module GW (6.9, 7.9, 5.1, 4.3), cash, restricted cash, debt ($5.7B / $6.3B / $6.4B / $6.5B), non-recourse, converts (Q2–Q4), capex, operating cash flow, shares, and the rounded 2025 Q4 placeholders (gross profit, opex, net income, operating cash flow) with the thousands from the statements. Q1 2026 cash $1,441M and restricted cash $442M were on the Q1 2026 segment note and were blank. Storage GWh for 2025 is 0.8, 2.3, 2.7, 2.0: Q1 is the shipment slide, Q3 is stated, Q4 is 2.0 because Q1 2026's 2.1 GWh was up 5%, and Q2 is the residual of the stated 7.8 GWh year. Q1 2026 converts stay blank (the release said about $0.4B; that is not a carrying value).
+- **Side effects:** none on charts. Definitions text for shipments, manufacturing margin, cash, debt, converts, capex, and shares was updated.
+
 ## 2026-09-25 — Initial CSIQ workbook
 
 - **Tab / range:** Created Welcome, Levers, Quarterly Financials, Financials Definitions, Pillars, Valuation, Shares, Price History, Reference. Removed the empty default Sheet1. No chart tab was created.
