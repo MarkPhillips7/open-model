@@ -59,19 +59,95 @@ def is_quarterly_spread_formula(cell: Any) -> bool:
     return text.startswith("=") and "Quarterly Financials" in text
 
 
+def week_ending(day: date) -> date:
+    """Saturday on/after `day` — the Weekly Financials column it belongs to."""
+    return day + timedelta(days=(5 - day.weekday()) % 7)
+
+
+def quarter_key(day: date) -> str:
+    return f"{day.year} Q{(day.month - 1) // 3 + 1}"
+
+
 def weekly_from_cumulative(
     points: list[tuple[date, int | float | None]],
 ) -> dict[date, int]:
-    """Turn QTD cumulative COEs into weekly home-sale counts."""
+    """Turn QTD cumulative COEs into weekly home-sale counts.
+
+    Quarter-end stubs (e.g. a 9/30 point) roll into the following Saturday.
+    """
     weekly: dict[date, int] = {}
     prev = 0
-    for week_ending, value in points:
+    for day, value in points:
         if value is None:
             continue
-        count = int(round(float(value) - prev))
-        weekly[week_ending] = count
+        week = week_ending(day)
+        weekly[week] = weekly.get(week, 0) + int(round(float(value) - prev))
         prev = float(value)
     return weekly
+
+
+def parse_as_of_date(as_of: str | None) -> date | None:
+    if not as_of:
+        return None
+    try:
+        return datetime.strptime(as_of, "%b %d, %Y").date()
+    except ValueError:
+        return None
+
+
+def uncovered_new_quarter_days(
+    points: list[tuple[date, int | float | None]],
+    as_of: date | None,
+) -> list[date]:
+    """Days after the chart's quarter ends, up to the as-of date.
+
+    Accountable keeps showing the finished quarter's chart for a while after it
+    rolls; its as-of date moves into the new quarter before a new chart exists.
+    """
+    dated = [day for day, value in points if value is not None]
+    if not dated or as_of is None:
+        return []
+    last = max(dated)
+    next_q_month = ((last.month - 1) // 3 + 1) * 3 + 1
+    next_q_start = (
+        date(last.year + 1, 1, 1) if next_q_month > 12 else date(last.year, next_q_month, 1)
+    )
+    if as_of < next_q_start:
+        return []
+    return [next_q_start + timedelta(days=i) for i in range((as_of - next_q_start).days + 1)]
+
+
+def merge_quarter_history(
+    previous: dict[str, Any] | None,
+    points: list[tuple[date, int | float | None]],
+) -> tuple[dict[str, list[dict[str, Any]]], dict[date, int]]:
+    """Combine the live quarter's COE chart with earlier quarters from the snapshot.
+
+    Accountable only shows the current quarter, so prior quarters must come from
+    the saved snapshot or they would be blanked on the sheet. Weeks that span a
+    quarter boundary sum the prior quarter's stub and the new quarter's first print.
+    """
+    quarters: dict[str, list[dict[str, Any]]] = {}
+    if previous:
+        if "quarters" in previous:
+            quarters = dict(previous["quarters"])
+        elif previous.get("cumulative"):
+            first = sheet_date(previous["cumulative"][0]["date"])
+            if first is not None:
+                quarters[quarter_key(first)] = previous["cumulative"]
+    quarters[quarter_key(points[0][0])] = [
+        {"date": day.isoformat(), "value": value} for day, value in points
+    ]
+    weekly: dict[date, int] = {}
+    for key in sorted(quarters):
+        series = [
+            (d, row.get("value"))
+            for row in quarters[key]
+            if (d := sheet_date(row.get("date"))) is not None
+        ]
+        for week, count in weekly_from_cumulative(series).items():
+            weekly[week] = weekly.get(week, 0) + count
+    return quarters, weekly
 
 
 def _unescape_next_f(payload: str) -> str:
@@ -183,19 +259,17 @@ def fetch_acquisition_contracts(
 
 def snapshot_payload(
     weekly: dict[date, int],
-    cumulative: list[tuple[date, int | float | None]],
+    quarters: dict[str, list[dict[str, Any]]],
     *,
     as_of: str | None,
 ) -> dict[str, Any]:
     return {
         "source": ACCOUNTABLE_URL,
-        "metric": "Resale COEs (cumulative QTD) → weekly Home Sales",
+        "metric": "Resale COEs (cumulative QTD per quarter) → weekly Home Sales",
         "as_of": as_of,
         "weekly_start": HOME_SALES_ACCOUNTABLE_START.isoformat(),
-        "cumulative": [
-            {"date": week.isoformat(), "value": value} for week, value in cumulative
-        ],
-        "weekly": {week.isoformat(): count for week, count in weekly.items()},
+        "quarters": quarters,
+        "weekly": {week.isoformat(): count for week, count in sorted(weekly.items())},
     }
 
 

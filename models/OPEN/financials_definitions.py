@@ -100,8 +100,12 @@ FIELD_NOTES: dict[str, str] = {
     'Home Sales': (
         "Non-GAAP homes sold (listed + private). Through week ending 2026-06-27: quarterly "
         "earnings actual spread ÷13 (day-weighted). From 2026-07-04: week-over-week change in "
-        "cumulative Resale COEs on accountable.opendoor.com (QTD recorded closings). Refresh "
-        "with sync_weekly_actuals.py (or sync_accountable_home_sales.py). Model row when blank."
+        "cumulative Resale COEs on accountable.opendoor.com (QTD recorded closings). "
+        "Quarter-end stub days roll into the next Saturday week (e.g. 9/27–9/30 → 10/3), so "
+        "that week counts in the new quarter's weekly SUM. New-quarter days Accountable has not "
+        "charted yet use Open Tracker daily Houses P. Sold × (1 − settled relist rate, ~30%) "
+        "until the next Accountable chart replaces them. Refresh with sync_weekly_actuals.py "
+        "(or sync_accountable_home_sales.py). Model row when blank."
     ),
     'Private Home Sales - Model': (
         "Never-listed completions: lagged purchases × (1 − Likelihood to List) × Transitions "

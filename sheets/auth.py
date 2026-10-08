@@ -2,6 +2,7 @@ from pathlib import Path
 
 import gspread
 from google.auth.exceptions import RefreshError
+from google.auth.transport.requests import Request
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
 CREDENTIALS_FILE = CONFIG_DIR / "credentials.json"
@@ -18,10 +19,16 @@ def get_client() -> gspread.Client:
         )
 
     try:
-        return gspread.oauth(
+        client = gspread.oauth(
             credentials_filename=str(CREDENTIALS_FILE),
             authorized_user_filename=str(AUTHORIZED_USER_FILE),
         )
+        # gspread refreshes lazily on the first API call; force it here so a
+        # revoked token is caught by this handler instead of escaping later.
+        creds = client.http_client.auth
+        if not creds.valid:
+            creds.refresh(Request())
+        return client
     except RefreshError:
         if AUTHORIZED_USER_FILE.exists():
             AUTHORIZED_USER_FILE.unlink()

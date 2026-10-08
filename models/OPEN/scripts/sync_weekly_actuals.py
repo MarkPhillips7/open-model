@@ -40,13 +40,12 @@ from models.OPEN.accountable import (  # noqa: E402
     acquisition_snapshot_payload,
     fetch_accountable_html,
     fetch_acquisition_contracts,
-    fetch_weekly_home_sales,
     sheet_date,
-    snapshot_payload,
 )
 from models.OPEN.open_tracker import (  # noqa: E402
     NEW_LISTINGS_LABEL,
     OPEN_TRACKER_URL,
+    fetch_open_tracker_html,
     fetch_weekly_new_listings,
     listings_snapshot_payload,
 )
@@ -55,6 +54,7 @@ from sheets import SheetsClient  # noqa: E402
 from sheets.labels import WEEKLY, label_rows  # noqa: E402
 from sync_accountable_home_sales import (  # noqa: E402
     SNAPSHOT_PATH as HOME_SALES_SNAPSHOT,
+    load_home_sales,
     refresh_definitions,
     write_quarterly_sums,
     write_weekly_home_sales,
@@ -97,7 +97,10 @@ def read_weekly_row(
     if not columns:
         return {}
     start_c, end_c = columns[0][1], columns[-1][1]
-    values = client.read_range(WEEKLY, f"{start_c}{row}:{end_c}{row}")[0]
+    grid = client.read_range(WEEKLY, f"{start_c}{row}:{end_c}{row}")
+    values = list(grid[0]) if grid else []
+    # Sheets API trims trailing blanks; pad so future weeks read as blank.
+    values += [""] * (len(columns) - len(values))
     out: dict[date, int | None] = {}
     for (week, _col, _n), raw in zip(columns, values):
         out[week] = _cell_int(raw)
@@ -227,9 +230,12 @@ def run(
     all_weeks: bool,
 ) -> None:
     accountable_html = fetch_accountable_html()
-    home_sales, cumulative, as_of = fetch_weekly_home_sales(html=accountable_html)
+    tracker_html = fetch_open_tracker_html()
+    home_sales, home_sales_payload, as_of = load_home_sales(
+        html=accountable_html, tracker_html=tracker_html
+    )
     contracts, _ = fetch_acquisition_contracts(html=accountable_html)
-    listings, tracker_update = fetch_weekly_new_listings()
+    listings, tracker_update = fetch_weekly_new_listings(html=tracker_html)
 
     if not home_sales:
         raise RuntimeError("Accountable Resale COEs had no actual weekly points")
@@ -255,10 +261,7 @@ def run(
         )
 
     if not dry_run:
-        HOME_SALES_SNAPSHOT.write_text(
-            json.dumps(snapshot_payload(home_sales, cumulative, as_of=as_of), indent=2)
-            + "\n"
-        )
+        HOME_SALES_SNAPSHOT.write_text(json.dumps(home_sales_payload, indent=2) + "\n")
         CONTRACTS_SNAPSHOT.write_text(
             json.dumps(acquisition_snapshot_payload(contracts, as_of=as_of), indent=2)
             + "\n"

@@ -16,6 +16,38 @@ Entry template:
 - **What:** Added `models/CSIQ/` for Canadian Solar, on the Comstock workbook pattern (levers, actuals vs model rows, yellow plans, sum of parts). Settings example and the models table include CSIQ.
 - **Why:** The live CSIQ sheet needed a pack of its own. Operating formulas are Canadian Solar's, not a copy of Comstock's recycling math.
 
+## 2026-10-07 — OPEN Home Sales: provisional new-quarter days from Open Tracker
+
+- **What:** `open_tracker.py` parses Daily Summary **Houses P. Sold** (column found by header) and a settled relist rate from `weeklySoldData` (median `noise_pct`, last 12 weeks excluding the newest 4). `accountable.py` adds `uncovered_new_quarter_days()`. `load_home_sales()` fills those days with P. Sold × (1 − relist rate) and stores them under `provisional` in the snapshot, outside quarter history. `sync_weekly_actuals.py` fetches the tracker page once for both listings and Home Sales.
+- **Why:** After a quarter ends, Accountable's as-of date moves into the new quarter before it posts a new chart, which left the first days of the quarter blank.
+
+## 2026-10-06 — OPEN weekly sync: new weeks, quarter-end stubs, quarter history
+
+- **What:** `sync_weekly_actuals.py` pads row reads to the full week spine, so blank future weeks can be filled. Before this fix, the Sheets API dropped trailing blanks and the sync could only revise existing weeks. `accountable.py` maps non-Saturday COE points (quarter-end stubs like 9/30) to the next Saturday week. It also keeps each quarter's cumulative series in `accountable_resale_coes.json` (`quarters`) and merges them, via the shared `load_home_sales()` used by both sync scripts.
+- **Why:** The 10/3 week wouldn't write, the 9/30 stub was silently dropped, and when Accountable switches to its Q4 chart the old code would have blanked every Q3 Home Sales week on the sheet.
+
+## 2026-10-06 — Google OAuth re-prompt actually fires on a revoked token
+
+- **What:** `sheets.auth.get_client()` now refreshes the saved credentials immediately, inside the `RefreshError` handler, instead of leaving gspread to refresh lazily on the first spreadsheet call.
+- **Why:** The 2026-09-10 re-prompt never ran: the expired token only failed later in `open_by_key`, outside the `try`, so scripts crashed with `invalid_grant` instead of opening a sign-in window.
+
+## 2026-10-06 — `sync_weekly_actuals.py` can add new weeks
+
+- **What:** `read_weekly_row()` pads the row read out to every week column.
+- **Why:** The Sheets API drops trailing blank cells, so blank future weeks were missing from the existing-values map and got skipped. The script could revise weeks already on the sheet but never fill in a new one.
+
+## 2026-10-06 — `sync_weekly_actuals.py` can add new weeks
+
+- **What:** `read_weekly_row()` pads the row read out to every week column.
+- **Why:** The Sheets API drops trailing blank cells, so blank future weeks were missing from the existing-values map and got skipped. The script could revise weeks already on the sheet but never fill in a new one.
+
+## 2026-10-06 — `sync_weekly_actuals.py` can add new weeks
+
+- **What:** `read_weekly_row()` pads the row read out to every week column.
+- **Why:** The Sheets API drops trailing blank cells, so blank future weeks were missing from the existing-values map and got skipped. The script could revise weeks already on the sheet but never fill in a new one.
+
+---
+
 ## 2026-09-23 — OPEN weekly actuals sync (Accountable + Open Tracker)
 
 - **What:** Added `models/OPEN/scripts/sync_weekly_actuals.py` plus Accountable acquisition-contract parsing and Open Tracker New Listings parsing (`open_tracker.py`). Snapshots for contracts/listings under `models/OPEN/data/`.

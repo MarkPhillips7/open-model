@@ -24,8 +24,18 @@ from models.OPEN.accountable import (  # noqa: E402
     HOME_SALES_ACCOUNTABLE_START,
     HOME_SALES_LABEL,
     fetch_weekly_home_sales,
+    merge_quarter_history,
+    parse_as_of_date,
     sheet_date,
     snapshot_payload,
+    uncovered_new_quarter_days,
+    week_ending,
+)
+from models.OPEN.open_tracker import (  # noqa: E402
+    OPEN_TRACKER_URL,
+    extract_daily_p_sold,
+    fetch_open_tracker_html,
+    settled_relist_rate,
 )
 from models.OPEN.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
 from models.OPEN.weekly_model_formulas import col_letter  # noqa: E402
@@ -39,11 +49,79 @@ HOME_SALES_NOTE = (
     f"From week ending {HOME_SALES_ACCOUNTABLE_START.isoformat()}, weekly Home Sales "
     f"are the week-over-week change in cumulative Resale COEs on {ACCOUNTABLE_URL} "
     "(QTD closings; later recordings stay in the then-current period). "
+    "Quarter-end stub days (e.g. 9/27–9/30) roll into the next Saturday week. "
+    "New-quarter days Accountable has not charted yet are filled provisionally with "
+    f"Open Tracker daily Houses P. Sold × (1 − settled relist rate) from {OPEN_TRACKER_URL}; "
+    "the next Accountable chart replaces them. "
     "Earlier weeks remain quarterly earnings actual ÷13 (day-weighted). "
     "Refresh with models/OPEN/scripts/sync_weekly_actuals.py "
     "(or sync_accountable_home_sales.py for Home Sales only). "
     "Do not restore quarterly spread on this row from 7/4/2026 onward."
 )
+
+
+def provisional_tracker_sales(
+    points: list,
+    as_of: str | None,
+    tracker_html: str | None,
+) -> dict | None:
+    """Open Tracker P. Sold (relist-discounted) for new-quarter days Accountable lacks."""
+    days = uncovered_new_quarter_days(points, parse_as_of_date(as_of))
+    if not days:
+        return None
+    page = tracker_html if tracker_html is not None else fetch_open_tracker_html()
+    daily = extract_daily_p_sold(page)
+    relist = settled_relist_rate(page)
+    missing = [d for d in days if d not in daily]
+    if missing:
+        print(
+            "Warning: Open Tracker Daily Summary lacks "
+            f"{', '.join(d.isoformat() for d in missing)}; those days are not filled"
+        )
+    raw_by_week: dict = {}
+    for day in days:
+        if day in daily:
+            week = week_ending(day)
+            raw_by_week[week] = raw_by_week.get(week, 0) + daily[day]
+    weekly = {week: int(round(raw * (1 - relist))) for week, raw in raw_by_week.items()}
+    return {
+        "source": OPEN_TRACKER_URL,
+        "metric": "Daily Houses P. Sold × (1 − settled relist rate)",
+        "relist_rate": round(relist, 4),
+        "days": {d.isoformat(): daily[d] for d in days if d in daily},
+        "weekly_raw": {w.isoformat(): n for w, n in sorted(raw_by_week.items())},
+        "weekly": {w.isoformat(): n for w, n in sorted(weekly.items())},
+    }
+
+
+def load_home_sales(
+    html: str | None = None,
+    tracker_html: str | None = None,
+) -> tuple[dict, dict, str | None]:
+    """Live Accountable chart merged with prior quarters → (weekly, snapshot, as_of).
+
+    New-quarter days that Accountable has not charted yet are filled
+    provisionally from Open Tracker; the next Accountable chart replaces them.
+    """
+    _live_weekly, points, as_of = fetch_weekly_home_sales(html=html)
+    if not any(value is not None for _day, value in points):
+        raise RuntimeError("Accountable Resale COEs had no actual weekly points")
+    previous = json.loads(SNAPSHOT_PATH.read_text()) if SNAPSHOT_PATH.exists() else None
+    quarters, weekly = merge_quarter_history(previous, points)
+    provisional = provisional_tracker_sales(points, as_of, tracker_html)
+    if provisional:
+        for week_iso, count in provisional["weekly"].items():
+            week = sheet_date(week_iso)
+            weekly[week] = weekly.get(week, 0) + count
+            print(
+                f"Provisional Home Sales {week_iso}: +{count} from Open Tracker "
+                f"(raw {provisional['weekly_raw'][week_iso]} × "
+                f"{1 - provisional['relist_rate']:.3f})"
+            )
+    payload = snapshot_payload(weekly, quarters, as_of=as_of)
+    if provisional:
+        payload["provisional"] = provisional
+    return weekly, payload, as_of
 
 
 def quarterly_sum_formula(weekly_row: int, q_col: str) -> str:
@@ -125,12 +203,8 @@ def refresh_definitions(client: SheetsClient) -> None:
 
 
 def main() -> None:
-    weekly, cumulative, as_of = fetch_weekly_home_sales()
-    if not weekly:
-        raise RuntimeError("Accountable Resale COEs had no actual weekly points")
-    SNAPSHOT_PATH.write_text(
-        json.dumps(snapshot_payload(weekly, cumulative, as_of=as_of), indent=2) + "\n"
-    )
+    weekly, payload, as_of = load_home_sales()
+    SNAPSHOT_PATH.write_text(json.dumps(payload, indent=2) + "\n")
     print(f"Wrote {SNAPSHOT_PATH.relative_to(ROOT)} ({len(weekly)} weeks, as of {as_of})")
 
     client = SheetsClient(ticker="OPEN")

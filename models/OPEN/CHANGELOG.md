@@ -18,6 +18,32 @@ Entry template:
 
 ---
 
+## 2026-10-07 — Provisional Q4 days in 10/3 Home Sales from Open Tracker
+
+Accountable (as of Oct 3) still shows only its Q3 chart, so 10/1–10/3 closings were missing from week ending 10/3. They are now filled provisionally from Open Tracker.
+
+- **Tab / range:** **Weekly Financials** **Home Sales** `BE19` (written as part of `AR19:DY19`); cell note `B19`; **Financials Definitions** `A1:B102` (Home Sales note)
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:** `BE19` **187 → 278** = Accountable Q3 stub **187** (9/27–9/30) + Open Tracker daily **Houses P. Sold** for 10/1–10/3 (**57 / 52 / 21 = 130**) × (1 − **29.7%** settled relist rate) = **91**. Why the discount: over Q3's full weeks the tracker's settled weekly P. Sold was **2,644** against Accountable's **2,541** (ratio **1.04**), but fresh daily counts run ~30% high until relists are netted out (week ending 10/4 had only ~4% netted so far). The relist rate is the median of the last 12 settled weeks and is recalculated every run. The tracker portion is held in the snapshot under `provisional`, separate from quarter history, and drops out once Accountable posts its Q4 chart; 10/3 then becomes 187 + Accountable's 10/3 Q4 print. Q3 quarterly weekly SUM is unchanged at **2,541** (10/3 is a Q4 week).
+- **Side effects:** **Homes Charts** Home Sales actual for 10/3 steps up; eyeball it in the UI. Agents did not edit chart objects.
+
+---
+
+## 2026-10-06 — Weekly actuals through 10/3 (Accountable + Open Tracker)
+
+Refreshed via `sync_weekly_actuals.py`. Accountable “Data as of Oct 03, 2026”; Open Tracker last update 06–07/10/2026.
+
+- **Tab / range:** **Weekly Financials** **Acquisition Contracts** `BE2`, **New Listings** `BE13`, **Home Sales** `AR19:DY19` (only `BE19` changed); **Financials Definitions** `A1:B102` refresh; cell note `B19`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:**
+  - **Acquisition Contracts** `BE` (**10/3**): blank → **477** (Accountable).
+  - **New Listings** `BE` (**10/3**): blank → **313** (Open Tracker cohort week ending Sun 10/4).
+  - **Home Sales** `BE` (**10/3**): blank → **187**. This is the Q3 quarter-end stub: Accountable’s last Q3 point is dated **9/30** (cumulative **2,541 → 2,728**). There’s no 9/30 column, so the stub rolls into the next Saturday week. It will be added to Q4’s 10/1–10/3 closings once Accountable posts its Q4 chart. Because 10/3 falls in Q4, the Q3 quarterly **Home Sales** weekly SUM stays at **2,541** (not Accountable’s 2,728) until earnings replace it.
+  - Week ending **9/26** (`BD`: **357 / 254 / 227**) was already on the sheet with no changelog entry, probably entered by hand. It matches Accountable and Open Tracker, so it was left as is.
+- **Side effects:** Definitions **Home Sales** note and `B19` cell note now describe the quarter-end stub roll. Snapshots: `models/OPEN/data/accountable_resale_coes.json` (now per-quarter `quarters` history), `accountable_acquisition_contracts.json`, `open_tracker_new_listings.json`. **Homes Charts** funnel actuals step for 10/3, so eyeball them in the UI. Agents did not edit chart objects.
+
 ## 2026-09-22 — Weekly actuals through 9/19 (Accountable + Open Tracker)
 
 Accountable “Data as of Sep 19, 2026” and Open Tracker (last update 22/09/2026) — new week ending **2026-09-19** plus a small listings revision.

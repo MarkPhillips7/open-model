@@ -3,11 +3,18 @@
 The Cohort Sell-Through table uses Sunday week-ending dates. Weekly Financials
 uses Saturday week-ending dates, so each tracker Sunday maps to Saturday − 1 day.
 PARTIAL (in-progress) weeks are skipped; CATCH-UP and complete weeks are kept.
+
+Daily **Houses P. Sold** (delistings) is a provisional stand-in for Home Sales on
+new-quarter days before Accountable posts its next-quarter chart. Raw daily
+counts run high until relists are netted out, so they are discounted by the
+typical relist rate of settled weeks.
 """
 
 from __future__ import annotations
 
+import json
 import re
+import statistics
 from datetime import date, datetime, timedelta
 from typing import Any
 from urllib.request import Request, urlopen
@@ -82,6 +89,57 @@ def extract_weekly_new_listings(html: str) -> dict[date, int]:
     if not weekly:
         raise ValueError("Open Tracker cohort table had no completed Listed weeks")
     return weekly
+
+
+_DAILY_ROW_RE = re.compile(
+    r'<td class="date-cell"[^>]*>\s*(\d{2}/\d{2}/\d{4})\s*</td>(.*?)</tr>',
+    re.DOTALL,
+)
+_CELL_RE = re.compile(r"<t[dh][^>]*>(.*?)</t[dh]>", re.DOTALL)
+_WEEKLY_SOLD_MARKER = "const weeklySoldData = "
+# Weeks this recent have not had time for relists to be netted out.
+SETTLE_WEEKS = 4
+RELIST_SAMPLE_WEEKS = 12
+
+
+def _cell_text(raw: str) -> str:
+    return re.sub(r"<[^>]+>|\s+", " ", raw).strip()
+
+
+def extract_daily_p_sold(html: str) -> dict[date, int]:
+    """Daily Summary 'Houses P. Sold' by calendar day (blank days skipped)."""
+    first = _DAILY_ROW_RE.search(html)
+    if not first:
+        raise ValueError("Open Tracker Daily Summary rows not found")
+    thead_at = html.rfind("<thead", 0, first.start())
+    headers = [_cell_text(c) for c in _CELL_RE.findall(html[thead_at:first.start()])]
+    try:
+        col = headers.index("Houses P. Sold") - 1  # minus the Date column
+    except ValueError as exc:
+        raise ValueError(f"Daily Summary has no 'Houses P. Sold' column: {headers}") from exc
+
+    daily: dict[date, int] = {}
+    for match in _DAILY_ROW_RE.finditer(html):
+        cells = [_cell_text(c) for c in _CELL_RE.findall(match.group(2))]
+        if col >= len(cells) or not cells[col].replace(",", "").isdigit():
+            continue
+        day = datetime.strptime(match.group(1), "%d/%m/%Y").date()
+        daily[day] = int(cells[col].replace(",", ""))
+    return daily
+
+
+def settled_relist_rate(html: str) -> float:
+    """Median share of P. Sold later relisted, over recent settled weeks."""
+    at = html.find(_WEEKLY_SOLD_MARKER)
+    if at < 0:
+        raise ValueError("Open Tracker weeklySoldData not found")
+    rows, _ = json.JSONDecoder().raw_decode(html, at + len(_WEEKLY_SOLD_MARKER))
+    rows = sorted(rows, key=lambda r: r["week_end"])
+    settled = rows[:-SETTLE_WEEKS][-RELIST_SAMPLE_WEEKS:]
+    rates = [float(r["noise_pct"]) / 100 for r in settled if r.get("noise_pct") is not None]
+    if not rates:
+        raise ValueError("Open Tracker weeklySoldData has no settled weeks")
+    return statistics.median(rates)
 
 
 def fetch_weekly_new_listings(
