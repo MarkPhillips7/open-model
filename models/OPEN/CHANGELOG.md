@@ -18,6 +18,23 @@ Entry template:
 
 ---
 
+## 2026-10-14 — Weekly actuals through 10/10; tracker Home Sales fill from full daily history
+
+Refreshed via `sync_weekly_actuals.py`. Accountable “Data as of Oct 10, 2026” (contracts updated; Home Sales chart still Q3 only); Open Tracker last update 14/10/2026, 15:00 CET.
+
+- **Tab / range:** **Weekly Financials** **Acquisition Contracts** `BF2`, **New Listings** `BF13`, **Home Sales** `AR19:DY19` (`BE19`, `BF19` changed); **Financials Definitions** `A1:B102`; cell note `B19`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:**
+  - **Acquisition Contracts** `BF` (**10/10**): blank → **525** (Accountable).
+  - **New Listings** `BF` (**10/10**): blank → **353** (Open Tracker cohort week ending Sun 10/11).
+  - **Home Sales** `BE` (**10/3**): **278 → 283** = Q3 stub **187** + tracker **96** (10/1–10/3 net P. Sold **51 / 45 / 19 = 115** × **0.838**).
+  - **Home Sales** `BF` (**10/10**): blank → **176** (10/4–10/10 net P. Sold **234**: 10/4 at ×0.838, 10/5–10/10 at ×0.747).
+  - Why the method changed: the Daily Summary table only shows ~8 days, so 10/1–10/6 had dropped off it. Without a change, this run would have reverted 10/3 to 187 and undercounted 10/10. Daily counts now come from the tracker’s full `newVsRemovedData` history (permanent delistings). Recent days match Daily Summary P. Sold exactly; older days shrink as relists are netted. Over Q3 (7/11–9/26) it totals **2,423** against Accountable’s **2,451**. Each day keeps (1 − settled **29.8%**) ÷ (1 − share its Mon–Sun week has already netted), so days that are already partly corrected aren’t discounted twice.
+- **Side effects:** **Homes Charts** funnel actuals step for 10/3 and 10/10; eyeball them in the UI. Agents did not edit chart objects.
+
+---
+
 ## 2026-10-07 — Provisional Q4 days in 10/3 Home Sales from Open Tracker
 
 Accountable (as of Oct 3) still shows only its Q3 chart, so 10/1–10/3 closings were missing from week ending 10/3. They are now filled provisionally from Open Tracker.

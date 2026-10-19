@@ -16,6 +16,11 @@ Entry template:
 - **What:** Added `models/CSIQ/` for Canadian Solar, on the Comstock workbook pattern (levers, actuals vs model rows, yellow plans, sum of parts). Settings example and the models table include CSIQ.
 - **Why:** The live CSIQ sheet needed a pack of its own. Operating formulas are Canadian Solar's, not a copy of Comstock's recycling math.
 
+## 2026-10-14 — OPEN tracker Home Sales fill uses full daily history
+
+- **What:** `open_tracker.py` replaces the Daily Summary parser with `extract_daily_removed()` (daily diffs of `newVsRemovedData` cumulative delistings, Europe/Madrid business dates). `relist_factors()` / `remaining_factor()` replace the flat settled discount with a per-week remaining factor, (1 − settled) ÷ (1 − already netted). `provisional_tracker_sales()` uses both.
+- **Why:** The Daily Summary only covers ~8 days, so a second week of provisional fill lost the earliest new-quarter days. A flat 30% cut also discounted older days twice.
+
 ## 2026-10-07 — OPEN Home Sales: provisional new-quarter days from Open Tracker
 
 - **What:** `open_tracker.py` parses Daily Summary **Houses P. Sold** (column found by header) and a settled relist rate from `weeklySoldData` (median `noise_pct`, last 12 weeks excluding the newest 4). `accountable.py` adds `uncovered_new_quarter_days()`. `load_home_sales()` fills those days with P. Sold × (1 − relist rate) and stores them under `provisional` in the snapshot, outside quarter history. `sync_weekly_actuals.py` fetches the tracker page once for both listings and Home Sales.

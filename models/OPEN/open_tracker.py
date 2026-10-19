@@ -4,10 +4,10 @@ The Cohort Sell-Through table uses Sunday week-ending dates. Weekly Financials
 uses Saturday week-ending dates, so each tracker Sunday maps to Saturday − 1 day.
 PARTIAL (in-progress) weeks are skipped; CATCH-UP and complete weeks are kept.
 
-Daily **Houses P. Sold** (delistings) is a provisional stand-in for Home Sales on
-new-quarter days before Accountable posts its next-quarter chart. Raw daily
-counts run high until relists are netted out, so they are discounted by the
-typical relist rate of settled weeks.
+Daily delistings (P. Sold) are a provisional stand-in for Home Sales on
+new-quarter days before Accountable posts its next-quarter chart. Recent days
+run high until relists are netted out, so each day keeps only the share its
+week is still expected to lose before settling.
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ import statistics
 from datetime import date, datetime, timedelta
 from typing import Any
 from urllib.request import Request, urlopen
+from zoneinfo import ZoneInfo
 
 OPEN_TRACKER_URL = "https://aubermark.github.io/open-tracker/"
 NEW_LISTINGS_LABEL = "New Listings"
@@ -91,55 +92,73 @@ def extract_weekly_new_listings(html: str) -> dict[date, int]:
     return weekly
 
 
-_DAILY_ROW_RE = re.compile(
-    r'<td class="date-cell"[^>]*>\s*(\d{2}/\d{2}/\d{4})\s*</td>(.*?)</tr>',
-    re.DOTALL,
-)
-_CELL_RE = re.compile(r"<t[dh][^>]*>(.*?)</t[dh]>", re.DOTALL)
 _WEEKLY_SOLD_MARKER = "const weeklySoldData = "
+_NEW_VS_REMOVED_MARKER = "const newVsRemovedData = "
+# The tracker's business dates are midnight in its own timezone, sent as UTC.
+_TRACKER_TZ = ZoneInfo("Europe/Madrid")
 # Weeks this recent have not had time for relists to be netted out.
 SETTLE_WEEKS = 4
 RELIST_SAMPLE_WEEKS = 12
 
 
-def _cell_text(raw: str) -> str:
-    return re.sub(r"<[^>]+>|\s+", " ", raw).strip()
+def _js_array(html: str, marker: str) -> list[dict[str, Any]]:
+    at = html.find(marker)
+    if at < 0:
+        raise ValueError(f"Open Tracker {marker.split()[1]} not found")
+    rows, _ = json.JSONDecoder().raw_decode(html, at + len(marker))
+    return rows
 
 
-def extract_daily_p_sold(html: str) -> dict[date, int]:
-    """Daily Summary 'Houses P. Sold' by calendar day (blank days skipped)."""
-    first = _DAILY_ROW_RE.search(html)
-    if not first:
-        raise ValueError("Open Tracker Daily Summary rows not found")
-    thead_at = html.rfind("<thead", 0, first.start())
-    headers = [_cell_text(c) for c in _CELL_RE.findall(html[thead_at:first.start()])]
-    try:
-        col = headers.index("Houses P. Sold") - 1  # minus the Date column
-    except ValueError as exc:
-        raise ValueError(f"Daily Summary has no 'Houses P. Sold' column: {headers}") from exc
+def extract_daily_removed(html: str) -> dict[date, int]:
+    """Daily P. Sold net of relists so far, from cumulative permanent delistings.
 
+    Recent days equal the Daily Summary's Houses P. Sold; older days shrink as
+    relisted homes are taken back out.
+    """
     daily: dict[date, int] = {}
-    for match in _DAILY_ROW_RE.finditer(html):
-        cells = [_cell_text(c) for c in _CELL_RE.findall(match.group(2))]
-        if col >= len(cells) or not cells[col].replace(",", "").isdigit():
-            continue
-        day = datetime.strptime(match.group(1), "%d/%m/%Y").date()
-        daily[day] = int(cells[col].replace(",", ""))
+    prev: int | None = None
+    for row in _js_array(html, _NEW_VS_REMOVED_MARKER):
+        stamp = datetime.fromisoformat(row["business_date"].replace("Z", "+00:00"))
+        day = stamp.astimezone(_TRACKER_TZ).date()
+        cumulative = int(row["cumulative_removed"])
+        if prev is not None:
+            daily[day] = cumulative - prev
+        prev = cumulative
+    if not daily:
+        raise ValueError("Open Tracker newVsRemovedData had no daily rows")
     return daily
 
 
-def settled_relist_rate(html: str) -> float:
-    """Median share of P. Sold later relisted, over recent settled weeks."""
-    at = html.find(_WEEKLY_SOLD_MARKER)
-    if at < 0:
-        raise ValueError("Open Tracker weeklySoldData not found")
-    rows, _ = json.JSONDecoder().raw_decode(html, at + len(_WEEKLY_SOLD_MARKER))
-    rows = sorted(rows, key=lambda r: r["week_end"])
-    settled = rows[:-SETTLE_WEEKS][-RELIST_SAMPLE_WEEKS:]
-    rates = [float(r["noise_pct"]) / 100 for r in settled if r.get("noise_pct") is not None]
+def relist_factors(html: str) -> tuple[float, dict[date, float]]:
+    """(settled relist rate, Mon–Sun week-end Sunday → remaining multiplier).
+
+    Settled rate is the median `noise_pct` over recent settled weeks. A newer
+    week that has already netted out `n` keeps (1 − settled) / (1 − n) of its
+    current count, so partly corrected days are not discounted twice.
+    """
+    rows = sorted(_js_array(html, _WEEKLY_SOLD_MARKER), key=lambda r: r["week_end"])
+    settled_rows = rows[:-SETTLE_WEEKS][-RELIST_SAMPLE_WEEKS:]
+    rates = [float(r["noise_pct"]) / 100 for r in settled_rows if r.get("noise_pct") is not None]
     if not rates:
         raise ValueError("Open Tracker weeklySoldData has no settled weeks")
-    return statistics.median(rates)
+    settled = statistics.median(rates)
+    factors: dict[date, float] = {}
+    for row in rows[-SETTLE_WEEKS:]:
+        netted = float(row.get("noise_pct") or 0) / 100
+        factors[date.fromisoformat(row["week_end"])] = min(
+            1.0, (1 - settled) / (1 - netted)
+        )
+    return settled, factors
+
+
+def remaining_factor(day: date, settled: float, factors: dict[date, float]) -> float:
+    """Multiplier for a day's net count; weeks not in `factors` get the full discount."""
+    sunday = day + timedelta(days=(6 - day.weekday()) % 7)
+    if sunday in factors:
+        return factors[sunday]
+    if factors and sunday < min(factors):
+        return 1.0
+    return 1 - settled
 
 
 def fetch_weekly_new_listings(

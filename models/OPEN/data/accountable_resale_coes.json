@@ -1,7 +1,7 @@
 {
   "source": "https://accountable.opendoor.com/",
   "metric": "Resale COEs (cumulative QTD per quarter) \u2192 weekly Home Sales",
-  "as_of": "Oct 03, 2026",
+  "as_of": "Oct 10, 2026",
   "weekly_start": "2026-07-04",
   "quarters": {
     "2026 Q3": [
@@ -77,22 +77,62 @@
     "2026-09-12": 185,
     "2026-09-19": 225,
     "2026-09-26": 227,
-    "2026-10-03": 278
+    "2026-10-03": 283,
+    "2026-10-10": 176
   },
   "provisional": {
     "source": "https://aubermark.github.io/open-tracker/",
-    "metric": "Daily Houses P. Sold \u00d7 (1 \u2212 settled relist rate)",
-    "relist_rate": 0.2966,
+    "metric": "Daily net P. Sold (newVsRemovedData) \u00d7 remaining relist factor",
+    "settled_relist_rate": 0.2984,
     "days": {
-      "2026-10-01": 57,
-      "2026-10-02": 52,
-      "2026-10-03": 21
+      "2026-10-01": {
+        "net_p_sold": 51,
+        "factor": 0.8379
+      },
+      "2026-10-02": {
+        "net_p_sold": 45,
+        "factor": 0.8379
+      },
+      "2026-10-03": {
+        "net_p_sold": 19,
+        "factor": 0.8379
+      },
+      "2026-10-04": {
+        "net_p_sold": 17,
+        "factor": 0.8379
+      },
+      "2026-10-05": {
+        "net_p_sold": 48,
+        "factor": 0.7465
+      },
+      "2026-10-06": {
+        "net_p_sold": 43,
+        "factor": 0.7465
+      },
+      "2026-10-07": {
+        "net_p_sold": 35,
+        "factor": 0.7465
+      },
+      "2026-10-08": {
+        "net_p_sold": 40,
+        "factor": 0.7465
+      },
+      "2026-10-09": {
+        "net_p_sold": 30,
+        "factor": 0.7465
+      },
+      "2026-10-10": {
+        "net_p_sold": 21,
+        "factor": 0.7465
+      }
     },
     "weekly_raw": {
-      "2026-10-03": 130
+      "2026-10-03": 115,
+      "2026-10-10": 234
     },
     "weekly": {
-      "2026-10-03": 91
+      "2026-10-03": 96,
+      "2026-10-10": 176
     }
   }
 }

@@ -33,9 +33,10 @@ from models.OPEN.accountable import (  # noqa: E402
 )
 from models.OPEN.open_tracker import (  # noqa: E402
     OPEN_TRACKER_URL,
-    extract_daily_p_sold,
+    extract_daily_removed,
     fetch_open_tracker_html,
-    settled_relist_rate,
+    relist_factors,
+    remaining_factor,
 )
 from models.OPEN.financials_definitions import FINANCIALS_DEFINITIONS_SHEET  # noqa: E402
 from models.OPEN.weekly_model_formulas import col_letter  # noqa: E402
@@ -51,8 +52,8 @@ HOME_SALES_NOTE = (
     "(QTD closings; later recordings stay in the then-current period). "
     "Quarter-end stub days (e.g. 9/27–9/30) roll into the next Saturday week. "
     "New-quarter days Accountable has not charted yet are filled provisionally with "
-    f"Open Tracker daily Houses P. Sold × (1 − settled relist rate) from {OPEN_TRACKER_URL}; "
-    "the next Accountable chart replaces them. "
+    f"Open Tracker daily P. Sold from {OPEN_TRACKER_URL}, discounted for relists not yet "
+    "netted out (settled rate ~30%); the next Accountable chart replaces them. "
     "Earlier weeks remain quarterly earnings actual ÷13 (day-weighted). "
     "Refresh with models/OPEN/scripts/sync_weekly_actuals.py "
     "(or sync_accountable_home_sales.py for Home Sales only). "
@@ -70,25 +71,31 @@ def provisional_tracker_sales(
     if not days:
         return None
     page = tracker_html if tracker_html is not None else fetch_open_tracker_html()
-    daily = extract_daily_p_sold(page)
-    relist = settled_relist_rate(page)
+    daily = extract_daily_removed(page)
+    settled, factors = relist_factors(page)
     missing = [d for d in days if d not in daily]
     if missing:
         print(
-            "Warning: Open Tracker Daily Summary lacks "
+            "Warning: Open Tracker newVsRemovedData lacks "
             f"{', '.join(d.isoformat() for d in missing)}; those days are not filled"
         )
     raw_by_week: dict = {}
+    est_by_week: dict = {}
+    day_rows: dict = {}
     for day in days:
-        if day in daily:
-            week = week_ending(day)
-            raw_by_week[week] = raw_by_week.get(week, 0) + daily[day]
-    weekly = {week: int(round(raw * (1 - relist))) for week, raw in raw_by_week.items()}
+        if day not in daily:
+            continue
+        factor = remaining_factor(day, settled, factors)
+        week = week_ending(day)
+        raw_by_week[week] = raw_by_week.get(week, 0) + daily[day]
+        est_by_week[week] = est_by_week.get(week, 0.0) + daily[day] * factor
+        day_rows[day.isoformat()] = {"net_p_sold": daily[day], "factor": round(factor, 4)}
+    weekly = {week: int(round(est)) for week, est in est_by_week.items()}
     return {
         "source": OPEN_TRACKER_URL,
-        "metric": "Daily Houses P. Sold × (1 − settled relist rate)",
-        "relist_rate": round(relist, 4),
-        "days": {d.isoformat(): daily[d] for d in days if d in daily},
+        "metric": "Daily net P. Sold (newVsRemovedData) × remaining relist factor",
+        "settled_relist_rate": round(settled, 4),
+        "days": day_rows,
         "weekly_raw": {w.isoformat(): n for w, n in sorted(raw_by_week.items())},
         "weekly": {w.isoformat(): n for w, n in sorted(weekly.items())},
     }
@@ -115,8 +122,7 @@ def load_home_sales(
             weekly[week] = weekly.get(week, 0) + count
             print(
                 f"Provisional Home Sales {week_iso}: +{count} from Open Tracker "
-                f"(raw {provisional['weekly_raw'][week_iso]} × "
-                f"{1 - provisional['relist_rate']:.3f})"
+                f"(net P. Sold {provisional['weekly_raw'][week_iso]}, relist-discounted)"
             )
     payload = snapshot_payload(weekly, quarters, as_of=as_of)
     if provisional:

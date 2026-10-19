@@ -103,8 +103,9 @@ FIELD_NOTES: dict[str, str] = {
         "cumulative Resale COEs on accountable.opendoor.com (QTD recorded closings). "
         "Quarter-end stub days roll into the next Saturday week (e.g. 9/27–9/30 → 10/3), so "
         "that week counts in the new quarter's weekly SUM. New-quarter days Accountable has not "
-        "charted yet use Open Tracker daily Houses P. Sold × (1 − settled relist rate, ~30%) "
-        "until the next Accountable chart replaces them. Refresh with sync_weekly_actuals.py "
+        "charted yet use Open Tracker daily P. Sold, discounted for relists not yet netted out "
+        "(settled rate ~30%), until the next Accountable chart replaces them. Refresh with "
+        "sync_weekly_actuals.py "
         "(or sync_accountable_home_sales.py). Model row when blank."
     ),
     'Private Home Sales - Model': (

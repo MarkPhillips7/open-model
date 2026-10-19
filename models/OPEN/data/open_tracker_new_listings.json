@@ -1,7 +1,7 @@
 {
   "source": "https://aubermark.github.io/open-tracker/",
   "metric": "New Listings (Cohort Sell-Through Listed \u2192 Saturday week-ending)",
-  "last_update": "07/10/2026, 15:20 (CET)",
+  "last_update": "14/10/2026, 15:00 (CET)",
   "weekly": {
     "2026-03-28": 169,
     "2026-04-04": 194,
@@ -30,6 +30,7 @@
     "2026-09-12": 501,
     "2026-09-19": 354,
     "2026-09-26": 254,
-    "2026-10-03": 313
+    "2026-10-03": 313,
+    "2026-10-10": 353
   }
 }
