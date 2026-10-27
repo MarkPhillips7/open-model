@@ -18,6 +18,25 @@ Entry template:
 
 ---
 
+## 2026-10-27 — Weekly actuals through 10/24 (two weeks)
+
+Refreshed via `sync_weekly_actuals.py`. Accountable “Data as of Oct 24, 2026” (contracts updated; **Home Sales chart still Q3-only** through 9/30); Open Tracker last update 27/10/2026, 22:50 CET.
+
+- **Tab / range:** **Weekly Financials** **Acquisition Contracts** `BG2:BH2`, **New Listings** `BG13:BH13`, **Home Sales** `AR19:DY19` (`BE19`, `BG19`, `BH19` changed; `BF19` unchanged); **Financials Definitions** `A1:B102`
+- **Insert/delete:** none
+- **Formulas:** none
+- **Data:**
+  - **Acquisition Contracts** `BG`/`BH` (**10/17** / **10/24**): blank → **428** / **477** (Accountable).
+  - **New Listings** `BG`/`BH`: blank → **366** / **315** (Open Tracker cohort weeks ending Sun 10/18 and 10/25).
+  - **Home Sales** still provisional for all of October (Accountable has not posted a Q4 Resale COEs chart yet):
+    - `BE` (**10/3**): **283 → 281** = Q3 stub **187** + tracker **94** (net P. Sold for 10/1–10/3 revised down with further relist netting).
+    - `BF` (**10/10**): **176** unchanged (matches current tracker fill).
+    - `BG` (**10/17**): blank → **193** (tracker net P. Sold **236**, relist-discounted).
+    - `BH` (**10/24**): blank → **198** (tracker net P. Sold **265**, relist-discounted).
+- **Side effects:** **Homes Charts** funnel actuals step for 10/17 and 10/24 (and a 2-unit tweak on 10/3); eyeball them in the UI. Agents did not edit chart objects. Google OAuth re-prompted (Testing-mode 7-day expiry).
+
+---
+
 ## 2026-10-14 — Weekly actuals through 10/10; tracker Home Sales fill from full daily history
 
 Refreshed via `sync_weekly_actuals.py`. Accountable “Data as of Oct 10, 2026” (contracts updated; Home Sales chart still Q3 only); Open Tracker last update 14/10/2026, 15:00 CET.
